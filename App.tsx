@@ -1,13 +1,14 @@
-import { ScreenContent } from 'components/ScreenContent';
-import { StatusBar } from 'expo-status-bar';
+import { View, Text } from 'react-native';
+
 
 import './global.css';
 
 export default function App() {
   return (
-    <>
-      <ScreenContent title="Home" path="App.tsx"></ScreenContent>
-      <StatusBar style="auto" />
-    </>
+    <View className="flex-1 justify-center items-center bg-white">
+      <Text className="text-blue-600 text-xl font-bold">
+        Hello NativeWind! blopr
+      </Text>
+    </View>
   );
 }
