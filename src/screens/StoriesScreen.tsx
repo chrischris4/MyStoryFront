@@ -1,25 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
+import { Image } from 'react-native'; // à importer
+
 
 export default function StoriesScreen() {
   const navigation = useNavigation();
 
-  // Simulation des stories de l'utilisateur
   const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Simule un fetch depuis un serveur ou une base locale
+  // ProfilId en dur pour test
+  const profilId = 3;
+
   useEffect(() => {
-    // Simule un délai et une récupération de données
     const fetchStories = async () => {
-      // Ex: remplacer ce tableau par un appel à ton backend
-      const fetchedStories = []; // ou [{ id: 1, title: 'Ma story' }, ...]
-      setStories(fetchedStories);
+      try {
+        const response = await fetch(`http://192.168.1.95:3000/story/${profilId}`);
+        if (!response.ok) {
+          throw new Error('Erreur lors de la récupération des histoires');
+        }
+        const data = await response.json();
+        setStories(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchStories();
   }, []);
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" color="#6b21a8" />
+        <Text>Chargement des histoires...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 items-center justify-center px-4">
+        <Text className="text-red-500 mb-4">{error}</Text>
+        <TouchableOpacity
+          className="bg-purple-700 px-4 py-2 rounded-lg"
+          onPress={() => navigation.navigate('CreateStory')}
+        >
+          <Text className="text-white font-semibold">Créer une Story</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   return (
     <View className="flex-1 bg-white pt-10 px-4">
@@ -36,15 +72,37 @@ export default function StoriesScreen() {
           </TouchableOpacity>
         </View>
       ) : (
+
         <FlatList
           data={stories}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <View className="mb-2 p-4 bg-gray-100 rounded-lg">
-              <Text className="text-lg font-medium">{item.title}</Text>
-            </View>
+            <TouchableOpacity
+              className="mb-2 p-4 bg-gray-100 rounded-lg"
+              onPress={() => navigation.navigate('StoryDetail', { storyId: item.id })}
+            >
+              <Text className="text-lg font-medium mb-2">{item.title}</Text>
+
+              {item.pages && item.pages.length > 0 ? (
+                item.pages.map((page) => (
+                  <View key={page.id} className="mb-3 bg-white p-2 rounded shadow">
+                    <Text className="mb-1">{page.text}</Text>
+                    {page.imageUrl ? (
+                      <Image
+                        source={{ uri: page.imageUrl }}
+                        style={{ width: '100%', height: 150, borderRadius: 8 }}
+                        resizeMode="cover"
+                      />
+                    ) : null}
+                  </View>
+                ))
+              ) : (
+                <Text className="text-gray-400 italic">Pas de pages</Text>
+              )}
+            </TouchableOpacity>
           )}
         />
+
       )}
 
       <BottomNavBar />
