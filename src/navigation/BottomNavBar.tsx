@@ -7,7 +7,7 @@ export default function BottomNavBar() {
 
   return (
     <View
-      className=" absolute bottom-2 left-2 right-2 h-20 bg-slate-700 flex flex-row justify-around items-center rounded-xl shadow-md"
+      className=" absolute bottom-2 left-2 right-2 h-20 bg-[#0D1821] flex flex-row justify-around items-center rounded-xl shadow-md"
     >
       <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <Text className="text-white font-semibold">Home</Text>

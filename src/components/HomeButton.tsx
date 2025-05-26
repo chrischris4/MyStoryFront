@@ -3,15 +3,18 @@ import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-nativ
 
 type HomeButtonProps = {
   title: string;
+  description: string;
   onPress: (event: GestureResponderEvent) => void;
 };
 
-export default function HomeButton({ onPress, title }: HomeButtonProps) {  return (
+export default function HomeButton({ onPress, title, description }: HomeButtonProps) {  return (
     <TouchableOpacity
       onPress={onPress}
-      className="bg-blue-200 p-4 rounded-xl w-full flex-col justify-between items-center"
+      className="bg-[#B4CDED] p-4 rounded-xl w-full flex-col justify-between items-center"
     >
-      <Text className="color-slate-700 text-lg font-semibold flex self-start mb-6">{title}</Text>
+      <Text className="color-slate-700 text-lg font-semibold flex self-start ">{title}</Text>
+            <Text className="color-slate-600 text-sm font-light flex self-start ">{description}</Text>
+
       <Text className="color-slate-700 text-3xl font-bold flex self-end">+</Text>
     </TouchableOpacity>
   );
