@@ -20,12 +20,11 @@ export default function CreateStoryScreen() {
   };
 
   const handleSubmit = () => {
-    // Tu peux ici envoyer le prompt, numPages, characters à ton backend
     console.log({ prompt, numPages, characters });
   };
 
   return (
-    <View className="flex-1 bg-white pt-10 px-4">
+    <View className="flex-1 bg-blue-200 pt-10 px-4">
       <Text className="text-2xl font-bold mb-4 text-center">Créer une histoire</Text>
 
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
@@ -79,10 +78,10 @@ export default function CreateStoryScreen() {
 
         {/* Bouton de création */}
         <TouchableOpacity
-          className="bg-blue-600 px-4 py-3 rounded-xl items-center mt-4"
+          className="bg-blue-800 px-4 py-3 rounded-xl items-center mt-4"
           onPress={handleSubmit}
         >
-          <Text className="text-white font-semibold text-lg">Créer la Story</Text>
+          <Text className="text-white font-semibold text-lg">Créer mon histoire ! </Text>
         </TouchableOpacity>
       </ScrollView>
 

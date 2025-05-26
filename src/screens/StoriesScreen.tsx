@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Image } from 'react-native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
-import { Image } from 'react-native'; // à importer
 
 
 export default function StoriesScreen() {
@@ -58,7 +57,7 @@ export default function StoriesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white pt-10 px-4">
+    <View className="flex-1 bg-blue-200 pt-10 px-4 pb-16">
       <Text className="text-xl font-bold mb-4 text-center">Mes histoires</Text>
 
       {stories.length === 0 ? (
@@ -76,31 +75,26 @@ export default function StoriesScreen() {
         <FlatList
           data={stories}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              className="mb-2 p-4 bg-gray-100 rounded-lg"
-              onPress={() => navigation.navigate('StoryDetail', { storyId: item.id })}
-            >
-              <Text className="text-lg font-medium mb-2">{item.title}</Text>
+          renderItem={({ item }) => {
+            const firstPageImage = item.pages?.[0]?.imageUrl;
 
-              {item.pages && item.pages.length > 0 ? (
-                item.pages.map((page) => (
-                  <View key={page.id} className="mb-3 bg-white p-2 rounded shadow">
-                    <Text className="mb-1">{page.text}</Text>
-                    {page.imageUrl ? (
-                      <Image
-                        source={{ uri: page.imageUrl }}
-                        style={{ width: '100%', height: 150, borderRadius: 8 }}
-                        resizeMode="cover"
-                      />
-                    ) : null}
-                  </View>
-                ))
-              ) : (
-                <Text className="text-gray-400 italic">Pas de pages</Text>
-              )}
-            </TouchableOpacity>
-          )}
+            return (
+              <TouchableOpacity
+                className="mb-2 p-4 bg-gray-100 rounded-lg"
+                onPress={() => navigation.navigate('StoryDetail', { storyId: item.id })}
+              >
+                <Text className="text-lg font-medium mb-2">{item.title}</Text>
+
+                {firstPageImage && (
+                  <Image
+                    source={{ uri: firstPageImage }}
+                    style={{ width: '100%', height: 150, borderRadius: 8 }}
+                    resizeMode="cover"
+                  />
+                )}
+              </TouchableOpacity>
+            );
+          }}
         />
 
       )}
