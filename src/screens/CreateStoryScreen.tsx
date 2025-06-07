@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image } from 'react-native';
 import StyledButton from '~/components/StyledButton';
 import BottomNavBar from '~/navigation/BottomNavBar';
@@ -17,7 +17,7 @@ export default function CreateStoryScreen() {
   const [loading, setLoading] = useState(false);
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [title, setTitle] = useState('');
-  const profileId = 3; // en dur pour l’instant
+  const profilId = 3; // en dur pour l’instant
 
   // const [characters, setCharacters] = useState(['']);
 
@@ -50,7 +50,7 @@ export default function CreateStoryScreen() {
           prompt,
           numberOfPages: numPages,
           title,
-          profileId,
+          profilId,
         }),
       });
 
@@ -61,8 +61,8 @@ export default function CreateStoryScreen() {
       const story = await response.json();
       console.log('Histoire générée:', story);
 
-      // Optionnel : naviguer vers un écran de résultat
-      // navigation.navigate('StoryResult', { story });
+      setStoryPages(story.pages);
+      setLoading(false);
 
     } catch (error) {
       console.error('Erreur côté front:', error);
