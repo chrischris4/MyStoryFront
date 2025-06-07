@@ -17,7 +17,7 @@ export default function StoriesScreen() {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const response = await fetch(`http://192.168.1.95:3000/story/${profilId}`);
+        const response = await fetch(`http://localhost:3000/story/${profilId}`);
         if (!response.ok) {
           throw new Error('Erreur lors de la récupération des histoires');
         }

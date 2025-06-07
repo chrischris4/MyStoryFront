@@ -1,25 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
+import type { Story, RootStackParamList } from '~/types';
+
+type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 
 export default function StoryDetailScreen() {
-    const route = useRoute();
+    const route = useRoute<StoryDetailRouteProp>();
     const { storyId } = route.params;
-
-    const [story, setStory] = useState(null);
+    const [story, setStory] = useState<Story | null>(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchStory = async () => {
             try {
-                const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`);
+                const response = await fetch(`http://localhost:3000/story/detail/${storyId}`);
                 if (!response.ok) throw new Error('Erreur lors de la récupération de la story');
 
-                const data = await response.json();
+                const data: Story = await response.json();
                 setStory(data);
-            } catch (err) {
+            } catch (err: any) {
                 setError(err.message);
             } finally {
                 setLoading(false);
@@ -38,10 +40,10 @@ export default function StoryDetailScreen() {
         );
     }
 
-    if (error) {
+    if (error || !story) {
         return (
-            <View className="flex-1 items-center justify-center">
-                <Text className="text-red-500">{error}</Text>
+            <View className="flex-1 items-center justify-centerpb-20">
+                <Text className="text-red-500">{error ?? 'Story non trouvée'}</Text>
             </View>
         );
     }
