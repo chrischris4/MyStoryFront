@@ -1,9 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, ActivityIndicator, TouchableOpacity, Modal, FlatList, useWindowDimensions } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  useWindowDimensions,
+  Pressable,
+  Animated,
+  Easing,
+} from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Feather } from '@expo/vector-icons';
+
 
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 
@@ -14,26 +29,80 @@ export default function StoryDetailScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showControls, setShowControls] = useState(false);
+  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Animated value pour opacité des controls
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
 
-  useEffect(() => {
-    const fetchStory = async () => {
-      try {
-        const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`);
-        if (!response.ok) throw new Error('Erreur lors de la récupération de la story');
-        const data: Story = await response.json();
-        setStory(data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchStory = async () => {
+    try {
+      const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`);
+      if (!response.ok) throw new Error('Erreur lors de la récupération de la story');
+      const data: Story = await response.json();
+      setStory(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchStory();
   }, [storyId]);
+
+  useEffect(() => {
+    return () => {
+      if (hideTimeout.current) {
+        clearTimeout(hideTimeout.current);
+      }
+    };
+  }, []);
+
+  const showControlsWithFade = () => {
+    setShowControls(true);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+
+    if (hideTimeout.current) clearTimeout(hideTimeout.current);
+
+    hideTimeout.current = setTimeout(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setShowControls(false);
+      });
+    }, 4000);
+  };
+
+  // toggle controls on press
+  const handleUserTouch = () => {
+    if (showControls) {
+      // hide immediately with fade out
+      if (hideTimeout.current) clearTimeout(hideTimeout.current);
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
+        setShowControls(false);
+      });
+    } else {
+      showControlsWithFade();
+    }
+  };
 
   if (loading) {
     return (
@@ -59,12 +128,17 @@ export default function StoryDetailScreen() {
 
         <TouchableOpacity
           onPress={() => setIsFullScreen(true)}
-          className="bg-black px-3 py-2 rounded-xl mb-4"
+          className="bg-black p-4 rounded-xl mb-4"
         >
-          <Text className="text-white font-medium">Plein écran</Text>
+          <Text className="text-white font-bold text-xl">Lancer en plein écran</Text>
+          <Text className="text-gray-300 font-light">C'est partie pour une nouvelle histoire ! </Text>
+          <Feather name="play" size={24} color="white" className='self-end mt-2' />
+
+
         </TouchableOpacity>
 
         {/* === MODAL FULLSCREEN === */}
+        {/* MODAL FULLSCREEN */}
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -73,14 +147,17 @@ export default function StoryDetailScreen() {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
+              onTouchStart={handleUserTouch}  // détecte le tap sans bloquer le swipe
               renderItem={({ item }) => (
-                <View style={{
-                  width,
-                  height,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: isPortrait ? 16 : 32,
-                }}>
+                <View
+                  style={{
+                    width,
+                    height,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    padding: isPortrait ? 16 : 32,
+                  }}
+                >
                   <Image
                     source={{ uri: item.imageUrl }}
                     style={{
@@ -90,33 +167,57 @@ export default function StoryDetailScreen() {
                     }}
                     resizeMode="contain"
                   />
-                  <Text style={{
-                    color: 'white',
-                    fontSize: 16,
-                    marginTop: 20,
-                    textAlign: 'center',
-                    paddingHorizontal: 10,
-                  }}>{item.text}</Text>
+                  <Text
+                    style={{
+                      color: 'white',
+                      fontSize: 16,
+                      marginTop: 20,
+                      textAlign: 'center',
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    {item.text}
+                  </Text>
                 </View>
               )}
             />
 
-            <TouchableOpacity
-              onPress={() => setIsFullScreen(false)}
-              style={{
-                position: 'absolute',
-                top: 40,
-                left: 20,
-                backgroundColor: 'white',
-                paddingHorizontal: 15,
-                paddingVertical: 8,
-                borderRadius: 12,
-              }}
-            >
-              <Text style={{ color: 'black', fontWeight: '600' }}>Fermer</Text>
-            </TouchableOpacity>
+            {showControls && (
+              <Animated.View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 2,
+                  opacity: fadeAnim,
+                }}
+                pointerEvents="box-none"
+              >
+                <TouchableOpacity
+                  onPress={() => setIsFullScreen(false)}
+                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', position: 'absolute', right: 16, top: 16, borderRadius: 40, padding: 20 }}
+                >
+                  <Feather name="x" size={24} color="black" />
+                </TouchableOpacity>
+
+                <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather name="chevron-left" size={24} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather name="heart" size={24} color="red" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Feather name="chevron-right" size={24} color="black" />
+                  </TouchableOpacity>
+                </View>
+              </Animated.View>
+            )}
           </SafeAreaView>
         </Modal>
+
 
         {/* === PAGES CLASSIQUES === */}
         {story.pages
@@ -131,6 +232,10 @@ export default function StoryDetailScreen() {
               />
             </View>
           ))}
+        <TouchableOpacity className="bg-red-400 p-4 rounded-xl mb-28 flex flex-row gap-4 justify-center">
+          <Text className="text-white font-bold text-xl">Supprimer l'histoire</Text>
+          <Feather name="trash" size={22} color="white" />
+        </TouchableOpacity>
       </ScrollView>
       <BottomNavBar />
     </>
