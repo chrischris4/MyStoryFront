@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
+import StoryFolder from '~/components/StoryFolder';
+import { Feather } from '@expo/vector-icons';
+
 
 
 export default function StoriesScreen() {
   const navigation = useNavigation();
-
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ProfilId en dur pour test
+
   const profilId = 3;
 
   useEffect(() => {
@@ -57,48 +59,32 @@ export default function StoriesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-blue-200 pt-10 px-4 pb-16">
-      <Text className="text-xl font-bold mb-4 text-center">Mes histoires</Text>
-
-      {stories.length === 0 ? (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-500 mb-4">Pas d'histoires créées.</Text>
-          <TouchableOpacity
-            className="bg-purple-700 px-4 py-2 rounded-lg"
-            onPress={() => navigation.navigate('CreateStory')}
-          >
-            <Text className="text-white font-semibold">Créer une Story</Text>
-          </TouchableOpacity>
+    <View className="flex-1 bg-blue-200 pt-10">
+      <Text className="text-2xl font-bold px-4">Mes histoires</Text>
+      <Text className=" color-slate-600 text-xl font-light mb-4 px-4">Toutes vos aventures vous attendent ici !</Text>
+        <View className='flex flex-col gap-4 mb-4'>
+          <StoryFolder
+            title="Tout"
+            icon={<Feather name="list" size={24} color="#fff" />}
+            storyType="ALL"
+            description='Toutes vos histoires au même endroit'
+            stories={stories}
+          />
+          <StoryFolder
+            title="Récent"
+            icon={<Feather name="clock" size={24} color="#fff" />}
+            storyType="RECENT"
+            description='Vos 10 histoires les plus récentes'
+            stories={stories}
+          />
+          <StoryFolder
+            title="Favorite"
+            icon={<Feather name="heart" size={24} color="#fff" />}
+            storyType="FAVORITE"
+            description='Vos histoires préférées'
+            stories={stories}
+          />
         </View>
-      ) : (
-
-        <FlatList
-          data={stories}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => {
-            const firstPageImage = item.pages?.[0]?.imageUrl;
-
-            return (
-              <TouchableOpacity
-                className="mb-2 p-4 bg-gray-100 rounded-lg"
-                onPress={() => navigation.navigate('StoryDetail', { storyId: item.id })}
-              >
-                <Text className="text-lg font-medium mb-2">{item.title}</Text>
-
-                {firstPageImage && (
-                  <Image
-                    source={{ uri: firstPageImage }}
-                    style={{ width: '100%', height: 150, borderRadius: 8 }}
-                    resizeMode="cover"
-                  />
-                )}
-              </TouchableOpacity>
-            );
-          }}
-        />
-
-      )}
-
       <BottomNavBar />
     </View>
   );
