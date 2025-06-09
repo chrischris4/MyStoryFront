@@ -6,19 +6,33 @@ import HomeScreen from '~/screens/HomeScreen';
 import StoriesScreen from '~/screens/StoriesScreen';
 import CreateStoryScreen from '~/screens/CreateStoryScreen';
 import StoryDetailScreen from '~/screens/StoryDetailScreen';
+import CompleteProfileScreen from '~/screens/CompleteProfileScreen';
 
-const Stack = createNativeStackNavigator();
+
+export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  Home: undefined;
+  Stories: undefined;
+  CreateStory: undefined;
+  StoryDetail: undefined;
+  CompleteProfileScreen: { accessToken: string };
+};
+
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Stories" component={StoriesScreen} />
                 <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
                 <Stack.Screen name="StoryDetail" component={StoryDetailScreen} />
+                <Stack.Screen name="CompleteProfileScreen" component={CompleteProfileScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function RegisterScreen() {
   const [email, setEmail] = useState('');
@@ -9,20 +9,42 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!email || !password || !confirmPassword) {
-      alert('Tous les champs sont requis');
+      Alert.alert('Erreur', 'Tous les champs sont requis');
       return;
     }
 
     if (password !== confirmPassword) {
-      alert('Les mots de passe ne correspondent pas');
+      Alert.alert('Erreur', 'Les mots de passe ne correspondent pas');
       return;
     }
 
-    // Inscription fictive
-    alert('Compte créé avec succès !');
-    navigation.navigate('Login');
+    try {
+      const res = await fetch('http://192.168.1.95:3000/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        Alert.alert('Erreur', errorData.message || 'Erreur lors de l\'inscription');
+        return;
+      }
+
+      const data = await res.json();
+      const accessToken = data.accessToken;
+
+      await AsyncStorage.setItem('accessToken', accessToken);
+
+      Alert.alert('Succès', 'Compte créé avec succès !');
+
+      navigation.navigate('CompleteProfileScreen', { accessToken });
+
+    } catch (error) {
+      Alert.alert('Erreur', 'Une erreur est survenue');
+    }
   };
 
   return (
@@ -62,6 +84,10 @@ export default function RegisterScreen() {
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text className="text-blue-600">Déjà un compte ? Se connecter</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate('CompleteProfileScreen')}>
+        <Text className="text-blue-600">Profile test</Text>
       </TouchableOpacity>
     </View>
   );

@@ -17,8 +17,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-blue-200 px-6">
-      <Text className="font-bold mb-2 text-gray-800">Connexion</Text>
+    <View className="flex-1 justify-center items-center bg-white px-6">
+      <Text className="font-bold text-xl mb-2 text-gray-800 text-start">Connexion</Text>
 
       <TextInput
         className="w-full border border-gray-300 rounded-xl p-4 mb-4"
