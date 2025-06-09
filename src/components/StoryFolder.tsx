@@ -95,7 +95,7 @@ export default function StoryFolder({
                     )}
 
                     {stories.length === 0 ? (
-                        <View className="flex-1 items-center justify-center mt-4">
+                        <View className="flex-1 items-center justify-center mt-6">
                             <Text className="text-gray-500 mb-4">Pas d'histoires créées.</Text>
                             <TouchableOpacity
                                 className="bg-purple-700 px-4 py-2 rounded-lg"

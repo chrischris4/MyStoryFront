@@ -18,6 +18,8 @@ import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
@@ -31,17 +33,27 @@ export default function StoryDetailScreen() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showControls, setShowControls] = useState(false);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
-
-  // Animated value pour opacité des controls
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
 
+
   const fetchStory = async () => {
     try {
-      const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`);
-      if (!response.ok) throw new Error('Erreur lors de la récupération de la story');
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) throw new Error('Utilisateur non authentifié');
+
+      const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération de la story');
+      }
+
       const data: Story = await response.json();
       setStory(data);
     } catch (err: any) {
@@ -50,6 +62,7 @@ export default function StoryDetailScreen() {
       setLoading(false);
     }
   };
+
 
   useEffect(() => {
     fetchStory();
@@ -86,10 +99,8 @@ export default function StoryDetailScreen() {
     }, 4000);
   };
 
-  // toggle controls on press
   const handleUserTouch = () => {
     if (showControls) {
-      // hide immediately with fade out
       if (hideTimeout.current) clearTimeout(hideTimeout.current);
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -137,8 +148,6 @@ export default function StoryDetailScreen() {
 
         </TouchableOpacity>
 
-        {/* === MODAL FULLSCREEN === */}
-        {/* MODAL FULLSCREEN */}
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -147,7 +156,7 @@ export default function StoryDetailScreen() {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              onTouchStart={handleUserTouch}  // détecte le tap sans bloquer le swipe
+              onTouchStart={handleUserTouch}
               renderItem={({ item }) => (
                 <View
                   style={{
@@ -156,6 +165,7 @@ export default function StoryDetailScreen() {
                     justifyContent: 'center',
                     alignItems: 'center',
                     padding: isPortrait ? 16 : 32,
+                    transform: isPortrait ? [] : [{ rotate: '90deg' }],
                   }}
                 >
                   <Image
@@ -163,15 +173,15 @@ export default function StoryDetailScreen() {
                     style={{
                       width: isPortrait ? width * 0.9 : height * 0.9,
                       height: isPortrait ? height * 0.6 : width * 0.6,
-                      borderRadius: 16,
                     }}
                     resizeMode="contain"
+                    className='rounded-3xl'
                   />
                   <Text
                     style={{
                       color: 'white',
                       fontSize: 16,
-                      marginTop: 20,
+                      marginTop: 0,
                       textAlign: 'center',
                       paddingHorizontal: 10,
                     }}
@@ -180,6 +190,7 @@ export default function StoryDetailScreen() {
                   </Text>
                 </View>
               )}
+
             />
 
             {showControls && (
@@ -219,7 +230,6 @@ export default function StoryDetailScreen() {
         </Modal>
 
 
-        {/* === PAGES CLASSIQUES === */}
         {story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
           .map((page) => (

@@ -1,24 +1,48 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // À remplacer avec ta logique réelle
-    if (email && password) {
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://192.168.1.95:3000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        Alert.alert('Erreur', errorData.message || 'Erreur lors de la connexion');
+        return;
+      }
+
+      const data = await res.json();
+      const accessToken = data.accessToken;
+
+      await AsyncStorage.setItem('accessToken', accessToken);
+
+      Alert.alert('Succès', 'Connexion réussie !');
       navigation.navigate('Home');
-    } else {
-      alert('Veuillez remplir tous les champs');
+
+    } catch (error) {
+      Alert.alert('Erreur', 'Une erreur est survenue');
     }
   };
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-6">
-      <Text className="font-bold text-xl mb-2 text-gray-800 text-start">Connexion</Text>
+      <Text className="font-bold text-xl mb-4 text-gray-800 text-start">Connexion</Text>
 
       <TextInput
         className="w-full border border-gray-300 rounded-xl p-4 mb-4"

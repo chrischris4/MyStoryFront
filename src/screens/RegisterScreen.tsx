@@ -49,7 +49,7 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-white px-6">
-      <Text className="text-3xl font-bold mb-8 text-gray-800">Inscription</Text>
+      <Text className="text-xl font-bold mb-4 text-gray-800">Inscription</Text>
 
       <TextInput
         className="w-full border border-gray-300 rounded-xl p-4 mb-4"
@@ -68,7 +68,7 @@ export default function RegisterScreen() {
       />
 
       <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-6"
+        className="w-full border border-gray-300 rounded-xl p-4 mb-4"
         placeholder="Confirmez le mot de passe"
         secureTextEntry
         value={confirmPassword}
@@ -84,10 +84,6 @@ export default function RegisterScreen() {
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
         <Text className="text-blue-600">Déjà un compte ? Se connecter</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('CompleteProfileScreen')}>
-        <Text className="text-blue-600">Profile test</Text>
       </TouchableOpacity>
     </View>
   );

@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image } from 'react-native';
 import StyledButton from '~/components/StyledButton';
 import BottomNavBar from '~/navigation/BottomNavBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Animated, Easing } from 'react-native';
+
+
 
 type StoryPage = {
   page: number;
@@ -9,48 +13,33 @@ type StoryPage = {
   imageUrl: string;
 };
 
-
-
 export default function CreateStoryScreen() {
   const [prompt, setPrompt] = useState('');
   const [numPages, setNumPages] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(true)
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [title, setTitle] = useState('');
-  const profilId = 3; // en dur pour l’instant
-
-  // const [characters, setCharacters] = useState(['']);
-
-  // const handleAddCharacter = () => {
-  //   if (characters.length < 5) {
-  //     setCharacters([...characters, '']);
-  //   }
-  // };
-
-  // const handleCharacterChange = (text, index) => {
-  //   const updated = [...characters];
-  //   updated[index] = text;
-  //   setCharacters(updated);
-  // };
-
-  // const handleSubmit = () => {
-  //   console.log({ prompt, numPages });
-  // };
+  const cloudAnim = useRef(new Animated.Value(0)).current;
 
   const handleSubmit = async () => {
     setLoading(true);
     setStoryPages([]);
+
     try {
-      const response = await fetch('http://localhost:3000/story/create', {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) throw new Error('Utilisateur non connecté');
+
+      const response = await fetch('http://192.168.1.95:3000/story/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           prompt,
           numberOfPages: numPages,
           title,
-          profilId,
         }),
       });
 
@@ -60,15 +49,42 @@ export default function CreateStoryScreen() {
 
       const story = await response.json();
       console.log('Histoire générée:', story);
-
       setStoryPages(story.pages);
-      setLoading(false);
-
     } catch (error) {
       console.error('Erreur côté front:', error);
       alert('Erreur lors de la création de l’histoire.');
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(cloudAnim, {
+        toValue: 1000,
+        duration: 100000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+
+  }, []);
+
+  useEffect(() => {
+    setTitle('🐉 Le voyage de Pacha');
+    setStoryPages([
+      {
+        page: 1,
+        text: 'Pacha s’éveilla au cœur d’une forêt enchantée, le soleil dansant entre les feuillages.',
+        imageUrl: 'https://picsum.photos/seed/foret-magique/400/200', // plus fiable
+      },
+    ]);
+  }, []);
+
+
+
+
+
 
 
   return (
@@ -78,8 +94,7 @@ export default function CreateStoryScreen() {
       <Text className="text-base font-light pb-4">Ici, toutes vos idées prennent vie !</Text>
 
 
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
-        {/* Prompt */}
+      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
         <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
           <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
           <TextInput
@@ -99,31 +114,6 @@ export default function CreateStoryScreen() {
             onChangeText={setTitle}
           />
         </View>
-
-
-        {/* Personnages */}
-        {/* <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
-          <Text className="text-lg font-semibold mb-2">Personnages (max 5)</Text>
-          {characters.map((char, index) => (
-            <TextInput
-              key={index}
-              className="border border-gray-400 rounded-lg p-2 mb-2"
-              placeholder={`Personnage ${index + 1}`}
-              value={char}
-              onChangeText={(text) => handleCharacterChange(text, index)}
-            />
-          ))}
-
-
-          {characters.length < 5 && (
-            <TouchableOpacity
-              className=" self-start bg-green-500 px-3 py-2 rounded-lg"
-              onPress={handleAddCharacter}
-            >
-              <Text className="text-white">+ Ajouter un personnage</Text>
-            </TouchableOpacity>
-          )}
-        </View> */}
 
         <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
           <Text className="text-lg font-semibold mb-2">Nombre de pages</Text>
@@ -148,7 +138,6 @@ export default function CreateStoryScreen() {
           <StyledButton title="Animations" icon='+' />
         </View>
 
-        {/* Bouton de création */}
         <TouchableOpacity
           className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center mt-4"
           onPress={handleSubmit}
@@ -156,39 +145,87 @@ export default function CreateStoryScreen() {
           <Text className="text-white font-semibold text-lg">Créer mon histoire ! </Text>
         </TouchableOpacity>
       </ScrollView>
-      {/* === Modal de chargement + résultat === */}
-      <Modal visible={loading || storyPages.length > 0} animationType="slide">
-        <View className="flex-1 bg-white p-4">
+      <Modal visible={showModal} animationType="slide" className=''>
+        <View className="flex-1 p-4 bg-sky-300 relative">
+          <View className='bg-green-600 absolute bottom-0 -left-10 border-4 border-green-700 h-40 rounded-t-full w-[200%]'>
+          </View>
+          <View className='bg-yellow-300 h-80 w-80 border-4 border-yellow-500 rounded-full absolute -top-20 -right-20'>
+          </View>
+          <Animated.View
+            style={{
+              transform: [{ translateX: cloudAnim }],
+            }} className='absolute top-40 -left-4'>
+            <View className='w-60 h-44 relative'>
+              <View className='bg-white h-20 rounded-full absolute top-10 left-0 w-full'>
+              </View>
+              <View className='bg-white h-24 w-24 rounded-full absolute top-0 left-10'>
+              </View>
+              <View className='bg-white h-20 w-20 rounded-full absolute top-4 left-28'>
+              </View>
+            </View>
+          </Animated.View>
+          <Animated.View
+            style={{
+              transform: [{ translateX: cloudAnim }],
+            }} className='absolute top-96 -left-96'>
+            <View className='w-52 h-44 relative'>
+              <View className='bg-white h-14 rounded-full absolute top-10 left-0 w-full'>
+              </View>
+              <View className='bg-white h-20 w-20 rounded-full absolute top-0 right-12'>
+              </View>
+              <View className='bg-white h-16 w-16 rounded-full absolute top-4 right-28'>
+              </View>
+            </View>
+          </Animated.View>
+          <Animated.View
+            style={{
+              transform: [{ translateX: cloudAnim }],
+            }} className='absolute top-72 right-10'>
+            <View className='w-52 h-44 relative'>
+              <View className='bg-white h-14 rounded-full absolute top-10 left-0 w-full'>
+              </View>
+              <View className='bg-white h-20 w-20 rounded-full absolute top-0 right-12'>
+              </View>
+              <View className='bg-white h-16 w-16 rounded-full absolute top-4 right-28'>
+              </View>
+            </View>
+          </Animated.View>
           {loading ? (
             <View className="flex-1 justify-center items-center">
               <ActivityIndicator size="large" color="#0D1821" />
-              <Text className="mt-4 text-lg font-semibold">Génération en cours...</Text>
+              <Text className="mt-4 text-lg font-semibold">Nous préparons votre histoire</Text>
             </View>
           ) : (
-            <ScrollView>
-              <Text className="text-xl font-bold mb-4 text-center">✨ Voici votre histoire !</Text>
-              {storyPages.map((page, index) => (
-                <View key={index} className="mb-6">
-                  <Text className="font-bold mb-2">Page {page.page}</Text>
+            <View className='flex-1 justify-center relative'>
+              <Text className="text-xl font-bold mb-4 text-center">Votre histoire est prête !</Text>
+              {storyPages.length > 0 && (
+                <View className="mb-4 bg-white p-4 rounded-3xl">
+                  <Text className="text-2xl font-bold mb-2 text-center">{title}</Text>
                   <Image
-                    source={{ uri: page.imageUrl }}
+                    source={{ uri: storyPages[0].imageUrl }}
                     style={{ width: '100%', height: 200, borderRadius: 16 }}
                     resizeMode="cover"
                   />
-                  <Text className="mt-2 text-base">{page.text}</Text>
                 </View>
-              ))}
+              )}
               <TouchableOpacity
-                className="mt-4 bg-black px-4 py-3 rounded-3xl items-center"
-                onPress={() => setStoryPages([])} // fermer modal
+                className="bg-white px-4 py-3 rounded-3xl items-center"
+              // onPress={() =>
+              //     navigation.navigate('StoryDetail', { storyId: item.id })
+              // }
               >
-                <Text className="text-white font-semibold text-lg">Fermer</Text>
+                <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
               </TouchableOpacity>
-            </ScrollView>
+              <TouchableOpacity
+                className="bg-black px-4 py-3 rounded-3xl items-center absolute bottom-0 left-0 w-full"
+                onPress={() => setStoryPages([])}
+              >
+                <Text className="text-white font-semibold text-lg">Revenir à la création</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </Modal>
-
       <BottomNavBar />
     </View>
   );
