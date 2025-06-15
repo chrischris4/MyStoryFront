@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image, Dimensions } from 'react-native';
 import StyledButton from '~/components/StyledButton';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated, Easing } from 'react-native';
+import LottieView from 'lottie-react-native';
+
 
 
 
@@ -82,6 +84,24 @@ export default function CreateStoryScreen() {
   }, []);
 
 
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    animationRef.current?.play();
+  }, []);
+
+  const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+
+  useEffect(() => {
+    animationRef.current?.play();
+
+    Animated.timing(translateX, {
+      toValue: -300,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
 
 
 
@@ -147,8 +167,26 @@ export default function CreateStoryScreen() {
       </ScrollView>
       <Modal visible={showModal} animationType="slide" className=''>
         <View className="flex-1 p-4 bg-sky-300 relative">
-          <View className='bg-green-600 absolute bottom-0 -left-10 border-4 border-green-700 h-40 rounded-t-full w-[200%]'>
+          <View className='bg-green-500 absolute bottom-0 -left-40 border-4 border-green-600 h-52  rounded-t-full w-[100%] z-0'>
           </View>
+          <View className='bg-green-500 absolute bottom-0 -left-10 border-4 border-green-600 h-40 w-[200%] z-10'>
+          </View>
+          <Animated.View
+      style={{
+        transform: [{ translateX }],
+        position: 'absolute',
+        bottom: 72,
+        alignSelf: 'center',
+      }}
+    >
+      <LottieView
+        ref={animationRef}
+        source={require('../../assets/animations/dog.json')}
+        autoPlay
+        loop={true}
+        style={{ width: 200, height: 200 }}
+      />
+    </Animated.View>
           <View className='bg-yellow-300 h-80 w-80 border-4 border-yellow-500 rounded-full absolute -top-20 -right-20'>
           </View>
           <Animated.View
