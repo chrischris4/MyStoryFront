@@ -5,6 +5,8 @@ import BottomNavBar from '~/navigation/BottomNavBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated, Easing } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 
@@ -19,46 +21,92 @@ export default function CreateStoryScreen() {
   const [prompt, setPrompt] = useState('');
   const [numPages, setNumPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(true)
+  const [showModal, setShowModal] = useState(false)
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
+  const [storyId, setStoryId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const cloudAnim = useRef(new Animated.Value(0)).current;
+  const navigation = useNavigation();
+
+
+  // const handleSubmit = async () => {
+  //   setLoading(true);
+  //   setShowModal(true)
+  //   setStoryPages([]);
+  //   setStoryId(null);
+
+    // try {
+    //   const token = await AsyncStorage.getItem('accessToken');
+    //   if (!token) throw new Error('Utilisateur non connecté');
+
+    //   const response = await fetch('http://192.168.1.95:3000/story/create', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: `Bearer ${token}`,
+    //     },
+    //     body: JSON.stringify({
+    //       prompt,
+    //       numberOfPages: numPages,
+    //       title,
+    //     }),
+    //   });
+
+    //   if (!response.ok) {
+    //     throw new Error('Erreur lors de la création de l’histoire');
+    //   }
+
+    //   const story = await response.json();
+    //   console.log('Histoire générée:', story);
+    //   setStoryPages(story.pages);
+    //   setStoryId(story.id);
+    // } catch (error) {
+    //   console.error('Erreur côté front:', error);
+    //   alert('Erreur lors de la création de l’histoire.');
+    // } finally {
+    //   setLoading(false);
+    // }
+  // };
 
   const handleSubmit = async () => {
-    setLoading(true);
-    setStoryPages([]);
+  setLoading(true);
+  setShowModal(true);
+  setStoryPages([]);
+  setStoryId(null); // N'oublie pas ce state
 
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) throw new Error('Utilisateur non connecté');
+  try {
+    // Simule un délai
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
-      const response = await fetch('http://192.168.1.95:3000/story/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+    // 👇 Données factices
+    const fakeStory = {
+      id: 'fake-story-123',
+      title: title || 'Mon histoire test',
+      pages: [
+        {
+          page: 1,
+          text: 'Ceci est la première page de votre histoire magique ✨',
+          imageUrl: 'https://picsum.photos/seed/test-story/400/200',
         },
-        body: JSON.stringify({
-          prompt,
-          numberOfPages: numPages,
-          title,
-        }),
-      });
+        {
+          page: 2,
+          text: 'Et voici la suite de l’aventure...',
+          imageUrl: 'https://picsum.photos/seed/test-story2/400/200',
+        },
+      ],
+    };
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de la création de l’histoire');
-      }
+    console.log('Fake story générée:', fakeStory);
+    setStoryPages(fakeStory.pages);
+    setStoryId(fakeStory.id);
+  } catch (error) {
+    console.error('Erreur côté front:', error);
+    alert('Erreur lors de la création de l’histoire.');
+  } finally {
+    setLoading(false);
+  }
+};
 
-      const story = await response.json();
-      console.log('Histoire générée:', story);
-      setStoryPages(story.pages);
-    } catch (error) {
-      console.error('Erreur côté front:', error);
-      alert('Erreur lors de la création de l’histoire.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     Animated.loop(
@@ -70,17 +118,6 @@ export default function CreateStoryScreen() {
       })
     ).start();
 
-  }, []);
-
-  useEffect(() => {
-    setTitle('🐉 Le voyage de Pacha');
-    setStoryPages([
-      {
-        page: 1,
-        text: 'Pacha s’éveilla au cœur d’une forêt enchantée, le soleil dansant entre les feuillages.',
-        imageUrl: 'https://picsum.photos/seed/foret-magique/400/200', // plus fiable
-      },
-    ]);
   }, []);
 
 
@@ -172,21 +209,21 @@ export default function CreateStoryScreen() {
           <View className='bg-green-500 absolute bottom-0 -left-10 border-4 border-green-600 h-40 w-[200%] z-10'>
           </View>
           <Animated.View
-      style={{
-        transform: [{ translateX }],
-        position: 'absolute',
-        bottom: 72,
-        alignSelf: 'center',
-      }}
-    >
-      <LottieView
-        ref={animationRef}
-        source={require('../../assets/animations/dog.json')}
-        autoPlay
-        loop={true}
-        style={{ width: 200, height: 200 }}
-      />
-    </Animated.View>
+            style={{
+              transform: [{ translateX }],
+              position: 'absolute',
+              bottom: 72,
+              alignSelf: 'center',
+            }}
+          >
+            <LottieView
+              ref={animationRef}
+              source={require('../../assets/animations/dog.json')}
+              autoPlay
+              loop={true}
+              style={{ width: 200, height: 200 }}
+            />
+          </Animated.View>
           <View className='bg-yellow-300 h-80 w-80 border-4 border-yellow-500 rounded-full absolute -top-20 -right-20'>
           </View>
           <Animated.View
@@ -248,12 +285,15 @@ export default function CreateStoryScreen() {
               )}
               <TouchableOpacity
                 className="bg-white px-4 py-3 rounded-3xl items-center"
-              // onPress={() =>
-              //     navigation.navigate('StoryDetail', { storyId: item.id })
-              // }
+                onPress={() => {
+                  if (storyId) {
+                    navigation.navigate('StoryDetail', { storyId });
+                  }
+                }}
               >
                 <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 className="bg-black px-4 py-3 rounded-3xl items-center absolute bottom-0 left-0 w-full"
                 onPress={() => setStoryPages([])}
