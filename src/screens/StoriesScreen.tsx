@@ -9,31 +9,65 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function StoriesScreen() {
   const navigation = useNavigation();
   const [stories, setStories] = useState([]);
+  const [favoriteStories, setFavoriteStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchStories = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        setError('Utilisateur non authentifié');
+        return;
+      }
+
+      const response = await fetch('http://192.168.1.95:3000/story', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des histoires');
+      }
+
+      const data = await response.json();
+      setStories(data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const fetchFavoriteStories = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('Utilisateur non connecté');
+      }
+
+      const response = await fetch('http://192.168.1.95:3000/favorite-story/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des histoires favorites');
+      }
+
+      const data = await response.json();
+      setFavoriteStories(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
-    const fetchStories = async () => {
+    const fetchAllData = async () => {
+      setLoading(true);
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) {
-          setError('Utilisateur non authentifié');
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch('http://192.168.1.95:3000/story', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des histoires');
-        }
-
-        const data = await response.json();
-        setStories(data);
+        await fetchStories();
+        await fetchFavoriteStories();
       } catch (err) {
         setError(err.message);
       } finally {
@@ -41,7 +75,7 @@ export default function StoriesScreen() {
       }
     };
 
-    fetchStories();
+    fetchAllData();
   }, []);
 
   if (loading) {
@@ -93,7 +127,7 @@ export default function StoriesScreen() {
           icon={<Feather name="heart" size={24} color="#fff" />}
           storyType="FAVORITE"
           description="Vos histoires préférées"
-          stories={stories}
+          stories={favoriteStories}
         />
       </View>
       <BottomNavBar />

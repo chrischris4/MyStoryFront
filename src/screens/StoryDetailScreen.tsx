@@ -12,6 +12,7 @@ import {
   Pressable,
   Animated,
   Easing,
+  Alert
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
@@ -19,6 +20,7 @@ import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -37,6 +39,33 @@ export default function StoryDetailScreen() {
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
+
+
+  const handleAddToFavorites = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) throw new Error('Utilisateur non connecté');
+
+      const response = await fetch('http://192.168.1.95:3000/favorite-story', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          storyId: story.id,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Échec de l’ajout aux favoris');
+
+      Alert.alert('Ajouté aux favoris ❤️');
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Erreur lors de l’ajout aux favoris');
+    }
+  };
+
 
 
   const fetchStory = async () => {
@@ -217,7 +246,16 @@ export default function StoryDetailScreen() {
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-left" size={24} color="black" />
                   </TouchableOpacity>
-                  <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
+                  <TouchableOpacity
+                    onPress={handleAddToFavorites}
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: 40,
+                      padding: 20,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Feather name="heart" size={24} color="red" />
                   </TouchableOpacity>
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
