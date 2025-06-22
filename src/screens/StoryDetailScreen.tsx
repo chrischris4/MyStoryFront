@@ -19,6 +19,7 @@ import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -36,36 +37,58 @@ export default function StoryDetailScreen() {
   const [showControls, setShowControls] = useState(false);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [isFavorite, setIsFavorite] = useState(true);
+
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
 
-
-  const handleAddToFavorites = async () => {
-    try {
+  useEffect(() => {
+    const checkIfFavorite = async () => {
       const token = await AsyncStorage.getItem('accessToken');
-      if (!token) throw new Error('Utilisateur non connecté');
-
-      const response = await fetch('http://192.168.1.95:3000/favorite-story', {
-        method: 'POST',
+      const response = await fetch('http://192.168.1.95:3000/favorite-story/me', {
         headers: {
-          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          storyId: story.id,
-        }),
       });
 
-      if (!response.ok) throw new Error('Échec de l’ajout aux favoris');
+      const favorites = await response.json();
+const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
+      setIsFavorite(isFav);
+      console.log("Favorites:", favorites.map(f => f.story.id), "Current storyId:", storyId);
 
-      Alert.alert('Ajouté aux favoris ❤️');
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Erreur lors de l’ajout aux favoris');
+    };
+
+    checkIfFavorite();
+  }, [storyId]);
+
+
+
+
+  const handleToggleFavorite = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+
+    const url = isFavorite
+      ? 'http://192.168.1.95:3000/favorite-story'
+      : 'http://192.168.1.95:3000/favorite-story';
+
+    const method = isFavorite ? 'DELETE' : 'POST';
+
+    const response = await fetch(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ storyId }),
+    });
+
+    if (response.ok) {
+      setIsFavorite(!isFavorite);
+    } else {
+      console.error('Erreur lors du changement de favori');
     }
   };
-
 
 
   const fetchStory = async () => {
@@ -247,7 +270,7 @@ export default function StoryDetailScreen() {
                     <Feather name="chevron-left" size={24} color="black" />
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={handleAddToFavorites}
+                    onPress={handleToggleFavorite}
                     style={{
                       backgroundColor: 'rgba(255, 255, 255, 0.7)',
                       borderRadius: 40,
@@ -256,7 +279,7 @@ export default function StoryDetailScreen() {
                       alignItems: 'center',
                     }}
                   >
-                    <Feather name="heart" size={24} color="red" />
+                    <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
                   </TouchableOpacity>
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-right" size={24} color="black" />
