@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated, Easing } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
+import PageSelector from '~/components/PageSelector';
 
 
 
@@ -141,9 +142,6 @@ export default function CreateStoryScreen() {
 
 
 
-
-
-
   return (
     <View className="flex-1 bg-[#F0F4EF] pt-4 px-4">
       <Text className="text-2xl font-bold pt-4">Quelle aventure</Text>
@@ -153,16 +151,6 @@ export default function CreateStoryScreen() {
 
       <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
         <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
-          <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
-          <TextInput
-            className="border border-gray-400 rounded-lg p-2"
-            placeholder="Ex: Une aventure magique dans les montagnes"
-            value={prompt}
-            onChangeText={setPrompt}
-          />
-        </View>
-
-        <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
           <Text className="text-lg font-semibold mb-2">Titre de l’histoire</Text>
           <TextInput
             className="border border-gray-400 rounded-lg p-2"
@@ -171,32 +159,19 @@ export default function CreateStoryScreen() {
             onChangeText={setTitle}
           />
         </View>
-
         <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
-          <Text className="text-lg font-semibold mb-2">Nombre de pages</Text>
-          <View className="flex-row flex-wrap">
-            {[...Array(10)].map((_, i) => (
-              <TouchableOpacity
-                key={i}
-                onPress={() => setNumPages(i + 1)}
-                className={`px-3 py-1 m-1 rounded-lg border ${numPages === i + 1 ? 'bg-slate-700 border-slate-700' : 'border-gray-400'
-                  }`}
-              >
-                <Text className={numPages === i + 1 ? 'text-white' : 'text-black'}>
-                  {i + 1}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
+          <TextInput
+            className="border border-gray-400 rounded-lg p-2"
+            placeholder="Ex: Une aventure magique dans les montagnes"
+            value={prompt}
+            onChangeText={setPrompt}
+          />
         </View>
-
-        <View className="gap-4 flex flex-row w-full">
-          <StyledButton title="Pages" icon='+' />
-          <StyledButton title="Animations" icon='+' />
-        </View>
+       <PageSelector numPages={numPages} setNumPages={setNumPages} />
 
         <TouchableOpacity
-          className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center mt-4"
+          className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
           onPress={handleSubmit}
         >
           <Text className="text-white font-semibold text-lg">Créer mon histoire ! </Text>

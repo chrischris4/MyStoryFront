@@ -7,16 +7,18 @@ import StoriesScreen from '~/screens/StoriesScreen';
 import CreateStoryScreen from '~/screens/CreateStoryScreen';
 import StoryDetailScreen from '~/screens/StoryDetailScreen';
 import CompleteProfileScreen from '~/screens/CompleteProfileScreen';
+import PurchaseScreen from '~/screens/PurchaseScreen';
 
 
 export type RootStackParamList = {
-  Login: undefined;
-  Register: undefined;
-  Home: undefined;
-  Stories: undefined;
-  CreateStory: undefined;
-  StoryDetail: undefined;
-  CompleteProfileScreen: { accessToken: string };
+    Login: undefined;
+    Register: undefined;
+    Home: undefined;
+    Stories: undefined;
+    CreateStory: undefined;
+    StoryDetail: undefined;
+    CompleteProfileScreen: { accessToken: string };
+    PurchaseScreen: undefined;
 };
 
 
@@ -33,6 +35,8 @@ export default function AppNavigator() {
                 <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
                 <Stack.Screen name="StoryDetail" component={StoryDetailScreen} />
                 <Stack.Screen name="CompleteProfileScreen" component={CompleteProfileScreen} />
+                <Stack.Screen name="PurchaseScreen" component={PurchaseScreen} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );
