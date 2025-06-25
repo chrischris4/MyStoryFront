@@ -3,6 +3,7 @@ import { View, Text, Button, Alert, StyleSheet } from 'react-native';
 import { useStripe } from '@stripe/stripe-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNavBar from '~/navigation/BottomNavBar';
+import ShopButton from '~/components/ShopButton';
 
 export default function PurchaseScreen() {
     const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -59,36 +60,31 @@ export default function PurchaseScreen() {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>💎 Boutique</Text>
+        <>
+            <View className='flex-1 w-11/12 mx-auto'>
+                <Text className="text-2xl font-bold pt-4">Boutique</Text>
+                <Text className="text-base font-light pb-4">Ici, toutes vos idées prennent vie !</Text>
 
-            <View style={styles.item}>
-                <Text>100 tokens - 1,99€</Text>
+                <View className='flex flex-row gap-2'>
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleBuyTokens} />
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleBuyTokens} />
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleBuyTokens} />
+                </View>
+
+                <View className='flex flex-row gap-2'>
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleSubscribe} />
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleSubscribe} />
+                    <ShopButton title='10 Jetons' price='10€' onPress={handleSubscribe} />
+                </View>
+            </View>
+            <View className='bg-blue-300 rounded-lg p-4 w-1/2 flex items-center'>
+                <Text className='w-fit font-bold'>10 Jetons</Text>
+                <Text className='w-fit'>10€</Text>
+
                 <Button title="Acheter" onPress={handleBuyTokens} disabled={loading} />
             </View>
-
-            <View style={styles.item}>
-                <Text>Premium - 5,99€/mois</Text>
-                <Button title="S’abonner" onPress={handleSubscribe} />
-            </View>
             <BottomNavBar />
-        </View>
+        </>
+
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 24,
-        backgroundColor: '#fff',
-    },
-    title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 24,
-        textAlign: 'center',
-    },
-    item: {
-        marginBottom: 32,
-    },
-});
