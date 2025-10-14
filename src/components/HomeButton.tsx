@@ -8,13 +8,14 @@ type HomeButtonProps = {
   description: string;
   onPress: (event: GestureResponderEvent) => void;
   isNight: boolean;
+  style?: string;
 };
 
-export default function HomeButton({ onPress, title, description, icon, isNight }: HomeButtonProps) {
+export default function HomeButton({ onPress, title, description, icon, isNight, style }: HomeButtonProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="w-full rounded-3xl overflow-hidden z-10"
+      className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10`}
     >
       <BlurView
         intensity={50}

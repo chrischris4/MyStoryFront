@@ -83,8 +83,8 @@ export default function HomeScreen() {
 
             <View
               style={{
-                width: 180,
-                height: 180,
+                width: 140,
+                height: 140,
                 borderRadius: 104,
                 shadowColor: isNight ? '#FFFFFF' : '#FBBF24',
                 shadowOffset: { width: 0, height: 0 },
@@ -99,8 +99,8 @@ export default function HomeScreen() {
               <Image
                 source={{ uri: profile?.imageUrl || 'https://randomuser.me/api/portraits/men/75.jpg' }}
                 style={{
-                  width: 180,
-                  height: 180,
+                  width: 140,
+                  height: 140,
                   borderRadius: 104,
                   borderWidth: 4,
                   borderColor: isNight ? '#FFFFFF' : '#FACC15',
@@ -128,20 +128,33 @@ export default function HomeScreen() {
 
 
         <View className="flex flex-col gap-4 w-11/12">
+          <View className='flex-row gap-4'>
+            <HomeButton
+              style="half"
+              isNight={isNight}
+              onPress={() => navigation.navigate('Stories')}
+              title="Mes histoires"
+              description="Laissez parler votre imagination"
+              icon={<Feather name="book" size={24} color="#334155" />}
+            />
+            <HomeButton
+              style="half"
+
+              isNight={isNight}
+              onPress={() => navigation.navigate('CreateStory')}
+              title="Créer une histoire"
+              description="Laissez parler votre imagination"
+              icon={<Feather name="users" size={24} color="#334155" />}
+            />
+          </View>
           <HomeButton
             isNight={isNight}
             onPress={() => navigation.navigate('Stories')}
-            title="Mes histoires"
-            description="Laissez parler votre imagination"
+            title="Découvrir"
+            description="Parcourez les histoires partagées par d'autres utilisateus !"
             icon={<Feather name="book" size={24} color="#334155" />}
           />
-          <HomeButton
-            isNight={isNight}
-            onPress={() => navigation.navigate('CreateStory')}
-            title="Créer une histoire"
-            description="Laissez parler votre imagination"
-            icon={<Feather name="users" size={24} color="#334155" />}
-          />
+
         </View>
         <BottomNavBar />
       </View>
