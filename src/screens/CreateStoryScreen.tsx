@@ -7,6 +7,8 @@ import { Animated, Easing } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import PageSelector from '~/components/PageSelector';
+import { useTheme } from '~/context/ThemeContext';
+import { BlurView } from 'expo-blur';
 
 
 
@@ -28,6 +30,7 @@ export default function CreateStoryScreen() {
   const [title, setTitle] = useState('');
   const cloudAnim = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation();
+  const { isNight, toggleTheme } = useTheme();
 
 
   // const handleSubmit = async () => {
@@ -36,77 +39,77 @@ export default function CreateStoryScreen() {
   //   setStoryPages([]);
   //   setStoryId(null);
 
-    // try {
-    //   const token = await AsyncStorage.getItem('accessToken');
-    //   if (!token) throw new Error('Utilisateur non connecté');
+  // try {
+  //   const token = await AsyncStorage.getItem('accessToken');
+  //   if (!token) throw new Error('Utilisateur non connecté');
 
-    //   const response = await fetch('http://192.168.1.95:3000/story/create', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: `Bearer ${token}`,
-    //     },
-    //     body: JSON.stringify({
-    //       prompt,
-    //       numberOfPages: numPages,
-    //       title,
-    //     }),
-    //   });
+  //   const response = await fetch('http://192.168.1.95:3000/story/create', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //     body: JSON.stringify({
+  //       prompt,
+  //       numberOfPages: numPages,
+  //       title,
+  //     }),
+  //   });
 
-    //   if (!response.ok) {
-    //     throw new Error('Erreur lors de la création de l’histoire');
-    //   }
+  //   if (!response.ok) {
+  //     throw new Error('Erreur lors de la création de l’histoire');
+  //   }
 
-    //   const story = await response.json();
-    //   console.log('Histoire générée:', story);
-    //   setStoryPages(story.pages);
-    //   setStoryId(story.id);
-    // } catch (error) {
-    //   console.error('Erreur côté front:', error);
-    //   alert('Erreur lors de la création de l’histoire.');
-    // } finally {
-    //   setLoading(false);
-    // }
+  //   const story = await response.json();
+  //   console.log('Histoire générée:', story);
+  //   setStoryPages(story.pages);
+  //   setStoryId(story.id);
+  // } catch (error) {
+  //   console.error('Erreur côté front:', error);
+  //   alert('Erreur lors de la création de l’histoire.');
+  // } finally {
+  //   setLoading(false);
+  // }
   // };
 
   const handleSubmit = async () => {
-  setLoading(true);
-  setShowModal(true);
-  setStoryPages([]);
-  setStoryId(null); // N'oublie pas ce state
+    setLoading(true);
+    setShowModal(true);
+    setStoryPages([]);
+    setStoryId(null); // N'oublie pas ce state
 
-  try {
-    // Simule un délai
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Simule un délai
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-    // 👇 Données factices
-    const fakeStory = {
-      id: 'fake-story-123',
-      title: title || 'Mon histoire test',
-      pages: [
-        {
-          page: 1,
-          text: 'Ceci est la première page de votre histoire magique ✨',
-          imageUrl: 'https://picsum.photos/seed/test-story/400/200',
-        },
-        {
-          page: 2,
-          text: 'Et voici la suite de l’aventure...',
-          imageUrl: 'https://picsum.photos/seed/test-story2/400/200',
-        },
-      ],
-    };
+      // 👇 Données factices
+      const fakeStory = {
+        id: 'fake-story-123',
+        title: title || 'Mon histoire test',
+        pages: [
+          {
+            page: 1,
+            text: 'Ceci est la première page de votre histoire magique ✨',
+            imageUrl: 'https://picsum.photos/seed/test-story/400/200',
+          },
+          {
+            page: 2,
+            text: 'Et voici la suite de l’aventure...',
+            imageUrl: 'https://picsum.photos/seed/test-story2/400/200',
+          },
+        ],
+      };
 
-    console.log('Fake story générée:', fakeStory);
-    setStoryPages(fakeStory.pages);
-    setStoryId(fakeStory.id);
-  } catch (error) {
-    console.error('Erreur côté front:', error);
-    alert('Erreur lors de la création de l’histoire.');
-  } finally {
-    setLoading(false);
-  }
-};
+      console.log('Fake story générée:', fakeStory);
+      setStoryPages(fakeStory.pages);
+      setStoryId(fakeStory.id);
+    } catch (error) {
+      console.error('Erreur côté front:', error);
+      alert('Erreur lors de la création de l’histoire.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   useEffect(() => {
@@ -140,43 +143,134 @@ export default function CreateStoryScreen() {
     }).start();
   }, []);
 
+  const skyColor = isNight ? '#020205' : '#87CEEB';
+  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
+  const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
+  const renderStars = (count: number) => {
+    const stars = [];
+    const { width, height } = Dimensions.get('window');
+
+    for (let i = 0; i < count; i++) {
+      const size = Math.random() * 2 + 1; // taille entre 1 et 3
+      const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
+      const left = Math.random() * width;
+      const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
+
+      stars.push(
+        <View
+          key={`star-${i}`}
+          style={{
+            position: 'absolute',
+            top,
+            left,
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: '#FFFFFF',
+            opacity,
+          }}
+        />
+      );
+    }
+
+    return stars;
+  };
 
 
   return (
-    <View className="flex-1 bg-[#F0F4EF] pt-4 px-4">
-      <Text className="text-2xl font-bold pt-4">Quelle aventure</Text>
-      <Text className="text-2xl font-bold pb-2">allez vous créer aujourd'hui ?</Text>
+    <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
+      {isNight && renderStars(50)}
+      <View
+        className='absolute bottom-0 -right-40 border-4 h-36 rounded-t-full w-[100%] z-0'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
+      <View
+        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
+      <Text className="text-4xl font-bold pb-2 pt-8">C'est partie pour une nouvelle aventure !</Text>
       <Text className="text-base font-light pb-4">Ici, toutes vos idées prennent vie !</Text>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      >
 
-
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
-        <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
-          <Text className="text-lg font-semibold mb-2">Titre de l’histoire</Text>
-          <TextInput
-            className="border border-gray-400 rounded-lg p-2"
-            placeholder="Ex: Pacha et la forêt magique"
-            value={title}
-            onChangeText={setTitle}
-          />
+        {/* 🟣 Bloc Titre */}
+        <View
+          style={{
+            borderRadius: 24,
+            overflow: 'hidden', // 👈 permet de clipper le blur arrondi
+            marginBottom: 16,
+          }}
+        >
+          <BlurView
+            intensity={50}
+            tint={isNight ? 'dark' : 'light'}
+            style={{ padding: 16 }}
+          >
+            <Text className="text-lg font-semibold mb-2">Titre de l’histoire</Text>
+            <TextInput
+              className="border border-gray-400 rounded-lg p-2"
+              placeholder="Ex: Pacha et la forêt magique"
+              value={title}
+              onChangeText={setTitle}
+            />
+          </BlurView>
         </View>
-        <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
-          <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
-          <TextInput
-            className="border border-gray-400 rounded-lg p-2"
-            placeholder="Ex: Une aventure magique dans les montagnes"
-            value={prompt}
-            onChangeText={setPrompt}
-          />
-        </View>
-       <PageSelector numPages={numPages} setNumPages={setNumPages} />
 
+        {/* 🟢 Bloc Résumé */}
+        <View
+          style={{
+            borderRadius: 24,
+            overflow: 'hidden',
+            marginBottom: 16,
+          }}
+        >
+          <BlurView
+            intensity={50}
+            tint={isNight ? 'dark' : 'light'}
+            style={{ padding: 16 }}
+          >
+            <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
+            <TextInput
+              className="border border-gray-400 rounded-lg p-2"
+              placeholder="Ex: Une aventure magique dans les montagnes"
+              value={prompt}
+              onChangeText={setPrompt}
+            />
+          </BlurView>
+        </View>
+
+        {/* 🧡 Sélecteur de pages */}
+        <View
+          style={{
+            borderRadius: 24,
+            overflow: 'hidden',
+            marginBottom: 16,
+          }}
+        >
+          <BlurView
+            intensity={50}
+            tint={isNight ? 'dark' : 'light'}
+            style={{ padding: 16 }}
+          >
+            <PageSelector numPages={numPages} setNumPages={setNumPages} />
+          </BlurView>
+        </View>
+
+        {/* 🖋️ Bouton */}
         <TouchableOpacity
           className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
           onPress={handleSubmit}
         >
-          <Text className="text-white font-semibold text-lg">Créer mon histoire ! </Text>
+          <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
         </TouchableOpacity>
+
       </ScrollView>
+
       <Modal visible={showModal} animationType="slide" className=''>
         <View className="flex-1 p-4 bg-sky-300 relative">
           <View className='bg-green-500 absolute bottom-0 -left-40 border-4 border-green-600 h-52  rounded-t-full w-[100%] z-0'>

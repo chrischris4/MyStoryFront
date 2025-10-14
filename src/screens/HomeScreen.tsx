@@ -10,6 +10,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/navigation/AppNavigator';
 import Background from '~/components/Background';
 import { BlurView } from 'expo-blur';
+import { useTheme } from '~/context/ThemeContext';
 
 
 type UserProfile = {
@@ -22,7 +23,7 @@ type UserProfile = {
 export default function HomeScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
-  const [isNight, setIsNight] = useState(false); // ← état du mode nuit
+  const { isNight, toggleTheme } = useTheme();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const fetchProfile = async () => {
@@ -112,7 +113,7 @@ export default function HomeScreen() {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => setIsNight(prev => !prev)}
+          onPress={toggleTheme}
           className="absolute top-8 left-4 rounded-full overflow-hidden"
         >
           <BlurView intensity={30} tint="light" className="p-4">

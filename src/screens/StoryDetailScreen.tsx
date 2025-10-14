@@ -12,7 +12,8 @@ import {
   Pressable,
   Animated,
   Easing,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
@@ -21,6 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '~/context/ThemeContext';
 
 
 
@@ -29,6 +31,8 @@ type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 
 export default function StoryDetailScreen() {
   const route = useRoute<StoryDetailRouteProp>();
+  const { isNight } = useTheme();
+
   const { storyId } = route.params;
   const [story, setStory] = useState<Story | null>(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +57,7 @@ export default function StoryDetailScreen() {
       });
 
       const favorites = await response.json();
-const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
+      const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
       setIsFavorite(isFav);
       console.log("Favorites:", favorites.map(f => f.story.id), "Current storyId:", storyId);
 
@@ -184,21 +188,61 @@ const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
     );
   }
 
+  const skyColor = isNight ? '#020205' : '#87CEEB';
+  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
+  const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
+  // Génère n étoiles aléatoires
+  const renderStars = (count: number) => {
+    const stars = [];
+    const { width, height } = Dimensions.get('window');
+
+    for (let i = 0; i < count; i++) {
+      const size = Math.random() * 2 + 1; // taille entre 1 et 3
+      const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
+      const left = Math.random() * width;
+      const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
+
+      stars.push(
+        <View
+          key={`star-${i}`}
+          style={{
+            position: 'absolute',
+            top,
+            left,
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            backgroundColor: '#FFFFFF',
+            opacity,
+          }}
+        />
+      );
+    }
+
+    return stars;
+  };
+
+
   return (
-    <>
-      <ScrollView className="flex-1 bg-white px-4 pt-10">
-        <Text className="text-2xl font-bold mb-4 text-center">{story.title}</Text>
+    <View className="flex-1 relative h-screen" style={{ backgroundColor: skyColor }}>
+      {/* Sol */}
+      <View
+        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
+      <View
+        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
+      {isNight && renderStars(50)}
+      <ScrollView className="flex-grow px-4 pt-10" >
 
-        <TouchableOpacity
-          onPress={() => setIsFullScreen(true)}
-          className="bg-black p-4 rounded-xl mb-4"
-        >
-          <Text className="text-white font-bold text-xl">Lancer en plein écran</Text>
-          <Text className="text-gray-300 font-light">C'est partie pour une nouvelle histoire ! </Text>
-          <Feather name="play" size={24} color="white" className='self-end mt-2' />
+        <Text className="text-4xl font-bold mb-4 text-center">{story.title}</Text>
 
 
-        </TouchableOpacity>
+
 
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
@@ -303,12 +347,17 @@ const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
               />
             </View>
           ))}
-        <TouchableOpacity className="bg-red-400 p-4 rounded-xl mb-28 flex flex-row gap-4 justify-center">
-          <Text className="text-white font-bold text-xl">Supprimer l'histoire</Text>
-          <Feather name="trash" size={22} color="white" />
+        <TouchableOpacity
+          onPress={() => setIsFullScreen(true)}
+          className="bg-black p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
+        >
+          <Text className="text-white font-medium text-xl">
+            Lancer en plein écran
+          </Text>
+          <Feather name="play" size={24} color="white" />
         </TouchableOpacity>
       </ScrollView>
       <BottomNavBar />
-    </>
+    </View>
   );
 }

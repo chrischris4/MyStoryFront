@@ -50,7 +50,7 @@ export default function PageSelector({ numPages, setNumPages }: PageSelectorProp
   }, [numPages]);
 
   return (
-    <View className="p-4 rounded-3xl bg-[#B4CDED] text-center mb-4">
+    <View className="text-center mb-4">
       <Text className="text-lg font-semibold mb-4">Nombre de pages</Text>
 
       <View className="flex-row justify-end items-center space-x-10">

@@ -85,11 +85,11 @@ export default function Background({ isNight = false }: BackgroundProps) {
 
             {/* Sol */}
             <View
-                className='absolute bottom-0 -left-40 border-4 h-44 rounded-t-full w-[100%] z-0'
+                className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
             <View
-                className='absolute bottom-0 -left-10 border-t-4 h-24 w-[200%] z-10'
+                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
 
@@ -98,7 +98,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
                 style={{
                     transform: [{ translateX }],
                     position: 'absolute',
-                    bottom: 20,
+                    bottom: 10,
                     alignSelf: 'center',
                 }}
             >

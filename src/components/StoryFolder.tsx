@@ -99,13 +99,13 @@ export default function StoryFolder({
                         )}
 
                         {stories.length === 0 ? (
-                            <View className="flex-1 items-center justify-center mt-6">
+                            <View className="flex-1 items-center  mt-6">
                                 <Text className="text-gray-500 mb-4">Pas d'histoires créées.</Text>
                                 <TouchableOpacity
-                                    className="bg-purple-700 px-4 py-2 rounded-lg"
+                                    className="bg-white px-4 py-2 rounded-lg"
                                     onPress={() => navigation.navigate('CreateStory')}
                                 >
-                                    <Text className="text-white font-semibold">Créer une Story</Text>
+                                    <Text className="font-semibold">Créer une Story</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : expanded ? (
