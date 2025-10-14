@@ -102,7 +102,13 @@ export default function StoriesScreen() {
   }
 
   return (
-    <View className="flex-1 bg-blue-200 pt-10">
+    <View className="flex-1 bg-blue-200 pt-10 relative">
+                  <View
+                      className='absolute bottom-0 -left-40 border-4 h-44 rounded-t-full w-[100%] z-0 bg-green-500'
+                  />
+                  <View
+                      className='absolute bottom-0 -left-10 border-t-4 h-24 w-[200%] z-10 bg-green-500'
+                  />
       <Text className="text-2xl font-bold px-4">Mes histoires</Text>
       <Text className="color-slate-600 text-xl font-light mb-4 px-4">
         Toutes vos aventures vous attendent ici !

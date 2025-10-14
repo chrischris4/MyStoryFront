@@ -76,14 +76,14 @@ export default function RegisterScreen() {
       />
 
       <TouchableOpacity
-        className="bg-green-600 rounded-xl py-4 w-full mb-4"
+        className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
         onPress={handleRegister}
       >
         <Text className="text-white font-semibold text-center">S'inscrire</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text className="text-blue-600">Déjà un compte ? Se connecter</Text>
+        <Text className="text-[#38b6ff]">Déjà un compte ? Se connecter</Text>
       </TouchableOpacity>
     </View>
   );

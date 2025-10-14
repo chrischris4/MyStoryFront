@@ -61,14 +61,14 @@ export default function LoginScreen() {
       />
 
       <TouchableOpacity
-        className="bg-blue-600 rounded-xl py-4 w-full mb-4"
+        className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
         onPress={handleLogin}
       >
         <Text className="text-white font-semibold text-center">Se connecter</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text className="text-blue-600">Pas encore de compte ? S'inscrire</Text>
+        <Text className="text-[#38b6ff]">Pas encore de compte ? S'inscrire</Text>
       </TouchableOpacity>
     </View>
   );

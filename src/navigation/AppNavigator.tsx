@@ -8,9 +8,11 @@ import CreateStoryScreen from '~/screens/CreateStoryScreen';
 import StoryDetailScreen from '~/screens/StoryDetailScreen';
 import CompleteProfileScreen from '~/screens/CompleteProfileScreen';
 import PurchaseScreen from '~/screens/PurchaseScreen';
+import OpeningScreen from '~/screens/Opening';
 
 
 export type RootStackParamList = {
+    Opening: undefined;
     Login: undefined;
     Register: undefined;
     Home: undefined;
@@ -27,7 +29,8 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="Opening" screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="Opening" component={OpeningScreen} />
                 <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Register" component={RegisterScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
