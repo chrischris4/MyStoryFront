@@ -202,7 +202,7 @@ export default function CreateStoryScreen() {
         <View
           style={{
             borderRadius: 24,
-            overflow: 'hidden', // 👈 permet de clipper le blur arrondi
+            overflow: 'hidden',
             marginBottom: 16,
           }}
         >

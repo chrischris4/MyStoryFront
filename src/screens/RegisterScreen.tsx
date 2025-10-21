@@ -48,43 +48,48 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-6">
-      <Text className="text-xl font-bold mb-4 text-gray-800">Inscription</Text>
+    <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
+      <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
 
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-4"
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <View className='w-[70%]'>
+          <Text className="text-xl font-bold mb-4 text-gray-800 text-center">Inscription</Text>
 
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-4"
-        placeholder="Mot de passe"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl p-4 mb-4"
+            placeholder="Email"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-4"
-        placeholder="Confirmez le mot de passe"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl p-4 mb-4"
+            placeholder="Mot de passe"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-      <TouchableOpacity
-        className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
-        onPress={handleRegister}
-      >
-        <Text className="text-white font-semibold text-center">S'inscrire</Text>
-      </TouchableOpacity>
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl p-4 mb-4"
+            placeholder="Confirmez le mot de passe"
+            secureTextEntry
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
 
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text className="text-[#38b6ff]">Déjà un compte ? Se connecter</Text>
-      </TouchableOpacity>
-    </View>
+          <TouchableOpacity
+            className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
+            onPress={handleRegister}
+          >
+            <Text className="text-white font-semibold text-center">S'inscrire</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text className="text-[#38b6ff] text-center">Déjà un compte ? Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View >
   );
 }

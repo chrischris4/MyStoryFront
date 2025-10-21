@@ -19,6 +19,11 @@ export default function StoriesScreen() {
 
   const animationRef = useRef(null);
   const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const skyColor = isNight ? '#020205' : '#87CEEB';
+  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
+  const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
 
   // useEffect(() => {
   //   animationRef.current?.play();
@@ -97,9 +102,9 @@ export default function StoriesScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#6b21a8" />
-        <Text>Chargement des histoires...</Text>
+      <View className="flex-1 items-center justify-center" style={{ backgroundColor: skyColor }} >
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Text className='text-white'>Chargement des histoires...</Text>
       </View>
     );
   }
@@ -117,13 +122,6 @@ export default function StoriesScreen() {
       </View>
     );
   }
-
-  const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
-  const groundColor = isNight ? '#2E313F' : '#38A169';
-  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
-
-
 
   const renderStars = (count: number) => {
     const stars = [];
@@ -163,7 +161,7 @@ export default function StoriesScreen() {
           // transform: [{ translateX }],
           position: 'absolute',
           bottom: 0,
-          right:0,
+          right: 0,
           alignSelf: 'center',
         }}
       >

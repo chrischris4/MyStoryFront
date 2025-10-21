@@ -41,35 +41,42 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-6">
-      <Text className="font-bold text-xl mb-4 text-gray-800 text-start">Connexion</Text>
+    <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
+      <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
 
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-4"
-        placeholder="Email"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <View className='w-[70%]'>
+          <Text className="font-bold text-xl mb-4 text-center text-gray-800">Connexion</Text>
+                    {/* <Text className="text-sm mb-4 text-center text-gray-800"></Text> */}
 
-      <TextInput
-        className="w-full border border-gray-300 rounded-xl p-4 mb-6"
-        placeholder="Mot de passe"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
 
-      <TouchableOpacity
-        className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
-        onPress={handleLogin}
-      >
-        <Text className="text-white font-semibold text-center">Se connecter</Text>
-      </TouchableOpacity>
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl p-4 mb-4"
+            placeholder="Email"
+            keyboardType="email-address"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-      <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-        <Text className="text-[#38b6ff]">Pas encore de compte ? S'inscrire</Text>
-      </TouchableOpacity>
+          <TextInput
+            className="w-full border border-gray-300 rounded-xl p-4 mb-6"
+            placeholder="Mot de passe"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
+
+          <TouchableOpacity
+            className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
+            onPress={handleLogin}
+          >
+            <Text className="text-white font-semibold text-center">Se connecter</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text className="text-[#38b6ff] text-center">Pas encore de compte ? S'inscrire</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
