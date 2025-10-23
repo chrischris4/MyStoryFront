@@ -15,7 +15,7 @@ import {
   Alert,
   Dimensions
 } from 'react-native';
-import { useRoute, RouteProp } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -30,6 +30,8 @@ import { useTheme } from '~/context/ThemeContext';
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 
 export default function StoryDetailScreen() {
+  const navigation = useNavigation();
+
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
 
@@ -355,6 +357,15 @@ export default function StoryDetailScreen() {
             Lancer en plein écran
           </Text>
           <Feather name="play" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Stories')} // <- redirection ici
+          className="bg-white p-4 rounded-xl mb-24 flex-row w-full justify-between items-center"
+        >
+          <Feather name="chevron-left" size={24} color="black" />
+          <Text className="text-black font-medium text-xl">
+            Retour
+          </Text>
         </TouchableOpacity>
       </ScrollView>
       <BottomNavBar />
