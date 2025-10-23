@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
+import StoryModal from '~/components/StoryModal';
 
 
 
@@ -28,73 +29,59 @@ export default function CreateStoryScreen() {
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
-  const cloudAnim = useRef(new Animated.Value(0)).current;
-  const navigation = useNavigation();
   const { isNight, toggleTheme } = useTheme();
 
 
- const handleSubmit = async () => {
-  setLoading(true);
-  setShowModal(true);
-  setStoryPages([]);
-  setStoryId(null);
+  const handleSubmit = async () => {
+    setLoading(true);
+    setShowModal(true);
+    setStoryPages([]);
+    setStoryId(null);
 
-  try {
-    const token = await AsyncStorage.getItem('accessToken');
-    if (!token) throw new Error('Utilisateur non connecté');
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) throw new Error('Utilisateur non connecté');
 
-    const body = { prompt, numberOfPages: numPages, title };
+      const body = { prompt, numberOfPages: numPages, title };
 
-    // 🟩 AJOUT DES LOGS COMPLETS
-    console.log('📤 Envoi de la requête /story/create');
-    console.log('🔑 Token:', token ? token.slice(0, 15) + '...' : 'Aucun');
-    console.log('📝 Corps envoyé au back:', JSON.stringify(body, null, 2));
+      // 🟩 AJOUT DES LOGS COMPLETS
+      console.log('📤 Envoi de la requête /story/create');
+      console.log('🔑 Token:', token ? token.slice(0, 15) + '...' : 'Aucun');
+      console.log('📝 Corps envoyé au back:', JSON.stringify(body, null, 2));
 
-    const response = await fetch('http://192.168.1.95:3000/story/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
+      const response = await fetch('http://192.168.1.95:3000/story/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(body),
+      });
 
-    // 🟡 LOGS DE LA RÉPONSE BRUTE
-    const text = await response.text();
-    console.log('📥 Réponse brute du back:', text);
+      // 🟡 LOGS DE LA RÉPONSE BRUTE
+      const text = await response.text();
+      console.log('📥 Réponse brute du back:', text);
 
-    if (!response.ok) {
-      console.error('❌ Erreur HTTP:', response.status, response.statusText);
-      throw new Error('Erreur lors de la création de l’histoire');
+      if (!response.ok) {
+        console.error('❌ Erreur HTTP:', response.status, response.statusText);
+        throw new Error('Erreur lors de la création de l’histoire');
+      }
+
+      // 🟢 Si tout va bien
+      const story = JSON.parse(text);
+      console.log('✅ Histoire générée (JSON parsé):', story);
+
+      setStoryPages(story.pages);
+      setStoryId(story.id);
+
+    } catch (error) {
+      console.error('💥 Erreur côté front:', error);
+      alert('Erreur lors de la création de l’histoire.');
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // 🟢 Si tout va bien
-    const story = JSON.parse(text);
-    console.log('✅ Histoire générée (JSON parsé):', story);
-
-    setStoryPages(story.pages);
-    setStoryId(story.id);
-
-  } catch (error) {
-    console.error('💥 Erreur côté front:', error);
-    alert('Erreur lors de la création de l’histoire.');
-  } finally {
-    setLoading(false);
-  }
-};
-
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(cloudAnim, {
-        toValue: 1000,
-        duration: 100000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    ).start();
-
-  }, []);
 
 
   const animationRef = useRef(null);
@@ -248,109 +235,15 @@ export default function CreateStoryScreen() {
 
 
       {showModal && (
-        <View className="absolute bottom-24 left-4 right-4 bg-white h-[50vh] rounded-2xl p-4 shadow-lg z-50 overflow-hidden">
-          <View className="flex-1 p-4 bg-sky-300 relative overflow-hidden" style={{ backgroundColor: skyColor }}>
-            {isNight && renderStars(50)}
-
-            <Animated.View
-              style={{
-                transform: [{ translateX }],
-                position: 'absolute',
-                bottom: 72,
-                alignSelf: 'center',
-              }}
-            >
-              <LottieView
-                ref={animationRef}
-                source={require('../../assets/animations/dog.json')}
-                autoPlay
-                loop={true}
-                style={{ width: 200, height: 200 }}
-              />
-            </Animated.View>
-            <View className='bg-yellow-300 h-80 w-80 border-4 border-yellow-500 rounded-full absolute -top-20 -right-20'>
-            </View>
-            <Animated.View
-              style={{
-                transform: [{ translateX: cloudAnim }],
-              }} className='absolute top-40 -left-4'>
-              <View className='w-60 h-44 relative'>
-                <View className='bg-white h-20 rounded-full absolute top-10 left-0 w-full'>
-                </View>
-                <View className='bg-white h-24 w-24 rounded-full absolute top-0 left-10'>
-                </View>
-                <View className='bg-white h-20 w-20 rounded-full absolute top-4 left-28'>
-                </View>
-              </View>
-            </Animated.View>
-            <Animated.View
-              style={{
-                transform: [{ translateX: cloudAnim }],
-              }} className='absolute top-96 -left-96'>
-              <View className='w-52 h-44 relative'>
-                <View className='bg-white h-14 rounded-full absolute top-10 left-0 w-full'>
-                </View>
-                <View className='bg-white h-20 w-20 rounded-full absolute top-0 right-12'>
-                </View>
-                <View className='bg-white h-16 w-16 rounded-full absolute top-4 right-28'>
-                </View>
-              </View>
-            </Animated.View>
-            <Animated.View
-              style={{
-                transform: [{ translateX: cloudAnim }],
-              }} className='absolute top-72 right-10'>
-              <View className='w-52 h-44 relative'>
-                <View className='bg-white h-14 rounded-full absolute top-10 left-0 w-full'>
-                </View>
-                <View className='bg-white h-20 w-20 rounded-full absolute top-0 right-12'>
-                </View>
-                <View className='bg-white h-16 w-16 rounded-full absolute top-4 right-28'>
-                </View>
-              </View>
-            </Animated.View>
-            {loading ? (
-              <View className="flex-1 justify-end items-center">
-                <ActivityIndicator size="large" color="#0D1821" />
-                <Text className="mt-4 text-lg font-semibold">Nous préparons votre histoire</Text>
-              </View>
-            ) : (
-              <View className='flex-1 justify-center relative'>
-                <Text className="text-xl font-bold mb-4 text-center">Votre histoire est prête !</Text>
-                {storyPages.length > 0 && (
-                  <View className="mb-4 bg-white p-4 rounded-3xl">
-                    <Text className="text-2xl font-bold mb-2 text-center">{title}</Text>
-                    <Image
-                      source={{ uri: storyPages[0].imageUrl }}
-                      style={{ width: '100%', height: 200, borderRadius: 16 }}
-                      resizeMode="cover"
-                    />
-                  </View>
-                )}
-                <TouchableOpacity
-                  className="bg-white px-4 py-3 rounded-3xl items-center"
-                  onPress={() => {
-                    if (storyId) {
-                      navigation.navigate('StoryDetail', { storyId });
-                    }
-                  }}
-                >
-                  <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="bg-black px-4 py-3 rounded-3xl items-center absolute bottom-0 left-0 w-full"
-                  onPress={() => {
-                    setStoryPages([]);
-                    setShowModal(false); // ← ajouté
-                  }}                >
-                  <Text className="text-white font-semibold text-lg">Revenir à la création</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </View>
+        <StoryModal
+          loading={loading}
+          title={title}
+          storyPages={storyPages}
+          storyId={storyId}
+          onClose={() => setShowModal(false)}
+        />
       )}
+
       <BottomNavBar />
     </View>
   );
