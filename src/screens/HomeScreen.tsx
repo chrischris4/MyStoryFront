@@ -149,7 +149,7 @@ export default function HomeScreen() {
           </View>
           <HomeButton
             isNight={isNight}
-            onPress={() => navigation.navigate('Stories')}
+            onPress={() => navigation.navigate('SharedStories')}
             title="Découvrir"
             description="Parcourez les histoires partagées par d'autres utilisateus !"
             icon={<Feather name="book" size={24} color="#334155" />}

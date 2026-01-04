@@ -4,6 +4,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '~/screens/RegisterScreen';
 import HomeScreen from '~/screens/HomeScreen';
 import StoriesScreen from '~/screens/StoriesScreen';
+import SharedStoriesScreen from '~/screens/SharedStoriesScreen';
 import CreateStoryScreen from '~/screens/CreateStoryScreen';
 import StoryDetailScreen from '~/screens/StoryDetailScreen';
 import CompleteProfileScreen from '~/screens/CompleteProfileScreen';
@@ -19,6 +20,7 @@ export type RootStackParamList = {
     Register: undefined;
     Home: undefined;
     Stories: undefined;
+    SharedStories: undefined;
     CreateStory: undefined;
     StoryDetail: undefined;
     CompleteProfileScreen: { accessToken: string };
@@ -39,6 +41,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="Register" component={RegisterScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="Stories" component={StoriesScreen} />
+                <Stack.Screen name="SharedStories" component={SharedStoriesScreen} />
                 <Stack.Screen name="CreateStory" component={CreateStoryScreen} />
                 <Stack.Screen name="StoryDetail" component={StoryDetailScreen} />
                 <Stack.Screen name="CompleteProfileScreen" component={CompleteProfileScreen} />

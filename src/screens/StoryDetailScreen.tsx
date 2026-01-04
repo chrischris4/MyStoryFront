@@ -44,6 +44,7 @@ export default function StoryDetailScreen() {
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isFavorite, setIsFavorite] = useState(true);
+  const [isShared, setIsShared] = useState(false);
 
 
   const { width, height } = useWindowDimensions();
@@ -96,6 +97,39 @@ export default function StoryDetailScreen() {
     }
   };
 
+  const handleToggleShared = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Alert.alert('Erreur', 'Utilisateur non authentifié');
+        return;
+      }
+
+      const response = await fetch(`http://192.168.1.95:3000/story/${storyId}/toggle-shared`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const updatedStory = await response.json();
+        setIsShared(updatedStory.isShared);
+        Alert.alert(
+          'Succès',
+          updatedStory.isShared
+            ? 'Votre histoire est maintenant partagée avec la communauté!'
+            : 'Votre histoire n\'est plus partagée'
+        );
+      } else {
+        Alert.alert('Erreur', 'Impossible de modifier le statut de partage');
+      }
+    } catch (err) {
+      console.error('Erreur lors du toggle shared:', err);
+      Alert.alert('Erreur', 'Une erreur est survenue');
+    }
+  };
+
 
   const fetchStory = async () => {
     try {
@@ -114,6 +148,7 @@ export default function StoryDetailScreen() {
 
       const data: Story = await response.json();
       setStory(data);
+      setIsShared(data.isShared || false);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -349,6 +384,16 @@ export default function StoryDetailScreen() {
               />
             </View>
           ))}
+        <TouchableOpacity
+          onPress={handleToggleShared}
+          className="p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
+          style={{ backgroundColor: isShared ? '#10B981' : '#6B7280' }}
+        >
+          <Text className="text-white font-medium text-xl">
+            {isShared ? 'Histoire partagée' : 'Partager cette histoire'}
+          </Text>
+          <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setIsFullScreen(true)}
           className="bg-black p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
