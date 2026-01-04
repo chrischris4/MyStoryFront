@@ -3,7 +3,7 @@ export type RootStackParamList = {
   Stories: undefined;
   SharedStories: undefined;
   CreateStory: undefined;
-  StoryDetail: undefined;
+  StoryDetail: { storyId: number };
 };
 
 export type Page = {

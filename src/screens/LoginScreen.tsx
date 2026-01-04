@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
+import { useAuth } from '~/context/AuthContext';
+import { api, ApiError } from '~/services/api';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
+  const { login } = useAuth();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -14,29 +17,36 @@ export default function LoginScreen() {
       return;
     }
 
+    setIsLoading(true);
+
     try {
-      const res = await fetch('http://192.168.1.95:3000/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      const data = await api.login(email, password);
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        Alert.alert('Erreur', errorData.message || 'Erreur lors de la connexion');
-        return;
-      }
+      console.log('Login response:', data);
 
-      const data = await res.json();
-      const accessToken = data.accessToken;
+      // Connexion via le contexte d'authentification
+      // Le contexte va automatiquement récupérer le profil utilisateur
+      // et attendre que tout soit chargé avant de résoudre la Promise
+      await login(data.accessToken);
 
-      await AsyncStorage.setItem('accessToken', accessToken);
+      console.log('Login completed, user loaded, navigating to Home');
 
-      Alert.alert('Succès', 'Connexion réussie !');
-      navigation.navigate('Home');
+      // Maintenant on peut naviguer car l'utilisateur est bien chargé
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+      );
 
     } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue');
+      if (error instanceof ApiError) {
+        Alert.alert('Erreur', error.message || 'Erreur lors de la connexion');
+      } else {
+        Alert.alert('Erreur', 'Une erreur est survenue');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,8 +78,13 @@ export default function LoginScreen() {
           <TouchableOpacity
             className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
             onPress={handleLogin}
+            disabled={isLoading}
           >
-            <Text className="text-white font-semibold text-center">Se connecter</Text>
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-semibold text-center">Se connecter</Text>
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')}>

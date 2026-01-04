@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image, Dimensions, FlatList } from 'react-native';
 import StyledButton from '~/components/StyledButton';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,38 @@ type StoryPage = {
   imageUrl: string;
 };
 
+type StoryStyle = {
+  id: string;
+  name: string;
+  description: string;
+  emoji: string;
+  gradient: string[];
+};
+
+const STORY_STYLES: StoryStyle[] = [
+  {
+    id: 'classic',
+    name: 'Classique',
+    description: 'Style conte de fées traditionnel',
+    emoji: '📚',
+    gradient: ['#FFD700', '#FFA500'],
+  },
+  {
+    id: 'realistic',
+    name: 'Réaliste',
+    description: 'Style photo réaliste',
+    emoji: '📷',
+    gradient: ['#4A90E2', '#357ABD'],
+  },
+  {
+    id: 'cartoon',
+    name: 'Cartoon',
+    description: 'Style dessin animé coloré',
+    emoji: '🎨',
+    gradient: ['#FF6B9D', '#C06C84'],
+  },
+];
+
 export default function CreateStoryScreen() {
   const [prompt, setPrompt] = useState('');
   const [numPages, setNumPages] = useState(1);
@@ -29,7 +61,9 @@ export default function CreateStoryScreen() {
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
+  const [selectedStyle, setSelectedStyle] = useState<string>('classic');
   const { isNight, toggleTheme } = useTheme();
+  const scrollViewRef = useRef<ScrollView>(null);
 
 
   const handleSubmit = async () => {
@@ -42,7 +76,7 @@ export default function CreateStoryScreen() {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) throw new Error('Utilisateur non connecté');
 
-      const body = { prompt, numberOfPages: numPages, title };
+      const body = { prompt, numberOfPages: numPages, title, style: selectedStyle };
 
       // 🟩 AJOUT DES LOGS COMPLETS
       console.log('📤 Envoi de la requête /story/create');
@@ -195,11 +229,103 @@ export default function CreateStoryScreen() {
           >
             <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
             <TextInput
-              className="border border-gray-400 rounded-lg p-2"
-              placeholder="Ex: Une aventure magique dans les montagnes"
+              className="border border-gray-400 rounded-lg p-3"
+              placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
               value={prompt}
               onChangeText={setPrompt}
+              multiline
+              numberOfLines={6}
+              textAlignVertical="top"
+              style={{ minHeight: 120 }}
             />
+          </BlurView>
+        </View>
+
+        {/* 🟢 Bloc Style */}
+        <View
+          style={{
+            borderRadius: 24,
+            overflow: 'hidden',
+            marginBottom: 16,
+          }}
+        >
+          <BlurView
+            intensity={50}
+            tint={isNight ? 'dark' : 'light'}
+            style={{ padding: 16 }}
+          >
+            <Text className="text-lg font-semibold mb-4">Style de l'histoire</Text>
+
+            {/* Carrousel de styles */}
+            <ScrollView
+              ref={scrollViewRef}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              snapToInterval={Dimensions.get('window').width * 0.75}
+              decelerationRate="fast"
+              contentContainerStyle={{ paddingRight: 16 }}
+            >
+              {STORY_STYLES.map((style) => {
+                const isSelected = selectedStyle === style.id;
+                return (
+                  <TouchableOpacity
+                    key={style.id}
+                    onPress={() => setSelectedStyle(style.id)}
+                    style={{
+                      width: Dimensions.get('window').width * 0.7,
+                      marginRight: 12,
+                      borderRadius: 16,
+                      overflow: 'hidden',
+                      borderWidth: isSelected ? 3 : 0,
+                      borderColor: isSelected ? '#10B981' : 'transparent',
+                    }}
+                  >
+                    <View
+                      style={{
+                        padding: 20,
+                        backgroundColor: isSelected ? style.gradient[0] + '40' : '#F3F4F6',
+                        borderRadius: 16,
+                      }}
+                    >
+                      <View className="flex-row items-center justify-between mb-3">
+                        <Text style={{ fontSize: 48 }}>{style.emoji}</Text>
+                        {isSelected && (
+                          <View className="bg-green-500 rounded-full w-8 h-8 items-center justify-center">
+                            <Text className="text-white font-bold text-lg">✓</Text>
+                          </View>
+                        )}
+                      </View>
+
+                      <Text
+                        className="font-bold text-xl mb-1"
+                        style={{ color: isSelected ? style.gradient[1] : '#1F2937' }}
+                      >
+                        {style.name}
+                      </Text>
+
+                      <Text className="text-gray-600 text-sm">
+                        {style.description}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            {/* Indicateurs de page */}
+            <View className="flex-row justify-center mt-4 gap-2">
+              {STORY_STYLES.map((style) => (
+                <View
+                  key={`dot-${style.id}`}
+                  className="rounded-full"
+                  style={{
+                    width: selectedStyle === style.id ? 24 : 8,
+                    height: 8,
+                    backgroundColor: selectedStyle === style.id ? '#10B981' : '#D1D5DB',
+                  }}
+                />
+              ))}
+            </View>
           </BlurView>
         </View>
 

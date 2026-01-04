@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import { useTheme } from '~/context/ThemeContext';
+import { useAuth } from '~/context/AuthContext';
 import Background from '~/components/Background';
 
 export default function SettingsScreen() {
     const navigation = useNavigation();
     const { isNight, toggleTheme } = useTheme();
+    const { logout, user } = useAuth();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const skyColor = isNight ? '#020205' : '#87CEEB';
     const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
@@ -17,10 +19,17 @@ export default function SettingsScreen() {
 
 
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?', [
             { text: 'Annuler', style: 'cancel' },
-            { text: 'Oui', onPress: () => console.log('Déconnexion…') },
+            {
+                text: 'Oui',
+                onPress: async () => {
+                    await logout();
+                    navigation.navigate('Login' as never);
+                    Alert.alert('Déconnecté', 'Vous avez été déconnecté avec succès');
+                },
+            },
         ]);
     };
 
@@ -73,41 +82,48 @@ export default function SettingsScreen() {
             />
             <Text style={styles.title}>⚙️ Paramètres</Text>
 
-            <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                <Text style={styles.sectionTitle}>Compte</Text>
-                <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                    <Text style={styles.buttonText}>Se déconnecter</Text>
-                </TouchableOpacity>
-            </BlurView>
+            <ScrollView className='pb-72'>
+                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                    <Text style={styles.sectionTitle}>Compte</Text>
+                    {user && (
+                        <View style={styles.userInfo}>
+                            <Text style={styles.userEmail}>{user.email}</Text>
+                            {user.username && <Text style={styles.username}>@{user.username}</Text>}
+                        </View>
+                    )}
+                    <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                        <Text style={styles.buttonText}>Se déconnecter</Text>
+                    </TouchableOpacity>
+                </BlurView>
 
-            <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                <Text style={styles.sectionTitle}>Apparence</Text>
-                <TouchableOpacity style={styles.button} onPress={toggleTheme}>
-                    <Text style={styles.buttonText}>
-                        Passer en mode {isNight ? 'clair' : 'sombre'}
-                    </Text>
-                </TouchableOpacity>
-            </BlurView>
+                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                    <Text style={styles.sectionTitle}>Apparence</Text>
+                    <TouchableOpacity style={styles.button} onPress={toggleTheme}>
+                        <Text style={styles.buttonText}>
+                            Passer en mode {isNight ? 'clair' : 'sombre'}
+                        </Text>
+                    </TouchableOpacity>
+                </BlurView>
 
-            <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                <Text style={styles.sectionTitle}>Notifications</Text>
-                <View style={styles.row}>
-                    <Text style={styles.buttonText}>Activer les notifications</Text>
-                    <Switch
-                        value={notificationsEnabled}
-                        onValueChange={setNotificationsEnabled}
-                        thumbColor={notificationsEnabled ? '#38A169' : '#ccc'}
-                    />
-                </View>
-            </BlurView>
+                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                    <Text style={styles.sectionTitle}>Notifications</Text>
+                    <View style={styles.row}>
+                        <Text style={styles.buttonText}>Activer les notifications</Text>
+                        <Switch
+                            value={notificationsEnabled}
+                            onValueChange={setNotificationsEnabled}
+                            thumbColor={notificationsEnabled ? '#38A169' : '#ccc'}
+                        />
+                    </View>
+                </BlurView>
 
-            <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                <Text style={styles.sectionTitle}>Facturation</Text>
-                <TouchableOpacity style={styles.button} onPress={handleBilling}>
-                    <Text style={styles.buttonText}>Gérer mes achats</Text>
-                </TouchableOpacity>
-            </BlurView>
-
+                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                    <Text style={styles.sectionTitle}>Facturation</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleBilling}>
+                        <Text style={styles.buttonText}>Gérer mes achats</Text>
+                    </TouchableOpacity>
+                </BlurView>
+            </ScrollView>
             <BottomNavBar />
         </View>
     );
@@ -153,5 +169,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    userInfo: {
+        marginBottom: 12,
+        padding: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+        borderRadius: 12,
+    },
+    userEmail: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#1A202C',
+        marginBottom: 4,
+    },
+    username: {
+        fontSize: 14,
+        color: '#4A5568',
     },
 });

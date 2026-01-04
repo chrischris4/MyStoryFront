@@ -16,6 +16,7 @@ import {
   Dimensions
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,9 +29,10 @@ import { useTheme } from '~/context/ThemeContext';
 
 
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
+type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function StoryDetailScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<StoryDetailNavigationProp>();
 
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
@@ -45,6 +47,7 @@ export default function StoryDetailScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [isFavorite, setIsFavorite] = useState(true);
   const [isShared, setIsShared] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 
   const { width, height } = useWindowDimensions();
@@ -126,6 +129,38 @@ export default function StoryDetailScreen() {
       }
     } catch (err) {
       console.error('Erreur lors du toggle shared:', err);
+      Alert.alert('Erreur', 'Une erreur est survenue');
+    }
+  };
+
+  const handleDeleteStory = async () => {
+    try {
+      const token = await AsyncStorage.getItem('accessToken');
+      if (!token) {
+        Alert.alert('Erreur', 'Utilisateur non authentifié');
+        return;
+      }
+
+      const response = await fetch(`http://192.168.1.95:3000/story/${storyId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        setShowDeleteModal(false);
+        Alert.alert('Succès', 'Histoire supprimée avec succès', [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Stories'),
+          },
+        ]);
+      } else {
+        Alert.alert('Erreur', 'Impossible de supprimer l\'histoire');
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err);
       Alert.alert('Erreur', 'Une erreur est survenue');
     }
   };
@@ -277,7 +312,27 @@ export default function StoryDetailScreen() {
       <ScrollView className="flex-grow px-4 pt-10" >
 
         <Text className="text-4xl font-bold mb-4 text-center">{story.title}</Text>
+        <View className='flex flex-row w-full justify-between mb-6'>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Stories')}
+            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"
+          >
+            <Feather name="chevron-left" size={24} color="black" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={handleToggleShared}
+            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"
+            style={{ backgroundColor: isShared ? '#10B981' : '#6B7280' }}
+          >
 
+            <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsFullScreen(true)}
+            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"> 
+            <Feather name="play" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
 
 
@@ -371,6 +426,49 @@ export default function StoryDetailScreen() {
           </SafeAreaView>
         </Modal>
 
+        {/* Modal de confirmation de suppression */}
+        <Modal
+          visible={showDeleteModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowDeleteModal(false)}
+        >
+          <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <View className="bg-white rounded-2xl p-6 mx-4 w-11/12 max-w-md">
+              <View className="items-center mb-4">
+                <View className="bg-red-100 rounded-full p-4 mb-4">
+                  <Feather name="trash-2" size={32} color="#DC2626" />
+                </View>
+                <Text className="text-2xl font-bold text-gray-900 mb-2">
+                  Supprimer l'histoire ?
+                </Text>
+                <Text className="text-center text-gray-600">
+                  Cette action est irréversible. Votre histoire "{story?.title}" sera définitivement supprimée.
+                </Text>
+              </View>
+
+              <View className="flex-col gap-3">
+                <TouchableOpacity
+                  onPress={handleDeleteStory}
+                  className="bg-red-600 p-4 rounded-xl items-center"
+                >
+                  <Text className="text-white font-semibold text-lg">
+                    Oui, supprimer
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setShowDeleteModal(false)}
+                  className="bg-gray-200 p-4 rounded-xl items-center"
+                >
+                  <Text className="text-gray-800 font-semibold text-lg">
+                    Annuler
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
@@ -384,34 +482,17 @@ export default function StoryDetailScreen() {
               />
             </View>
           ))}
+
         <TouchableOpacity
-          onPress={handleToggleShared}
-          className="p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
-          style={{ backgroundColor: isShared ? '#10B981' : '#6B7280' }}
+          onPress={() => setShowDeleteModal(true)}
+          className="bg-red-600 p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
         >
           <Text className="text-white font-medium text-xl">
-            {isShared ? 'Histoire partagée' : 'Partager cette histoire'}
+            Supprimer cette histoire
           </Text>
-          <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
+          <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setIsFullScreen(true)}
-          className="bg-black p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
-        >
-          <Text className="text-white font-medium text-xl">
-            Lancer en plein écran
-          </Text>
-          <Feather name="play" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Stories')} // <- redirection ici
-          className="bg-white p-4 rounded-xl mb-24 flex-row w-full justify-between items-center"
-        >
-          <Feather name="chevron-left" size={24} color="black" />
-          <Text className="text-black font-medium text-xl">
-            Retour
-          </Text>
-        </TouchableOpacity>
+
       </ScrollView>
       <BottomNavBar />
     </View>
