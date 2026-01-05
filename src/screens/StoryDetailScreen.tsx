@@ -25,6 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
 import LottieView from 'lottie-react-native';
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 
 
@@ -49,6 +50,7 @@ export default function StoryDetailScreen() {
   const [isFavorite, setIsFavorite] = useState(true);
   const [isShared, setIsShared] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [forceLandscape, setForceLandscape] = useState(true);
 
 
   const { width, height } = useWindowDimensions();
@@ -205,6 +207,44 @@ export default function StoryDetailScreen() {
     };
   }, []);
 
+  // Gérer l'orientation quand la modal s'ouvre/ferme
+  useEffect(() => {
+    const handleOrientation = async () => {
+      if (isFullScreen) {
+        // Déverrouiller toutes les orientations quand la modal est ouverte
+        await ScreenOrientation.unlockAsync();
+      } else {
+        // Verrouiller en portrait quand la modal est fermée et réinitialiser
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        setForceLandscape(false);
+      }
+    };
+
+    handleOrientation();
+
+    // Cleanup: remettre en portrait quand le composant se démonte
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+    };
+  }, [isFullScreen]);
+
+  // Fonction pour basculer manuellement entre portrait et paysage
+  const toggleOrientation = async () => {
+    try {
+      if (forceLandscape || !isPortrait) {
+        // Retour en portrait
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        setForceLandscape(false);
+      } else {
+        // Passer en paysage
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+        setForceLandscape(true);
+      }
+    } catch (error) {
+      console.error('Erreur lors du changement d\'orientation:', error);
+    }
+  };
+
   const showControlsWithFade = () => {
     setShowControls(true);
     Animated.timing(fadeAnim, {
@@ -305,40 +345,46 @@ export default function StoryDetailScreen() {
         className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
+
+      <TouchableOpacity
+          onPress={() => setIsFullScreen(true)}
+          className="bg-black absolute bottom-24 self-center p-4  w-11/12 z-30 flex flex-row px-4 gap-2 items-center justify-center rounded-full">
+            <Text className='text-white text-lg'>Lire en plein écran </Text>
+          <Feather name="play" size={20} color="white" />
+        </TouchableOpacity>
+
       <Text className="text-4xl font-bold mb-4 text-center px-4 pt-8">{story.title}</Text>
-        <BlurView intensity={50} tint={isNight ? 'dark' : 'light'}
-          className="p-4 flex flex-row justify-between items-center mx-4 rounded-lg bg-[#B4CDED]/40">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"
-          >
-            <Feather name="chevron-left" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleToggleShared}
-            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"
-            style={{ backgroundColor: isShared ? '#10B981' : '#6B7280' }}
-          >
-
-            <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setIsFullScreen(true)}
-            className="bg-white h-14 w-14 flex items-center justify-center rounded-full">
-            <Feather name="play" size={24} color="white" />
-          </TouchableOpacity>
-        </BlurView>
-      {isNight && renderStars(50)}
-      <ScrollView className="flex-grow px-4 pt-10" >
-
+      <View
+        className='absolute bottom-0 left-0 border-t-4 h-20 w-full z-10 flex flex-row items-center justify-between px-8 p-4'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      >
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className=""
+        >
+          <Feather name="chevron-left" size={24} color="white" />
+        </TouchableOpacity>
         
+        
+        <TouchableOpacity
+          onPress={handleToggleShared}
+          className={`${isShared ? 'bg-yellow-800' : '' } h-16 w-16 rounded-full flex items-center justify-center`}
+        >
 
+          <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
+        </TouchableOpacity>
 
-
+        <TouchableOpacity
+          onPress={() => setShowDeleteModal(true)}
+        >
+          <Feather name="trash-2" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+      {isNight && renderStars(50)}
+      <ScrollView
+        className="flex-grow px-4"
+        contentContainerStyle={{ paddingBottom: 140 }}
+      >
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -355,15 +401,15 @@ export default function StoryDetailScreen() {
                     height,
                     justifyContent: 'center',
                     alignItems: 'center',
-                    padding: isPortrait ? 16 : 32,
-                    transform: isPortrait ? [] : [{ rotate: '90deg' }],
+                    padding: isPortrait ? 16 : 24,
                   }}
                 >
+                  
                   <Image
                     source={{ uri: item.imageUrl }}
                     style={{
-                      width: isPortrait ? width * 0.9 : height * 0.9,
-                      height: isPortrait ? height * 0.6 : width * 0.6,
+                      width: isPortrait ? width * 0.9 : width * 0.7,
+                      height: isPortrait ? height * 0.6 : height * 0.75,
                     }}
                     resizeMode="contain"
                     className='rounded-3xl'
@@ -371,14 +417,16 @@ export default function StoryDetailScreen() {
                   <Text
                     style={{
                       color: 'white',
-                      fontSize: 16,
-                      marginTop: 0,
+                      fontSize: isPortrait ? 16 : 18,
+                      marginTop: isPortrait ? 16 : 12,
                       textAlign: 'center',
-                      paddingHorizontal: 10,
+                      paddingHorizontal: isPortrait ? 10 : 40,
+                      maxWidth: isPortrait ? width * 0.9 : width * 0.7,
                     }}
                   >
                     {item.text}
                   </Text>
+
                 </View>
               )}
 
@@ -397,12 +445,32 @@ export default function StoryDetailScreen() {
                 }}
                 pointerEvents="box-none"
               >
-                <TouchableOpacity
-                  onPress={() => setIsFullScreen(false)}
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', position: 'absolute', right: 16, top: 16, borderRadius: 40, padding: 20 }}
-                >
-                  <Feather name="x" size={24} color="black" />
-                </TouchableOpacity>
+                {/* Boutons en haut à droite */}
+                <View style={{ position: 'absolute', right: 16, top: 16, flexDirection: 'row', gap: 12 }}>
+                  {/* Bouton rotation */}
+                  <TouchableOpacity
+                    onPress={toggleOrientation}
+                    style={{
+                      backgroundColor: (forceLandscape || !isPortrait) ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: 40,
+                      padding: 20
+                    }}
+                  >
+                    <Feather
+                      name={isPortrait ? "smartphone" : "tablet"}
+                      size={24}
+                      color={(forceLandscape || !isPortrait) ? "white" : "black"}
+                    />
+                  </TouchableOpacity>
+
+                  {/* Bouton fermer */}
+                  <TouchableOpacity
+                    onPress={() => setIsFullScreen(false)}
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20 }}
+                  >
+                    <Feather name="x" size={24} color="black" />
+                  </TouchableOpacity>
+                </View>
 
                 <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
@@ -487,7 +555,7 @@ export default function StoryDetailScreen() {
         {story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
           .map((page) => (
-            <View key={page.id} className="mb-6 bg-gray-100 p-4 rounded-lg shadow">
+            <View key={page.id} className=" bg-gray-100 p-4 rounded-lg shadow mb-4">
               <Text className="mb-2 text-base">{page.text}</Text>
               <Image
                 source={{ uri: page.imageUrl }}
@@ -497,15 +565,7 @@ export default function StoryDetailScreen() {
             </View>
           ))}
 
-        <TouchableOpacity
-          onPress={() => setShowDeleteModal(true)}
-          className="bg-red-600 p-4 mb-28 rounded-xl flex-row w-full justify-between items-center"
-        >
-          <Text className="text-white font-medium text-xl">
-            Supprimer cette histoire
-          </Text>
-          <Feather name="trash-2" size={24} color="white" />
-        </TouchableOpacity>
+        
 
       </ScrollView>
     </View>

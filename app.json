@@ -10,9 +10,10 @@
       "tsconfigPaths": true
     },
     "plugins": [
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-screen-orientation"
     ],
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {

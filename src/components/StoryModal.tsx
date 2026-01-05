@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, Dimensions, View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '~/types';
 
 type StoryPage = {
     page: number;
@@ -19,7 +21,7 @@ type StoryModalProps = {
 export default function StoryModal({ loading, title, storyPages, storyId, onClose }: StoryModalProps) {
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
-    const navigation = useNavigation();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     // Rotation infinie du cercle soleil/lune
     useEffect(() => {
@@ -181,7 +183,7 @@ const moonSize = orbitSize * 0.15;
 
                         <TouchableOpacity
                             className="bg-white px-4 py-3 rounded-3xl items-center mb-2"
-                            onPress={() => storyId && navigation.navigate('StoryDetail', { storyId })}
+                            onPress={() => storyId && navigation.navigate('StoryDetail', { storyId: Number(storyId) })}
                         >
                             <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
                         </TouchableOpacity>

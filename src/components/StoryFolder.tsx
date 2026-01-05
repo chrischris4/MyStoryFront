@@ -16,7 +16,16 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { RootStackParamList, MainTabParamList } from '~/types';
 import { BlurView } from 'expo-blur';
+
+type StoryFolderNavigationProp = CompositeNavigationProp<
+    BottomTabNavigationProp<MainTabParamList>,
+    NativeStackNavigationProp<RootStackParamList>
+>;
 
 type StoryFolderProps = {
     title: string;
@@ -44,7 +53,7 @@ export default function StoryFolder({
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
-    const navigation = useNavigation();
+    const navigation = useNavigation<StoryFolderNavigationProp>();
 
     const animatedStyle = useAnimatedStyle(() => ({
         width: withTiming(width.value, { duration: 300 }),

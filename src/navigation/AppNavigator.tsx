@@ -18,26 +18,7 @@ import ProtectedRoute from '~/components/ProtectedRoute';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
-
-
-export type RootStackParamList = {
-    BillingScreen: undefined;
-    Opening: undefined;
-    Login: undefined;
-    Register: undefined;
-    MainTabs: undefined;
-    StoryDetail: undefined;
-    CompleteProfileScreen: { accessToken: string };
-
-};
-
-export type MainTabParamList = {
-    Home: undefined;
-    Stories: undefined;
-    SharedStories: undefined;
-    CreateStory: undefined;
-    SettingsScreen: undefined;
-};
+import type { RootStackParamList, MainTabParamList } from '~/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<MainTabParamList>();
