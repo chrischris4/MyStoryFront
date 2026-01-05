@@ -6,10 +6,12 @@ import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
+import { useUserStore } from '~/store/useUserStore';
 
 export default function SharedStoriesScreen() {
   const navigation = useNavigation();
   const { isNight } = useTheme();
+  const user = useUserStore((state) => state.user);
 
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,20 +69,31 @@ export default function SharedStoriesScreen() {
       <View className="flex-1 items-center justify-center" style={{ backgroundColor: skyColor }} >
         <ActivityIndicator size="large" color="#ffffff" />
         <Text className='text-white'>Chargement des histoires partagées...</Text>
+        <View
+          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
+        <View
+          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-red-500 mb-4">{error}</Text>
-        <TouchableOpacity
-          className="bg-purple-700 px-4 py-2 rounded-lg"
-          onPress={() => navigation.goBack()}
-        >
-          <Text className="text-white font-semibold">Retour</Text>
-        </TouchableOpacity>
+      <View className="flex-1 items-center justify-center px-4" style={{ backgroundColor: skyColor }}>
+        <Text className="text-white font-semibold">Ooops !</Text>
+        <Text className="text-white font-semibold">Une erreur est survenue</Text>
+        <View
+          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
+        <View
+          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
       </View>
     );
   }
@@ -142,17 +155,22 @@ export default function SharedStoriesScreen() {
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className="text-4xl font-bold px-4">Histoires partagées</Text>
       <Text className="color-slate-600 text-xl font-light mb-4 px-4">
         Découvrez les histoires partagées par la communauté !
       </Text>
+      <View className='rounded-2xl mb-4 flex items-center justify-center p-4 bg-black w-11/12 mx-auto'>
+        <Text className="text-white text-center text-xl font-light px-4">
+          Vous devez être un fluner pour découvrir ces histoires      </Text>
+      </View>
       <View className="flex flex-col gap-4 mb-4">
         <StoryFolder
-                isNight={isNight}
-
+          isNight={isNight}
+          isShared={true}
+          isPremium={user?.isPremium}
           title="Toutes les histoires"
           icon={<Feather name="share-2" size={24} color="#fff" />}
           storyType="ALL"
@@ -160,7 +178,9 @@ export default function SharedStoriesScreen() {
           stories={sharedStories}
         />
         <StoryFolder
-        isNight={isNight}
+          isNight={isNight}
+          isShared={true}
+          isPremium={user?.isPremium}
           title="Les plus apréciées"
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"

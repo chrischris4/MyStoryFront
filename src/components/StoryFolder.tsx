@@ -34,27 +34,29 @@ type StoryFolderProps = {
     description: string;
     stories: any[];
     isNight: boolean;
+    isPremium: boolean;
+    isShared?: boolean;
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const NAVBAR_HEIGHT = 80; // Hauteur de la navbar + marges
 
 export default function StoryFolder({
+    isShared,
     title,
     storyType,
     icon,
+    isPremium,
     description,
     stories,
     isNight,
 }: StoryFolderProps) {
     const [expanded, setExpanded] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
-
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
     const navigation = useNavigation<StoryFolderNavigationProp>();
-
     const animatedStyle = useAnimatedStyle(() => ({
         width: withTiming(width.value, { duration: 300 }),
         height: withTiming(height.value, { duration: 300 }),
@@ -87,8 +89,17 @@ export default function StoryFolder({
             }} className="flex items-center justify-center w-full z-20"
             onLayout={onLayout}
         >
-            <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
+            <Animated.View className={` ${!isPremium && isShared ? 'border-4' : ''} relative `} style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
+                {!isPremium && isShared && (
+                    <View className='absolute top-8 z-30 right-4 h-10 w-10 flex justify-center items-center bg-black rounded-full'>
+                        <Feather
+                            name="lock"
+                            size={20}
+                            color='white'
+                        />
 
+                    </View>
+                )}
                 <BlurView
                     intensity={expanded ? 60 : 30}
                     tint="light"
@@ -98,7 +109,7 @@ export default function StoryFolder({
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start`}>{title}</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-xl font-semibold self-start`}>{title}</Text>
                         <Text className="text-slate-500 text-lg font-light">{description}</Text>
 
                         {expanded && (
@@ -146,6 +157,13 @@ export default function StoryFolder({
                                                     resizeMode="cover"
                                                 />
                                             )}
+                                            <View className='flex flex-row gap-1 justify-end mt-2'>
+                                                <Text className="text-lg font-medium mb-2"><Feather name="heart" size={24} color="#334155" /></Text>
+                                                <Text className="text-lg font-medium mb-2"><Feather name="book" size={24} color="#334155" /></Text>
+                                                <Text className="text-lg font-medium mb-2"><Feather name="book" size={24} color="#334155" /></Text>
+                                            </View>
+
+
                                         </TouchableOpacity>
                                     );
                                 }}

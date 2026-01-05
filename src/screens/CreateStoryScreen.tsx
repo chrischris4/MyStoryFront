@@ -7,6 +7,9 @@ import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
 import StoryModal from '~/components/StoryModal';
 import * as Yup from 'yup';
+import { useFormik } from 'formik';
+import { useUserStore } from '~/store/useUserStore';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -68,81 +71,67 @@ const createStorySchema = Yup.object().shape({
 });
 
 export default function CreateStoryScreen() {
+  const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
-  const [title, setTitle] = useState('');
-  const [prompt, setPrompt] = useState('');
-  const [numPages, setNumPages] = useState(1);
-  const [selectedStyle, setSelectedStyle] = useState<string>('classic');
   const { isNight } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
+  const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
 
-  const handleSubmit = async () => {
-    // Validation manuelle avec le schéma Yup
-    try {
-      await createStorySchema.validate(
-        { title, prompt, numPages, selectedStyle },
-        { abortEarly: false }
-      );
-    } catch (validationError: any) {
-      const errors = validationError.inner.map((err: any) => err.message).join('\n');
-      Alert.alert('Erreur de validation', errors);
-      return;
-    }
+  const formik = useFormik({
+    initialValues: {
+      title: '',
+      prompt: '',
+      numPages: 1,
+      selectedStyle: 'classic',
+    },
+    validationSchema: createStorySchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      setShowModal(true);
+      setStoryPages([]);
+      setStoryId(null);
 
-    const values = { title, prompt, numPages, selectedStyle };
-    setLoading(true);
-    setShowModal(true);
-    setStoryPages([]);
-    setStoryId(null);
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (!token) throw new Error('Utilisateur non connecté');
 
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) throw new Error('Utilisateur non connecté');
+        const body = {
+          prompt: values.prompt,
+          numberOfPages: values.numPages,
+          title: values.title,
+          style: values.selectedStyle
+        };
 
-      const body = {
-        prompt: values.prompt,
-        numberOfPages: values.numPages,
-        title: values.title,
-        style: values.selectedStyle
-      };
+        const response = await fetch('http://192.168.1.95:3000/story/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(body),
+        });
 
-      console.log('📤 Envoi de la requête /story/create');
-      console.log('🔑 Token:', token ? token.slice(0, 15) + '...' : 'Aucun');
-      console.log('📝 Corps envoyé au back:', JSON.stringify(body, null, 2));
+        const text = await response.text();
 
-      const response = await fetch('http://192.168.1.95:3000/story/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
+        if (!response.ok) {
+          throw new Error('Erreur lors de la création de l\'histoire');
+        }
 
-      const text = await response.text();
-      console.log('📥 Réponse brute du back:', text);
+        const story = JSON.parse(text);
 
-      if (!response.ok) {
-        console.error('❌ Erreur HTTP:', response.status, response.statusText);
-        throw new Error('Erreur lors de la création de l\'histoire');
+        setStoryPages(story.pages);
+        setStoryId(story.id);
+
+      } catch (error) {
+        Alert.alert('Erreur', 'Erreur lors de la création de l\'histoire.');
+      } finally {
+        setLoading(false);
       }
-
-      const story = JSON.parse(text);
-      console.log('✅ Histoire générée (JSON parsé):', story);
-
-      setStoryPages(story.pages);
-      setStoryId(story.id);
-
-    } catch (error) {
-      console.error('💥 Erreur côté front:', error);
-      Alert.alert('Erreur', 'Erreur lors de la création de l\'histoire.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+  });
 
 
 
@@ -199,7 +188,6 @@ export default function CreateStoryScreen() {
     return stars;
   };
 
-
   return (
     <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
       {isNight && renderStars(50)}
@@ -212,7 +200,26 @@ export default function CreateStoryScreen() {
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className="text-4xl font-bold pb-2 pt-8">C'est partie pour une nouvelle aventure !</Text>
-      <Text className="text-base font-light pb-4">Ici, toutes vos idées prennent vie !</Text>
+      <Text className="text-base font-light pb-2">Ici, toutes vos idées prennent vie !</Text>
+      <View className="flex-col pb-4">
+        {storyCoin > 0 ? (
+          <Text className="text-lg font-semibold">Vous avez {storyCoin} Story Coins !</Text>
+        ) : (
+          <View className="flex-col">
+            <Text className="text-lg font-semibold mb-2">
+              Vous n'avez plus de Story Coins !
+            </Text>
+            <TouchableOpacity
+              className="bg-purple-600 px-4 py-3 rounded-xl"
+              onPress={() => navigation.navigate('Billing' as never)}
+            >
+              <Text className="text-white font-semibold text-center">
+                🛒 Obtenir des Story Coins
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -232,13 +239,17 @@ export default function CreateStoryScreen() {
             tint='light'
             style={{ padding: 16 }}
           >
-            <Text className="text-lg font-semibold mb-2">Titre de l’histoire</Text>
+            <Text className="text-lg font-semibold mb-2">Titre de l'histoire</Text>
             <TextInput
               className="border border-gray-400 rounded-lg p-2"
               placeholder="Ex: Pacha et la forêt magique"
-              value={title}
-              onChangeText={setTitle}
+              value={formik.values.title}
+              onChangeText={formik.handleChange('title')}
+              onBlur={formik.handleBlur('title')}
             />
+            {formik.touched.title && formik.errors.title && (
+              <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
+            )}
           </BlurView>
         </View>
 
@@ -259,13 +270,17 @@ export default function CreateStoryScreen() {
             <TextInput
               className="border border-gray-400 rounded-lg p-3"
               placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
-              value={prompt}
-              onChangeText={setPrompt}
+              value={formik.values.prompt}
+              onChangeText={formik.handleChange('prompt')}
+              onBlur={formik.handleBlur('prompt')}
               multiline
               numberOfLines={6}
               textAlignVertical="top"
               style={{ minHeight: 120 }}
             />
+            {formik.touched.prompt && formik.errors.prompt && (
+              <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
+            )}
           </BlurView>
         </View>
 
@@ -294,11 +309,11 @@ export default function CreateStoryScreen() {
               contentContainerStyle={{ paddingRight: 16 }}
             >
               {STORY_STYLES.map((style) => {
-                const isSelected = selectedStyle === style.id;
+                const isSelected = formik.values.selectedStyle === style.id;
                 return (
                   <TouchableOpacity
                     key={style.id}
-                    onPress={() => setSelectedStyle(style.id)}
+                    onPress={() => formik.setFieldValue('selectedStyle', style.id)}
                     style={{
                       width: Dimensions.get('window').width * 0.7,
                       marginRight: 12,
@@ -347,13 +362,16 @@ export default function CreateStoryScreen() {
                   key={`dot-${style.id}`}
                   className="rounded-full"
                   style={{
-                    width: selectedStyle === style.id ? 24 : 8,
+                    width: formik.values.selectedStyle === style.id ? 24 : 8,
                     height: 8,
-                    backgroundColor: selectedStyle === style.id ? '#10B981' : '#D1D5DB',
+                    backgroundColor: formik.values.selectedStyle === style.id ? '#10B981' : '#D1D5DB',
                   }}
                 />
               ))}
             </View>
+            {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+              <Text className="text-red-500 text-sm mt-2 text-center">{formik.errors.selectedStyle}</Text>
+            )}
           </BlurView>
         </View>
 
@@ -370,14 +388,20 @@ export default function CreateStoryScreen() {
             tint='light'
             style={{ padding: 16 }}
           >
-            <PageSelector numPages={numPages} setNumPages={setNumPages} />
+            <PageSelector
+              numPages={formik.values.numPages}
+              setNumPages={(n) => formik.setFieldValue('numPages', n)}
+            />
+            {formik.touched.numPages && formik.errors.numPages && (
+              <Text className="text-red-500 text-sm mt-1 text-center">{formik.errors.numPages}</Text>
+            )}
           </BlurView>
         </View>
 
         {/* 🖋️ Bouton */}
         <TouchableOpacity
           className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
-          onPress={handleSubmit}
+          onPress={() => formik.handleSubmit()}
         >
           <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
         </TouchableOpacity>
@@ -391,7 +415,7 @@ export default function CreateStoryScreen() {
       {showModal && (
         <StoryModal
           loading={loading}
-          title={title}
+          title={formik.values.title}
           storyPages={storyPages}
           storyId={storyId}
           onClose={() => setShowModal(false)}

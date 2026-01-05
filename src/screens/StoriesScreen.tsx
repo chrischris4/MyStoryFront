@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
+import { useStories } from '~/hooks/useStories';
+import { useFavoriteStories } from '~/hooks/useFavoriteStories';
 
 export default function StoriesScreen() {
   const navigation = useNavigation();
   const { isNight } = useTheme();
 
-  const [stories, setStories] = useState([]);
-  const [favoriteStories, setFavoriteStories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Utiliser les hooks TanStack Query pour récupérer les histoires et les favoris
+  const { data: stories = [], isLoading: isLoadingStories, error: storiesError } = useStories();
+  const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
 
   const animationRef = useRef(null);
   const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
@@ -23,103 +23,41 @@ export default function StoriesScreen() {
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
+  const isLoading = isLoadingStories || isLoadingFavorites;
+  const error = storiesError;
 
-  // useEffect(() => {
-  //   animationRef.current?.play();
-
-  //   Animated.timing(translateX, {
-  //     toValue: -300,
-  //     duration: 5000,
-  //     useNativeDriver: true,
-  //   }).start();
-  // }, []);
-
-  const fetchStories = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        setError('Utilisateur non authentifié');
-        return;
-      }
-
-      const response = await fetch('http://192.168.1.95:3000/story', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error('Erreur lors de la récupération des histoires');
-      }
-
-      const data = await response.json();
-      setStories(data);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const fetchFavoriteStories = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        throw new Error('Utilisateur non connecté');
-      }
-
-      const response = await fetch('http://192.168.1.95:3000/favorite-story/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des histoires favorites');
-      }
-
-      const data = await response.json();
-      setFavoriteStories(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchAllData = async () => {
-      setLoading(true);
-      try {
-        await fetchStories();
-        await fetchFavoriteStories();
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllData();
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center" style={{ backgroundColor: skyColor }} >
         <ActivityIndicator size="large" color="#ffffff" />
         <Text className='text-white'>Chargement des histoires...</Text>
+        <View
+          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
+        <View
+          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
       </View>
     );
   }
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-red-500 mb-4">{error}</Text>
-        <TouchableOpacity
-          className="bg-purple-700 px-4 py-2 rounded-lg"
-          onPress={() => navigation.navigate('CreateStory')}
-        >
-          <Text className="text-white font-semibold">Créer une Story</Text>
-        </TouchableOpacity>
+      <View className="flex-1 items-center justify-center px-4" style={{ backgroundColor: skyColor }}>
+
+          <Text className="text-white font-semibold">Ooops !</Text>
+                    <Text className="text-white font-semibold">Une erreur est survenue</Text>
+
+        <View
+          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
+        <View
+          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
       </View>
     );
   }

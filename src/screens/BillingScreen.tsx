@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Alert, Dimensions, FlatList, GestureResponderEvent } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Alert, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import ShopButton from '~/components/ShopButton';
 import { useTheme } from '~/context/ThemeContext';
+import { Feather } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '~/types';
+import LottieView from 'lottie-react-native';
 
+type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BillingScreen() {
+    const navigation = useNavigation<StoryDetailNavigationProp>();
+
     // === GESTION DU MODULE IAP ===
     let RNIap;
     if (__DEV__) {
@@ -36,7 +44,7 @@ export default function BillingScreen() {
     }
 
     // === PRODUITS ===
-    const itemSkus = ['tokens_pack_100', 'premium_monthly'];
+    const itemSkus = ['tokens_pack_5', 'tokens_pack_10', 'tokens_pack_20', 'premium_monthly', 'premium_yearly'];
 
     const [products, setProducts] = useState<RNIap.Product[]>([]);
     const { isNight } = useTheme();
@@ -94,15 +102,176 @@ export default function BillingScreen() {
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
+    const animationRef = useRef(null);
+
+    useEffect(() => {
+        animationRef.current?.play();
+    }, []);
+
+    const translateX = useRef(new Animated.Value(-250)).current; // Commence hors écran à gauche
+
+    // Animations pour chaque ShopButton - commencent tous au centre du bas
+    const button1Anim = useRef(new Animated.ValueXY({ x: 0, y: 200 })).current;
+    const button2Anim = useRef(new Animated.ValueXY({ x: 0, y: 200 })).current;
+    const button3Anim = useRef(new Animated.ValueXY({ x: 0, y: 200 })).current;
+    const button4Anim = useRef(new Animated.ValueXY({ x: 0, y: 200 })).current;
+    const button5Anim = useRef(new Animated.ValueXY({ x: 0, y: 200 })).current;
+
+    const scale1 = useRef(new Animated.Value(0.5)).current;
+    const scale2 = useRef(new Animated.Value(0.5)).current;
+    const scale3 = useRef(new Animated.Value(0.5)).current;
+    const scale4 = useRef(new Animated.Value(0.5)).current;
+    const scale5 = useRef(new Animated.Value(0.5)).current;
+
+    const opacity1 = useRef(new Animated.Value(0)).current;
+    const opacity2 = useRef(new Animated.Value(0)).current;
+    const opacity3 = useRef(new Animated.Value(0)).current;
+    const opacity4 = useRef(new Animated.Value(0)).current;
+    const opacity5 = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        animationRef.current?.play();
+
+        // Animation de déplacement de gauche à droite pour le chien
+        Animated.timing(translateX, {
+            toValue: Dimensions.get('window').width, // Se déplace vers la droite hors écran
+            duration: 8000, // 8 secondes pour traverser l'écran
+            useNativeDriver: true,
+        }).start();
+
+        // Animations séquentielles pour les boutons
+        const { width } = Dimensions.get('window');
+        const centerX = width / 2;
+
+
+        setTimeout(() => {
+
+            // Button 1 (5 jetons)
+            Animated.parallel([
+                Animated.spring(button1Anim, {
+                    toValue: { x: 0, y: 0 },
+                    useNativeDriver: true,
+                    tension: 50,
+                    friction: 8,
+                }),
+                Animated.timing(opacity1, {
+                    toValue: 1,
+                    duration: 400,
+                    useNativeDriver: true,
+                }),
+                Animated.spring(scale1, {
+                    toValue: 1,
+                    useNativeDriver: true,
+                    tension: 50,
+                    friction: 8,
+                }),
+            ]).start();
+
+            // Button 2 (10 jetons)
+            setTimeout(() => {
+                Animated.parallel([
+                    Animated.spring(button2Anim, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                    Animated.timing(opacity2, {
+                        toValue: 1,
+                        duration: 400,
+                        useNativeDriver: true,
+                    }),
+                    Animated.spring(scale2, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                ]).start();
+            }, 150);
+
+            // Button 3 (20 jetons)
+            setTimeout(() => {
+                Animated.parallel([
+                    Animated.spring(button3Anim, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                    Animated.timing(opacity3, {
+                        toValue: 1,
+                        duration: 400,
+                        useNativeDriver: true,
+                    }),
+                    Animated.spring(scale3, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                ]).start();
+            }, 300);
+
+            // Button 4 (Mensuel)
+            setTimeout(() => {
+                Animated.parallel([
+                    Animated.spring(button4Anim, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                    Animated.timing(opacity4, {
+                        toValue: 1,
+                        duration: 400,
+                        useNativeDriver: true,
+                    }),
+                    Animated.spring(scale4, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                ]).start();
+            }, 450);
+
+            // Button 5 (Annuel)
+            setTimeout(() => {
+                Animated.parallel([
+                    Animated.spring(button5Anim, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                    Animated.timing(opacity5, {
+                        toValue: 1,
+                        duration: 400,
+                        useNativeDriver: true,
+                    }),
+                    Animated.spring(scale5, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                        tension: 50,
+                        friction: 8,
+                    }),
+                ]).start(() => {
+                });
+            }, 600);
+        }, 300);
+
+    }, []);
+
     const renderStars = (count: number) => {
         const stars = [];
         const { width, height } = Dimensions.get('window');
 
         for (let i = 0; i < count; i++) {
-            const size = Math.random() * 2 + 1; // taille entre 1 et 3
-            const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
+            const size = Math.random() * 2 + 1;
+            const top = Math.random() * (height * 0.5);
             const left = Math.random() * width;
-            const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
+            const opacity = Math.random() * 0.8 + 0.2;
 
             stars.push(
                 <View
@@ -125,36 +294,191 @@ export default function BillingScreen() {
     };
 
     return (
-        <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
+        <View className="flex-1 overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
             {isNight && renderStars(50)}
             <View
                 className='absolute bottom-0 -right-40 border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
-            <View
-                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-            />
-            <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20, marginTop: 20 }}>Boutique</Text>
-            <View className="flex-col mb-4">
-                <Text className="text-xl font-bold mb-2">Achat de jetons</Text>
-                <Text className="text-sm mb-4">1 jeton vous permet de créer une histoire</Text>
-                <View className='flex-row gap-4'>
-                    <ShopButton title="Pack 10 jetons" price="$9.99" onPress={() => buy('tokens_pack_100')} />
-                    <ShopButton title="Pack 20 jetons" price="$18.99" onPress={() => buy('tokens_pack_500')} />
-                </View>
-            </View>
 
-            <View className="flex-1 mb-4">
-                <Text className="text-xl font-bold mb-2">Abonnement</Text>
-                <Text className="text-sm mb-4">
-                    Devenez membre Flun pour avoir accès aux histoires partagées par les utilisateurs et bénéficier de 10 jetons par mois
-                </Text>
-                <View className='flex-row gap-4'>
-                    <ShopButton title="Premium Mensuel" price="$14.99" onPress={() => buy('premium_monthly')} />
-                    <ShopButton title="Premium Annuel" price="$149.99" onPress={() => buy('premium_yearly')} />
-                </View>
+            <View
+                className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
+                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+            >
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    className=""
+                >
+                    <Feather name="chevron-left" size={24} color="white" />
+                </TouchableOpacity>
             </View>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, marginTop: 20 }}>Boutique</Text>
+            <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text>
+
+            {/* Boutons de jetons en disposition triangle */}
+            <View style={{ height: 280, position: 'relative', marginBottom: 0 }}>
+                <View className='absolute -top-5 self-center'>
+                    <View className='w-60 h-44 relative'>
+                        <View
+                            className='h-20 rounded-full absolute top-10 left-0 w-full'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-24 w-24 rounded-full absolute top-0 right-10'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-20 w-20 rounded-full absolute top-4 right-28'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                    </View>
+                </View>
+                {/* Button 5 jetons - En haut au centre */}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        top: 70,
+                        left: '50%',
+                        marginLeft: -45,
+                        width: 90,
+                        height: 90,
+                        zIndex: 20,
+                        opacity: opacity1,
+                transform: [
+                ...button1Anim.getTranslateTransform(),
+                {scale: scale1 }
+                ],
+                    }}
+                >
+                <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_5')} />
+            </Animated.View>
+
+            {/* Button 10 jetons - En bas à gauche */}
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 120,
+                    left: 20,
+                    width: 90,
+                    height: 90,
+                    zIndex: 20,
+                    opacity: opacity2,
+                    transform: [
+                        ...button2Anim.getTranslateTransform(),
+                        { scale: scale2 }
+                    ],
+                }}
+            >
+                <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_10')} />
+            </Animated.View>
+
+            {/* Button 20 jetons - En bas à droite */}
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 120,
+                    right: 20,
+                    width: 90,
+                    height: 90,
+                    zIndex: 20,
+                    opacity: opacity3,
+                    transform: [
+                        ...button3Anim.getTranslateTransform(),
+                        { scale: scale3 }
+                    ],
+                }}
+            >
+                <ShopButton isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
+            </Animated.View >
         </View>
+
+            {/* Boutons Premium en position absolue */ }
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 200,
+                    left: 20,
+                    width: 120,
+                    height: 120,
+                    zIndex: 20,
+                    opacity: opacity4,
+                    transform: [
+                        ...button4Anim.getTranslateTransform(),
+                        { scale: scale4 }
+                    ],
+                }}
+            >
+                <ShopButton title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
+            </Animated.View>
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 200,
+                    right: 20,
+                    width: 120,
+                    height: 120,
+                    opacity: opacity5,
+                    zIndex: 20,
+                    transform: [
+                        ...button5Anim.getTranslateTransform(),
+                        { scale: scale5 }
+                    ],
+                }}
+            >
+                <ShopButton title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
+            </Animated.View>
+    {/* Chien */ }
+    {
+        !isNight && (
+            <Animated.View
+                style={{
+                    transform: [{ translateX }],
+                    position: 'absolute',
+                    bottom: 26,
+                    left: 0,
+                    zIndex: 5
+                }}
+            >
+                <LottieView
+                    ref={animationRef}
+                    source={require('../../assets/animations/MoodyDog.json')}
+                    autoPlay
+                    loop={true}
+                    style={{ width: 200, height: 200, zIndex: 10 }}
+                />
+            </Animated.View>
+        )
+    }
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: -45,
+                    alignSelf: 'center',
+                    zIndex: 1
+                }}
+            >
+                <LottieView
+                    source={require('../../assets/animations/Store.json')}
+                    autoPlay
+                    loop={false}
+                    style={{ width: 400, height: 400, zIndex: 5 }}
+                />
+            </Animated.View>
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 170,
+                    alignSelf: 'center',
+                    zIndex: 0
+                }}
+            >
+                <LottieView
+                    source={require('../../assets/animations/tree.json')}
+                    autoPlay
+                    loop={false}
+                    style={{ width: 300, height: 300, zIndex: 5 }}
+                />
+            </Animated.View>
+        </View >
     );
 };

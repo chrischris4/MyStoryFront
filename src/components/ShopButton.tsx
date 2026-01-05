@@ -7,22 +7,27 @@ type ShopButtonProps = {
   icon?: React.ReactNode;
   price: string;
   onPress: (event: GestureResponderEvent) => void;
+  isCoin?: boolean;
 };
 
-export default function ShopButton({ onPress, title, price, icon }: ShopButtonProps) {
+export default function ShopButton({ onPress, title, price, icon, isCoin = false }: ShopButtonProps) {
+  const size = isCoin ? 90 : 110;
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="w-1/2 flex-1 rounded-2xl overflow-hidden"
+      className='rounded-full'
+      style={{ width: size, height: size, overflow: 'hidden' }}
     >
       <BlurView
         intensity={50}
         tint="light"
-        className="p-4 rounded-2xl flex-col justify-between"
+        className='flex items-center justify-center'
+        style={{ flex: 1, flexDirection: 'column' }}
       >
-        <Text className="text-lg font-semibold mb-1">{title}</Text>
-        <Text className="text-sm font-light text-center mb-2">{price}</Text>
-        {icon && <View className="self-end">{icon}</View>}
+        <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }}>{title}</Text>
+        <Text style={{ fontSize: 14, fontWeight: '300', textAlign: 'center' }}>{price}</Text>
+        {icon && <View style={{ alignSelf: 'flex-end' }}>{icon}</View>}
       </BlurView>
     </TouchableOpacity>
   );

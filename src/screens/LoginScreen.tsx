@@ -28,15 +28,10 @@ export default function LoginScreen() {
     try {
       const data = await api.login(values.email, values.password);
 
-      console.log('Login response:', data);
-
       // Connexion via le contexte d'authentification
       // Le contexte va automatiquement récupérer le profil utilisateur
       // et attendre que tout soit chargé avant de résoudre la Promise
       await login(data.accessToken);
-
-      console.log('Login completed, user loaded, navigating to MainTabs');
-
       // Maintenant on peut naviguer car l'utilisateur est bien chargé
       navigation.dispatch(
         CommonActions.reset({

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -82,13 +82,29 @@ export default function SettingsScreen() {
             />
             <Text style={styles.title}>Paramètres</Text>
 
-            <ScrollView className='pb-72'>
+            <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
                 <BlurView intensity={50} tint='light' style={styles.section}>
-                    <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-lg font-semibold self-start`}>Compte</Text>
+                    <View className='flex flex-row justify-between'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-lg font-semibold self-start`}>Compte</Text>
+                        <Feather name="user" size={20} color="#fff" />
+                    </View>
                     {user && (
-                        <View >
-                            <Text >{user.email}</Text>
-                            {user.username && <Text>@{user.username}</Text>}
+                        <View className="flex-row items-center gap-4">
+                            {user.profil.imageUrl && (
+                                <Image
+                                    source={{ uri: user.profil.imageUrl }}
+                                    style={styles.profileImage}
+                                />
+                            )}
+                            <View className="flex-1">
+                                {user.profil.name && (
+                                    <Text className={`${isNight ? "text-white" : "text-slate-800"} text-base font-semibold`}>
+                                        {user.profil.name}
+                                    </Text>
+                                )}
+                                <Text className={`${isNight ? "text-white" : "text-slate-600"} text-sm font-light mt-1`}>{user.email}</Text>
+
+                            </View>
                         </View>
                     )}
                 </BlurView>
@@ -198,6 +214,12 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         color: '#1A202C',
+    },
+    profileImage: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: '#E2E8F0',
     },
 
 });

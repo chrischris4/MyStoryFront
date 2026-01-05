@@ -1,13 +1,7 @@
-import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useEffect, ReactNode, useContext } from 'react';
+import { useUserStore, User } from '~/store/useUserStore';
 
-export type User = {
-  id: number;
-  email: string;
-  username?: string;
-  firstName?: string;
-  lastName?: string;
-};
+export type { User };
 
 type AuthContextType = {
   user: User | null;
@@ -45,9 +39,9 @@ const STORAGE_KEYS = {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Utiliser le store Zustand
+  const { user, accessToken: token, isAuthenticated, loadFromStorage, setUser, setTokens } = useUserStore();
+  const [isLoading, setIsLoading] = React.useState(true);
 
   useEffect(() => {
     loadStoredAuth();
@@ -55,19 +49,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loadStoredAuth = async () => {
     try {
-      const [storedToken, storedUser] = await Promise.all([
-        AsyncStorage.getItem(STORAGE_KEYS.TOKEN),
-        AsyncStorage.getItem(STORAGE_KEYS.USER),
-      ]);
+      await loadFromStorage();
 
-      if (storedToken) {
-        setToken(storedToken);
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        } else {
-          // Si on a un token mais pas de user, on le récupère depuis l'API
-          await fetchUserProfile(storedToken);
-        }
+      // Si on a un token mais pas de user, on le récupère depuis l'API
+      if (token && !user) {
+        await fetchUserProfile(token);
       }
     } catch (error) {
       console.error('Erreur lors du chargement de l\'authentification:', error);
@@ -88,7 +74,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         const userData = await response.json();
         setUser(userData);
-        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
       } else {
         // Si le token n'est plus valide, on déconnecte
         await logout();
@@ -100,16 +85,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (newToken: string, userData?: User) => {
     try {
-      // Toujours mettre à jour le token en premier
-      setToken(newToken);
-      await AsyncStorage.setItem(STORAGE_KEYS.TOKEN, newToken);
-
       if (userData) {
-        setUser(userData);
-        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
+        // Utiliser le store Zustand pour sauvegarder
+        await useUserStore.getState().login(userData, newToken, newToken); // refreshToken = accessToken pour l'instant
       } else {
         // Récupérer les infos utilisateur si non fournies
-        // IMPORTANT: On attend que fetchUserProfile se termine
         const response = await fetch('http://192.168.1.95:3000/profile/me', {
           headers: {
             Authorization: `Bearer ${newToken}`,
@@ -118,8 +98,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (response.ok) {
           const userProfile = await response.json();
-          setUser(userProfile);
-          await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userProfile));
+          await useUserStore.getState().login(userProfile, newToken, newToken);
         } else {
           throw new Error('Impossible de récupérer le profil utilisateur');
         }
@@ -132,12 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      setToken(null);
-      setUser(null);
-      await Promise.all([
-        AsyncStorage.removeItem(STORAGE_KEYS.TOKEN),
-        AsyncStorage.removeItem(STORAGE_KEYS.USER),
-      ]);
+      await useUserStore.getState().logout();
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
     }
@@ -146,7 +120,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const updateUser = async (userData: User) => {
     try {
       setUser(userData);
-      await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData));
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'utilisateur:', error);
       throw error;
@@ -174,8 +147,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
   };
-
-  const isAuthenticated = !!token && !!user;
 
   return (
     <AuthContext.Provider

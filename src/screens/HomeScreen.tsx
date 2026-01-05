@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Alert, TouchableOpacity, Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
+import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import HomeButton from '~/components/HomeButton';
 import StyledButton from '~/components/StyledButton';
 import { Feather } from '@expo/vector-icons';
@@ -11,66 +10,20 @@ import Background from '~/components/Background';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
-
-
-type UserProfile = {
-  firstName: string;
-  lastName: string;
-  imageUrl: string;
-  storyCoin: number;
-};
+import { useUserStore } from '~/store/useUserStore';
 
 export default function HomeScreen() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(false);
   const { isNight, toggleTheme } = useTheme();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        Alert.alert('Erreur', 'Utilisateur non authentifié');
-        setLoading(false);
-        return;
-      }
-
-      const res = await fetch('http://192.168.1.95:3000/profile/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setProfile({
-          firstName: data.name || 'Prénom',
-          lastName: data.lastname || 'Nom',
-          imageUrl: data.imageUrl || 'https://randomuser.me/api/portraits/men/75.jpg',
-          storyCoin: data.storyCoin || 0,
-        });
-      } else {
-        Alert.alert('Erreur', 'Impossible de récupérer le profil');
-      }
-    } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue');
-    } finally {
-      setLoading(false);
-    }
+  // Récupérer les données depuis Zustand au lieu de faire un fetch
+  const user = useUserStore((state) => state.user);
+  const profile = {
+    name: user?.profil.name || 'Prénom',
+    isPremium: user?.isPremium,
+    imageUrl: user?.profil.imageUrl || 'https://randomuser.me/api/portraits/men/75.jpg',
+    storyCoin: user?.storyCoin || 0,
   };
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
-  if (loading) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>Chargement...</Text>
-      </View>
-    );
-  }
 
   return (
     <View className="flex-1 relative">
@@ -82,6 +35,7 @@ export default function HomeScreen() {
           <View className="flex flex-col items-center mx-auto">
 
             <View
+              className='relative'
               style={{
                 width: 140,
                 height: 140,
@@ -105,15 +59,55 @@ export default function HomeScreen() {
                   borderWidth: 4,
                   borderColor: isNight ? '#FFFFFF' : '#FACC15',
                 }}
+                className='absolute bottom-0 left-0'
               />
+              {profile.isPremium && (
+                <View
+                  className='self-center mx-auto absolute bottom-5'
+                >
+
+                  <View className='w-[140px] h-16 relative flex items-center justify-center'>
+                    <Text className="color-slate-600 text-xl font-medium mt-10 z-20">
+                      Fluner
+                    </Text>
+                    <View
+                      className='h-10 rounded-full absolute top-10 left-0 w-full'
+                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
+                    />
+                    <View
+                      className='h-14 w-14 rounded-full absolute -bottom-5 left-5'
+                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
+                    />
+                    <View
+                      className='h-14 w-14 rounded-full absolute -bottom-5 right-3'
+                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
+                    />
+                    <View
+                      className='h-20 w-20 rounded-full absolute top-3 left-12'
+                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
+                    />
+                  </View>
+                </View>
+              )}
             </View>
-            <View className="flex flex-row gap-2 mt-2">
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.firstName || 'Jean'}</Text>
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.storyCoin || '0'}</Text>
+            <View className="flex flex-row items-center gap-2 mt-2">
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.name || 'Jean'}</Text>
+              <View className='flex flex-row items-center mb-4'>
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold`}>{profile?.storyCoin || '0'}</Text>
+              <Image
+                source={{ uri: "https://res.cloudinary.com/dnotl9a0s/image/upload/v1767644505/ChatGPT_Image_5_janv._2026_21_21_34_saseb4.png" }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 200,
+                }}
+                className=''
+              />
+              </View>
             </View>
           </View>
         </View>
-        
+
 
 
 

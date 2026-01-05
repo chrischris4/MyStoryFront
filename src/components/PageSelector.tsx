@@ -10,7 +10,7 @@ interface PageSelectorProps {
 export default function PageSelector({ numPages, setNumPages }: PageSelectorProps) {
   const maxPages = 10;
 
-  const [currentIndex, setCurrentIndex] = useState(numPages - 1);
+  const [currentIndex, setCurrentIndex] = useState(numPages - 6);
   const translateX = useRef(new Animated.Value(0)).current;
   const [direction, setDirection] = useState<'left' | 'right'>('right');
 
