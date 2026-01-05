@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
+import { Feather } from '@expo/vector-icons';
 import Background from '~/components/Background';
 
 export default function SettingsScreen() {
@@ -80,35 +80,53 @@ export default function SettingsScreen() {
                 className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
-            <Text style={styles.title}>⚙️ Paramètres</Text>
+            <Text style={styles.title}>Paramètres</Text>
 
             <ScrollView className='pb-72'>
-                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                    <Text style={styles.sectionTitle}>Compte</Text>
+                <BlurView intensity={50} tint='light' style={styles.section}>
+                    <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-lg font-semibold self-start`}>Compte</Text>
                     {user && (
-                        <View style={styles.userInfo}>
-                            <Text style={styles.userEmail}>{user.email}</Text>
-                            {user.username && <Text style={styles.username}>@{user.username}</Text>}
+                        <View >
+                            <Text >{user.email}</Text>
+                            {user.username && <Text>@{user.username}</Text>}
                         </View>
                     )}
-                    <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                        <Text style={styles.buttonText}>Se déconnecter</Text>
+                </BlurView>
+
+                <BlurView intensity={50} tint='light' style={styles.section}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start mb-2`}>Apparence</Text>
+                        {!isNight ? (
+                            <Feather name="sun" size={20} color="#fff" />
+                        ) : (
+                            <Feather name="moon" size={20} color="#fff" />
+                        )}
+                    </View>
+                    <TouchableOpacity
+                        onPress={toggleTheme}
+                        style={styles.button}
+                    >
+                        <View className="flex-row items-center justify-center gap-2">
+                            {isNight ? (
+                                <Feather name="sun" size={20} color="#fff" />
+                            ) : (
+                                <Feather name="moon" size={20} color="#fff" />
+                            )}
+                            <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-sm font-light`}>
+                                Passer en mode {isNight ? 'clair' : 'sombre'}
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                    <Text style={styles.sectionTitle}>Apparence</Text>
-                    <TouchableOpacity style={styles.button} onPress={toggleTheme}>
-                        <Text style={styles.buttonText}>
-                            Passer en mode {isNight ? 'clair' : 'sombre'}
-                        </Text>
-                    </TouchableOpacity>
-                </BlurView>
+                <BlurView intensity={50} tint='light' style={styles.section}>
+                    <View className='flex flex-row justify-between mb-4'>
 
-                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                    <Text style={styles.sectionTitle}>Notifications</Text>
-                    <View style={styles.row}>
-                        <Text style={styles.buttonText}>Activer les notifications</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start`}>Notifications</Text>
+                        <Feather name="bell" size={20} color="#fff" />
+                    </View>
+                    <View className='flex flex-row justify-between items-center'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-sm mt-2 font-light self-start`}>Activer les notifications</Text>
                         <Switch
                             value={notificationsEnabled}
                             onValueChange={setNotificationsEnabled}
@@ -117,14 +135,26 @@ export default function SettingsScreen() {
                     </View>
                 </BlurView>
 
-                <BlurView intensity={50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
-                    <Text style={styles.sectionTitle}>Facturation</Text>
+                <BlurView intensity={50} tint='light' style={styles.section}>
+                    <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start`}>Facturation</Text>
                     <TouchableOpacity style={styles.button} onPress={handleBilling}>
-                        <Text style={styles.buttonText}>Gérer mes achats</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-sm font-light self-start`}>Gérer mes achats</Text>
+                    </TouchableOpacity>
+                </BlurView>
+
+                <BlurView intensity={50} tint='light' style={styles.section}>
+                    <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start`}>Abonnement</Text>
+                    <TouchableOpacity style={styles.button} onPress={handleBilling}>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-sm font-light self-start`}>Gérer mon abonnement</Text>
+                    </TouchableOpacity>
+                </BlurView>
+
+                <BlurView intensity={50} tint='light' style={styles.sectionBis}>
+                    <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                        <Text style={styles.buttonText}>Se déconnecter</Text>
                     </TouchableOpacity>
                 </BlurView>
             </ScrollView>
-            <BottomNavBar />
         </View>
     );
 }
@@ -147,6 +177,11 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         overflow: 'hidden', // indispensable pour le BlurView
     },
+    sectionBis: {
+        borderRadius: 24,
+        marginBottom: 80,
+        overflow: 'hidden', // indispensable pour le BlurView
+    },
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
@@ -154,10 +189,9 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     button: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 16,
-        backgroundColor: '#edb4cb',
+        padding: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        borderRadius: 12,
         alignItems: 'center',
     },
     buttonText: {
@@ -165,25 +199,5 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         color: '#1A202C',
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    userInfo: {
-        marginBottom: 12,
-        padding: 12,
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
-        borderRadius: 12,
-    },
-    userEmail: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1A202C',
-        marginBottom: 4,
-    },
-    username: {
-        fontSize: 14,
-        color: '#4A5568',
-    },
+
 });

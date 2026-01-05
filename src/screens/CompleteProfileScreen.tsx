@@ -78,7 +78,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
 
             if (res.ok) {
                 Alert.alert('Succès', 'Profil mis à jour avec succès.');
-                navigation.navigate('Home'); // Par exemple, rediriger vers home après MAJ
+                navigation.navigate('MainTabs'); // Rediriger vers MainTabs après MAJ
             } else {
                 const error = await res.json();
                 Alert.alert('Erreur', error.message || 'Erreur lors de la mise à jour du profil.');

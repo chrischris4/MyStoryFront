@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
@@ -181,7 +180,7 @@ export default function StoriesScreen() {
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className="text-4xl font-bold px-4">Mes histoires</Text>
@@ -190,6 +189,7 @@ export default function StoriesScreen() {
       </Text>
       <View className="flex flex-col gap-4 mb-4">
         <StoryFolder
+          isNight={isNight}
           title="Tout"
           icon={<Feather name="list" size={24} color="#fff" />}
           storyType="ALL"
@@ -197,6 +197,7 @@ export default function StoriesScreen() {
           stories={stories}
         />
         <StoryFolder
+          isNight={isNight}
           title="Récent"
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"
@@ -204,6 +205,7 @@ export default function StoriesScreen() {
           stories={stories}
         />
         <StoryFolder
+          isNight={isNight}
           title="Favorite"
           icon={<Feather name="heart" size={24} color="#fff" />}
           storyType="FAVORITE"
@@ -211,7 +213,6 @@ export default function StoriesScreen() {
           stories={favoriteStories}
         />
       </View>
-      <BottomNavBar />
     </View>
   );
 }

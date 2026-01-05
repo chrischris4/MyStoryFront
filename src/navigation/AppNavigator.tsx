@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '~/screens/RegisterScreen';
@@ -14,6 +15,7 @@ import OpeningScreen from '~/screens/Opening';
 import BillingScreen from '~/screens/BillingScreen';
 import SettingsScreen from '~/screens/SettingsScreen';
 import ProtectedRoute from '~/components/ProtectedRoute';
+import BottomNavBar from '~/navigation/BottomNavBar';
 import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
 
@@ -23,18 +25,38 @@ export type RootStackParamList = {
     Opening: undefined;
     Login: undefined;
     Register: undefined;
+    MainTabs: undefined;
+    StoryDetail: undefined;
+    CompleteProfileScreen: { accessToken: string };
+
+};
+
+export type MainTabParamList = {
     Home: undefined;
     Stories: undefined;
     SharedStories: undefined;
     CreateStory: undefined;
-    StoryDetail: undefined;
-    CompleteProfileScreen: { accessToken: string };
     SettingsScreen: undefined;
-
 };
 
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<MainTabParamList>();
+
+// Tab Navigator avec BottomNavBar personnalisée
+function MainTabs() {
+    return (
+        <Tab.Navigator
+            screenOptions={{ headerShown: false }}
+            tabBar={(props) => <BottomNavBar {...props} />}
+        >
+            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Stories" component={StoriesScreen} />
+            <Tab.Screen name="SharedStories" component={SharedStoriesScreen} />
+            <Tab.Screen name="CreateStory" component={CreateStoryScreen} />
+            <Tab.Screen name="SettingsScreen" component={SettingsScreen} />
+        </Tab.Navigator>
+    );
+}
 
 function AppNavigatorContent() {
     const { logout, isAuthenticated } = useAuth();
@@ -56,35 +78,16 @@ function AppNavigatorContent() {
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
 
-            {/* Routes protégées */}
-            <Stack.Screen name="Home">
+            {/* Routes protégées avec Tab Navigator */}
+            <Stack.Screen name="MainTabs">
                 {(props) => (
                     <ProtectedRoute>
-                        <HomeScreen {...props} />
+                        <MainTabs {...props} />
                     </ProtectedRoute>
                 )}
             </Stack.Screen>
-            <Stack.Screen name="Stories">
-                {(props) => (
-                    <ProtectedRoute>
-                        <StoriesScreen {...props} />
-                    </ProtectedRoute>
-                )}
-            </Stack.Screen>
-            <Stack.Screen name="SharedStories">
-                {(props) => (
-                    <ProtectedRoute>
-                        <SharedStoriesScreen {...props} />
-                    </ProtectedRoute>
-                )}
-            </Stack.Screen>
-            <Stack.Screen name="CreateStory">
-                {(props) => (
-                    <ProtectedRoute>
-                        <CreateStoryScreen {...props} />
-                    </ProtectedRoute>
-                )}
-            </Stack.Screen>
+
+            {/* Pages modales/détails sans navbar */}
             <Stack.Screen name="StoryDetail">
                 {(props) => (
                     <ProtectedRoute>
@@ -96,13 +99,6 @@ function AppNavigatorContent() {
                 {(props) => (
                     <ProtectedRoute>
                         <BillingScreen {...props} />
-                    </ProtectedRoute>
-                )}
-            </Stack.Screen>
-            <Stack.Screen name="SettingsScreen">
-                {(props) => (
-                    <ProtectedRoute>
-                        <SettingsScreen {...props} />
                     </ProtectedRoute>
                 )}
             </Stack.Screen>

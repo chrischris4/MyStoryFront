@@ -24,9 +24,11 @@ type StoryFolderProps = {
     storyType: string;
     description: string;
     stories: any[];
+    isNight: boolean;
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const NAVBAR_HEIGHT = 80; // Hauteur de la navbar + marges
 
 export default function StoryFolder({
     title,
@@ -34,6 +36,7 @@ export default function StoryFolder({
     icon,
     description,
     stories,
+    isNight,
 }: StoryFolderProps) {
     const [expanded, setExpanded] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
@@ -62,7 +65,7 @@ export default function StoryFolder({
             translateY.value = 0;
         } else {
             width.value = SCREEN_WIDTH;
-            height.value = SCREEN_HEIGHT;
+            height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; // Laisser de la place pour la navbar
             translateY.value = -layoutY;
         }
         setExpanded(!expanded);
@@ -86,7 +89,7 @@ export default function StoryFolder({
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
-                        <Text className="text-slate-700 text-2xl font-bold">{title}</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-semibold self-start`}>{title}</Text>
                         <Text className="text-slate-500 text-lg font-light">{description}</Text>
 
                         {expanded && (

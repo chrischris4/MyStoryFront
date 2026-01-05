@@ -17,13 +17,14 @@ import {
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import type { Story, RootStackParamList } from '~/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
+import { BlurView } from 'expo-blur';
+import LottieView from 'lottie-react-native';
 
 
 
@@ -308,13 +309,11 @@ export default function StoryDetailScreen() {
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      {isNight && renderStars(50)}
-      <ScrollView className="flex-grow px-4 pt-10" >
-
-        <Text className="text-4xl font-bold mb-4 text-center">{story.title}</Text>
-        <View className='flex flex-row w-full justify-between mb-6'>
+      <Text className="text-4xl font-bold mb-4 text-center px-4 pt-8">{story.title}</Text>
+        <BlurView intensity={50} tint={isNight ? 'dark' : 'light'}
+          className="p-4 flex flex-row justify-between items-center mx-4 rounded-lg bg-[#B4CDED]/40">
           <TouchableOpacity
-            onPress={() => navigation.navigate('Stories')}
+            onPress={() => navigation.goBack()}
             className="bg-white h-14 w-14 flex items-center justify-center rounded-full"
           >
             <Feather name="chevron-left" size={24} color="black" />
@@ -329,10 +328,14 @@ export default function StoryDetailScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setIsFullScreen(true)}
-            className="bg-white h-14 w-14 flex items-center justify-center rounded-full"> 
+            className="bg-white h-14 w-14 flex items-center justify-center rounded-full">
             <Feather name="play" size={24} color="white" />
           </TouchableOpacity>
-        </View>
+        </BlurView>
+      {isNight && renderStars(50)}
+      <ScrollView className="flex-grow px-4 pt-10" >
+
+        
 
 
 
@@ -436,9 +439,20 @@ export default function StoryDetailScreen() {
           <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <View className="bg-white rounded-2xl p-6 mx-4 w-11/12 max-w-md">
               <View className="items-center mb-4">
-                <View className="bg-red-100 rounded-full p-4 mb-4">
-                  <Feather name="trash-2" size={32} color="#DC2626" />
-                </View>
+                <Animated.View
+                  style={{
+                    bottom: 10,
+                    alignSelf: 'center',
+                  }}
+                >
+                  <LottieView
+                    source={require('../../assets/animations/crying.json')}
+                    autoPlay
+                    loop={true}
+                    style={{ width: 100, height: 100 }}
+                  />
+                </Animated.View>
+
                 <Text className="text-2xl font-bold text-gray-900 mb-2">
                   Supprimer l'histoire ?
                 </Text>
@@ -485,7 +499,7 @@ export default function StoryDetailScreen() {
 
         <TouchableOpacity
           onPress={() => setShowDeleteModal(true)}
-          className="bg-red-600 p-4 rounded-xl mb-4 flex-row w-full justify-between items-center"
+          className="bg-red-600 p-4 mb-28 rounded-xl flex-row w-full justify-between items-center"
         >
           <Text className="text-white font-medium text-xl">
             Supprimer cette histoire
@@ -494,7 +508,6 @@ export default function StoryDetailScreen() {
         </TouchableOpacity>
 
       </ScrollView>
-      <BottomNavBar />
     </View>
   );
 }

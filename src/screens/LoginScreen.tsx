@@ -29,13 +29,13 @@ export default function LoginScreen() {
       // et attendre que tout soit chargé avant de résoudre la Promise
       await login(data.accessToken);
 
-      console.log('Login completed, user loaded, navigating to Home');
+      console.log('Login completed, user loaded, navigating to MainTabs');
 
       // Maintenant on peut naviguer car l'utilisateur est bien chargé
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'MainTabs' }],
         })
       );
 

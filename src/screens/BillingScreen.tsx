@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Alert, Dimensions, FlatList, GestureResponderEvent } from 'react-native';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import ShopButton from '~/components/ShopButton';
 import { useTheme } from '~/context/ThemeContext';
 
@@ -136,7 +135,7 @@ export default function BillingScreen() {
                 className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
-            <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20, marginTop: 20 }}>🛒 Boutique</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 20, marginTop: 20 }}>Boutique</Text>
             <View className="flex-col mb-4">
                 <Text className="text-xl font-bold mb-2">Achat de jetons</Text>
                 <Text className="text-sm mb-4">1 jeton vous permet de créer une histoire</Text>
@@ -156,9 +155,6 @@ export default function BillingScreen() {
                     <ShopButton title="Premium Annuel" price="$149.99" onPress={() => buy('premium_yearly')} />
                 </View>
             </View>
-
-
-            <BottomNavBar />
         </View>
     );
 };

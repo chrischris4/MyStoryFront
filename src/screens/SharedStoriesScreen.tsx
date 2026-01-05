@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import { useNavigation } from '@react-navigation/native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
@@ -152,21 +151,23 @@ export default function SharedStoriesScreen() {
       </Text>
       <View className="flex flex-col gap-4 mb-4">
         <StoryFolder
-          title="Toutes les histoires partagées"
+                isNight={isNight}
+
+          title="Toutes les histoires"
           icon={<Feather name="share-2" size={24} color="#fff" />}
           storyType="ALL"
-          description="Toutes les histoires partagées par les utilisateurs"
+          description="Il y en a pour tout le monde !"
           stories={sharedStories}
         />
         <StoryFolder
-          title="Récentes"
+        isNight={isNight}
+          title="Les plus apréciées"
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"
-          description="Les 10 histoires partagées les plus récentes"
+          description="Les 10 histoires les plus populaires"
           stories={sharedStories}
         />
       </View>
-      <BottomNavBar />
     </View>
   );
 }

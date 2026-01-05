@@ -94,6 +94,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
             />
 
             {/* Chien */}
+            {!isNight && (
             <Animated.View
                 style={{
                     transform: [{ translateX }],
@@ -110,7 +111,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
                     style={{ width: 200, height: 200 }}
                 />
             </Animated.View>
-
+            )}
             {/* Nuages */}
             <Animated.View
                 style={{ transform: [{ translateX: cloudAnim }] }}

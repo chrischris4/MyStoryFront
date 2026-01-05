@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, Image, Alert, TouchableOpacity, Animated } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeButton from '~/components/HomeButton';
 import StyledButton from '~/components/StyledButton';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '~/navigation/AppNavigator';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { MainTabParamList } from '~/navigation/AppNavigator';
 import Background from '~/components/Background';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '~/context/ThemeContext';
+import LottieView from 'lottie-react-native';
 
 
 type UserProfile = {
@@ -24,7 +24,7 @@ export default function HomeScreen() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
   const { isNight, toggleTheme } = useTheme();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -112,18 +112,7 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-        <TouchableOpacity
-          onPress={toggleTheme}
-          className="absolute top-8 left-4 rounded-full overflow-hidden"
-        >
-          <BlurView intensity={30} tint="light" className="p-4">
-            {isNight ? (
-              <Feather name="sun" size={24} color="#fff" />
-            ) : (
-              <Feather name="moon" size={24} color="#fff" />
-            )}
-          </BlurView>
-        </TouchableOpacity>
+        
 
 
 
@@ -156,7 +145,23 @@ export default function HomeScreen() {
           />
 
         </View>
-        <BottomNavBar />
+        {isNight && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 24,
+              right: 50,
+              zIndex: 100,
+            }}
+          >
+            <LottieView
+              source={require('../../assets/animations/sleepyDog.json')}
+              autoPlay
+              loop={true}
+              style={{ width: 150, height: 150 }}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image, Dimensions, FlatList } from 'react-native';
 import StyledButton from '~/components/StyledButton';
-import BottomNavBar from '~/navigation/BottomNavBar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated, Easing } from 'react-native';
 import LottieView from 'lottie-react-native';
@@ -201,7 +200,7 @@ export default function CreateStoryScreen() {
         >
           <BlurView
             intensity={50}
-            tint={isNight ? 'dark' : 'light'}
+            tint='light'
             style={{ padding: 16 }}
           >
             <Text className="text-lg font-semibold mb-2">Titre de l’histoire</Text>
@@ -224,7 +223,7 @@ export default function CreateStoryScreen() {
         >
           <BlurView
             intensity={50}
-            tint={isNight ? 'dark' : 'light'}
+            tint='light'
             style={{ padding: 16 }}
           >
             <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
@@ -251,7 +250,7 @@ export default function CreateStoryScreen() {
         >
           <BlurView
             intensity={50}
-            tint={isNight ? 'dark' : 'light'}
+            tint='light'
             style={{ padding: 16 }}
           >
             <Text className="text-lg font-semibold mb-4">Style de l'histoire</Text>
@@ -339,7 +338,7 @@ export default function CreateStoryScreen() {
         >
           <BlurView
             intensity={50}
-            tint={isNight ? 'dark' : 'light'}
+            tint='light'
             style={{ padding: 16 }}
           >
             <PageSelector numPages={numPages} setNumPages={setNumPages} />
@@ -369,8 +368,6 @@ export default function CreateStoryScreen() {
           onClose={() => setShowModal(false)}
         />
       )}
-
-      <BottomNavBar />
     </View>
   );
 }
