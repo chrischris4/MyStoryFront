@@ -1,14 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Modal, ActivityIndicator, Image, Dimensions, FlatList } from 'react-native';
-import StyledButton from '~/components/StyledButton';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Animated, Easing } from 'react-native';
-import LottieView from 'lottie-react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
 import StoryModal from '~/components/StoryModal';
+import * as Yup from 'yup';
 
 
 
@@ -52,20 +50,49 @@ const STORY_STYLES: StoryStyle[] = [
   },
 ];
 
+const createStorySchema = Yup.object().shape({
+  title: Yup.string()
+    .min(3, 'Le titre doit contenir au moins 3 caractères')
+    .max(100, 'Le titre ne peut pas dépasser 100 caractères')
+    .required('Le titre est requis'),
+  prompt: Yup.string()
+    .min(10, 'Le résumé doit contenir au moins 10 caractères')
+    .max(500, 'Le résumé ne peut pas dépasser 500 caractères')
+    .required('Le résumé est requis'),
+  numPages: Yup.number()
+    .min(1, 'Au moins 1 page')
+    .max(10, 'Maximum 10 pages')
+    .required('Le nombre de pages est requis'),
+  selectedStyle: Yup.string()
+    .required('Le style est requis'),
+});
+
 export default function CreateStoryScreen() {
-  const [prompt, setPrompt] = useState('');
-  const [numPages, setNumPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
   const [title, setTitle] = useState('');
+  const [prompt, setPrompt] = useState('');
+  const [numPages, setNumPages] = useState(1);
   const [selectedStyle, setSelectedStyle] = useState<string>('classic');
-  const { isNight, toggleTheme } = useTheme();
+  const { isNight } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
 
-
   const handleSubmit = async () => {
+    // Validation manuelle avec le schéma Yup
+    try {
+      await createStorySchema.validate(
+        { title, prompt, numPages, selectedStyle },
+        { abortEarly: false }
+      );
+    } catch (validationError: any) {
+      const errors = validationError.inner.map((err: any) => err.message).join('\n');
+      Alert.alert('Erreur de validation', errors);
+      return;
+    }
+
+    const values = { title, prompt, numPages, selectedStyle };
     setLoading(true);
     setShowModal(true);
     setStoryPages([]);
@@ -75,9 +102,13 @@ export default function CreateStoryScreen() {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) throw new Error('Utilisateur non connecté');
 
-      const body = { prompt, numberOfPages: numPages, title, style: selectedStyle };
+      const body = {
+        prompt: values.prompt,
+        numberOfPages: values.numPages,
+        title: values.title,
+        style: values.selectedStyle
+      };
 
-      // 🟩 AJOUT DES LOGS COMPLETS
       console.log('📤 Envoi de la requête /story/create');
       console.log('🔑 Token:', token ? token.slice(0, 15) + '...' : 'Aucun');
       console.log('📝 Corps envoyé au back:', JSON.stringify(body, null, 2));
@@ -91,16 +122,14 @@ export default function CreateStoryScreen() {
         body: JSON.stringify(body),
       });
 
-      // 🟡 LOGS DE LA RÉPONSE BRUTE
       const text = await response.text();
       console.log('📥 Réponse brute du back:', text);
 
       if (!response.ok) {
         console.error('❌ Erreur HTTP:', response.status, response.statusText);
-        throw new Error('Erreur lors de la création de l’histoire');
+        throw new Error('Erreur lors de la création de l\'histoire');
       }
 
-      // 🟢 Si tout va bien
       const story = JSON.parse(text);
       console.log('✅ Histoire générée (JSON parsé):', story);
 
@@ -109,7 +138,7 @@ export default function CreateStoryScreen() {
 
     } catch (error) {
       console.error('💥 Erreur côté front:', error);
-      alert('Erreur lors de la création de l’histoire.');
+      Alert.alert('Erreur', 'Erreur lors de la création de l\'histoire.');
     } finally {
       setLoading(false);
     }

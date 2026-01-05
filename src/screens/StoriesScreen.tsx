@@ -48,7 +48,9 @@ export default function StoriesScreen() {
         },
       });
 
+
       if (!response.ok) {
+        const errorText = await response.text();
         throw new Error('Erreur lors de la récupération des histoires');
       }
 

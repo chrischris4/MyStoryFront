@@ -1,26 +1,32 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
 import { api, ApiError } from '~/services/api';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+const loginSchema = Yup.object().shape({
+  email: Yup.string()
+    .email('Email invalide')
+    .required('L\'email est requis'),
+  password: Yup.string()
+    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+    .required('Le mot de passe est requis'),
+});
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { login } = useAuth();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs');
-      return;
-    }
-
+  const handleLogin = async (values: { email: string; password: string }) => {
     setIsLoading(true);
 
     try {
-      const data = await api.login(email, password);
+      const data = await api.login(values.email, values.password);
 
       console.log('Login response:', data);
 
@@ -53,43 +59,62 @@ export default function LoginScreen() {
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
-
         <View className='w-[70%]'>
           <Text className="font-bold text-xl mb-4 text-center text-gray-800">Connexion</Text>
-                    {/* <Text className="text-sm mb-4 text-center text-gray-800"></Text> */}
 
-
-          <TextInput
-            className="w-full border border-gray-300 rounded-xl p-4 mb-4"
-            placeholder="Email"
-            keyboardType="email-address"
-            value={email}
-            onChangeText={setEmail}
-          />
-
-          <TextInput
-            className="w-full border border-gray-300 rounded-xl p-4 mb-6"
-            placeholder="Mot de passe"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-
-          <TouchableOpacity
-            className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
-            onPress={handleLogin}
-            disabled={isLoading}
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={loginSchema}
+            onSubmit={handleLogin}
           >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text className="text-white font-semibold text-center">Se connecter</Text>
-            )}
-          </TouchableOpacity>
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+              <>
+                <View className="mb-4">
+                  <TextInput
+                    className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
+                    placeholder="Email"
+                    keyboardType="email-address"
+                    value={values.email}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                  />
+                  {touched.email && errors.email && (
+                    <Text className="text-red-500 text-sm mt-1 ml-2">{errors.email}</Text>
+                  )}
+                </View>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-            <Text className="text-[#38b6ff] text-center">Pas encore de compte ? S'inscrire</Text>
-          </TouchableOpacity>
+                <View className="mb-6">
+                  <TextInput
+                    className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
+                    placeholder="Mot de passe"
+                    secureTextEntry
+                    value={values.password}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                  />
+                  {touched.password && errors.password && (
+                    <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
+                  )}
+                </View>
+
+                <TouchableOpacity
+                  className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
+                  onPress={() => handleSubmit()}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text className="text-white font-semibold text-center">Se connecter</Text>
+                  )}
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                  <Text className="text-[#38b6ff] text-center">Pas encore de compte ? S'inscrire</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </Formik>
         </View>
       </View>
     </View>

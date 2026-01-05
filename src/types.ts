@@ -31,3 +31,11 @@ export type Story = {
   pages: Page[];
   isShared?: boolean;
 };
+
+export type User = {
+  id: string;
+  email?: string;
+  username?: string;
+  avatarUrl?: string;
+  isAnonymous: boolean;
+};

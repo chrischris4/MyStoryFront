@@ -107,8 +107,9 @@ export default function HomeScreen() {
                 }}
               />
             </View>
-            <View className="flex flex-col mt-2">
+            <View className="flex flex-row gap-2 mt-2">
               <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.firstName || 'Jean'}</Text>
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.storyCoin || '0'}</Text>
             </View>
           </View>
         </View>

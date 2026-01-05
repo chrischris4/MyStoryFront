@@ -183,7 +183,12 @@ const moonSize = orbitSize * 0.15;
 
                         <TouchableOpacity
                             className="bg-white px-4 py-3 rounded-3xl items-center mb-2"
-                            onPress={() => storyId && navigation.navigate('StoryDetail', { storyId: Number(storyId) })}
+                            onPress={() => {
+                                if (storyId) {
+                                    navigation.navigate('StoryDetail', { storyId: Number(storyId) });
+                                    onClose();
+                                }
+                            }}
                         >
                             <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
                         </TouchableOpacity>
