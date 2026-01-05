@@ -89,9 +89,9 @@ export default function StoryFolder({
             }} className="flex items-center justify-center w-full z-20"
             onLayout={onLayout}
         >
-            <Animated.View className={` ${!isPremium && isShared ? 'border-4' : ''} relative `} style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
+            <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
                 {!isPremium && isShared && (
-                    <View className='absolute top-8 z-30 right-4 h-10 w-10 flex justify-center items-center bg-black rounded-full'>
+                    <View className='absolute top-8 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'>
                         <Feather
                             name="lock"
                             size={20}

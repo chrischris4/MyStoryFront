@@ -1,15 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore } from '~/store/useUserStore';
+import type { RootStackParamList, MainTabParamList } from '~/types';
+
+type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 export default function SharedStoriesScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<SharedStoriesScreenNavigationProp>();
   const { isNight } = useTheme();
   const user = useUserStore((state) => state.user);
 
@@ -151,21 +160,38 @@ export default function SharedStoriesScreen() {
 
       {/* Sol */}
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <View
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
+      {!user?.isPremium && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            bottom: 65,
+            right: -15,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => navigation.navigate('BillingScreen')}
+            activeOpacity={0.8}
+          >
+            <LottieView
+              source={require('../../assets/animations/Store.json')}
+              autoPlay
+              loop={false}
+              style={{ width: 200, height: 200, zIndex: 5 }}
+            />
+          </TouchableOpacity>
+        </Animated.View>
+      )}
       <Text className="text-4xl font-bold px-4">Histoires partagées</Text>
       <Text className="color-slate-600 text-xl font-light mb-4 px-4">
         Découvrez les histoires partagées par la communauté !
       </Text>
-      <View className='rounded-2xl mb-4 flex items-center justify-center p-4 bg-black w-11/12 mx-auto'>
-        <Text className="text-white text-center text-xl font-light px-4">
-          Vous devez être un fluner pour découvrir ces histoires      </Text>
-      </View>
       <View className="flex flex-col gap-4 mb-4">
         <StoryFolder
           isNight={isNight}

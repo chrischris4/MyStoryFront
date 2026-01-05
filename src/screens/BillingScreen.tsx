@@ -297,7 +297,7 @@ export default function BillingScreen() {
         <View className="flex-1 overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
             {isNight && renderStars(50)}
             <View
-                className='absolute bottom-0 -right-40 border-4 h-36 rounded-t-full w-[100%] z-0'
+                className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
 
@@ -317,7 +317,7 @@ export default function BillingScreen() {
 
             {/* Boutons de jetons en disposition triangle */}
             <View style={{ height: 280, position: 'relative', marginBottom: 0 }}>
-                <View className='absolute -top-5 self-center'>
+                <View className='absolute -top-5 right-0'>
                     <View className='w-60 h-44 relative'>
                         <View
                             className='h-20 rounded-full absolute top-10 left-0 w-full'
@@ -344,55 +344,55 @@ export default function BillingScreen() {
                         height: 90,
                         zIndex: 20,
                         opacity: opacity1,
-                transform: [
-                ...button1Anim.getTranslateTransform(),
-                {scale: scale1 }
-                ],
+                        transform: [
+                            ...button1Anim.getTranslateTransform(),
+                            { scale: scale1 }
+                        ],
                     }}
                 >
-                <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_5')} />
-            </Animated.View>
+                    <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_5')} />
+                </Animated.View>
 
-            {/* Button 10 jetons - En bas à gauche */}
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: 120,
-                    left: 20,
-                    width: 90,
-                    height: 90,
-                    zIndex: 20,
-                    opacity: opacity2,
-                    transform: [
-                        ...button2Anim.getTranslateTransform(),
-                        { scale: scale2 }
-                    ],
-                }}
-            >
-                <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_10')} />
-            </Animated.View>
+                {/* Button 10 jetons - En bas à gauche */}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        bottom: 120,
+                        left: 20,
+                        width: 90,
+                        height: 90,
+                        zIndex: 20,
+                        opacity: opacity2,
+                        transform: [
+                            ...button2Anim.getTranslateTransform(),
+                            { scale: scale2 }
+                        ],
+                    }}
+                >
+                    <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_10')} />
+                </Animated.View>
 
-            {/* Button 20 jetons - En bas à droite */}
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: 120,
-                    right: 20,
-                    width: 90,
-                    height: 90,
-                    zIndex: 20,
-                    opacity: opacity3,
-                    transform: [
-                        ...button3Anim.getTranslateTransform(),
-                        { scale: scale3 }
-                    ],
-                }}
-            >
-                <ShopButton isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
-            </Animated.View >
-        </View>
+                {/* Button 20 jetons - En bas à droite */}
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        bottom: 120,
+                        right: 20,
+                        width: 90,
+                        height: 90,
+                        zIndex: 20,
+                        opacity: opacity3,
+                        transform: [
+                            ...button3Anim.getTranslateTransform(),
+                            { scale: scale3 }
+                        ],
+                    }}
+                >
+                    <ShopButton isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
+                </Animated.View >
+            </View>
 
-            {/* Boutons Premium en position absolue */ }
+            {/* Boutons Premium en position absolue */}
             <Animated.View
                 style={{
                     position: 'absolute',
@@ -427,56 +427,41 @@ export default function BillingScreen() {
             >
                 <ShopButton title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
             </Animated.View>
-    {/* Chien */ }
-    {
-        !isNight && (
+            {/* Chien */}
+            {
+                !isNight && (
+                    <Animated.View
+                        style={{
+                            transform: [{ translateX }],
+                            position: 'absolute',
+                            bottom: 26,
+                            left: 0,
+                            zIndex: 5
+                        }}
+                    >
+                        <LottieView
+                            ref={animationRef}
+                            source={require('../../assets/animations/MoodyDog.json')}
+                            autoPlay
+                            loop={true}
+                            style={{ width: 200, height: 200, zIndex: 10 }}
+                        />
+                    </Animated.View>
+                )
+            }
             <Animated.View
                 style={{
-                    transform: [{ translateX }],
                     position: 'absolute',
-                    bottom: 26,
-                    left: 0,
-                    zIndex: 5
-                }}
-            >
-                <LottieView
-                    ref={animationRef}
-                    source={require('../../assets/animations/MoodyDog.json')}
-                    autoPlay
-                    loop={true}
-                    style={{ width: 200, height: 200, zIndex: 10 }}
-                />
-            </Animated.View>
-        )
-    }
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: -45,
-                    alignSelf: 'center',
+                    bottom: -75,
                     zIndex: 1
                 }}
+                className="self-center"
             >
                 <LottieView
                     source={require('../../assets/animations/Store.json')}
                     autoPlay
                     loop={false}
-                    style={{ width: 400, height: 400, zIndex: 5 }}
-                />
-            </Animated.View>
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: 170,
-                    alignSelf: 'center',
-                    zIndex: 0
-                }}
-            >
-                <LottieView
-                    source={require('../../assets/animations/tree.json')}
-                    autoPlay
-                    loop={false}
-                    style={{ width: 300, height: 300, zIndex: 5 }}
+                    style={{ width: 500, height: 500, zIndex: 5 }}
                 />
             </Animated.View>
         </View >
