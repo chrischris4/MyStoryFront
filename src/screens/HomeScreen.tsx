@@ -26,21 +26,17 @@ export default function HomeScreen() {
     storyCoin: user?.storyCoin || 0,
   };
 
-  useEffect(() => {
-  const logAuthState = async () => {
-    const token = await AsyncStorage.getItem('accessToken');
-    const userString = await AsyncStorage.getItem('user');
-    const user = userString ? JSON.parse(userString) : null;
+//   useEffect(() => {
+//   const logAuthState = async () => {
+//     const userString = await AsyncStorage.getItem('user');
+//     const user = userString ? JSON.parse(userString) : null;
+//     console.log('📧 Email:', user?.email);
+//     console.log('👤 Username:', user?.profil?.name);
+//     console.log('🆔 User ID:', user?.id);
+//   };
 
-    console.log('🔑 Token:', token ? `${token.substring(0, 30)}...` : 'null');
-    console.log('👤 User:', user);
-    console.log('📧 Email:', user?.email);
-    console.log('👤 Username:', user?.profil?.name);
-    console.log('🆔 User ID:', user?.id);
-  };
-
-  logAuthState();
-}, []);
+//   logAuthState();
+// }, []);
 
   return (
     <View className="flex-1 relative">

@@ -6,6 +6,7 @@ import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
 import StoryModal from '~/components/StoryModal';
+import ConfirmationModal from '~/components/ConfirmationModal';
 import { Feather } from '@expo/vector-icons';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -85,6 +86,7 @@ export default function CreateStoryScreen() {
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
   const [storyId, setStoryId] = useState<string | null>(null);
   const { isNight } = useTheme();
@@ -100,6 +102,9 @@ export default function CreateStoryScreen() {
     },
     validationSchema: createStorySchema,
     onSubmit: async (values) => {
+      // Fermer la modal de confirmation
+      setShowConfirmationModal(false);
+
       setLoading(true);
       setShowModal(true);
       setStoryPages([]);
@@ -143,6 +148,25 @@ export default function CreateStoryScreen() {
       }
     },
   });
+
+  // Fonction pour gérer le clic sur le bouton de création
+  const handleCreateClick = async () => {
+    // Valider tous les champs
+    const errors = await formik.validateForm();
+
+    // Marquer tous les champs comme touchés pour afficher les erreurs
+    formik.setTouched({
+      title: true,
+      prompt: true,
+      numPages: true,
+      selectedStyle: true,
+    });
+
+    // Si pas d'erreurs, ouvrir la modal de confirmation
+    if (Object.keys(errors).length === 0) {
+      setShowConfirmationModal(true);
+    }
+  };
 
 
 
@@ -454,10 +478,32 @@ export default function CreateStoryScreen() {
               </BlurView>
             </View>
 
+            {/* Messages d'erreur résumés */}
+            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
+              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
+                <View className="mb-4 bg-red-50 rounded-2xl p-4">
+                    <Text className="text-red-800 font-semibold text-base mb-4">Informations manquantes</Text>
+                  <View className="gap-1">
+                    {formik.touched.title && formik.errors.title && (
+                      <Text className="text-red-700 text-sm">• {formik.errors.title}</Text>
+                    )}
+                    {formik.touched.prompt && formik.errors.prompt && (
+                      <Text className="text-red-700 text-sm">• {formik.errors.prompt}</Text>
+                    )}
+                    {formik.touched.numPages && formik.errors.numPages && (
+                      <Text className="text-red-700 text-sm">• {formik.errors.numPages}</Text>
+                    )}
+                    {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+                      <Text className="text-red-700 text-sm">• {formik.errors.selectedStyle}</Text>
+                    )}
+                  </View>
+                </View>
+              )}
+
             {/* 🖋️ Bouton */}
             <TouchableOpacity
               className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
-              onPress={() => formik.handleSubmit()}
+              onPress={handleCreateClick}
             >
               <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
             </TouchableOpacity>
@@ -469,7 +515,19 @@ export default function CreateStoryScreen() {
 
       {/* /////////////////MODAL/////////////////////////////////////////////////// */}
 
+      {/* Modal de confirmation */}
+      <ConfirmationModal
+        visible={showConfirmationModal}
+        title={formik.values.title}
+        prompt={formik.values.prompt}
+        numPages={formik.values.numPages}
+        styleName={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.name || ''}
+        styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
+        onConfirm={() => formik.handleSubmit()}
+        onCancel={() => setShowConfirmationModal(false)}
+      />
 
+      {/* Modal de résultat */}
       {showModal && (
         <StoryModal
           loading={loading}

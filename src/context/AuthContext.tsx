@@ -10,7 +10,7 @@ type AuthContextType = {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string, userData?: User) => Promise<void>;
+  login: (accessToken: string, refreshToken: string, userData?: User) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (userData: User) => Promise<void>;
   checkAuth: () => Promise<boolean>;
@@ -21,9 +21,9 @@ export const AuthContext = createContext<AuthContextType>({
   token: null,
   isAuthenticated: false,
   isLoading: true,
-  login: async () => {},
-  logout: async () => {},
-  updateUser: async () => {},
+  login: async () => { },
+  logout: async () => { },
+  updateUser: async () => { },
   checkAuth: async () => false,
 });
 
@@ -94,22 +94,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const login = async (newToken: string, userData?: User) => {
+  const login = async (accessToken: string, refreshToken: string, userData?: User) => {
     try {
       if (userData) {
-        // Utiliser le store Zustand pour sauvegarder
-        await useUserStore.getState().login(userData, newToken, newToken); // refreshToken = accessToken pour l'instant
+        await useUserStore.getState().login(userData, accessToken, refreshToken); // ✅ Les deux tokens séparés
       } else {
-        // Récupérer les infos utilisateur si non fournies
         const response = await fetch(`${API_BASE_URL}/profile/me`, {
           headers: {
-            Authorization: `Bearer ${newToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         });
 
         if (response.ok) {
           const userProfile = await response.json();
-          await useUserStore.getState().login(userProfile, newToken, newToken);
+          await useUserStore.getState().login(userProfile, accessToken, refreshToken); // ✅ Les deux tokens séparés
         } else {
           throw new Error('Impossible de récupérer le profil utilisateur');
         }
@@ -119,6 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+
 
   const logout = async () => {
     try {

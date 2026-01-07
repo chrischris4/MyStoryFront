@@ -65,7 +65,10 @@ const refreshTokens = async () => {
       // Programmer le prochain refresh
       setupTokenRefresh();
     } else {
+      const errorText = await response.text();
       console.error('❌ Échec du rafraîchissement du token');
+      console.error('Status:', response.status);
+      console.error('Réponse:', errorText);
       // Déconnecter l'utilisateur
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');

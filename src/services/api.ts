@@ -135,20 +135,20 @@ class ApiService {
 
   // Méthodes spécifiques pour l'authentification
   async login(email: string, password: string) {
-    return this.post<{ accessToken: string; user?: any }>(
-      '/auth/login',
-      { email, password },
-      false
-    );
-  }
+  return this.post<{ accessToken: string; refreshToken: string }>(
+    '/auth/login',
+    { email, password },
+    false
+  );
+}
 
-  async register(email: string, password: string, username?: string) {
-    return this.post<{ accessToken: string; user?: any }>(
-      '/auth/register',
-      { email, password, username },
-      false
-    );
-  }
+async register(email: string, password: string, username?: string) {
+  return this.post<{ accessToken: string; refreshToken: string }>( // ← Ajouter refreshToken
+    '/auth/register',
+    { email, password, username },
+    false
+  );
+}
 
   async getProfile() {
     return this.get<any>('/profile/me');

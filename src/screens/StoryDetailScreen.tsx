@@ -24,6 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import { useCheckFavorite } from '~/hooks/useCheckFavorite';
+import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 
 
 
@@ -45,57 +49,31 @@ export default function StoryDetailScreen() {
   const [showControls, setShowControls] = useState(false);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const [isFavorite, setIsFavorite] = useState(true);
   const [isShared, setIsShared] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [forceLandscape, setForceLandscape] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // Utiliser les hooks pour les favoris
+  const { data: isFavorite = false, isLoading: isFavoriteLoading } = useCheckFavorite(Number(storyId));
+  const toggleFavoriteMutation = useToggleFavorite();
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
 
-  useEffect(() => {
-    const checkIfFavorite = async () => {
-      const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/favorite-story/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+  const handleToggleFavorite = () => {
+    toggleFavoriteMutation.mutate(
+      { storyId: Number(storyId), isFavorite },
+      {
+        onSuccess: () => {
+          console.log('✅ Favori mis à jour avec succès');
         },
-      });
-
-      const favorites = await response.json();
-      const isFav = favorites.some((fav) => fav.story.id === Number(storyId));
-      setIsFavorite(isFav);
-      console.log("Favorites:", favorites.map(f => f.story.id), "Current storyId:", storyId);
-
-    };
-
-    checkIfFavorite();
-  }, [storyId]);
-
-
-  const handleToggleFavorite = async () => {
-    const token = await AsyncStorage.getItem('accessToken');
-
-    const url = `${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/favorite-story`;
-
-    const method = isFavorite ? 'DELETE' : 'POST';
-
-    const response = await fetch(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ storyId }),
-    });
-
-    if (response.ok) {
-      setIsFavorite(!isFavorite);
-    } else {
-      console.error('Erreur lors du changement de favori');
-    }
+        onError: (error) => {
+          Alert.alert('Erreur', 'Impossible de modifier le favori');
+          console.error('Erreur toggle favori:', error);
+        },
+      }
+    );
   };
 
   const handleToggleShared = async () => {
@@ -290,7 +268,7 @@ export default function StoryDetailScreen() {
 
   if (error || !story) {
     return (
-      <View className="flex-1 items-center justify-center pb-20">
+      <View className="flex-1 items-center justify-center">
         <Text className="text-red-500">{error ?? 'Story non trouvée'}</Text>
       </View>
     );
@@ -334,87 +312,137 @@ export default function StoryDetailScreen() {
 
 
   return (
-    <View className="flex-1 relative h-screen" style={{ backgroundColor: skyColor }}>
+    <View className="flex-1 relative h-screen pt-10" style={{ backgroundColor: skyColor }}>
 
       {isNight && renderStars(50)}
       <ScrollView
         className="flex-grow px-4 z-20"
         contentContainerStyle={{ paddingBottom: 140 }}
       >
-        
-      {/* Couverture */}
-      <View className='flex flex-col rounded-xl bg-white/30 mt-8 p-4'>
-        <Text className="text-3xl font-bold mb-4 text-center">{story.title}</Text>
-        {story.pages[0] && (
-          <View className='w-5/6 aspect-square rounded-full shadow-white overflow-hidden self-center'>
-            <Image
-              source={{ uri: story.pages[0].imageUrl }}
-              resizeMode="cover"
-              className='w-full h-full'
-            />
-          </View>
-        )}
 
-
-        {/* Author date */}
-        <View className='flex flex-row gap-2 items-center mt-4 justify-center'>
-          {/* <Image
-            source={story.user?.profil?.imageUrl ? { uri: story.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-            }}
-          /> */}
-          <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
-          {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
-        </View>
-        <Text className="text-base font-light text-center px-4 pt-4">
-          {new Date(story.createdAt).toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit'
-          })}
-        </Text>
-      </View>
-
-
-
-      {/* //Share Like */}
-      <View className='flex flex-row justify-between mt-4'>
-        <TouchableOpacity
-          onPress={handleToggleShared}
-          className="bg-white/30 p-4 flex-row gap-2 rounded-full items-center self-start"
-        >
-          <Text className='text-lg'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
-          {isShared && (
-          <Feather name='check' size={24}/>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={handleToggleFavorite}
+        {/* Couverture */}
+        <BlurView
+          intensity={50}
+          tint='light'
           style={{
-            justifyContent: 'center',
-            alignItems: 'center',
+            borderRadius: 12,
+            overflow: 'hidden',
           }}
-          className='w-14 h-14 bg-white/30 rounded-full'
         >
-          <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
-        </TouchableOpacity>
-      </View>
+          <View className='flex flex-col p-4'>
+            <Text className="text-3xl font-bold mb-4 text-center">{story.title}</Text>
+            {story.pages[0] && (
+              <View
+                className='w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden'
+              >
+                <Image
+                  source={{ uri: story.pages[0].imageUrl }}
+                  resizeMode="cover"
+                  className='w-full h-full'
+                />
+              </View>
+            )}
 
 
-      {/* Button Story details  */}
-      <TouchableOpacity
-        onPress={() => setIsExpanded(!isExpanded)}
-        className="bg-white/30 p-4 flex-row gap-2 rounded-full items-center justify-center mt-4 mb-4"
-      >
-        <Text className="text-lg">
-          {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
-        </Text>
-        <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
-      </TouchableOpacity>
+            {/* Author date */}
+            <View className='flex flex-row gap-2 items-center mt-4 justify-center'>
+              {/* <Image
+              source={story.user?.profil?.imageUrl ? { uri: story.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: 20,
+              }}
+            /> */}
+              <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
+              {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
+            </View>
+            <Text className="text-sm font-light text-center px-4 pt-4">
+              {story.createdAt ? new Date(story.createdAt).toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: '2-digit'
+              }) : 'Date inconnue'}
+            </Text>
+          </View>
+        </BlurView>
 
+
+
+        {/* //Share Like */}
+        <View className='flex flex-row justify-between mt-4'>
+          <BlurView
+            intensity={50}
+            tint='light'
+            style={{
+              borderRadius: 9999,
+              overflow: 'hidden',
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleToggleShared}
+              className="p-4 flex-row gap-2 items-center"
+            >
+              <Text className='text-lg'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+              {isShared && (
+                <Feather name='check' size={24} />
+              )}
+            </TouchableOpacity>
+          </BlurView>
+
+          <BlurView
+            intensity={50}
+            tint='light'
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 9999,
+              overflow: 'hidden',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <TouchableOpacity
+              onPress={handleToggleFavorite}
+              disabled={toggleFavoriteMutation.isPending || isFavoriteLoading}
+              style={{
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {toggleFavoriteMutation.isPending || isFavoriteLoading ? (
+                <ActivityIndicator size="small" color="red" />
+              ) : (
+                <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
+              )}
+            </TouchableOpacity>
+          </BlurView>
+        </View>
+
+
+        {/* Button Story details  */}
+        <BlurView
+          intensity={50}
+          tint='light'
+          style={{
+            borderRadius: 9999,
+            overflow: 'hidden',
+            marginTop: 16,
+            marginBottom: 16,
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => setIsExpanded(!isExpanded)}
+            className="p-4 flex-row gap-2 items-center justify-center"
+          >
+            <Text className="text-lg">
+              {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
+            </Text>
+            <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
+          </TouchableOpacity>
+        </BlurView>
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -591,7 +619,7 @@ export default function StoryDetailScreen() {
         className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      
+
       <View
         className='absolute bottom-0 left-0 border-t-4 h-20 w-full z-30 flex flex-row items-center justify-between px-8 p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
@@ -603,11 +631,11 @@ export default function StoryDetailScreen() {
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-        onPress={() => setIsFullScreen(true)}
-        className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-4 gap-2 items-center justify-center rounded-full">
-        <Text className='text-white text-lg'>Lire en plein écran </Text>
-        <Feather name="play" size={20} color="white" />
-      </TouchableOpacity>
+          onPress={() => setIsFullScreen(true)}
+          className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-4 gap-2 items-center justify-center rounded-full">
+          <Text className='text-white text-lg'>Lire en plein écran </Text>
+          <Feather name="play" size={20} color="white" />
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setShowDeleteModal(true)}
         >

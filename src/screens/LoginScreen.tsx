@@ -7,6 +7,7 @@ import { useAuth } from '~/context/AuthContext';
 import { api, ApiError } from '~/services/api';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -31,7 +32,7 @@ export default function LoginScreen() {
       // Connexion via le contexte d'authentification
       // Le contexte va automatiquement récupérer le profil utilisateur
       // et attendre que tout soit chargé avant de résoudre la Promise
-      await login(data.accessToken);
+      await login(data.accessToken, data.refreshToken);
       // Maintenant on peut naviguer car l'utilisateur est bien chargé
       navigation.dispatch(
         CommonActions.reset({
@@ -51,8 +52,25 @@ export default function LoginScreen() {
     }
   };
 
+  const handleClearStorage = async () => {
+    try {
+      await AsyncStorage.clear();
+      Alert.alert('Succès', 'Le storage a été nettoyé !');
+    } catch (error) {
+      Alert.alert('Erreur', 'Impossible de nettoyer le storage');
+    }
+  };
+
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
+      {/* Bouton Debug - Clear Storage */}
+      <TouchableOpacity
+        onPress={handleClearStorage}
+        className="absolute top-12 right-4 bg-red-500 px-4 py-2 rounded-lg z-50"
+      >
+        <Text className="text-white font-bold text-xs">Clear Storage</Text>
+      </TouchableOpacity>
+
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[70%]'>
           <Text className="font-bold text-xl mb-4 text-center text-gray-800">Connexion</Text>
