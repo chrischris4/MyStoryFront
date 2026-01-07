@@ -64,7 +64,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                 imageData = await convertToBase64(imageUri);
             }
 
-            const res = await fetch('http://192.168.1.95:3000/profile', {
+            const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/profile`, {
                 method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

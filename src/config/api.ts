@@ -1,5 +1,5 @@
 // Configuration de l'API
-export const API_BASE_URL = 'http://192.168.1.95:3000';
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000';
 
 // Endpoints
 export const API_ENDPOINTS = {

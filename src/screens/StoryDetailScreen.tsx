@@ -59,7 +59,7 @@ export default function StoryDetailScreen() {
   useEffect(() => {
     const checkIfFavorite = async () => {
       const token = await AsyncStorage.getItem('accessToken');
-      const response = await fetch('http://192.168.1.95:3000/favorite-story/me', {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/favorite-story/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -81,9 +81,7 @@ export default function StoryDetailScreen() {
   const handleToggleFavorite = async () => {
     const token = await AsyncStorage.getItem('accessToken');
 
-    const url = isFavorite
-      ? 'http://192.168.1.95:3000/favorite-story'
-      : 'http://192.168.1.95:3000/favorite-story';
+    const url = `${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/favorite-story`;
 
     const method = isFavorite ? 'DELETE' : 'POST';
 
@@ -111,7 +109,7 @@ export default function StoryDetailScreen() {
         return;
       }
 
-      const response = await fetch(`http://192.168.1.95:3000/story/${storyId}/toggle-shared`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/${storyId}/toggle-shared`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -144,7 +142,7 @@ export default function StoryDetailScreen() {
         return;
       }
 
-      const response = await fetch(`http://192.168.1.95:3000/story/${storyId}`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/${storyId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -174,7 +172,7 @@ export default function StoryDetailScreen() {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) throw new Error('Utilisateur non authentifié');
 
-      const response = await fetch(`http://192.168.1.95:3000/story/detail/${storyId}`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/detail/${storyId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

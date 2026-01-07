@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, ReactNode, useContext } from 'react';
 import { useUserStore, User } from '~/store/useUserStore';
+import { API_BASE_URL } from '~/config/api';
 
 export type { User };
 
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchUserProfile = async (authToken: string) => {
     try {
-      const response = await fetch('http://192.168.1.95:3000/profile/me', {
+      const response = await fetch(`${API_BASE_URL}/profile/me`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -90,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await useUserStore.getState().login(userData, newToken, newToken); // refreshToken = accessToken pour l'instant
       } else {
         // Récupérer les infos utilisateur si non fournies
-        const response = await fetch('http://192.168.1.95:3000/profile/me', {
+        const response = await fetch(`${API_BASE_URL}/profile/me`, {
           headers: {
             Authorization: `Bearer ${newToken}`,
           },
@@ -130,7 +131,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!token) return false;
 
     try {
-      const response = await fetch('http://192.168.1.95:3000/profile/me', {
+      const response = await fetch(`${API_BASE_URL}/profile/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

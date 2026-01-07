@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserStore } from '~/store/useUserStore';
+import { API_BASE_URL } from '~/config/api';
 
 type Story = {
   id: string;
@@ -20,7 +21,7 @@ const fetchStories = async (token: string | null): Promise<Story[]> => {
     throw new Error('Utilisateur non authentifié');
   }
 
-  const response = await fetch('http://192.168.1.95:3000/story', {
+  const response = await fetch(`${API_BASE_URL}/story`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

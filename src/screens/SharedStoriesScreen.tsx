@@ -41,7 +41,7 @@ export default function SharedStoriesScreen() {
         return;
       }
 
-      const response = await fetch('http://192.168.1.95:3000/story/shared', {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/shared`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

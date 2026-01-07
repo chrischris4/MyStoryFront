@@ -23,7 +23,7 @@ export default function RegisterScreen() {
 
   const handleRegister = async (values: { email: string; password: string }) => {
     try {
-      const res = await fetch('http://192.168.1.95:3000/auth/register', {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: values.email, password: values.password }),

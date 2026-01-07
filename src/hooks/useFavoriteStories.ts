@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useUserStore } from '~/store/useUserStore';
+import { API_BASE_URL } from '~/config/api';
 
 type FavoriteStory = {
   id: string;
@@ -20,7 +21,7 @@ const fetchFavoriteStories = async (token: string | null): Promise<FavoriteStory
     throw new Error('Utilisateur non connecté');
   }
 
-  const response = await fetch('http://192.168.1.95:3000/favorite-story/me', {
+  const response = await fetch(`${API_BASE_URL}/favorite-story/me`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
