@@ -1,17 +1,13 @@
-import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import HomeButton from '~/components/HomeButton';
-import StyledButton from '~/components/StyledButton';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { MainTabParamList } from '~/navigation/AppNavigator';
 import Background from '~/components/Background';
-import { BlurView } from 'expo-blur';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore } from '~/store/useUserStore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const { isNight } = useTheme();

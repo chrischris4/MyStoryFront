@@ -16,6 +16,7 @@ import BillingScreen from '~/screens/BillingScreen';
 import SettingsScreen from '~/screens/SettingsScreen';
 import ProtectedRoute from '~/components/ProtectedRoute';
 import BottomNavBar from '~/navigation/BottomNavBar';
+import FloatingStoryCreation from '~/components/FloatingStoryCreation';
 import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
 import type { RootStackParamList, MainTabParamList } from '~/types';
@@ -92,6 +93,7 @@ export default function AppNavigator() {
     return (
         <NavigationContainer>
             <AppNavigatorContent />
+            <FloatingStoryCreation />
         </NavigationContainer>
     );
 }

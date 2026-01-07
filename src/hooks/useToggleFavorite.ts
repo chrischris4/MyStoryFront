@@ -33,12 +33,14 @@ const toggleFavorite = async (
 };
 
 export const useToggleFavorite = () => {
-  const accessToken = useUserStore((state) => state.accessToken);
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: ToggleFavoriteParams) =>
-      toggleFavorite(params, accessToken),
+    mutationFn: (params: ToggleFavoriteParams) => {
+      // Récupérer le token frais à chaque mutation
+      const accessToken = useUserStore.getState().accessToken;
+      return toggleFavorite(params, accessToken);
+    },
     onSuccess: () => {
       // Invalider et refetch les queries liées aux favoris
       queryClient.invalidateQueries({ queryKey: ['favoriteStories'] });

@@ -30,10 +30,7 @@ export default function LoginScreen() {
       const data = await api.login(values.email, values.password);
 
       // Connexion via le contexte d'authentification
-      // Le contexte va automatiquement récupérer le profil utilisateur
-      // et attendre que tout soit chargé avant de résoudre la Promise
       await login(data.accessToken, data.refreshToken);
-      // Maintenant on peut naviguer car l'utilisateur est bien chargé
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

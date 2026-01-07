@@ -3,6 +3,8 @@ import { Animated, Easing, Dimensions, View, Text, TouchableOpacity, Image, Acti
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
+import { useStoryCreationStore } from '~/store/useStoryCreationStore';
+import { Feather } from '@expo/vector-icons';
 
 type StoryPage = {
     page: number;
@@ -19,6 +21,7 @@ type StoryModalProps = {
 };
 
 export default function StoryModal({ loading, title, storyPages, storyId, onClose }: StoryModalProps) {
+    const { minimize } = useStoryCreationStore();
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -107,10 +110,38 @@ const orbitSize = screenWidth * 1.4;
 const sunSize = orbitSize * 0.22;
 const moonSize = orbitSize * 0.15;
 
+    const handleMinimize = () => {
+        minimize();
+    };
+
     return (
         <View
             className="absolute bottom-24 left-4 right-4 bg-white h-[50vh] rounded-2xl p-1 shadow-lg z-50"
         >
+            {/* Bouton de minimisation */}
+            <TouchableOpacity
+                onPress={handleMinimize}
+                style={{
+                    position: 'absolute',
+                    top: 12,
+                    right: 12,
+                    zIndex: 100,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: 20,
+                    width: 36,
+                    height: 36,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 4,
+                    elevation: 4,
+                }}
+            >
+                <Feather name="minimize-2" size={20} color="#1F2937" />
+            </TouchableOpacity>
+
             <Animated.View
                 style={{
                     flex: 1,

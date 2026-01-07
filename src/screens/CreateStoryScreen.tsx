@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useUserStore } from '~/store/useUserStore';
+import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { useNavigation } from '@react-navigation/native';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -84,14 +85,68 @@ type CreateStoryScreenNavigationProp = CompositeNavigationProp<
 
 export default function CreateStoryScreen() {
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
-  const [loading, setLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
-  const [storyId, setStoryId] = useState<string | null>(null);
   const { isNight } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
+
+  // Utiliser le store global pour la création d'histoire
+  const {
+    isCreating,
+    loading,
+    title: creationTitle,
+    storyPages,
+    storyId,
+    isMinimized,
+    startCreation,
+    updateProgress,
+    close,
+    minimize,
+    maximize
+  } = useStoryCreationStore();
+
+  // Détecter quand l'utilisateur quitte la page et minimiser automatiquement
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      // Quand on quitte la page CreateStory
+      if (isCreating && !isMinimized) {
+        minimize();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, isCreating, isMinimized, minimize]);
+
+  // Restaurer la modal en plein écran quand on revient sur la page
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Quand on revient sur la page CreateStory
+      if (isCreating && isMinimized) {
+        maximize();
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, isCreating, isMinimized, maximize]);
+
+  // Données de test pour le bouton de test
+  const testStoryPages: StoryPage[] = [
+    {
+      page: 1,
+      text: 'Il était une fois, dans une forêt magique, un petit renard nommé Roux qui rêvait de découvrir le monde.',
+      imageUrl: 'https://picsum.photos/400/600?random=1'
+    },
+    {
+      page: 2,
+      text: 'Un jour, il rencontra une chouette sage qui lui révéla l\'existence d\'un trésor caché au sommet de la montagne.',
+      imageUrl: 'https://picsum.photos/400/600?random=2'
+    },
+    {
+      page: 3,
+      text: 'Roux se mit en route, traversant des rivières et des vallées, faisant de nouvelles rencontres à chaque étape.',
+      imageUrl: 'https://picsum.photos/400/600?random=3'
+    }
+  ];
 
   const formik = useFormik({
     initialValues: {
@@ -105,10 +160,8 @@ export default function CreateStoryScreen() {
       // Fermer la modal de confirmation
       setShowConfirmationModal(false);
 
-      setLoading(true);
-      setShowModal(true);
-      setStoryPages([]);
-      setStoryId(null);
+      // Démarrer la création dans le store global
+      startCreation(values.title);
 
       try {
         const token = await AsyncStorage.getItem('accessToken');
@@ -138,13 +191,12 @@ export default function CreateStoryScreen() {
 
         const story = JSON.parse(text);
 
-        setStoryPages(story.pages);
-        setStoryId(story.id);
+        // Mettre à jour le store avec les résultats
+        updateProgress(story.pages, story.id, false);
 
       } catch (error) {
         Alert.alert('Erreur', 'Erreur lors de la création de l\'histoire.');
-      } finally {
-        setLoading(false);
+        close();
       }
     },
   });
@@ -225,6 +277,21 @@ export default function CreateStoryScreen() {
 
   return (
     <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
+      {/* Bouton de test pour ouvrir/fermer la StoryModal */}
+      <TouchableOpacity
+        className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
+        onPress={() => {
+          if (isCreating) {
+            close();
+          } else {
+            startCreation('Histoire de test');
+            updateProgress(testStoryPages, 'test-story-id', false);
+          }
+        }}
+      >
+        <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
+      </TouchableOpacity>
+
       {isNight && renderStars(50)}
       <View
         className='absolute bottom-10 border-4 self-center h-28 rounded-t-full w-[100%] z-0'
@@ -528,13 +595,13 @@ export default function CreateStoryScreen() {
       />
 
       {/* Modal de résultat */}
-      {showModal && (
+      {isCreating && !isMinimized && (
         <StoryModal
           loading={loading}
-          title={formik.values.title}
+          title={creationTitle || formik.values.title}
           storyPages={storyPages}
           storyId={storyId}
-          onClose={() => setShowModal(false)}
+          onClose={() => close()}
         />
       )}
     </View>

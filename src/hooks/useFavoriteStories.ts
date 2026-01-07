@@ -40,7 +40,11 @@ export const useFavoriteStories = () => {
 
   return useQuery({
     queryKey: ['favoriteStories'],
-    queryFn: () => fetchFavoriteStories(accessToken),
+    queryFn: () => {
+      // Récupérer le token frais à chaque query
+      const freshToken = useUserStore.getState().accessToken;
+      return fetchFavoriteStories(freshToken);
+    },
     staleTime: 1000 * 60 * 5, // Les données sont considérées comme fraîches pendant 5 minutes
     retry: 2, // Réessayer 2 fois en cas d'erreur
     enabled: !!accessToken, // Ne lance la requête que si on a un token

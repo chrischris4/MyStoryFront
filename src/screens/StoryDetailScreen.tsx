@@ -12,7 +12,7 @@ import {
   Animated,
   Easing,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,10 +24,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -80,7 +80,11 @@ export default function StoryDetailScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Alert.alert('Erreur', 'Utilisateur non authentifié');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Utilisateur non authentifié',
+        });
         return;
       }
 
@@ -94,18 +98,27 @@ export default function StoryDetailScreen() {
       if (response.ok) {
         const updatedStory = await response.json();
         setIsShared(updatedStory.isShared);
-        Alert.alert(
-          'Succès',
-          updatedStory.isShared
+        Toast.show({
+          type: 'success',
+          text1: 'Succès',
+          text2: updatedStory.isShared
             ? 'Votre histoire est maintenant partagée avec la communauté!'
-            : 'Votre histoire n\'est plus partagée'
-        );
+            : 'Votre histoire n\'est plus partagée',
+        });
       } else {
-        Alert.alert('Erreur', 'Impossible de modifier le statut de partage');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Impossible de modifier le statut de partage',
+        });
       }
     } catch (err) {
       console.error('Erreur lors du toggle shared:', err);
-      Alert.alert('Erreur', 'Une erreur est survenue');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Une erreur est survenue',
+      });
     }
   };
 
@@ -454,41 +467,31 @@ export default function StoryDetailScreen() {
               onTouchStart={handleUserTouch}
               renderItem={({ item }) => (
                 <View
-                  style={{
-                    width,
-                    height,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: isPortrait ? 16 : 24,
-                  }}
-                >
-
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={{
-                      width: isPortrait ? width * 0.9 : width * 0.7,
-                      height: isPortrait ? height * 0.6 : height * 0.75,
-                    }}
-                    resizeMode="contain"
-                    className='rounded-3xl'
-                  />
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: isPortrait ? 16 : 18,
-                      marginTop: isPortrait ? 16 : 12,
-                      textAlign: 'center',
-                      paddingHorizontal: isPortrait ? 10 : 40,
-                      maxWidth: isPortrait ? width * 0.9 : width * 0.7,
-                    }}
+                    style={{ width, height }}
+                    className="justify-center items-center"
                   >
-                    {item.text}
-                  </Text>
-
-                </View>
-              )}
-
-            />
+                    <View className={`relative aspect-square ${isPortrait ? 'w-full' : ' h-full'}`}>
+                      <Image
+                        source={{ uri: item.imageUrl }}
+                        className="w-full h-full absolute top-0 left-0"
+                        resizeMode="contain"
+                      />
+                      <View
+                        className={`absolute bottom-2 left-2 p-2 bg-black/70 rounded-xl`}
+                      >
+                        <Text
+                          style={{
+                            color: 'white',
+                            fontSize: isPortrait ? 16 : 18,
+                            textAlign: 'left',
+                          }}
+                        >
+                          {item.text}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+              )}            />
 
             {showControls && (
               <Animated.View
@@ -621,7 +624,7 @@ export default function StoryDetailScreen() {
       />
 
       <View
-        className='absolute bottom-0 left-0 border-t-4 h-20 w-full z-30 flex flex-row items-center justify-between px-8 p-4'
+        className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30 flex flex-row items-center justify-between px-8 p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       >
         <TouchableOpacity

@@ -22,7 +22,6 @@ export const setupTokenRefresh = async () => {
     const refreshTime = timeUntilExpiry - 2 * 60 * 1000;
 
     if (refreshTime > 0) {
-      console.log(`🔄 Token refresh programmé dans ${Math.round(refreshTime / 1000 / 60)} minutes`);
 
       refreshTimeout = setTimeout(async () => {
         await refreshTokens();
@@ -32,7 +31,7 @@ export const setupTokenRefresh = async () => {
       await refreshTokens();
     }
   } catch (error) {
-    console.error('Erreur lors du décodage du token:', error);
+    // console.error('Erreur lors du décodage du token:', error);
   }
 };
 
@@ -40,11 +39,9 @@ const refreshTokens = async () => {
   try {
     const refreshToken = await AsyncStorage.getItem('refreshToken');
     if (!refreshToken) {
-      console.log('❌ Pas de refresh token disponible');
+      // console.log('❌ Pas de refresh token disponible');
       return;
     }
-
-    console.log('🔄 Rafraîchissement du token...');
 
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/auth/refresh`, {
       method: 'POST',
@@ -60,15 +57,13 @@ const refreshTokens = async () => {
       await AsyncStorage.setItem('accessToken', newAccessToken);
       await AsyncStorage.setItem('refreshToken', newRefreshToken);
 
-      console.log('✅ Token rafraîchi avec succès');
-
       // Programmer le prochain refresh
       setupTokenRefresh();
     } else {
       const errorText = await response.text();
-      console.error('❌ Échec du rafraîchissement du token');
-      console.error('Status:', response.status);
-      console.error('Réponse:', errorText);
+      // console.error('❌ Échec du rafraîchissement du token');
+      // console.error('Status:', response.status);
+      // console.error('Réponse:', errorText);
       // Déconnecter l'utilisateur
       await AsyncStorage.removeItem('accessToken');
       await AsyncStorage.removeItem('refreshToken');
