@@ -1,0 +1,83 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+let refreshTimeout: NodeJS.Timeout | null = null;
+
+export const setupTokenRefresh = async () => {
+  // Nettoyer l'ancien timeout
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+  }
+
+  const accessToken = await AsyncStorage.getItem('accessToken');
+  if (!accessToken) return;
+
+  // Décoder le token pour obtenir l'expiration
+  try {
+    const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const expiresAt = payload.exp * 1000; // Convertir en ms
+    const now = Date.now();
+    const timeUntilExpiry = expiresAt - now;
+
+    // Rafraîchir 2 minutes avant l'expiration
+    const refreshTime = timeUntilExpiry - 2 * 60 * 1000;
+
+    if (refreshTime > 0) {
+      console.log(`🔄 Token refresh programmé dans ${Math.round(refreshTime / 1000 / 60)} minutes`);
+
+      refreshTimeout = setTimeout(async () => {
+        await refreshTokens();
+      }, refreshTime);
+    } else {
+      // Token déjà expiré ou va expirer bientôt
+      await refreshTokens();
+    }
+  } catch (error) {
+    console.error('Erreur lors du décodage du token:', error);
+  }
+};
+
+const refreshTokens = async () => {
+  try {
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      console.log('❌ Pas de refresh token disponible');
+      return;
+    }
+
+    console.log('🔄 Rafraîchissement du token...');
+
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    if (response.ok) {
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await response.json();
+
+      await AsyncStorage.setItem('accessToken', newAccessToken);
+      await AsyncStorage.setItem('refreshToken', newRefreshToken);
+
+      console.log('✅ Token rafraîchi avec succès');
+
+      // Programmer le prochain refresh
+      setupTokenRefresh();
+    } else {
+      console.error('❌ Échec du rafraîchissement du token');
+      // Déconnecter l'utilisateur
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+    }
+  } catch (error) {
+    console.error('❌ Erreur lors du rafraîchissement:', error);
+  }
+};
+
+export const clearTokenRefresh = () => {
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+    refreshTimeout = null;
+  }
+};

@@ -6,10 +6,16 @@ import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
 import StoryModal from '~/components/StoryModal';
+import { Feather } from '@expo/vector-icons';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useUserStore } from '~/store/useUserStore';
 import { useNavigation } from '@react-navigation/native';
+import type { CompositeNavigationProp } from '@react-navigation/native';
+import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { MainTabParamList, RootStackParamList } from '~/types';
+import LottieView from 'lottie-react-native';
 
 
 
@@ -70,8 +76,13 @@ const createStorySchema = Yup.object().shape({
     .required('Le style est requis'),
 });
 
+type CreateStoryScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'CreateStory'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+
 export default function CreateStoryScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<CreateStoryScreenNavigationProp>();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [storyPages, setStoryPages] = useState<StoryPage[]>([]);
@@ -192,221 +203,268 @@ export default function CreateStoryScreen() {
     <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
       {isNight && renderStars(50)}
       <View
-        className='absolute bottom-0 -right-40 border-4 h-36 rounded-t-full w-[100%] z-0'
+        className='absolute bottom-10 border-4 self-center h-28 rounded-t-full w-[100%] z-0'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
+      {storyCoin === 0 && (
+        <View className='absolute bottom-60 self-center'>
+          <View className="bg-white rounded-3xl px-6 py-4 mb-4 relative" style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 8,
+            elevation: 4,
+            maxWidth: 280
+          }}>
+            <Text className="text-base font-semibold text-center text-gray-800">
+              Vous avez besoin de Story Coins pour créer une histoire !
+            </Text>
+            {/* Petite pointe de la bulle */}
+            <View style={{
+              position: 'absolute',
+              bottom: -10,
+              left: '50%',
+              marginLeft: -10,
+              width: 0,
+              height: 0,
+              backgroundColor: 'transparent',
+              borderStyle: 'solid',
+              borderLeftWidth: 10,
+              borderRightWidth: 10,
+              borderTopWidth: 10,
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+              borderTopColor: 'white',
+            }} />
+          </View>
+        </View>
+      )}
+      {storyCoin === 0 && (
+        <Animated.View
+          style={{
+            position: 'absolute',
+            bottom: 50,
+            zIndex: 1
+          }}
+          className="self-center"
+        >
+          <LottieView
+            source={require('../../assets/animations/HappyDog.json')}
+            autoPlay
+            loop={true}
+            style={{ width: 250, height: 250, zIndex: 5 }}
+          />
+        </Animated.View>
+      )}
       <View
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      <Text className="text-4xl font-bold pb-2 pt-8">C'est partie pour une nouvelle aventure !</Text>
-      <Text className="text-base font-light pb-2">Ici, toutes vos idées prennent vie !</Text>
-      <View className="flex-col pb-4">
-        {storyCoin > 0 ? (
-          <Text className="text-lg font-semibold">Vous avez {storyCoin} Story Coins !</Text>
-        ) : (
-          <View className="flex-col">
-            <Text className="text-lg font-semibold mb-2">
-              Vous n'avez plus de Story Coins !
+      {storyCoin === 0 && (
+        <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 100 }}>
+          <TouchableOpacity
+            className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
+            onPress={() => navigation.navigate('BillingScreen')}
+          >
+            <Text className="text-gray-800 font-semibold text-center text-base">
+              Obtenir des Story Coins
             </Text>
-            <TouchableOpacity
-              className="bg-purple-600 px-4 py-3 rounded-xl"
-              onPress={() => navigation.navigate('Billing' as never)}
-            >
-              <Text className="text-white font-semibold text-center">
-                🛒 Obtenir des Story Coins
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
+            <Feather name="arrow-right" size={20} color="#000" />
+          </TouchableOpacity>
+        </View>
+      )}
+      <Text className="text-4xl font-bold pb-2 pt-8">Creation d'histoire</Text>
+      <Text className="text-lg font-light pb-2">Ici, tout deviens possible !</Text>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-
-        {/* 🟣 Bloc Titre */}
-        <View
-          style={{
-            borderRadius: 24,
-            overflow: 'hidden',
-            marginBottom: 16,
-          }}
-        >
-          <BlurView
-            intensity={50}
-            tint='light'
-            style={{ padding: 16 }}
-          >
-            <Text className="text-lg font-semibold mb-2">Titre de l'histoire</Text>
-            <TextInput
-              className="border border-gray-400 rounded-lg p-2"
-              placeholder="Ex: Pacha et la forêt magique"
-              value={formik.values.title}
-              onChangeText={formik.handleChange('title')}
-              onBlur={formik.handleBlur('title')}
-            />
-            {formik.touched.title && formik.errors.title && (
-              <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
-            )}
-          </BlurView>
-        </View>
-
-        {/* 🟢 Bloc Résumé */}
-        <View
-          style={{
-            borderRadius: 24,
-            overflow: 'hidden',
-            marginBottom: 16,
-          }}
-        >
-          <BlurView
-            intensity={50}
-            tint='light'
-            style={{ padding: 16 }}
-          >
-            <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
-            <TextInput
-              className="border border-gray-400 rounded-lg p-3"
-              placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
-              value={formik.values.prompt}
-              onChangeText={formik.handleChange('prompt')}
-              onBlur={formik.handleBlur('prompt')}
-              multiline
-              numberOfLines={6}
-              textAlignVertical="top"
-              style={{ minHeight: 120 }}
-            />
-            {formik.touched.prompt && formik.errors.prompt && (
-              <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
-            )}
-          </BlurView>
-        </View>
-
-        {/* 🟢 Bloc Style */}
-        <View
-          style={{
-            borderRadius: 24,
-            overflow: 'hidden',
-            marginBottom: 16,
-          }}
-        >
-          <BlurView
-            intensity={50}
-            tint='light'
-            style={{ padding: 16 }}
-          >
-            <Text className="text-lg font-semibold mb-4">Style de l'histoire</Text>
-
-            {/* Carrousel de styles */}
-            <ScrollView
-              ref={scrollViewRef}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              snapToInterval={Dimensions.get('window').width * 0.75}
-              decelerationRate="fast"
-              contentContainerStyle={{ paddingRight: 16 }}
+        {storyCoin > 0 && (
+          <View>
+            {/* 🟣 Bloc Titre */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
             >
-              {STORY_STYLES.map((style) => {
-                const isSelected = formik.values.selectedStyle === style.id;
-                return (
-                  <TouchableOpacity
-                    key={style.id}
-                    onPress={() => formik.setFieldValue('selectedStyle', style.id)}
-                    style={{
-                      width: Dimensions.get('window').width * 0.7,
-                      marginRight: 12,
-                      borderRadius: 16,
-                      overflow: 'hidden',
-                      borderWidth: isSelected ? 3 : 0,
-                      borderColor: isSelected ? '#10B981' : 'transparent',
-                    }}
-                  >
-                    <View
-                      style={{
-                        padding: 20,
-                        backgroundColor: isSelected ? style.gradient[0] + '40' : '#F3F4F6',
-                        borderRadius: 16,
-                      }}
-                    >
-                      <View className="flex-row items-center justify-between mb-3">
-                        <Text style={{ fontSize: 48 }}>{style.emoji}</Text>
-                        {isSelected && (
-                          <View className="bg-green-500 rounded-full w-8 h-8 items-center justify-center">
-                            <Text className="text-white font-bold text-lg">✓</Text>
-                          </View>
-                        )}
-                      </View>
-
-                      <Text
-                        className="font-bold text-xl mb-1"
-                        style={{ color: isSelected ? style.gradient[1] : '#1F2937' }}
-                      >
-                        {style.name}
-                      </Text>
-
-                      <Text className="text-gray-600 text-sm">
-                        {style.description}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-
-            {/* Indicateurs de page */}
-            <View className="flex-row justify-center mt-4 gap-2">
-              {STORY_STYLES.map((style) => (
-                <View
-                  key={`dot-${style.id}`}
-                  className="rounded-full"
-                  style={{
-                    width: formik.values.selectedStyle === style.id ? 24 : 8,
-                    height: 8,
-                    backgroundColor: formik.values.selectedStyle === style.id ? '#10B981' : '#D1D5DB',
-                  }}
+              <BlurView
+                intensity={50}
+                tint='light'
+                style={{ padding: 16 }}
+              >
+                <Text className="text-lg font-semibold mb-2">Titre de l'histoire</Text>
+                <TextInput
+                  className="border border-gray-400 rounded-lg p-2"
+                  placeholder="Ex: Pacha et la forêt magique"
+                  value={formik.values.title}
+                  onChangeText={formik.handleChange('title')}
+                  onBlur={formik.handleBlur('title')}
                 />
-              ))}
+                {formik.touched.title && formik.errors.title && (
+                  <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
+                )}
+              </BlurView>
             </View>
-            {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-              <Text className="text-red-500 text-sm mt-2 text-center">{formik.errors.selectedStyle}</Text>
-            )}
-          </BlurView>
-        </View>
 
-        {/* 🧡 Sélecteur de pages */}
-        <View
-          style={{
-            borderRadius: 24,
-            overflow: 'hidden',
-            marginBottom: 16,
-          }}
-        >
-          <BlurView
-            intensity={50}
-            tint='light'
-            style={{ padding: 16 }}
-          >
-            <PageSelector
-              numPages={formik.values.numPages}
-              setNumPages={(n) => formik.setFieldValue('numPages', n)}
-            />
-            {formik.touched.numPages && formik.errors.numPages && (
-              <Text className="text-red-500 text-sm mt-1 text-center">{formik.errors.numPages}</Text>
-            )}
-          </BlurView>
-        </View>
+            {/* 🟢 Bloc Résumé */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              <BlurView
+                intensity={50}
+                tint='light'
+                style={{ padding: 16 }}
+              >
+                <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
+                <TextInput
+                  className="border border-gray-400 rounded-lg p-3"
+                  placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
+                  value={formik.values.prompt}
+                  onChangeText={formik.handleChange('prompt')}
+                  onBlur={formik.handleBlur('prompt')}
+                  multiline
+                  numberOfLines={6}
+                  textAlignVertical="top"
+                  style={{ minHeight: 120 }}
+                />
+                {formik.touched.prompt && formik.errors.prompt && (
+                  <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
+                )}
+              </BlurView>
+            </View>
 
-        {/* 🖋️ Bouton */}
-        <TouchableOpacity
-          className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
-          onPress={() => formik.handleSubmit()}
-        >
-          <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
-        </TouchableOpacity>
+            {/* 🟢 Bloc Style */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              <BlurView
+                intensity={50}
+                tint='light'
+                style={{ padding: 16 }}
+              >
+                <Text className="text-lg font-semibold mb-4">Style de l'histoire</Text>
 
+                {/* Carrousel de styles */}
+                <ScrollView
+                  ref={scrollViewRef}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  snapToInterval={Dimensions.get('window').width * 0.75}
+                  decelerationRate="fast"
+                  contentContainerStyle={{ paddingRight: 16 }}
+                >
+                  {STORY_STYLES.map((style) => {
+                    const isSelected = formik.values.selectedStyle === style.id;
+                    return (
+                      <TouchableOpacity
+                        key={style.id}
+                        onPress={() => formik.setFieldValue('selectedStyle', style.id)}
+                        style={{
+                          width: Dimensions.get('window').width * 0.7,
+                          marginRight: 12,
+                          borderRadius: 16,
+                          overflow: 'hidden',
+                          borderWidth: isSelected ? 3 : 0,
+                          borderColor: isSelected ? '#10B981' : 'transparent',
+                        }}
+                      >
+                        <View
+                          style={{
+                            padding: 20,
+                            backgroundColor: isSelected ? style.gradient[0] + '40' : '#F3F4F6',
+                            borderRadius: 16,
+                          }}
+                        >
+                          <View className="flex-row items-center justify-between mb-3">
+                            <Text style={{ fontSize: 48 }}>{style.emoji}</Text>
+                            {isSelected && (
+                              <View className="bg-green-500 rounded-full w-8 h-8 items-center justify-center">
+                                <Text className="text-white font-bold text-lg">✓</Text>
+                              </View>
+                            )}
+                          </View>
+
+                          <Text
+                            className="font-bold text-xl mb-1"
+                            style={{ color: isSelected ? style.gradient[1] : '#1F2937' }}
+                          >
+                            {style.name}
+                          </Text>
+
+                          <Text className="text-gray-600 text-sm">
+                            {style.description}
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </ScrollView>
+
+                {/* Indicateurs de page */}
+                <View className="flex-row justify-center mt-4 gap-2">
+                  {STORY_STYLES.map((style) => (
+                    <View
+                      key={`dot-${style.id}`}
+                      className="rounded-full"
+                      style={{
+                        width: formik.values.selectedStyle === style.id ? 24 : 8,
+                        height: 8,
+                        backgroundColor: formik.values.selectedStyle === style.id ? '#10B981' : '#D1D5DB',
+                      }}
+                    />
+                  ))}
+                </View>
+                {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+                  <Text className="text-red-500 text-sm mt-2 text-center">{formik.errors.selectedStyle}</Text>
+                )}
+              </BlurView>
+            </View>
+
+            {/* 🧡 Sélecteur de pages */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              <BlurView
+                intensity={50}
+                tint='light'
+                style={{ padding: 16 }}
+              >
+                <PageSelector
+                  numPages={formik.values.numPages}
+                  setNumPages={(n) => formik.setFieldValue('numPages', n)}
+                />
+                {formik.touched.numPages && formik.errors.numPages && (
+                  <Text className="text-red-500 text-sm mt-1 text-center">{formik.errors.numPages}</Text>
+                )}
+              </BlurView>
+            </View>
+
+            {/* 🖋️ Bouton */}
+            <TouchableOpacity
+              className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
+              onPress={() => formik.handleSubmit()}
+            >
+              <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </ScrollView>
+
 
 
       {/* /////////////////MODAL/////////////////////////////////////////////////// */}

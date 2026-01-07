@@ -34,7 +34,7 @@ type StoryFolderProps = {
     description: string;
     stories: any[];
     isNight: boolean;
-    isPremium: boolean;
+    isPremium?: boolean;
     isShared?: boolean;
 };
 
@@ -70,6 +70,12 @@ export default function StoryFolder({
     };
 
     const handleToggle = () => {
+        // Empêcher l'expansion si l'utilisateur n'est pas premium et que c'est un dossier partagé
+        if (!isPremium && isShared && !expanded) {
+            navigation.navigate('BillingScreen');
+            return;
+        }
+
         if (expanded) {
             width.value = SCREEN_WIDTH / 1.08;
             height.value = 84;
@@ -82,6 +88,7 @@ export default function StoryFolder({
         setExpanded(!expanded);
     };
 
+    
     return (
         <Pressable
             onPress={() => {
@@ -91,11 +98,11 @@ export default function StoryFolder({
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
                 {!isPremium && isShared && (
-                    <View className='absolute top-8 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'>
+                    <View className='absolute top-3 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'>
                         <Feather
                             name="lock"
                             size={20}
-                            color='white'
+                            color='black'
                         />
 
                     </View>
@@ -115,7 +122,7 @@ export default function StoryFolder({
                         {expanded && (
                             <Pressable
                                 onPress={handleToggle}
-                                className="absolute top-0 right-0 p-2"
+                                className="absolute -top-2 -right-1 p-2"
                             >
                                 <Feather name="x" size={24} color="#fff" />
                             </Pressable>
@@ -157,10 +164,21 @@ export default function StoryFolder({
                                                     resizeMode="cover"
                                                 />
                                             )}
-                                            <View className='flex flex-row gap-1 justify-end mt-2'>
-                                                <Text className="text-lg font-medium mb-2"><Feather name="heart" size={24} color="#334155" /></Text>
-                                                <Text className="text-lg font-medium mb-2"><Feather name="book" size={24} color="#334155" /></Text>
-                                                <Text className="text-lg font-medium mb-2"><Feather name="book" size={24} color="#334155" /></Text>
+                                            <View className='flex flex-row gap-1 justify-between items-center mt-2'>
+                                                {/* Author date */}
+                                                        <View className='flex flex-row gap-2 items-center'>
+                                                          <Image
+                                                            source={item.user?.profil?.imageUrl ? { uri: item.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
+                                                            style={{
+                                                              width: 40,
+                                                              height: 40,
+                                                              borderRadius: 20,
+                                                            }}
+                                                          />
+                                                          {/* <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text> */}
+                                                          <Text className="text-base font-bold text-black">{item.user?.profil?.name || 'Anonyme'}</Text>
+                                                        </View>
+                                                <Text className="text-lg font-medium"><Feather name="heart" size={24} color="#334155" /></Text>
                                             </View>
 
 

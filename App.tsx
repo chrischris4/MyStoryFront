@@ -5,6 +5,7 @@ import './global.css';
 import AppNavigator from './src/navigation/AppNavigator';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Toast from 'react-native-toast-message';
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ export default function App() {
           </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
+      <Toast />
     </>
   );
 }

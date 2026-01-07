@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, Animated } from 'react-native';
 import HomeButton from '~/components/HomeButton';
 import StyledButton from '~/components/StyledButton';
@@ -11,9 +11,10 @@ import { BlurView } from 'expo-blur';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore } from '~/store/useUserStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
-  const { isNight, toggleTheme } = useTheme();
+  const { isNight } = useTheme();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
 
   // Récupérer les données depuis Zustand au lieu de faire un fetch
@@ -21,9 +22,25 @@ export default function HomeScreen() {
   const profile = {
     name: user?.profil.name || 'Prénom',
     isPremium: user?.isPremium,
-    imageUrl: user?.profil.imageUrl || 'https://randomuser.me/api/portraits/men/75.jpg',
+    imageUrl: user?.profil.imageUrl,
     storyCoin: user?.storyCoin || 0,
   };
+
+  useEffect(() => {
+  const logAuthState = async () => {
+    const token = await AsyncStorage.getItem('accessToken');
+    const userString = await AsyncStorage.getItem('user');
+    const user = userString ? JSON.parse(userString) : null;
+
+    console.log('🔑 Token:', token ? `${token.substring(0, 30)}...` : 'null');
+    console.log('👤 User:', user);
+    console.log('📧 Email:', user?.email);
+    console.log('👤 Username:', user?.profil?.name);
+    console.log('🆔 User ID:', user?.id);
+  };
+
+  logAuthState();
+}, []);
 
   return (
     <View className="flex-1 relative">
@@ -51,7 +68,7 @@ export default function HomeScreen() {
               }}
             >
               <Image
-                source={{ uri: profile?.imageUrl || 'https://randomuser.me/api/portraits/men/75.jpg' }}
+                source={profile?.imageUrl ? { uri: profile.imageUrl } : require('../../assets/default-avatar.png')}
                 style={{
                   width: 140,
                   height: 140,
@@ -128,7 +145,7 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate('CreateStory')}
               title="Créer une histoire"
               description="Laissez parler votre imagination"
-              icon={<Feather name="users" size={24} color="#334155" />}
+              icon={<Feather name="plus" size={24} color="#334155" />}
             />
           </View>
           <HomeButton
@@ -136,7 +153,7 @@ export default function HomeScreen() {
             onPress={() => navigation.navigate('SharedStories')}
             title="Découvrir"
             description="Parcourez les histoires partagées par d'autres utilisateus !"
-            icon={<Feather name="book" size={24} color="#334155" />}
+            icon={<Feather name="users" size={24} color="#334155" />}
           />
 
         </View>

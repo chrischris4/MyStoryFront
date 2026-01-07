@@ -47,8 +47,8 @@ export default function StoriesScreen() {
     return (
       <View className="flex-1 items-center justify-center px-4" style={{ backgroundColor: skyColor }}>
 
-          <Text className="text-white font-semibold">Ooops !</Text>
-                    <Text className="text-white font-semibold">Une erreur est survenue</Text>
+        <Text className="text-white font-semibold">Ooops !</Text>
+        <Text className="text-white font-semibold">Une erreur est survenue</Text>
 
         <View
           className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'

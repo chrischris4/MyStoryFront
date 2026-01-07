@@ -25,11 +25,10 @@ export type Page = {
   imageUrl: string;
 };
 
-export type Story = {
+export type Profil = {
   id: number;
-  title: string;
-  pages: Page[];
-  isShared?: boolean;
+  name?: string;
+  imageUrl?: string;
 };
 
 export type User = {
@@ -38,4 +37,14 @@ export type User = {
   username?: string;
   avatarUrl?: string;
   isAnonymous: boolean;
+  profil?: Profil;
+};
+
+export type Story = {
+  id: number;
+  title: string;
+  pages: Page[];
+  isShared?: boolean;
+  createdAt?: string;
+  user?: User;
 };

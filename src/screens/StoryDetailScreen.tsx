@@ -9,7 +9,6 @@ import {
   Modal,
   FlatList,
   useWindowDimensions,
-  Pressable,
   Animated,
   Easing,
   Alert,
@@ -23,7 +22,6 @@ import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
-import { BlurView } from 'expo-blur';
 import LottieView from 'lottie-react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
@@ -51,6 +49,7 @@ export default function StoryDetailScreen() {
   const [isShared, setIsShared] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [forceLandscape, setForceLandscape] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
 
   const { width, height } = useWindowDimensions();
@@ -74,8 +73,6 @@ export default function StoryDetailScreen() {
 
     checkIfFavorite();
   }, [storyId]);
-
-
 
 
   const handleToggleFavorite = async () => {
@@ -154,7 +151,7 @@ export default function StoryDetailScreen() {
         Alert.alert('Succès', 'Histoire supprimée avec succès', [
           {
             text: 'OK',
-            onPress: () => navigation.navigate('Stories'),
+            onPress: () => navigation.navigate('MainTabs'),
           },
         ]);
       } else {
@@ -338,51 +335,86 @@ export default function StoryDetailScreen() {
 
   return (
     <View className="flex-1 relative h-screen" style={{ backgroundColor: skyColor }}>
-      {/* Sol */}
-      <View
-        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
 
-      <TouchableOpacity
-          onPress={() => setIsFullScreen(true)}
-          className="bg-black absolute bottom-24 self-center p-4  w-11/12 z-30 flex flex-row px-4 gap-2 items-center justify-center rounded-full">
-            <Text className='text-white text-lg'>Lire en plein écran </Text>
-          <Feather name="play" size={20} color="white" />
-        </TouchableOpacity>
-
-      <Text className="text-4xl font-bold mb-4 text-center px-4 pt-8">{story.title}</Text>
-      <View
-        className='absolute bottom-0 left-0 border-t-4 h-20 w-full z-10 flex flex-row items-center justify-between px-8 p-4'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          className=""
-        >
-          <Feather name="chevron-left" size={24} color="white" />
-        </TouchableOpacity>
-        
-        
-        <TouchableOpacity
-          onPress={handleToggleShared}
-          className={`${isShared ? 'bg-yellow-800' : '' } h-16 w-16 rounded-full flex items-center justify-center`}
-        >
-
-          <Feather name={isShared ? 'users' : 'share-2'} size={24} color="white" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setShowDeleteModal(true)}
-        >
-          <Feather name="trash-2" size={24} color="white" />
-        </TouchableOpacity>
-      </View>
       {isNight && renderStars(50)}
       <ScrollView
-        className="flex-grow px-4"
+        className="flex-grow px-4 z-20"
         contentContainerStyle={{ paddingBottom: 140 }}
       >
+        
+      {/* Couverture */}
+      <View className='flex flex-col rounded-xl bg-white/30 mt-8 p-4'>
+        <Text className="text-3xl font-bold mb-4 text-center">{story.title}</Text>
+        {story.pages[0] && (
+          <View className='w-5/6 aspect-square rounded-full shadow-white overflow-hidden self-center'>
+            <Image
+              source={{ uri: story.pages[0].imageUrl }}
+              resizeMode="cover"
+              className='w-full h-full'
+            />
+          </View>
+        )}
+
+
+        {/* Author date */}
+        <View className='flex flex-row gap-2 items-center mt-4 justify-center'>
+          {/* <Image
+            source={story.user?.profil?.imageUrl ? { uri: story.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+            }}
+          /> */}
+          <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
+          {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
+        </View>
+        <Text className="text-base font-light text-center px-4 pt-4">
+          {new Date(story.createdAt).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+          })}
+        </Text>
+      </View>
+
+
+
+      {/* //Share Like */}
+      <View className='flex flex-row justify-between mt-4'>
+        <TouchableOpacity
+          onPress={handleToggleShared}
+          className="bg-white/30 p-4 flex-row gap-2 rounded-full items-center self-start"
+        >
+          <Text className='text-lg'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+          {isShared && (
+          <Feather name='check' size={24}/>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleToggleFavorite}
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          className='w-14 h-14 bg-white/30 rounded-full'
+        >
+          <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
+        </TouchableOpacity>
+      </View>
+
+
+      {/* Button Story details  */}
+      <TouchableOpacity
+        onPress={() => setIsExpanded(!isExpanded)}
+        className="bg-white/30 p-4 flex-row gap-2 rounded-full items-center justify-center mt-4 mb-4"
+      >
+        <Text className="text-lg">
+          {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
+        </Text>
+        <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
+      </TouchableOpacity>
+
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -402,7 +434,7 @@ export default function StoryDetailScreen() {
                     padding: isPortrait ? 16 : 24,
                   }}
                 >
-                  
+
                   <Image
                     source={{ uri: item.imageUrl }}
                     style={{
@@ -474,18 +506,6 @@ export default function StoryDetailScreen() {
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-left" size={24} color="black" />
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={handleToggleFavorite}
-                    style={{
-                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                      borderRadius: 40,
-                      padding: 20,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
-                  </TouchableOpacity>
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-right" size={24} color="black" />
                   </TouchableOpacity>
@@ -550,7 +570,7 @@ export default function StoryDetailScreen() {
           </View>
         </Modal>
 
-        {story.pages
+        {isExpanded && story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
           .map((page) => (
             <View key={page.id} className=" bg-gray-100 p-4 rounded-lg shadow mb-4">
@@ -563,9 +583,37 @@ export default function StoryDetailScreen() {
             </View>
           ))}
 
-        
+
 
       </ScrollView>
+      {/* Navbar */}
+      <View
+        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
+      
+      <View
+        className='absolute bottom-0 left-0 border-t-4 h-20 w-full z-30 flex flex-row items-center justify-between px-8 p-4'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      >
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          className=""
+        >
+          <Feather name="chevron-left" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity
+        onPress={() => setIsFullScreen(true)}
+        className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-4 gap-2 items-center justify-center rounded-full">
+        <Text className='text-white text-lg'>Lire en plein écran </Text>
+        <Feather name="play" size={20} color="white" />
+      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setShowDeleteModal(true)}
+        >
+          <Feather name="trash-2" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

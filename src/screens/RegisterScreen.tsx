@@ -21,7 +21,10 @@ const registerSchema = Yup.object().shape({
 export default function RegisterScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const handleRegister = async (values: { email: string; password: string }) => {
+  const handleRegister = async (
+    values: { email: string; password: string },
+    { setSubmitting, setFieldError }: any
+  ) => {
     try {
       const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/auth/register`, {
         method: 'POST',
@@ -29,23 +32,35 @@ export default function RegisterScreen() {
         body: JSON.stringify({ email: values.email, password: values.password }),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const errorData = await res.json();
-        Alert.alert('Erreur', errorData.message || 'Erreur lors de l\'inscription');
+        // Gestion des erreurs spécifiques du backend
+        if (res.status === 409) {
+          // Conflit - email ou nom déjà utilisé
+          if (data.message?.includes('email')) {
+            setFieldError('email', data.message || 'Cet email est déjà utilisé');
+          } else {
+            // Erreur générique pour les conflits
+            setFieldError('email', data.message || 'Erreur lors de l\'inscription');
+          }
+        } else {
+          // Autres erreurs
+          Alert.alert('Erreur', data.message || 'Erreur lors de l\'inscription');
+        }
+        setSubmitting(false);
         return;
       }
 
-      const data = await res.json();
       const accessToken = data.accessToken;
-
       await AsyncStorage.setItem('accessToken', accessToken);
 
       Alert.alert('Succès', 'Compte créé avec succès !');
-
       navigation.navigate('CompleteProfileScreen', { accessToken });
 
     } catch (error) {
-      Alert.alert('Erreur', 'Une erreur est survenue');
+      Alert.alert('Erreur', 'Une erreur réseau est survenue');
+      setSubmitting(false);
     }
   };
 
@@ -60,7 +75,7 @@ export default function RegisterScreen() {
             validationSchema={registerSchema}
             onSubmit={handleRegister}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <>
                 <View className="mb-4">
                   <TextInput
@@ -105,10 +120,13 @@ export default function RegisterScreen() {
                 </View>
 
                 <TouchableOpacity
-                  className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
+                  className={`${isSubmitting ? 'bg-gray-400' : 'bg-[#38b6ff]'} rounded-xl py-4 w-full mb-4`}
                   onPress={() => handleSubmit()}
+                  disabled={isSubmitting}
                 >
-                  <Text className="text-white font-semibold text-center">S'inscrire</Text>
+                  <Text className="text-white font-semibold text-center">
+                    {isSubmitting ? 'Inscription en cours...' : 'S\'inscrire'}
+                  </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>

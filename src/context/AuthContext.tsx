@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, ReactNode, useContext } from 'react';
 import { useUserStore, User } from '~/store/useUserStore';
 import { API_BASE_URL } from '~/config/api';
+import { setupTokenRefresh, clearTokenRefresh } from '~/utils/authRefresh';
 
 export type { User };
 
@@ -46,7 +47,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     loadStoredAuth();
-  }, []);
+
+    // Configurer le rafraîchissement automatique du token
+    if (token) {
+      setupTokenRefresh();
+    }
+
+    return () => {
+      clearTokenRefresh();
+    };
+  }, [token]);
 
   const loadStoredAuth = async () => {
     try {
@@ -112,6 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
+      clearTokenRefresh();
       await useUserStore.getState().logout();
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
