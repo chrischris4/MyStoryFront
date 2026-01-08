@@ -79,7 +79,7 @@ export default function BillingScreen() {
         });
 
         const purchaseError = RNIap.purchaseErrorListener((error: any) => {
-            console.warn('Erreur d'achat', error);
+            console.warn('Erreur d\'achat', error);
             Toast.show({
                 type: 'error',
                 text1: 'Erreur d\'achat',
