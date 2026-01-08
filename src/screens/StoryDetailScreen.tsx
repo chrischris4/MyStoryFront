@@ -69,7 +69,11 @@ export default function StoryDetailScreen() {
           console.log('✅ Favori mis à jour avec succès');
         },
         onError: (error) => {
-          Alert.alert('Erreur', 'Impossible de modifier le favori');
+          Toast.show({
+            type: 'error',
+            text1: 'Erreur',
+            text2: 'Impossible de modifier le favori',
+          });
           console.error('Erreur toggle favori:', error);
         },
       }
@@ -126,7 +130,11 @@ export default function StoryDetailScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        Alert.alert('Erreur', 'Utilisateur non authentifié');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Utilisateur non authentifié',
+        });
         return;
       }
 
@@ -139,18 +147,29 @@ export default function StoryDetailScreen() {
 
       if (response.ok) {
         setShowDeleteModal(false);
-        Alert.alert('Succès', 'Histoire supprimée avec succès', [
-          {
-            text: 'OK',
-            onPress: () => navigation.navigate('MainTabs'),
-          },
-        ]);
+        Toast.show({
+          type: 'success',
+          text1: 'Succès',
+          text2: 'Histoire supprimée avec succès',
+        });
+        // Naviguer après un court délai pour laisser le toast s'afficher
+        setTimeout(() => {
+          navigation.navigate('MainTabs');
+        }, 1000);
       } else {
-        Alert.alert('Erreur', 'Impossible de supprimer l\'histoire');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Impossible de supprimer l\'histoire',
+        });
       }
     } catch (err) {
       console.error('Erreur lors de la suppression:', err);
-      Alert.alert('Erreur', 'Une erreur est survenue');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Une erreur est survenue',
+      });
     }
   };
 

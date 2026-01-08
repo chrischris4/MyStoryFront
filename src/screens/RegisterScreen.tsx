@@ -1,10 +1,11 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import Toast from 'react-native-toast-message';
 
 const registerSchema = Yup.object().shape({
   email: Yup.string()
@@ -46,7 +47,11 @@ export default function RegisterScreen() {
           }
         } else {
           // Autres erreurs
-          Alert.alert('Erreur', data.message || 'Erreur lors de l\'inscription');
+          Toast.show({
+            type: 'error',
+            text1: 'Erreur',
+            text2: data.message || 'Erreur lors de l\'inscription',
+          });
         }
         setSubmitting(false);
         return;
@@ -55,11 +60,19 @@ export default function RegisterScreen() {
       const accessToken = data.accessToken;
       await AsyncStorage.setItem('accessToken', accessToken);
 
-      Alert.alert('Succès', 'Compte créé avec succès !');
+      Toast.show({
+        type: 'success',
+        text1: 'Succès',
+        text2: 'Compte créé avec succès !',
+      });
       navigation.navigate('CompleteProfileScreen', { accessToken });
 
     } catch (error) {
-      Alert.alert('Erreur', 'Une erreur réseau est survenue');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Une erreur réseau est survenue',
+      });
       setSubmitting(false);
     }
   };

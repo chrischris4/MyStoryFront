@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, Switch, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
 import { Feather } from '@expo/vector-icons';
 import Background from '~/components/Background';
+import Toast from 'react-native-toast-message';
 
 export default function SettingsScreen() {
     const navigation = useNavigation();
@@ -20,17 +21,14 @@ export default function SettingsScreen() {
 
 
     const handleLogout = async () => {
-        Alert.alert('Déconnexion', 'Voulez-vous vraiment vous déconnecter ?', [
-            { text: 'Annuler', style: 'cancel' },
-            {
-                text: 'Oui',
-                onPress: async () => {
-                    await logout();
-                    navigation.navigate('Login' as never);
-                    Alert.alert('Déconnecté', 'Vous avez été déconnecté avec succès');
-                },
-            },
-        ]);
+        // Utiliser un modal de confirmation personnalisé ou directement logout
+        await logout();
+        navigation.navigate('Login' as never);
+        Toast.show({
+            type: 'success',
+            text1: 'Déconnecté',
+            text2: 'Vous avez été déconnecté avec succès',
+        });
     };
 
     const handleBilling = () => {

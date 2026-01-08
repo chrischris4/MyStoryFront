@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
@@ -18,6 +18,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -195,7 +196,11 @@ export default function CreateStoryScreen() {
         updateProgress(story.pages, story.id, false);
 
       } catch (error) {
-        Alert.alert('Erreur', 'Erreur lors de la création de l\'histoire.');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Erreur lors de la création de l\'histoire.',
+        });
         close();
       }
     },

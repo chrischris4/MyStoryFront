@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Alert, Dimensions, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import ShopButton from '~/components/ShopButton';
 import { useTheme } from '~/context/ThemeContext';
 import { Feather } from '@expo/vector-icons';
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
+import Toast from 'react-native-toast-message';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -67,19 +68,23 @@ export default function BillingScreen() {
         const purchaseUpdate = RNIap.purchaseUpdatedListener(async (purchase: RNIap.Purchase) => {
             const receipt = purchase.transactionReceipt;
             if (receipt) {
-                Alert.alert(
-                    purchase.productId === 'tokens_pack_100' ? '✅ Jetons achetés' : '🎉 Abonnement activé',
-                    purchase.productId === 'tokens_pack_100'
-                        ? 'Tu as reçu 100 jetons 🎉'
-                        : 'Bienvenue Premium !'
-                );
+                const isTokenPack = purchase.productId.includes('tokens_pack');
+                Toast.show({
+                    type: 'success',
+                    text1: isTokenPack ? 'Jetons achetés' : 'Abonnement activé',
+                    text2: isTokenPack ? 'Tu as reçu tes jetons !' : 'Bienvenue Premium !',
+                });
                 await RNIap.finishTransaction({ purchase, isConsumable: true });
             }
         });
 
         const purchaseError = RNIap.purchaseErrorListener((error: any) => {
-            console.warn('Erreur d’achat', error);
-            Alert.alert('Erreur', error.message);
+            console.warn('Erreur d'achat', error);
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur d\'achat',
+                text2: error.message,
+            });
         });
 
         return () => {

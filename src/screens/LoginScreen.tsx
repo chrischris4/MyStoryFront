@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -8,6 +8,7 @@ import { api, ApiError } from '~/services/api';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -40,9 +41,17 @@ export default function LoginScreen() {
 
     } catch (error) {
       if (error instanceof ApiError) {
-        Alert.alert('Erreur', error.message || 'Erreur lors de la connexion');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: error.message || 'Erreur lors de la connexion',
+        });
       } else {
-        Alert.alert('Erreur', 'Une erreur est survenue');
+        Toast.show({
+          type: 'error',
+          text1: 'Erreur',
+          text2: 'Une erreur est survenue',
+        });
       }
     } finally {
       setIsLoading(false);
@@ -52,9 +61,17 @@ export default function LoginScreen() {
   const handleClearStorage = async () => {
     try {
       await AsyncStorage.clear();
-      Alert.alert('Succès', 'Le storage a été nettoyé !');
+      Toast.show({
+        type: 'success',
+        text1: 'Succès',
+        text2: 'Le storage a été nettoyé !',
+      });
     } catch (error) {
-      Alert.alert('Erreur', 'Impossible de nettoyer le storage');
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Impossible de nettoyer le storage',
+      });
     }
   };
 

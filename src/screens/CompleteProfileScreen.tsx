@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { View, TextInput, Image, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, TextInput, Image, Text, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CompleteProfileScreen'>;
 
@@ -34,7 +35,11 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
-            Alert.alert('Permission refusée', 'Nous avons besoin de la permission pour accéder à vos photos.');
+            Toast.show({
+                type: 'error',
+                text1: 'Permission refusée',
+                text2: 'Nous avons besoin de la permission pour accéder à vos photos.',
+            });
             return;
         }
 
@@ -103,7 +108,11 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                     });
                 } catch (loginError) {
                     console.error('Erreur lors de la connexion:', loginError);
-                    Alert.alert('Erreur', 'Erreur lors de la connexion. Veuillez vous reconnecter.');
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erreur',
+                        text2: 'Erreur lors de la connexion. Veuillez vous reconnecter.',
+                    });
                     navigation.reset({
                         index: 0,
                         routes: [{ name: 'Login' }],
@@ -116,15 +125,27 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                     if (data.message?.includes('nom')) {
                         setFieldError('name', data.message || 'Ce nom d\'utilisateur est déjà pris');
                     } else {
-                        Alert.alert('Erreur', data.message || 'Erreur lors de la mise à jour du profil.');
+                        Toast.show({
+                            type: 'error',
+                            text1: 'Erreur',
+                            text2: data.message || 'Erreur lors de la mise à jour du profil.',
+                        });
                     }
                 } else {
                     // Autres erreurs
-                    Alert.alert('Erreur', data.message || 'Erreur lors de la mise à jour du profil.');
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Erreur',
+                        text2: data.message || 'Erreur lors de la mise à jour du profil.',
+                    });
                 }
             }
         } catch (error) {
-            Alert.alert('Erreur', 'Une erreur réseau est survenue.');
+            Toast.show({
+                type: 'error',
+                text1: 'Erreur',
+                text2: 'Une erreur réseau est survenue.',
+            });
         } finally {
             setSubmitting(false);
         }
