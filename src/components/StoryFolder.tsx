@@ -116,8 +116,8 @@ export default function StoryFolder({
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-xl font-semibold self-start`}>{title}</Text>
-                        <Text className="text-slate-500 text-lg font-light">{description}</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-xl font-baloo-semibold self-start`}>{title}</Text>
+                        <Text className="text-slate-500 text-lg font-baloo">{description}</Text>
 
                         {expanded && (
                             <Pressable
@@ -130,12 +130,12 @@ export default function StoryFolder({
 
                         {stories.length === 0 ? (
                             <View className="flex-1 items-center  mt-6">
-                                <Text className="text-gray-500 mb-4">Pas d'histoires créées.</Text>
+                                <Text className="text-gray-500 mb-4 font-baloo-medium">Pas d'histoires créées.</Text>
                                 <TouchableOpacity
                                     className="bg-white px-4 py-2 rounded-lg"
                                     onPress={() => navigation.navigate('CreateStory')}
                                 >
-                                    <Text className="font-semibold">Créer une Story</Text>
+                                    <Text className="font-baloo-semibold">Créer une histoire</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : expanded ? (
@@ -155,7 +155,7 @@ export default function StoryFolder({
                                                 navigation.navigate('StoryDetail', { storyId: item.id })
                                             }
                                         >
-                                            <Text className="text-lg font-medium mb-2">{item.title}</Text>
+                                            <Text className="text-lg font-baloo-semibold mb-2">{item.title}</Text>
 
                                             {firstPageImage && (
                                                 <Image
@@ -176,12 +176,10 @@ export default function StoryFolder({
                                                             }}
                                                           />
                                                           {/* <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text> */}
-                                                          <Text className="text-base font-bold text-black">{item.user?.profil?.name || 'Anonyme'}</Text>
+                                                          <Text className="text-base font-baloo-semibold text-black">{item.user?.profil?.name || 'Anonyme'}</Text>
                                                         </View>
                                                 <Text className="text-lg font-medium"><Feather name="heart" size={24} color="#334155" /></Text>
                                             </View>
-
-
                                         </TouchableOpacity>
                                     );
                                 }}

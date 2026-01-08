@@ -11,7 +11,8 @@
     },
     "plugins": [
       "expo-secure-store",
-      "expo-screen-orientation"
+      "expo-screen-orientation",
+      "expo-font"
     ],
     "orientation": "default",
     "icon": "./assets/icon.png",

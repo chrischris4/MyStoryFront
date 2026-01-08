@@ -82,12 +82,12 @@ export default function LoginScreen() {
         onPress={handleClearStorage}
         className="absolute top-12 right-4 bg-red-500 px-4 py-2 rounded-lg z-50"
       >
-        <Text className="text-white font-bold text-xs">Clear Storage</Text>
+        <Text className="text-white font-baloo-bold text-xs">Clear Storage</Text>
       </TouchableOpacity>
 
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[70%]'>
-          <Text className="font-bold text-xl mb-4 text-center text-gray-800">Connexion</Text>
+          <Text className="font-baloo-bold text-2xl mb-4 text-center text-gray-800">Connexion</Text>
 
           <Formik
             initialValues={{ email: '', password: '' }}
@@ -110,7 +110,7 @@ export default function LoginScreen() {
                   )}
                 </View>
 
-                <View className="mb-6">
+                <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
                     placeholder="Mot de passe"
@@ -132,12 +132,12 @@ export default function LoginScreen() {
                   {isLoading ? (
                     <ActivityIndicator color="#fff" />
                   ) : (
-                    <Text className="text-white font-semibold text-center">Se connecter</Text>
+                    <Text className="text-white text-lg font-baloo-semibold text-center">Se connecter</Text>
                   )}
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                  <Text className="text-[#38b6ff] text-center">Pas encore de compte ? S'inscrire</Text>
+                  <Text className="text-[#38b6ff] text-center font-baloo">Pas encore de compte ? S'inscrire</Text>
                 </TouchableOpacity>
               </>
             )}

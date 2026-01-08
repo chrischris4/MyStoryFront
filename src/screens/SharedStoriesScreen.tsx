@@ -93,8 +93,8 @@ export default function SharedStoriesScreen() {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center px-4" style={{ backgroundColor: skyColor }}>
-        <Text className="text-white font-semibold">Ooops !</Text>
-        <Text className="text-white font-semibold">Une erreur est survenue</Text>
+        <Text className="text-white font-baloo-semibold">Ooops !</Text>
+        <Text className="text-white font-baloo-semibold">Une erreur est survenue</Text>
         <View
           className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
           style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
@@ -188,8 +188,8 @@ export default function SharedStoriesScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-      <Text className="text-4xl font-bold px-4">Histoires partagées</Text>
-      <Text className="color-slate-600 text-xl font-light mb-4 px-4">
+      <Text className="text-4xl font-baloo-bold px-4 pt-4">Histoires partagées</Text>
+      <Text className="color-slate-600 text-xl font-baloo mb-4 px-4">
         Découvrez les histoires partagées par la communauté !
       </Text>
       <View className="flex flex-col gap-4 mb-4">

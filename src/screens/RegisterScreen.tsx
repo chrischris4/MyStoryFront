@@ -81,7 +81,7 @@ export default function RegisterScreen() {
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[70%]'>
-          <Text className="text-xl font-bold mb-4 text-gray-800 text-center">Inscription</Text>
+          <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">Inscription</Text>
 
           <Formik
             initialValues={{ email: '', password: '', confirmPassword: '' }}
@@ -137,13 +137,13 @@ export default function RegisterScreen() {
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
-                  <Text className="text-white font-semibold text-center">
+                  <Text className="text-white text-lg font-baloo-semibold text-center">
                     {isSubmitting ? 'Inscription en cours...' : 'S\'inscrire'}
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                  <Text className="text-[#38b6ff] text-center">Déjà un compte ? Se connecter</Text>
+                  <Text className="text-[#38b6ff] text-center font-baloo">Déjà un compte ? Se connecter</Text>
                 </TouchableOpacity>
               </>
             )}

@@ -51,7 +51,7 @@ export default function PageSelector({ numPages, setNumPages }: PageSelectorProp
 
   return (
     <View className="text-center mb-4">
-      <Text className="text-lg font-semibold mb-4">Nombre de pages</Text>
+      <Text className="text-lg font-baloo-semibold mb-4">Nombre de pages</Text>
 
       <View className="flex-row justify-end items-center space-x-10">
         <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>
@@ -67,9 +67,9 @@ export default function PageSelector({ numPages, setNumPages }: PageSelectorProp
             style={{
               color: 'black',
               fontSize: 36,
-              fontWeight: 'bold',
               transform: [{ translateX }],
             }}
+            className='font-baloo-semibold -mt-2'
           >
             {currentIndex + 1}
           </Animated.Text>

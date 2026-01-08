@@ -312,7 +312,7 @@ export default function CreateStoryScreen() {
             elevation: 4,
             maxWidth: 280
           }}>
-            <Text className="text-base font-semibold text-center text-gray-800">
+            <Text className="text-base font-baloo-semibold text-center text-gray-800">
               Vous avez besoin de Story Coins pour créer une histoire !
             </Text>
             {/* Petite pointe de la bulle */}
@@ -362,15 +362,15 @@ export default function CreateStoryScreen() {
             className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
             onPress={() => navigation.navigate('BillingScreen')}
           >
-            <Text className="text-gray-800 font-semibold text-center text-base">
+            <Text className="text-gray-800 font-baloo-semibold text-center text-base">
               Obtenir des Story Coins
             </Text>
             <Feather name="arrow-right" size={20} color="#000" />
           </TouchableOpacity>
         </View>
       )}
-      <Text className="text-4xl font-bold pb-2 pt-8">Creation d'histoire</Text>
-      <Text className="text-lg font-light pb-2">Ici, tout deviens possible !</Text>
+      <Text className="text-4xl font-baloo-bold pb-2 pt-8">Creation d'histoire</Text>
+      <Text className="text-lg font-baloo pb-2">Ici, tout deviens possible !</Text>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -391,7 +391,7 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-semibold mb-2">Titre de l'histoire</Text>
+                <Text className="text-lg font-baloo-semibold mb-2">Titre de l'histoire</Text>
                 <TextInput
                   className="border border-gray-400 rounded-lg p-2"
                   placeholder="Ex: Pacha et la forêt magique"
@@ -418,7 +418,7 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-semibold mb-2">Résumé de l'histoire</Text>
+                <Text className="text-lg font-baloo-semibold mb-2">Résumé de l'histoire</Text>
                 <TextInput
                   className="border border-gray-400 rounded-lg p-3"
                   placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
@@ -449,7 +449,7 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-semibold mb-4">Style de l'histoire</Text>
+                <Text className="text-lg font-baloo-semibold mb-4">Style de l'histoire</Text>
 
                 {/* Carrousel de styles */}
                 <ScrollView
@@ -486,7 +486,7 @@ export default function CreateStoryScreen() {
                             <Text style={{ fontSize: 48 }}>{style.emoji}</Text>
                             {isSelected && (
                               <View className="bg-green-500 rounded-full w-8 h-8 items-center justify-center">
-                                <Text className="text-white font-bold text-lg">✓</Text>
+                                <Text className="text-white font-baloo-bold text-lg">✓</Text>
                               </View>
                             )}
                           </View>
@@ -554,7 +554,7 @@ export default function CreateStoryScreen() {
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
                 <View className="mb-4 bg-red-50 rounded-2xl p-4">
-                    <Text className="text-red-800 font-semibold text-base mb-4">Informations manquantes</Text>
+                    <Text className="text-red-800 font-baloo-semibold text-base mb-4">Informations manquantes</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
                       <Text className="text-red-700 text-sm">• {formik.errors.title}</Text>
@@ -577,7 +577,7 @@ export default function CreateStoryScreen() {
               className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
               onPress={handleCreateClick}
             >
-              <Text className="text-white font-semibold text-lg">Créer mon histoire !</Text>
+              <Text className="text-white font-baloo-semibold text-lg">Créer mon histoire !</Text>
             </TouchableOpacity>
           </View>
         )}

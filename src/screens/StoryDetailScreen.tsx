@@ -362,7 +362,7 @@ export default function StoryDetailScreen() {
           }}
         >
           <View className='flex flex-col p-4'>
-            <Text className="text-3xl font-bold mb-4 text-center">{story.title}</Text>
+            <Text className="text-3xl font-baloo-bold mb-2 mt-2 text-center">{story.title}</Text>
             {story.pages[0] && (
               <View
                 className='w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden'
@@ -386,10 +386,10 @@ export default function StoryDetailScreen() {
                 borderRadius: 20,
               }}
             /> */}
-              <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
+              <Text className="text-base font-baloo-medium text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
-            <Text className="text-sm font-light text-center px-4 pt-4">
+            <Text className="text-sm font-baloo text-center px-4 pt-4">
               {story.createdAt ? new Date(story.createdAt).toLocaleDateString('fr-FR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -413,11 +413,11 @@ export default function StoryDetailScreen() {
           >
             <TouchableOpacity
               onPress={handleToggleShared}
-              className="p-4 flex-row gap-2 items-center"
+              className="p-4 px-6 flex-row gap-2 items-center"
             >
-              <Text className='text-lg'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+              <Text className='text-lg font-baloo-medium'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
               {isShared && (
-                <Feather name='check' size={24} />
+                <Feather name='check' size={20} />
               )}
             </TouchableOpacity>
           </BlurView>
@@ -447,7 +447,7 @@ export default function StoryDetailScreen() {
               {toggleFavoriteMutation.isPending || isFavoriteLoading ? (
                 <ActivityIndicator size="small" color="red" />
               ) : (
-                <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={24} color="red" />
+                <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
               )}
             </TouchableOpacity>
           </BlurView>
@@ -469,7 +469,7 @@ export default function StoryDetailScreen() {
             onPress={() => setIsExpanded(!isExpanded)}
             className="p-4 flex-row gap-2 items-center justify-center"
           >
-            <Text className="text-lg">
+            <Text className="text-lg font-baloo-semibold">
               {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
             </Text>
             <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
@@ -496,7 +496,7 @@ export default function StoryDetailScreen() {
                         resizeMode="contain"
                       />
                       <View
-                        className={`absolute bottom-2 left-2 p-2 bg-black/70 rounded-xl`}
+                        className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
                       >
                         <Text
                           style={{
@@ -504,6 +504,7 @@ export default function StoryDetailScreen() {
                             fontSize: isPortrait ? 16 : 18,
                             textAlign: 'left',
                           }}
+                          className='font-baloo-medium'
                         >
                           {item.text}
                         </Text>
@@ -589,10 +590,10 @@ export default function StoryDetailScreen() {
                   />
                 </Animated.View>
 
-                <Text className="text-2xl font-bold text-gray-900 mb-2">
+                <Text className="text-2xl font-baloo-bold text-gray-900 mb-2">
                   Supprimer l'histoire ?
                 </Text>
-                <Text className="text-center text-gray-600">
+                <Text className="text-center text-gray-600 font-baloo">
                   Cette action est irréversible. Votre histoire "{story?.title}" sera définitivement supprimée.
                 </Text>
               </View>
@@ -602,7 +603,7 @@ export default function StoryDetailScreen() {
                   onPress={handleDeleteStory}
                   className="bg-red-600 p-4 rounded-xl items-center"
                 >
-                  <Text className="text-white font-semibold text-lg">
+                  <Text className="text-white font-baloo-semibold text-lg">
                     Oui, supprimer
                   </Text>
                 </TouchableOpacity>
@@ -611,7 +612,7 @@ export default function StoryDetailScreen() {
                   onPress={() => setShowDeleteModal(false)}
                   className="bg-gray-200 p-4 rounded-xl items-center"
                 >
-                  <Text className="text-gray-800 font-semibold text-lg">
+                  <Text className="text-gray-800 font-baloo-semibold text-lg">
                     Annuler
                   </Text>
                 </TouchableOpacity>
@@ -624,7 +625,7 @@ export default function StoryDetailScreen() {
           .sort((a, b) => a.pageIndex - b.pageIndex)
           .map((page) => (
             <View key={page.id} className=" bg-gray-100 p-4 rounded-lg shadow mb-4">
-              <Text className="mb-2 text-base">{page.text}</Text>
+              <Text className="mb-2 text-base font-baloo-medium">{page.text}</Text>
               <Image
                 source={{ uri: page.imageUrl }}
                 style={{ width: '100%', height: 200, borderRadius: 10 }}
@@ -654,8 +655,8 @@ export default function StoryDetailScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => setIsFullScreen(true)}
-          className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-4 gap-2 items-center justify-center rounded-full">
-          <Text className='text-white text-lg'>Lire en plein écran </Text>
+          className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-6 gap-2 items-center justify-center rounded-full">
+          <Text className='text-white text-lg font-baloo-medium'>Lire en plein écran </Text>
           <Feather name="play" size={20} color="white" />
         </TouchableOpacity>
         <TouchableOpacity

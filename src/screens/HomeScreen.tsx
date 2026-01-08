@@ -99,19 +99,10 @@ export default function HomeScreen() {
                 </View>
               )}
             </View>
-            <View className="flex flex-row items-center gap-2 mt-2">
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold mb-4`}>{profile?.name || 'Jean'}</Text>
-              <View className='flex flex-row items-center mb-4'>
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-semibold`}>{profile?.storyCoin || '0'}</Text>
-              <Image
-                source={{ uri: "https://res.cloudinary.com/dnotl9a0s/image/upload/v1767644505/ChatGPT_Image_5_janv._2026_21_21_34_saseb4.png" }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 200,
-                }}
-                className=''
-              />
+            <View className="flex flex-row items-center gap-2 mt-4 mb-4">
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
+              <View className='flex flex-row items-center'>
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-baloo-semibold`}>{profile?.storyCoin || '0'}</Text>
               </View>
             </View>
           </View>
@@ -144,7 +135,7 @@ export default function HomeScreen() {
             isNight={isNight}
             onPress={() => navigation.navigate('SharedStories')}
             title="Découvrir"
-            description="Parcourez les histoires partagées par d'autres utilisateus !"
+            description="Parcourez les histoires partagées par les autres utilisateurs !"
             icon={<Feather name="users" size={24} color="#334155" />}
           />
 
