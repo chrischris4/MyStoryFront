@@ -317,7 +317,7 @@ export default function BillingScreen() {
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
             </View>
-            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, marginTop: 20 }}>Boutique</Text>
+            <Text className='font-baloo-semibold text-4xl pt-10'>Boutique</Text>
             {/* <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text> */}
 
             {/* Boutons de jetons en disposition triangle */}
@@ -325,7 +325,7 @@ export default function BillingScreen() {
                 <View className='absolute -top-1 self-center'>
                     <View className='w-80 h-44 relative'>
                         <View className='z-20 w-full top-6'>
-                            <Text className='font-baloo-semibold text-xl text-center'>Paquet de Jetons</Text>
+                            <Text className='font-baloo-semibold text-2xl text-center'>Paquet de Jetons</Text>
                             <Text className='font-baloo text-lg text-center'>1 Jetons permet de crée une histoire !</Text>
                         </View>
                         <View
@@ -445,7 +445,7 @@ export default function BillingScreen() {
                 <View className='absolute -top-36 self-center'>
                     <View className='w-72 h-44 relative'>
                         <View className='z-20 top-4'>
-                            <Text className='font-baloo-semibold text-xl text-center'>Abonnements</Text>
+                            <Text className='font-baloo-semibold text-2xl text-center'>Abonnements</Text>
 
                             <Text className='font-baloo text-lg text-center'>Accès aux histoires partagées</Text>
 

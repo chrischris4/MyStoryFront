@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View,
     Text,
@@ -7,12 +7,14 @@ import {
     LayoutChangeEvent,
     TouchableOpacity,
     FlatList,
-    Image,
+    ActivityIndicator,
 } from 'react-native';
+import { Image } from 'expo-image';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
+    withRepeat,
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -36,10 +38,41 @@ type StoryFolderProps = {
     isNight: boolean;
     isPremium?: boolean;
     isShared?: boolean;
+    isLoading?: boolean;
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const NAVBAR_HEIGHT = 80; // Hauteur de la navbar + marges
+
+// Composant Skeleton pour les stories
+const StorySkeleton = () => {
+    const opacity = useSharedValue(0.3);
+
+    useEffect(() => {
+        opacity.value = withRepeat(
+            withTiming(1, { duration: 1000 }),
+            -1,
+            true
+        );
+    }, []);
+
+    const skeletonStyle = useAnimatedStyle(() => ({
+        opacity: opacity.value,
+    }));
+
+    return (
+        <View className="mb-2 p-4 bg-gray-100 rounded-3xl">
+            <Animated.View style={skeletonStyle}>
+                <View className="h-6 bg-gray-300 rounded-lg mb-2 w-3/4" />
+                <View className="h-[150px] bg-gray-300 rounded-lg mb-2" />
+                <View className="flex flex-row justify-between items-center">
+                    <View className="h-4 bg-gray-300 rounded w-1/2" />
+                    <View className="h-4 bg-gray-300 rounded w-8" />
+                </View>
+            </Animated.View>
+        </View>
+    );
+};
 
 export default function StoryFolder({
     isShared,
@@ -50,8 +83,10 @@ export default function StoryFolder({
     description,
     stories,
     isNight,
+    isLoading = false,
 }: StoryFolderProps) {
     const [expanded, setExpanded] = useState(false);
+    const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
@@ -77,6 +112,7 @@ export default function StoryFolder({
         }
 
         if (expanded) {
+            setShowContent(false);
             width.value = SCREEN_WIDTH / 1.08;
             height.value = 84;
             translateY.value = 0;
@@ -84,11 +120,13 @@ export default function StoryFolder({
             width.value = SCREEN_WIDTH;
             height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; // Laisser de la place pour la navbar
             translateY.value = -layoutY;
+            // Retarder légèrement l'affichage du contenu pour une animation plus fluide
+            setTimeout(() => setShowContent(true), 150);
         }
         setExpanded(!expanded);
     };
 
-    
+
     return (
         <Pressable
             onPress={() => {
@@ -116,7 +154,7 @@ export default function StoryFolder({
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-xl font-baloo-semibold self-start`}>{title}</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
                         <Text className="text-slate-500 text-lg font-baloo">{description}</Text>
 
                         {expanded && (
@@ -128,7 +166,20 @@ export default function StoryFolder({
                             </Pressable>
                         )}
 
-                        {stories.length === 0 ? (
+                        {expanded && !showContent ? (
+                            <View style={{ flex: 1, marginTop: 16 }}>
+                                <StorySkeleton />
+                                <StorySkeleton />
+                                <StorySkeleton />
+                            </View>
+                        ) : expanded && showContent && isLoading ? (
+                            <View className="flex-1 items-center justify-center mt-6">
+                                <ActivityIndicator size="large" color={isNight ? "#ffffff" : "#1e293b"} />
+                                <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo mt-2`}>
+                                    Chargement...
+                                </Text>
+                            </View>
+                        ) : expanded && showContent && stories.length === 0 ? (
                             <View className="flex-1 items-center  mt-6">
                                 <Text className="text-gray-500 mb-4 font-baloo-medium">Pas d'histoires créées.</Text>
                                 <TouchableOpacity
@@ -138,13 +189,17 @@ export default function StoryFolder({
                                     <Text className="font-baloo-semibold">Créer une histoire</Text>
                                 </TouchableOpacity>
                             </View>
-                        ) : expanded ? (
+                        ) : expanded && showContent ? (
                             <FlatList
                                 data={stories}
                                 keyExtractor={(item) => item.id.toString()}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
                                 showsVerticalScrollIndicator={false}
+                                initialNumToRender={3}
+                                maxToRenderPerBatch={3}
+                                windowSize={5}
+                                removeClippedSubviews={true}
                                 renderItem={({ item }) => {
                                     const firstPageImage = item.pages?.[0]?.imageUrl;
 
@@ -155,30 +210,22 @@ export default function StoryFolder({
                                                 navigation.navigate('StoryDetail', { storyId: item.id })
                                             }
                                         >
-                                            <Text className="text-lg font-baloo-semibold mb-2">{item.title}</Text>
+                                            <Text className="text-xl font-baloo-semibold mb-1">{item.title}</Text>
 
                                             {firstPageImage && (
                                                 <Image
                                                     source={{ uri: firstPageImage }}
                                                     style={{ width: '100%', height: 150, borderRadius: 8 }}
-                                                    resizeMode="cover"
+                                                    contentFit="cover"
+                                                    cachePolicy="memory-disk"
+                                                    transition={200}
                                                 />
                                             )}
-                                            <View className='flex flex-row gap-1 justify-between items-center mt-2'>
-                                                {/* Author date */}
-                                                        <View className='flex flex-row gap-2 items-center'>
-                                                          <Image
-                                                            source={item.user?.profil?.imageUrl ? { uri: item.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
-                                                            style={{
-                                                              width: 40,
-                                                              height: 40,
-                                                              borderRadius: 20,
-                                                            }}
-                                                          />
-                                                          {/* <Text className="text-base font-bold text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text> */}
-                                                          <Text className="text-base font-baloo-semibold text-black">{item.user?.profil?.name || 'Anonyme'}</Text>
-                                                        </View>
-                                                <Text className="text-lg font-medium"><Feather name="heart" size={24} color="#334155" /></Text>
+                                            <View className='flex flex-row gap-1 justify-between items-center w-full'>
+                                                <Text className="text-base font-baloo-semibold text-black ml-2">
+                                                    Auteur : <Text className='font-baloo'>{item.user?.profil?.name || 'Anonyme'}</Text>
+                                                </Text>
+                                                <Text className="text-lg font-medium mr-2"><Feather name="heart" size={14} color="#334155" /></Text>
                                             </View>
                                         </TouchableOpacity>
                                     );

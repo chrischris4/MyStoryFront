@@ -19,7 +19,7 @@ const toastConfig = {
   success: (props: any) => (
     <View style={{ paddingHorizontal: 20, width: '100%' }}>
       <BlurView
-        intensity={80}
+        intensity={90}
         tint="light"
         style={{
           borderRadius: 16,
@@ -53,12 +53,12 @@ const toastConfig = {
     </View>
   ),
   error: (props: any) => (
-    <View style={{ paddingHorizontal: 20, width: '90%' }}>
+    <View style={{ paddingHorizontal: 20, width: '100%' }}>
       <BlurView
-        intensity={80}
+        intensity={90}
         tint="light"
         style={{
-          borderRadius: 20,
+          borderRadius: 16,
           overflow: 'hidden',
           paddingVertical: 20,
           paddingHorizontal: 24,

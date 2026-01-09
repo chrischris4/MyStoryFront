@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Dimensions, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { CompositeNavigationProp } from '@react-navigation/native';
@@ -24,7 +24,6 @@ export default function SharedStoriesScreen() {
 
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const animationRef = useRef(null);
   const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
@@ -37,7 +36,6 @@ export default function SharedStoriesScreen() {
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
-        setError('Utilisateur non authentifié');
         return;
       }
 
@@ -54,7 +52,7 @@ export default function SharedStoriesScreen() {
       const data = await response.json();
       setSharedStories(data);
     } catch (err) {
-      setError(err.message);
+      console.error('Erreur lors du chargement des histoires partagées:', err);
     }
   };
 
@@ -63,8 +61,6 @@ export default function SharedStoriesScreen() {
       setLoading(true);
       try {
         await fetchSharedStories();
-      } catch (err) {
-        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -73,39 +69,6 @@ export default function SharedStoriesScreen() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center" style={{ backgroundColor: skyColor }} >
-        <ActivityIndicator size="large" color="#ffffff" />
-        <Text className='text-white'>Chargement des histoires partagées...</Text>
-        <View
-          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-        />
-        <View
-          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-        />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View className="flex-1 items-center justify-center px-4" style={{ backgroundColor: skyColor }}>
-        <Text className="text-white font-baloo-semibold">Ooops !</Text>
-        <Text className="text-white font-baloo-semibold">Une erreur est survenue</Text>
-        <View
-          className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-        />
-        <View
-          className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-        />
-      </View>
-    );
-  }
 
   const renderStars = (count: number) => {
     const stars = [];
@@ -140,6 +103,21 @@ export default function SharedStoriesScreen() {
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>
+      <Animated.View
+        style={{
+          position: 'absolute',
+          bottom: 110,
+          right: 50,
+        }}
+      >
+        <LottieView
+          ref={animationRef}
+          source={require('../../assets/animations/tree.json')}
+          autoPlay
+          loop={false}
+          style={{ width: 200, height: 200 }}
+        />
+      </Animated.View>
       <Animated.View
         style={{
           position: 'absolute',
@@ -202,6 +180,7 @@ export default function SharedStoriesScreen() {
           storyType="ALL"
           description="Il y en a pour tout le monde !"
           stories={sharedStories}
+          isLoading={loading}
         />
         <StoryFolder
           isNight={isNight}
@@ -212,6 +191,7 @@ export default function SharedStoriesScreen() {
           storyType="RECENT"
           description="Les 10 histoires les plus populaires"
           stories={sharedStories}
+          isLoading={loading}
         />
       </View>
     </View>

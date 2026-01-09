@@ -1,0 +1,60 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useUserStore } from '~/store/useUserStore';
+import { API_BASE_URL } from '~/config/api';
+
+type CreateStoryInput = {
+  prompt: string;
+  numberOfPages: number;
+  title: string;
+  style: string;
+};
+
+type StoryPage = {
+  page: number;
+  text: string;
+  imageUrl: string;
+};
+
+type CreateStoryResponse = {
+  id: string;
+  title: string;
+  pages: StoryPage[];
+};
+
+const createStory = async (
+  input: CreateStoryInput,
+  token: string | null
+): Promise<CreateStoryResponse> => {
+  if (!token) {
+    throw new Error('Utilisateur non authentifié');
+  }
+
+  const response = await fetch(`${API_BASE_URL}/story/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    throw new Error('Erreur lors de la création de l\'histoire');
+  }
+
+  const data = await response.json();
+  return data;
+};
+
+export const useCreateStory = () => {
+  const accessToken = useUserStore((state) => state.accessToken);
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: CreateStoryInput) => createStory(input, accessToken),
+    onSuccess: () => {
+      // Invalider et refetch automatiquement la liste des stories
+      queryClient.invalidateQueries({ queryKey: ['stories'] });
+    },
+  });
+};

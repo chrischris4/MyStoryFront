@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
@@ -19,6 +18,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
+import { useCreateStory } from '~/hooks/useCreateStory';
 
 
 
@@ -94,6 +94,10 @@ export default function CreateStoryScreen() {
   const { isNight } = useTheme();
   const scrollViewRef = useRef<ScrollView>(null);
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  // Hook pour la création d'histoire avec React Query
+  const createStoryMutation = useCreateStory();
 
   // Utiliser le store global pour la création d'histoire
   const {
@@ -157,7 +161,7 @@ export default function CreateStoryScreen() {
     initialValues: {
       title: '',
       prompt: '',
-      numPages: 1,
+      numPages: 6,
       selectedStyle: 'CLASSIQUE',
     },
     validationSchema: createStorySchema,
@@ -169,32 +173,13 @@ export default function CreateStoryScreen() {
       startCreation(values.title);
 
       try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (!token) throw new Error('Utilisateur non connecté');
-
-        const body = {
+        // Utiliser la mutation React Query
+        const story = await createStoryMutation.mutateAsync({
           prompt: values.prompt,
           numberOfPages: values.numPages,
           title: values.title,
           style: values.selectedStyle
-        };
-
-        const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/create`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(body),
         });
-
-        const text = await response.text();
-
-        if (!response.ok) {
-          throw new Error('Erreur lors de la création de l\'histoire');
-        }
-
-        const story = JSON.parse(text);
 
         // Mettre à jour le store avec les résultats
         updateProgress(story.pages, story.id, false);
@@ -373,8 +358,8 @@ export default function CreateStoryScreen() {
           </TouchableOpacity>
         </View>
       )}
-      <Text className="text-4xl font-baloo-bold pb-2 pt-8">Creation d'histoire</Text>
-      <Text className="text-lg font-baloo pb-2">Ici, tout deviens possible !</Text>
+      <Text className="text-4xl font-baloo-bold pt-10">Creation d'histoire</Text>
+      <Text className="text-xl font-baloo pb-4">Ici, tout deviens possible !</Text>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -395,7 +380,8 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-baloo-semibold mb-2">Titre de l'histoire</Text>
+                <Text className="text-2xl font-baloo-semibold mb-2">Titre de l'histoire</Text>
+
                 <TextInput
                   className="border border-gray-400 rounded-lg p-2"
                   placeholder="Ex: Pacha et la forêt magique"
@@ -422,7 +408,8 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-baloo-semibold mb-2">Résumé de l'histoire</Text>
+                <Text className="text-2xl font-baloo-semibold">Résumé de l'histoire</Text>
+                <Text className="text-sm font-baloO mb-2">Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
                 <TextInput
                   className="border border-gray-400 rounded-lg p-3"
                   placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
@@ -434,9 +421,12 @@ export default function CreateStoryScreen() {
                   textAlignVertical="top"
                   style={{ minHeight: 120 }}
                 />
-                {formik.touched.prompt && formik.errors.prompt && (
-                  <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
-                )}
+                <View className='flex flex-row gap-2'>
+                  <Text className="text-sm mt-1">{formik.values.prompt.length}/500</Text>
+                  {formik.touched.prompt && formik.errors.prompt && (
+                    <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
+                  )}
+                </View>
               </BlurView>
             </View>
 
@@ -453,16 +443,21 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-lg font-baloo-semibold mb-4">Style de l'histoire</Text>
+                <Text className="text-2xl font-baloo-semibold mb-4">Style de l'histoire</Text>
 
                 {/* Carrousel de styles */}
-                <ScrollView
+                <Animated.ScrollView
                   ref={scrollViewRef}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  snapToInterval={Dimensions.get('window').width * 0.75}
+                  snapToInterval={Dimensions.get('window').width * 0.6 + 12}
                   decelerationRate="fast"
                   contentContainerStyle={{ paddingRight: 16 }}
+                  onScroll={Animated.event(
+                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                    { useNativeDriver: false }
+                  )}
+                  scrollEventThrottle={16}
                 >
                   {STORY_STYLES.map((style) => {
                     const isSelected = formik.values.selectedStyle === style.id;
@@ -498,11 +493,11 @@ export default function CreateStoryScreen() {
                             className='justify-between flex flex-col relative h-full w-full'
                           >
 
-                              {isSelected && (
-                                <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
-                                  <Text className="text-white font-baloo-bold text-lg">✓</Text>
-                                </View>
-                              )}
+                            {isSelected && (
+                              <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
+                                <Text className="text-white font-baloo-bold text-lg">✓</Text>
+                              </View>
+                            )}
                             <Text
                               className="font-bold text-xl mb-2 text-white"
                             >
@@ -518,21 +513,43 @@ export default function CreateStoryScreen() {
                       </TouchableOpacity>
                     );
                   })}
-                </ScrollView>
+                </Animated.ScrollView>
 
                 {/* Indicateurs de page */}
                 <View className="flex-row justify-center mt-4 gap-2">
-                  {STORY_STYLES.map((style) => (
-                    <View
-                      key={`dot-${style.id}`}
-                      className="rounded-full"
-                      style={{
-                        width: formik.values.selectedStyle === style.id ? 24 : 8,
-                        height: 8,
-                        backgroundColor: formik.values.selectedStyle === style.id ? '#10B981' : '#D1D5DB',
-                      }}
-                    />
-                  ))}
+                  {STORY_STYLES.map((style, index) => {
+                    const cardWidth = Dimensions.get('window').width * 0.6 + 12;
+
+                    const inputRange = [
+                      (index - 1) * cardWidth,
+                      index * cardWidth,
+                      (index + 1) * cardWidth,
+                    ];
+
+                    const dotWidth = scrollX.interpolate({
+                      inputRange,
+                      outputRange: [8, 24, 8],
+                      extrapolate: 'clamp',
+                    });
+
+                    const dotColor = scrollX.interpolate({
+                      inputRange,
+                      outputRange: ['rgba(209, 213, 219, 1)', 'rgba(0, 0, 0, 1)', 'rgba(209, 213, 219, 1)'],
+                      extrapolate: 'clamp',
+                    });
+
+                    return (
+                      <Animated.View
+                        key={`dot-${style.id}`}
+                        className="rounded-full"
+                        style={{
+                          width: dotWidth,
+                          height: 8,
+                          backgroundColor: dotColor,
+                        }}
+                      />
+                    );
+                  })}
                 </View>
                 {formik.touched.selectedStyle && formik.errors.selectedStyle && (
                   <Text className="text-red-500 text-sm mt-2 text-center">{formik.errors.selectedStyle}</Text>
@@ -567,7 +584,7 @@ export default function CreateStoryScreen() {
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
                 <View className="mb-4 bg-red-50 rounded-2xl p-4">
-                  <Text className="text-red-800 font-baloo-semibold text-base mb-4">Informations manquantes</Text>
+                  <Text className="text-red-800 font-baloo-semibold text-base mb-2">Informations manquantes</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
                       <Text className="text-red-700 text-sm">• {formik.errors.title}</Text>

@@ -122,7 +122,7 @@ export default function LoginScreen() {
             validationSchema={loginSchema}
             onSubmit={handleLogin}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+            {({ handleChange, handleSubmit, values, errors, touched, setTouched }) => (
               <>
                 <View className="mb-4">
                   <TextInput
@@ -131,7 +131,6 @@ export default function LoginScreen() {
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
-                    onBlur={handleBlur('email')}
                   />
                   {touched.email && errors.email && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.email}</Text>
@@ -145,7 +144,6 @@ export default function LoginScreen() {
                     secureTextEntry
                     value={values.password}
                     onChangeText={handleChange('password')}
-                    onBlur={handleBlur('password')}
                   />
                   {touched.password && errors.password && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
@@ -154,7 +152,10 @@ export default function LoginScreen() {
 
                 <TouchableOpacity
                   className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
-                  onPress={() => handleSubmit()}
+                  onPress={() => {
+                    setTouched({ email: true, password: true });
+                    handleSubmit();
+                  }}
                   disabled={isLoading}
                 >
                   {isLoading ? (

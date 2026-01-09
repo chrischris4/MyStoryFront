@@ -41,14 +41,37 @@ export const useToggleFavorite = () => {
       const accessToken = useUserStore.getState().accessToken;
       return toggleFavorite(params, accessToken);
     },
+    onMutate: async (variables) => {
+      // Annuler toutes les queries en cours pour éviter qu'elles écrasent notre mise à jour optimiste
+      await queryClient.cancelQueries({ queryKey: ['checkFavorite', variables.storyId] });
+
+      // Sauvegarder la valeur précédente pour pouvoir rollback en cas d'erreur
+      const previousValue = queryClient.getQueryData<boolean>(['checkFavorite', variables.storyId]);
+
+      // Mise à jour optimiste : inverser immédiatement la valeur dans le cache
+      queryClient.setQueryData<boolean>(
+        ['checkFavorite', variables.storyId],
+        !variables.isFavorite
+      );
+
+      // Retourner un contexte avec la valeur précédente pour le rollback
+      return { previousValue, storyId: variables.storyId };
+    },
     onSuccess: () => {
-      // Invalider et refetch les queries liées aux favoris
+      // Invalider et refetch les queries liées aux favoris (sauf checkFavorite qui a déjà été mis à jour)
       queryClient.invalidateQueries({ queryKey: ['favoriteStories'] });
-      queryClient.invalidateQueries({ queryKey: ['checkFavorite'] });
       queryClient.invalidateQueries({ queryKey: ['stories'] });
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _variables, context) => {
       console.error('Erreur lors du toggle favori:', error);
+
+      // Rollback : restaurer la valeur précédente en cas d'erreur
+      if (context?.previousValue !== undefined) {
+        queryClient.setQueryData<boolean>(
+          ['checkFavorite', context.storyId],
+          context.previousValue
+        );
+      }
     },
   });
 };
