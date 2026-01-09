@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
@@ -36,29 +36,33 @@ type StoryStyle = {
   description: string;
   emoji: string;
   gradient: string[];
+  imageUrl: string;
 };
 
 const STORY_STYLES: StoryStyle[] = [
   {
-    id: 'classic',
+    id: 'CLASSIQUE',
     name: 'Classique',
     description: 'Style conte de fées traditionnel',
     emoji: '📚',
     gradient: ['#FFD700', '#FFA500'],
+    imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop', // Livre ancien
   },
   {
-    id: 'realistic',
+    id: 'REALIST',
     name: 'Réaliste',
     description: 'Style photo réaliste',
     emoji: '📷',
     gradient: ['#4A90E2', '#357ABD'],
+    imageUrl: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&h=300&fit=crop', // Photo réaliste
   },
   {
-    id: 'cartoon',
-    name: 'Cartoon',
-    description: 'Style dessin animé coloré',
+    id: 'MANGA',
+    name: 'Manga',
+    description: 'Style manga japonais',
     emoji: '🎨',
     gradient: ['#FF6B9D', '#C06C84'],
+    imageUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=300&fit=crop', // Art manga
   },
 ];
 
@@ -154,7 +158,7 @@ export default function CreateStoryScreen() {
       title: '',
       prompt: '',
       numPages: 1,
-      selectedStyle: 'classic',
+      selectedStyle: 'CLASSIQUE',
     },
     validationSchema: createStorySchema,
     onSubmit: async (values) => {
@@ -467,41 +471,50 @@ export default function CreateStoryScreen() {
                         key={style.id}
                         onPress={() => formik.setFieldValue('selectedStyle', style.id)}
                         style={{
-                          width: Dimensions.get('window').width * 0.7,
+                          width: Dimensions.get('window').width * 0.6,
                           marginRight: 12,
-                          borderRadius: 16,
+                          borderRadius: 22,
                           overflow: 'hidden',
-                          borderWidth: isSelected ? 3 : 0,
+                          borderWidth: isSelected ? 4 : 0,
                           borderColor: isSelected ? '#10B981' : 'transparent',
                         }}
+                        className="h-40"
                       >
-                        <View
+                        <ImageBackground
+                          source={{ uri: style.imageUrl }}
                           style={{
-                            padding: 20,
-                            backgroundColor: isSelected ? style.gradient[0] + '40' : '#F3F4F6',
                             borderRadius: 16,
+                            overflow: 'hidden',
                           }}
+                          imageStyle={{ borderRadius: 16 }}
+                          className='h-full w-full'
                         >
-                          <View className="flex-row items-center justify-between mb-3">
-                            <Text style={{ fontSize: 48 }}>{style.emoji}</Text>
-                            {isSelected && (
-                              <View className="bg-green-500 rounded-full w-8 h-8 items-center justify-center">
-                                <Text className="text-white font-baloo-bold text-lg">✓</Text>
-                              </View>
-                            )}
-                          </View>
-
-                          <Text
-                            className="font-bold text-xl mb-1"
-                            style={{ color: isSelected ? style.gradient[1] : '#1F2937' }}
+                          <View
+                            style={{
+                              padding: 20,
+                              borderRadius: 16,
+                              backgroundColor: 'rgba(0, 0, 0, 0.4)', // Overlay sombre pour rendre le texte lisible
+                            }}
+                            className='justify-between flex flex-col relative h-full w-full'
                           >
-                            {style.name}
-                          </Text>
 
-                          <Text className="text-gray-600 text-sm">
-                            {style.description}
-                          </Text>
-                        </View>
+                              {isSelected && (
+                                <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
+                                  <Text className="text-white font-baloo-bold text-lg">✓</Text>
+                                </View>
+                              )}
+                            <Text
+                              className="font-bold text-xl mb-2 text-white"
+                            >
+                              {style.name}
+                            </Text>
+
+
+                            <Text className="text-white text-sm">
+                              {style.description}
+                            </Text>
+                          </View>
+                        </ImageBackground>
                       </TouchableOpacity>
                     );
                   })}
@@ -554,7 +567,7 @@ export default function CreateStoryScreen() {
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
                 <View className="mb-4 bg-red-50 rounded-2xl p-4">
-                    <Text className="text-red-800 font-baloo-semibold text-base mb-4">Informations manquantes</Text>
+                  <Text className="text-red-800 font-baloo-semibold text-base mb-4">Informations manquantes</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
                       <Text className="text-red-700 text-sm">• {formik.errors.title}</Text>
