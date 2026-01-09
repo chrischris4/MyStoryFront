@@ -19,6 +19,14 @@ const loginSchema = Yup.object().shape({
     .required('Le mot de passe est requis'),
 });
 
+const WELCOME_MESSAGES = [
+  "Plein d'aventures t'attendent ici !",
+  "Prêt à créer de nouvelles histoires ?",
+  "Tes histoires n'attendent que toi !",
+  "L'aventure commence maintenant !",
+  "Bienvenue dans le monde des histoires !",
+];
+
 export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -32,6 +40,26 @@ export default function LoginScreen() {
 
       // Connexion via le contexte d'authentification
       await login(data.accessToken, data.refreshToken);
+
+      // Récupérer les infos utilisateur depuis l'API pour le toast
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/profile/me`, {
+        headers: {
+          Authorization: `Bearer ${data.accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        const userName = userData?.profil?.name || 'toi';
+        const randomMessage = WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)];
+
+        Toast.show({
+          type: 'success',
+          text1: `Hey ${userName} !`,
+          text2: randomMessage,
+        });
+      }
+
       navigation.dispatch(
         CommonActions.reset({
           index: 0,

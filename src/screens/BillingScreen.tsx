@@ -318,22 +318,30 @@ export default function BillingScreen() {
                 </TouchableOpacity>
             </View>
             <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8, marginTop: 20 }}>Boutique</Text>
-            <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text>
+            {/* <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text> */}
 
             {/* Boutons de jetons en disposition triangle */}
-            <View style={{ height: 280, position: 'relative', marginBottom: 0 }}>
-                <View className='absolute -top-5 right-0'>
-                    <View className='w-60 h-44 relative'>
+            <View style={{ height: 280, position: 'relative', marginTop: 20 }}>
+                <View className='absolute -top-1 self-center'>
+                    <View className='w-80 h-44 relative'>
+                        <View className='z-20 w-full top-6'>
+                            <Text className='font-baloo-semibold text-xl text-center'>Paquet de Jetons</Text>
+                            <Text className='font-baloo text-lg text-center'>1 Jetons permet de crée une histoire !</Text>
+                        </View>
                         <View
-                            className='h-20 rounded-full absolute top-10 left-0 w-full'
+                            className='h-20 rounded-full absolute -top-2 left-8 w-20'
                             style={{ backgroundColor: cloudColor }}
                         />
                         <View
-                            className='h-24 w-24 rounded-full absolute top-0 right-10'
+                            className='h-24 rounded-full absolute top-3.5 left-0 w-full'
                             style={{ backgroundColor: cloudColor }}
                         />
                         <View
-                            className='h-20 w-20 rounded-full absolute top-4 right-28'
+                            className='h-36 w-36 rounded-full absolute -top-8 left-20'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-28 w-28 rounded-full absolute -top-4 right-8'
                             style={{ backgroundColor: cloudColor }}
                         />
                     </View>
@@ -355,7 +363,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_5')} />
+                    <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_5')} />
                 </Animated.View>
 
                 {/* Button 10 jetons - En bas à gauche */}
@@ -374,7 +382,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_10')} />
+                    <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_10')} />
                 </Animated.View>
 
                 {/* Button 20 jetons - En bas à droite */}
@@ -398,40 +406,70 @@ export default function BillingScreen() {
             </View>
 
             {/* Boutons Premium en position absolue */}
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: 200,
-                    left: 20,
-                    width: 120,
-                    height: 120,
-                    zIndex: 20,
-                    opacity: opacity4,
-                    transform: [
-                        ...button4Anim.getTranslateTransform(),
-                        { scale: scale4 }
-                    ],
-                }}
-            >
-                <ShopButton title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
-            </Animated.View>
-            <Animated.View
-                style={{
-                    position: 'absolute',
-                    bottom: 200,
-                    right: 20,
-                    width: 120,
-                    height: 120,
-                    opacity: opacity5,
-                    zIndex: 20,
-                    transform: [
-                        ...button5Anim.getTranslateTransform(),
-                        { scale: scale5 }
-                    ],
-                }}
-            >
-                <ShopButton title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
-            </Animated.View>
+            <View style={{ height: 280, position: 'relative', marginBottom: 0 }}>
+
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        bottom: 200,
+                        left: 20,
+                        width: 120,
+                        height: 120,
+                        zIndex: 20,
+                        opacity: opacity4,
+                        transform: [
+                            ...button4Anim.getTranslateTransform(),
+                            { scale: scale4 }
+                        ],
+                    }}
+                >
+                    <ShopButton title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
+                </Animated.View>
+                <Animated.View
+                    style={{
+                        position: 'absolute',
+                        bottom: 200,
+                        right: 20,
+                        width: 120,
+                        height: 120,
+                        opacity: opacity5,
+                        zIndex: 20,
+                        transform: [
+                            ...button5Anim.getTranslateTransform(),
+                            { scale: scale5 }
+                        ],
+                    }}
+                >
+                    <ShopButton title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
+                </Animated.View>
+                <View className='absolute -top-36 self-center'>
+                    <View className='w-72 h-44 relative'>
+                        <View className='z-20 top-4'>
+                            <Text className='font-baloo-semibold text-xl text-center'>Abonnements</Text>
+
+                            <Text className='font-baloo text-lg text-center'>Accès aux histoires partagées</Text>
+
+                            <Text className='font-baloo text-lg text-center'>+10 Jetons par mois !</Text>
+                        </View>
+                        <View
+                            className='h-20 rounded-full absolute top-0 left-4 w-20'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-24 rounded-full absolute top-3.5 left-0 w-full'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-24 w-24 rounded-full absolute -top-2 right-10'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                        <View
+                            className='h-28 w-28 rounded-full absolute -top-8 right-28'
+                            style={{ backgroundColor: cloudColor }}
+                        />
+                    </View>
+                </View>
+            </View>
             {/* Chien */}
             {
                 !isNight && (

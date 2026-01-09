@@ -5,6 +5,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { Feather } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 type StoryPage = {
     page: number;
@@ -64,17 +65,50 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
 
     }, []);
     const animatedSkyColor = dayNightAnim.interpolate({
-        inputRange: [0, 0.5, 1],
+        inputRange: [0, 0.3, 0.5, 0.7, 1],
         outputRange: [
-            'rgba(135,206,235,1)', // #87CEEB
-            'rgba(255,165,0,1)',   // #FFA500
-            'rgba(2,2,5,1)'        // #020205
+            'rgba(135,206,235,1)', // #87CEEB (jour - bleu ciel)
+            'rgba(135,206,235,1)', // #87CEEB (jour - bleu ciel)
+            'rgba(255,165,0,1)',   // #FFA500 (coucher de soleil - orange)
+            'rgba(2,2,5,1)',        // #020205 (nuit - noir)
+            'rgba(2,2,5,1)'        // #020205 (nuit - noir)
         ],
     });
 
     const starsOpacity = dayNightAnim.interpolate({
+        inputRange: [0, 0.4, 0.6, 1],
+        outputRange: [0, 0, 1, 1],
+    });
+
+    const groundColor = dayNightAnim.interpolate({
         inputRange: [0, 0.5, 1],
-        outputRange: [0, 1, 1],
+        outputRange: [
+            'rgba(56,161,105,1)',  // #38A169 (jour)
+            'rgba(56,161,105,1)',  // #38A169 (transition)
+            'rgba(46,49,63,1)'     // #2E313F (nuit)
+        ],
+    });
+
+    const groundBorderColor = dayNightAnim.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [
+            'rgba(47,133,90,1)',   // #2F855A (jour)
+            'rgba(47,133,90,1)',   // #2F855A (transition)
+            'rgba(68,73,93,1)'     // #44495D (nuit)
+        ],
+    });
+
+    const textColor = dayNightAnim.interpolate({
+        inputRange: [0, 0.3, 0.5, 0.7, 1],
+        outputRange: [
+            'rgba(0,0,0,1)',       // #000000 (noir - jour)
+            'rgba(0,0,0,1)',       // #000000 (noir - transition)
+            'rgba(255,255,255,1)',  // #FFFFFF (blanc - nuit)
+            'rgba(255,255,255,1)',  // #FFFFFF (blanc - nuit)
+            'rgba(255,255,255,1)',  // #FFFFFF (blanc - nuit)
+
+
+        ],
     });
 
 
@@ -105,10 +139,10 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
         }
         return stars;
     };
-const { width: screenWidth } = Dimensions.get('window');
-const orbitSize = screenWidth * 1.4;
-const sunSize = orbitSize * 0.22;
-const moonSize = orbitSize * 0.15;
+    const { width: screenWidth } = Dimensions.get('window');
+    const orbitSize = screenWidth * 1.4;
+    const sunSize = orbitSize * 0.22;
+    const moonSize = orbitSize * 0.15;
 
     const handleMinimize = () => {
         minimize();
@@ -116,40 +150,38 @@ const moonSize = orbitSize * 0.15;
 
     return (
         <View
-            className="absolute bottom-24 left-4 right-4 bg-white h-[50vh] rounded-2xl p-1 shadow-lg z-50"
+            className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
         >
-            {/* Bouton de minimisation */}
-            <TouchableOpacity
-                onPress={handleMinimize}
-                style={{
-                    position: 'absolute',
-                    top: 12,
-                    right: 12,
-                    zIndex: 100,
-                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: 20,
-                    width: 36,
-                    height: 36,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 4,
-                    elevation: 4,
-                }}
-            >
-                <Feather name="minimize-2" size={20} color="#1F2937" />
-            </TouchableOpacity>
-
+            {loading && (
+                <TouchableOpacity
+                    onPress={handleMinimize}
+                    style={{
+                        position: 'absolute',
+                        top: 12,
+                        right: 12,
+                        zIndex: 100,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: 20,
+                        width: 36,
+                        height: 36,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        shadowColor: '#000',
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 4,
+                        elevation: 4,
+                    }}
+                >
+                    <Feather name="minimize-2" size={20} color="#1F2937" />
+                </TouchableOpacity>
+            )}
             <Animated.View
                 style={{
                     flex: 1,
                     backgroundColor: animatedSkyColor,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    overflow:'hidden',
-                    borderRadius: 10
+                    overflow: 'hidden',
+                    borderRadius: 10,
                 }}
             >
                 {/* Étoiles */}
@@ -161,7 +193,7 @@ const moonSize = orbitSize * 0.15;
                 <Animated.View
                     style={{
                         position: 'absolute',
-                        width: orbitSize,          // cercle plus grand
+                        width: orbitSize,
                         height: orbitSize,
                         justifyContent: 'center',
                         alignItems: 'center',
@@ -174,7 +206,7 @@ const moonSize = orbitSize * 0.15;
                     <View style={{
                         position: 'absolute',
                         top: 0,
-                        width: sunSize,           // Soleil plus grand
+                        width: sunSize,
                         height: sunSize,
                         borderRadius: 100,
                         backgroundColor: '#FFD700',
@@ -183,7 +215,7 @@ const moonSize = orbitSize * 0.15;
                     <View style={{
                         position: 'absolute',
                         bottom: 0,
-                        width: moonSize,           // Lune plus grande
+                        width: moonSize,
                         height: moonSize,
                         borderRadius: 100,
                         backgroundColor: '#F0F8FF',
@@ -198,22 +230,48 @@ const moonSize = orbitSize * 0.15;
                         <Text className="mt-4 text-lg font-semibold">Nous préparons votre histoire</Text>
                     </View>
                 ) : (
-                    <View className="flex-1 justify-center relative px-4">
-                        <Text className="text-xl font-bold mb-4 text-center">Votre histoire est prête !</Text>
+                    <View className="flex-1 w-full justify-between relative p-2">
+                        <Animated.View
+                            style={{
+                                backgroundColor: groundColor,
+                                borderTopWidth: 4,
+                                borderColor: groundBorderColor,
+                                width: '200%',
+                                alignSelf: 'center',
+                                aspectRatio: 1,
+                                borderRadius: 9999,
+                                position: 'absolute',
+                                bottom: '-130%',
+                            }}
+                        />
 
-                        {storyPages.length > 0 && (
-                            <View className="mb-4 bg-white p-4 rounded-3xl">
-                                <Text className="text-2xl font-bold mb-2 text-center">{title}</Text>
-                                <Image
-                                    source={{ uri: storyPages[0].imageUrl }}
-                                    style={{ width: '100%', height: 200, borderRadius: 16 }}
-                                    resizeMode="cover"
-                                />
+                        <View>
+                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
+                                <Animated.Text className="text-xl font-baloo text-center">
+                                    Votre histoire est prête !
+                                </Animated.Text>
                             </View>
-                        )}
 
+                            {storyPages.length > 0 && (
+                                <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
+                                    <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
+                                        <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
+                                            {title}
+                                        </Animated.Text>
+                                        <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
+                                            <Image
+                                                source={{ uri: storyPages[0].imageUrl }}
+                                                style={{ width: '100%', height: 200, borderRadius: 16 }}
+                                                resizeMode="cover"
+                                            />
+                                        </View>
+                                    </BlurView>
+                                </View>
+                            )}
+                        </View>
                         <TouchableOpacity
-                            className="bg-white px-4 py-3 rounded-3xl items-center mb-2"
+                            style={{ borderRadius: 24, overflow: 'hidden' }}
+                            className='bg-white p-4 -mb-2'
                             onPress={() => {
                                 if (storyId) {
                                     navigation.navigate('StoryDetail', { storyId: Number(storyId) });
@@ -221,18 +279,23 @@ const moonSize = orbitSize * 0.15;
                                 }
                             }}
                         >
-                            <Text className="text-black font-semibold text-lg">Découvrir votre histoire</Text>
+                            <Animated.Text className="text-lg font-baloo-medium text-center">
+                                Découvrir votre histoire
+                            </Animated.Text>
                         </TouchableOpacity>
-
                         <TouchableOpacity
-                            className="bg-black px-4 py-3 rounded-3xl items-center"
-                            onPress={onClose}
+                            style={{ borderRadius: 24, overflow: 'hidden' }}
+                            className='bg-white p-4'
+                            onPress={handleMinimize}
                         >
-                            <Text className="text-white font-semibold text-lg">Revenir à la création</Text>
+                            <Animated.Text className="text-lg font-baloo-medium text-center">
+                                Je verrais plus tard
+                            </Animated.Text>
                         </TouchableOpacity>
                     </View>
-                )}
-            </Animated.View>
-        </View>
+                )
+                }
+            </Animated.View >
+        </View >
     );
 }

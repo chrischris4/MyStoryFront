@@ -22,12 +22,13 @@ export default function SettingsScreen() {
 
     const handleLogout = async () => {
         // Utiliser un modal de confirmation personnalisé ou directement logout
+        const userName = user?.profil?.name || 'ami';
         await logout();
         navigation.navigate('Login' as never);
         Toast.show({
             type: 'success',
-            text1: 'Déconnecté',
-            text2: 'Vous avez été déconnecté avec succès',
+            text1: `À bientôt ${userName} !`,
+            text2: 'On espère te revoir bientôt !',
         });
     };
 
