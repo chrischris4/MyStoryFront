@@ -264,10 +264,10 @@ export default function StoryDetailScreen() {
         {/* Couverture */}
         <BlurView
           intensity={isNight ? 90 : 50}
-          tint={isNight ? 'dark' : 'light'}
+          tint={isNight ? "dark" : "light"}
           style={{
-            borderRadius: 12,
-            overflow: 'hidden',
+            padding: 16, borderRadius: 12,
+            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
           }}
         >
           <View className='flex flex-col p-4'>
@@ -314,17 +314,19 @@ export default function StoryDetailScreen() {
         <View className='flex flex-row justify-between mt-4'>
           <BlurView
             intensity={isNight ? 90 : 50}
-            tint={isNight ? 'dark' : 'light'}
+            tint={isNight ? "dark" : "light"}
             style={{
-              borderRadius: 9999,
-              overflow: 'hidden',
+              padding: 16, borderRadius: 100,
+              height: 56,
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
             }}
+            className='flex items-center'
           >
             <TouchableOpacity
               onPress={handleToggleShared}
-              className="p-4 px-6 flex-row gap-2 items-center"
+              className="flex-row gap-2 items-center"
             >
-              <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+              <Text className={`px-4 text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
               {isShared && (
                 <Feather name='check' size={20} color={isNight ? '#fff' : '#000'} />
               )}
@@ -333,15 +335,16 @@ export default function StoryDetailScreen() {
 
           <BlurView
             intensity={isNight ? 90 : 50}
-            tint={isNight ? 'dark' : 'light'}
+            tint={isNight ? "dark" : "light"}
             style={{
-              width: 56,
+              padding: 16, width: 56,
               height: 56,
               borderRadius: 9999,
-              overflow: 'hidden',
               justifyContent: 'center',
               alignItems: 'center',
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
             }}
+
           >
             <TouchableOpacity
               onPress={handleToggleFavorite}
@@ -366,12 +369,13 @@ export default function StoryDetailScreen() {
         {/* Button Story details  */}
         <BlurView
           intensity={isNight ? 90 : 50}
-          tint={isNight ? 'dark' : 'light'}
+          tint={isNight ? "dark" : "light"}
           style={{
             borderRadius: 9999,
-            overflow: 'hidden',
             marginTop: 16,
             marginBottom: 16,
+            overflow: 'hidden',
+            backgroundColor: isNight ? '#1e293b90' : ''
           }}
         >
           <TouchableOpacity

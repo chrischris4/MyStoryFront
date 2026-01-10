@@ -228,7 +228,9 @@ export default function StoryFolder({
                 <BlurView
                     intensity={isNight ? 90 : 50}
                     tint={isNight ? "dark" : "light"}
-                    style={{ flex: 1, padding: 16, borderRadius: 24, }}
+                    style={{
+                        flex: 1, padding: 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : ''
+                    }}
                 >
                     <View
                         className="w-full mb-4 relative"

@@ -102,7 +102,7 @@ export default function SettingsScreen() {
             <Text className={`font-baloo-bold text-4xl pt-4 ${isNight ? "text-white" : "text-black"}`}>Paramètres</Text>
 
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={ { backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl font-baloo-semibold self-start`}>Compte</Text>
                         <Feather name="user" size={20} color={isNight ? "#fff" : "#000"} />
@@ -130,7 +130,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>Apparence</Text>
                         {!isNight ? (
@@ -157,7 +157,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Notifications</Text>
@@ -173,7 +173,7 @@ export default function SettingsScreen() {
                     </View>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Historique</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
@@ -183,7 +183,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.section}>
+                <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4'  tint={isNight ? 'dark' : 'light'} style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Abonnement</Text>
                         <Feather name="credit-card" size={20} color={isNight ? "#fff" : "#000"} />
@@ -209,7 +209,7 @@ export default function SettingsScreen() {
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis}>
                     <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                        <Text className='font-baloo-medium text-xl'>Se déconnecter</Text>
+                        <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>Se déconnecter</Text>
                     </TouchableOpacity>
                 </BlurView>
             </ScrollView>

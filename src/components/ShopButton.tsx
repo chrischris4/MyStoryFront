@@ -24,9 +24,9 @@ export default function ShopButton({ onPress, title, price, icon, isNight, value
     >
       <BlurView
         intensity={50}
-        tint="light"
+        tint={isNight ? "dark" : "light"}
         className="flex flex-col w-full p-2 h-full relative"
-        style={{ backgroundColor: isNight ? '#00000090' : '#87CEEB90' }}
+        style={{backgroundColor: isNight ? '#1e293b90' : '' }}
       >
         <View className='flex flex-col'>
           <Text className={`${isNight ? "text-white" : "text-slate-900"} text-lg font-baloo-semibold`}>{title}</Text>
@@ -40,7 +40,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, value
             <Text className={`${isNight ? "text-white" : "text-slate-900"} text-sm font-baloo-medium`}>{value2}</Text>
           )}
         </View>
-        <Text className={`${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo self-end absolute bottom-2 right-2`}>{price}</Text>
+        <Text className={`${isNight ? "text-white/80" : "text-slate-900"} text-sm font-baloo self-end absolute bottom-2 right-2`}>{price}</Text>
         {icon && <View style={{ alignSelf: 'flex-end' }}>{icon}</View>}
       </BlurView>
     </TouchableOpacity>

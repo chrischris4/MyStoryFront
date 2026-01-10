@@ -377,8 +377,8 @@ export default function CreateStoryScreen() {
             >
               <BlurView
                 intensity={isNight ? 90 : 50}
-                tint={isNight ? 'dark' : 'light'}
-                style={{ padding: 16 }}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>Titre de l'histoire</Text>
 
@@ -406,8 +406,8 @@ export default function CreateStoryScreen() {
             >
               <BlurView
                 intensity={isNight ? 90 : 50}
-                tint={isNight ? 'dark' : 'light'}
-                style={{ padding: 16 }}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
@@ -442,8 +442,8 @@ export default function CreateStoryScreen() {
             >
               <BlurView
                 intensity={isNight ? 90 : 50}
-                tint={isNight ? 'dark' : 'light'}
-                style={{ padding: 16 }}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
 
@@ -569,8 +569,8 @@ export default function CreateStoryScreen() {
             >
               <BlurView
                 intensity={isNight ? 90 : 50}
-                tint={isNight ? 'dark' : 'light'}
-                style={{ padding: 16 }}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <PageSelector
                   isNight={isNight}

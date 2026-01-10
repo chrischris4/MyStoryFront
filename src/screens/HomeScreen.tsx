@@ -94,7 +94,7 @@ export default function HomeScreen() {
                   intensity={isNight ? 90 : 50}
                   tint={isNight ? "dark" : "light"}
                   className="py-2 rounded-2xl overflow-hidden"
-                  style={{ backgroundColor: isNight ? '#1e293b90' : '#ffffff90' }}
+                  style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
                 >
                   <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
                     {planName}
@@ -107,7 +107,7 @@ export default function HomeScreen() {
                 intensity={isNight ? 90 : 50}
                 tint={isNight ? "dark" : "light"}
                 className="py-2 rounded-2xl overflow-hidden"
-                style={{ backgroundColor: isNight ? '#1e293b90' : '#ffffff90' }}
+                style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
                   {profile?.storyCoin || '0'} Jetons

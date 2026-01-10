@@ -9,6 +9,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
+import { BlurView } from 'expo-blur';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -359,12 +360,8 @@ export default function BillingScreen() {
             <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>Boutique</Text>
 
             {/* Boutons de jetons*/}
-            <View className='flex-col w-full mb-4'>
-                <View className='self-center w-full'>
-                    <View className='z-20 w-full bg-white rounded-xl p-3 flex items-center justify-center'>
-                        <Text className='font-baloo-semibold text-xl text-center'>Paquet de Jetons</Text>
-                    </View>
-                </View>
+            <View className='flex-col w-full mt-4'>
+                <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Paquets de Jetons</Text>
                 <View className='flex-row w-full gap-2'>
                     <Animated.View
                         style={{
@@ -414,11 +411,7 @@ export default function BillingScreen() {
 
             {/* Boutons Premium*/}
             <View className='flex flex-col w-full'>
-                <View className=' self-center w-full rounded-xl'>
-                    <View className='bg-white p-3 z-20 rounded-xl relative'>
-                        <Text className='font-baloo-semibold text-xl text-center'>Abonnements</Text>
-                    </View>
-                </View>
+                <Text className={`z-20 font-baloo-semibold text-2xl mt-4 -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Abonnements</Text>
                 <View className='flex-row w-full gap-2'>
                     <Animated.View
                         style={{
