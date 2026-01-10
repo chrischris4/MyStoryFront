@@ -6,6 +6,7 @@ import type { RootStackParamList } from '~/types';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import LottieView from 'lottie-react-native';
 
 type StoryPage = {
     page: number;
@@ -65,7 +66,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
 
     }, []);
     const animatedSkyColor = dayNightAnim.interpolate({
-        inputRange: [0, 0.3, 0.5, 0.7, 1],
+        inputRange: [0, 0.35, 0.5, 0.65, 1],
         outputRange: [
             'rgba(135,206,235,1)', // #87CEEB (jour - bleu ciel)
             'rgba(135,206,235,1)', // #87CEEB (jour - bleu ciel)
@@ -188,14 +189,24 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                         backgroundColor: '#FFD700',
                     }} />
                     {/* Lune */}
-                    <View style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        width: moonSize,
-                        height: moonSize,
-                        borderRadius: 100,
-                        backgroundColor: '#F0F8FF',
-                    }} />
+                    <Animated.View
+                        style={{
+                            position: 'absolute',
+                            bottom: 10,
+                            alignSelf: 'center',
+                        }}
+                    >
+                        <LottieView
+                            source={require('../../assets/animations/moon.json')}
+                            autoPlay
+
+                            loop={true}
+                            style={{
+                                width: 150, height: 150, position: 'absolute',
+                                bottom: 0,
+                            }}
+                        />
+                    </Animated.View>
                 </Animated.View>
 
 
@@ -223,7 +234,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                         </View>
                         <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
                             <Animated.Text className="text-base font-baloo text-center">
-                                Le temps de te chercher quelque chose à boire et ton histoire sera prète ! 
+                                Le temps de te chercher quelque chose à boire et ton histoire sera prète !
                             </Animated.Text>
                         </View>
                     </View>

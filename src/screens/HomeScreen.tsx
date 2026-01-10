@@ -100,7 +100,7 @@ export default function HomeScreen() {
               )}
             </View>
             <View className="flex flex-row items-center gap-2 mt-4 mb-4">
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
+              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
               <View className='flex flex-row items-center'>
               <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-baloo-semibold`}>{profile?.storyCoin || '0'}</Text>
               </View>

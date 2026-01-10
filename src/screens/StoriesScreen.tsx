@@ -97,7 +97,7 @@ export default function StoriesScreen() {
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-slate-600"}`}>Mes histoires</Text>
+      <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>Mes histoires</Text>
       <Text className={` text-xl font-baloo mb-4 px-4 ${isNight ? "text-white" : "text-slate-600"}`}>
         Toutes vos aventures vous attendent ici !
       </Text>

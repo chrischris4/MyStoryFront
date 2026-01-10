@@ -59,6 +59,8 @@ export default function StoryDetailScreen() {
   const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
   const [brightness, setBrightness] = useState(1);
+  const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
+  const [selectedBackground, setSelectedBackground] = useState<string>('black');
   const scrollViewRef = useRef<ScrollView>(null);
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
@@ -399,7 +401,7 @@ export default function StoryDetailScreen() {
           }}
         >
           <View className='flex flex-col p-4'>
-            <Text className="text-3xl font-baloo-bold mb-2 mt-2 text-center">{story.title}</Text>
+            <Text className={`text-3xl font-baloo-bold mb-2 mt-2 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
               <View
                 className='w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden'
@@ -423,10 +425,10 @@ export default function StoryDetailScreen() {
                 borderRadius: 20,
               }}
             /> */}
-              <Text className="text-base font-baloo-medium text-black">Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
+              <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
-            <Text className="text-sm font-baloo text-center px-4 pt-4">
+            <Text className={`text-sm font-baloo text-center px-4 pt-4 ${isNight ? 'text-white/80' : 'text-black'}`}>
               {story.createdAt ? new Date(story.createdAt).toLocaleDateString('fr-FR', {
                 day: '2-digit',
                 month: '2-digit',
@@ -452,9 +454,9 @@ export default function StoryDetailScreen() {
               onPress={handleToggleShared}
               className="p-4 px-6 flex-row gap-2 items-center"
             >
-              <Text className='text-lg font-baloo-semibold'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+              <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
               {isShared && (
-                <Feather name='check' size={20} />
+                <Feather name='check' size={20} color={isNight ? '#fff' : '#000'} />
               )}
             </TouchableOpacity>
           </BlurView>
@@ -506,10 +508,10 @@ export default function StoryDetailScreen() {
             onPress={() => setIsExpanded(!isExpanded)}
             className="p-4 flex-row gap-2 items-center justify-center"
           >
-            <Text className="text-lg font-baloo-semibold">
+            <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
               {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
             </Text>
-            <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
+            <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={isNight ? '#fff' : '#000'} />
           </TouchableOpacity>
         </BlurView>
 
@@ -517,7 +519,7 @@ export default function StoryDetailScreen() {
 
         {/* PLEIN ECRAN */}
         <Modal visible={isFullScreen} animationType="slide">
-          <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: selectedBackground }}>
             <FlatList
               data={story.pages.sort((a, b) => a.pageIndex - b.pageIndex)}
               keyExtractor={(item) => item.id.toString()}
@@ -571,207 +573,207 @@ export default function StoryDetailScreen() {
                 <View className='absolute top-4 left-4 right-4 flex flex-row justify-between'>
                   {/* Bouton musique en haut à gauche */}
                   <View className='flex flex-row gap-4 relative'>
-                      <TouchableOpacity
-                        onPress={() => {
-                          setShowMusicMenu(!showMusicMenu);
-                          if (!showMusicMenu) setShowBrightnessMenu(false);
-                        }}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowMusicMenu(!showMusicMenu);
+                        if (!showMusicMenu) setShowBrightnessMenu(false);
+                      }}
+                      style={{
+                        backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 40,
+                        width: 65,
+                        height: 65
+                      }}
+                      className='flex items-center justify-center'
+                    >
+                      <Feather
+                        name="music"
+                        size={24}
+                        color={selectedMusic ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Menu des musiques */}
+                    {showMusicMenu && (
+                      <BlurView
+                        intensity={50}
+                        tint="light"
                         style={{
-                          backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
-                          borderRadius: 40,
-                          width: 65,
-                          height: 65
+                          position: 'absolute',
+                          top: 80,
+                          left: 0,
+                          borderRadius: 16,
+                          overflow: 'hidden',
+                          minWidth: 200,
+                          zIndex: 10,
                         }}
-                        className='flex items-center justify-center'
                       >
-                        <Feather
-                          name="music"
-                          size={24}
-                          color={selectedMusic ? "white" : "black"}
-                        />
-                      </TouchableOpacity>
+                        <View style={{ padding: 8 }} className='bg-white/50'>
+                          <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
+                            Musiques
+                          </Text>
 
-                      {/* Menu des musiques */}
-                      {showMusicMenu && (
-                        <BlurView
-                          intensity={50}
-                          tint="light"
-                          style={{
-                            position: 'absolute',
-                            top: 80,
-                            left: 0,
-                            borderRadius: 16,
-                            overflow: 'hidden',
-                            minWidth: 200,
-                            zIndex: 10,
-                          }}
-                        >
-                          <View style={{ padding: 8 }} className='bg-white/50'>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
-                              Musiques
-                            </Text>
+                          {/* Liste des musiques */}
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedMusic(null);
+                              setShowMusicMenu(false);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🔇 Aucune musique</Text>
+                          </TouchableOpacity>
 
-                            {/* Liste des musiques */}
-                            <TouchableOpacity
-                              onPress={() => {
-                                setSelectedMusic(null);
-                                setShowMusicMenu(false);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🔇 Aucune musique</Text>
-                            </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedMusic('ambient');
+                              setShowMusicMenu(false);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: selectedMusic === 'ambient' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🎵 Ambiance douce</Text>
+                          </TouchableOpacity>
 
-                            <TouchableOpacity
-                              onPress={() => {
-                                setSelectedMusic('ambient');
-                                setShowMusicMenu(false);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: selectedMusic === 'ambient' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🎵 Ambiance douce</Text>
-                            </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedMusic('adventure');
+                              setShowMusicMenu(false);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: selectedMusic === 'adventure' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>⚔️ Aventure</Text>
+                          </TouchableOpacity>
 
-                            <TouchableOpacity
-                              onPress={() => {
-                                setSelectedMusic('adventure');
-                                setShowMusicMenu(false);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: selectedMusic === 'adventure' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>⚔️ Aventure</Text>
-                            </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedMusic('lullaby');
+                              setShowMusicMenu(false);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: selectedMusic === 'lullaby' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🌙 Berceuse</Text>
+                          </TouchableOpacity>
 
-                            <TouchableOpacity
-                              onPress={() => {
-                                setSelectedMusic('lullaby');
-                                setShowMusicMenu(false);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: selectedMusic === 'lullaby' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🌙 Berceuse</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                              onPress={() => {
-                                setSelectedMusic('magical');
-                                setShowMusicMenu(false);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: selectedMusic === 'magical' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>✨ Magique</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </BlurView>
-                      )}
+                          <TouchableOpacity
+                            onPress={() => {
+                              setSelectedMusic('magical');
+                              setShowMusicMenu(false);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: selectedMusic === 'magical' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>✨ Magique</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </BlurView>
+                    )}
 
                     {/* Bouton luminosité */}
-                      <TouchableOpacity
-                        onPress={() => {
-                          setShowBrightnessMenu(!showBrightnessMenu);
-                          if (!showBrightnessMenu) setShowMusicMenu(false);
-                        }}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowBrightnessMenu(!showBrightnessMenu);
+                        if (!showBrightnessMenu) setShowMusicMenu(false);
+                      }}
+                      style={{
+                        backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 40,
+                        width: 65,
+                        height: 65
+                      }}
+                      className='flex justify-center items-center'
+
+                    >
+                      <Feather
+                        name="sun"
+                        size={24}
+                        color={showBrightnessMenu ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Menu de luminosité */}
+                    {showBrightnessMenu && (
+                      <BlurView
+                        intensity={50}
+                        tint="light"
                         style={{
-                          backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
-                          borderRadius: 40,
-                          width: 65,
-                          height: 65
+                          position: 'absolute',
+                          top: 80,
+                          left: 0,
+                          borderRadius: 16,
+                          overflow: 'hidden',
+                          minWidth: 200,
+                          zIndex: 10,
                         }}
-                        className='flex justify-center items-center'
-
                       >
-                        <Feather
-                          name="sun"
-                          size={24}
-                          color={showBrightnessMenu ? "white" : "black"}
-                        />
-                      </TouchableOpacity>
+                        <View style={{ padding: 16 }} className='bg-white/50'>
+                          <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
+                            Luminosité
+                          </Text>
 
-                      {/* Menu de luminosité */}
-                      {showBrightnessMenu && (
-                        <BlurView
-                          intensity={50}
-                          tint="light"
-                          style={{
-                            position: 'absolute',
-                            top: 80,
-                            left: 0,
-                            borderRadius: 16,
-                            overflow: 'hidden',
-                            minWidth: 200,
-                            zIndex: 10,
-                          }}
-                        >
-                          <View style={{ padding: 16 }} className='bg-white/50'>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
-                              Luminosité
-                            </Text>
+                          {/* Presets de luminosité */}
+                          <TouchableOpacity
+                            onPress={async () => {
+                              setBrightness(0.3);
+                              await Brightness.setBrightnessAsync(0.3);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: brightness === 0.3 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🌑 Faible (30%)</Text>
+                          </TouchableOpacity>
 
-                            {/* Presets de luminosité */}
-                            <TouchableOpacity
-                              onPress={async () => {
-                                setBrightness(0.3);
-                                await Brightness.setBrightnessAsync(0.3);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: brightness === 0.3 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🌑 Faible (30%)</Text>
-                            </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={async () => {
+                              setBrightness(0.5);
+                              await Brightness.setBrightnessAsync(0.5);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: brightness === 0.5 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🌓 Moyenne (50%)</Text>
+                          </TouchableOpacity>
 
-                            <TouchableOpacity
-                              onPress={async () => {
-                                setBrightness(0.5);
-                                await Brightness.setBrightnessAsync(0.5);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: brightness === 0.5 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🌓 Moyenne (50%)</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                              onPress={async () => {
-                                setBrightness(0.7);
-                                await Brightness.setBrightnessAsync(0.7);
-                              }}
-                              style={{
-                                padding: 12,
-                                borderRadius: 8,
-                                backgroundColor: brightness === 0.7 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                              }}
-                            >
-                              <Text style={{ fontSize: 14 }}>🌕 Forte (70%)</Text>
-                            </TouchableOpacity>
-                          </View>
-                        </BlurView>
-                      )}
+                          <TouchableOpacity
+                            onPress={async () => {
+                              setBrightness(0.7);
+                              await Brightness.setBrightnessAsync(0.7);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: brightness === 0.7 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>🌕 Forte (70%)</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </BlurView>
+                    )}
                   </View>
                   <View className='flex flex-row gap-4'>
                     {/* Bouton rotation */}
@@ -806,10 +808,128 @@ export default function StoryDetailScreen() {
                   </View>
                 </View>
 
-                <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
+                <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-left" size={24} color="black" />
                   </TouchableOpacity>
+
+                  {/* Bouton Background au milieu */}
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowBackgroundMenu(!showBackgroundMenu);
+                        if (!showBackgroundMenu) {
+                          setShowMusicMenu(false);
+                          setShowBrightnessMenu(false);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: showBackgroundMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 40,
+                        width: 65,
+                        height: 65,
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <Feather
+                        name="image"
+                        size={24}
+                        color={showBackgroundMenu ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Menu des backgrounds */}
+                    {showBackgroundMenu && (
+                      <BlurView
+                        intensity={50}
+                        tint="light"
+                        style={{
+                          position: 'absolute',
+                          top: -125,
+                          borderRadius: 16,
+                          overflow: 'hidden',
+                          minWidth: 200,
+                          zIndex: 10,
+                        }}
+                        className='self-center'
+                      >
+                        <View style={{ padding: 8 }} className='bg-white/50'>
+                          <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
+                            Arrière-plan
+                          </Text>
+
+                          <View className='flex flex-row gap-3 p-4 pt-0'>
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedBackground('black');
+                                setShowBackgroundMenu(false);
+                              }}
+                              style={{
+                                borderRadius: 8,
+                                backgroundColor: selectedBackground === 'black' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 32 }}>⚫</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedBackground('#1a1a1a');
+                                setShowBackgroundMenu(false);
+                              }}
+                              style={{
+                                borderRadius: 8,
+                                backgroundColor: selectedBackground === '#1a1a1a' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 32 }}>⚫</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedBackground('#1e3a5f');
+                                setShowBackgroundMenu(false);
+                              }}
+                              style={{
+                                borderRadius: 8,
+                                backgroundColor: selectedBackground === '#1e3a5f' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 32 }}>🔵</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedBackground('#2d1b2e');
+                                setShowBackgroundMenu(false);
+                              }}
+                              style={{
+                                borderRadius: 8,
+                                backgroundColor: selectedBackground === '#2d1b2e' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 32 }}>🟣</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedBackground('#1a2e1a');
+                                setShowBackgroundMenu(false);
+                              }}
+                              style={{
+                                borderRadius: 8,
+                                backgroundColor: selectedBackground === '#1a2e1a' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 32 }}>🟢</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      </BlurView>
+                    )}
+                  </View>
+
                   <TouchableOpacity style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20, justifyContent: 'center', alignItems: 'center' }}>
                     <Feather name="chevron-right" size={24} color="black" />
                   </TouchableOpacity>

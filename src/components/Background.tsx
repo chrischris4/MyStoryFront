@@ -40,7 +40,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
 
     // 🔹 Couleurs nuit
     const skyColor = isNight ? '#020205' : '#87CEEB';
-    const cloudColor = isNight ? '#A0AEC9' : '#FFFFFF';
+    const cloudColor = isNight ? '#6b7588' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 

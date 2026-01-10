@@ -52,21 +52,21 @@ export default function PageSelector({ numPages, setNumPages, isNight }: PageSel
 
   return (
     <View className="text-center mb-4">
-      <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold mb-4`}>Nombre de pages</Text>
+      <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Nombre de pages</Text>
 
       <View className="flex-row justify-end items-center space-x-10">
         <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>
           <Feather
             name="chevron-left"
             size={28}
-            color={currentIndex === 0 ? '#B4CDED' : 'black'}
+            color={currentIndex === 0 ? (isNight ? '#4A5568' : '#B4CDED') : (isNight ? '#E5E7EB' : 'black')}
           />
         </TouchableOpacity>
 
         <View className="overflow-hidden w-20 h-12 justify-center items-center">
           <Animated.Text
             style={{
-              color: 'black',
+              color: isNight ? '#E5E7EB' : 'black',
               fontSize: 36,
               transform: [{ translateX }],
             }}
@@ -80,7 +80,7 @@ export default function PageSelector({ numPages, setNumPages, isNight }: PageSel
           <Feather
             name="chevron-right"
             size={28}
-            color={currentIndex === maxPages - 1 ? '#B4CDED' : 'black'}
+            color={currentIndex === maxPages - 1 ? (isNight ? '#4A5568' : '#B4CDED') : (isNight ? '#E5E7EB' : 'black')}
           />
         </TouchableOpacity>
       </View>

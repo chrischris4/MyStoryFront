@@ -166,7 +166,7 @@ export default function SharedStoriesScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-      <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-4xl font-baloo-bold px-4 pt-4`}>Histoires partagées</Text>
+      <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl font-baloo-bold px-4 pt-4`}>Histoires partagées</Text>
       <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
         Découvrez les histoires partagées par la communauté !
       </Text>

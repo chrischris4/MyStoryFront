@@ -146,7 +146,7 @@ export default function StoryFolder({
                     </View>
                 )}
                 <BlurView
-                    intensity={expanded ? 60 : 30}
+                    intensity={50}
                     tint="light"
                     style={{ flex: 1, padding: 16, borderRadius: 24 }}
                 >

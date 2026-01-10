@@ -358,7 +358,7 @@ export default function CreateStoryScreen() {
           </TouchableOpacity>
         </View>
       )}
-      <Text className={`text-4xl font-baloo-bold pt-10 ${isNight ? "text-white/80" : "text-slate-600"}`}>Creation d'histoire</Text>
+      <Text className={`text-4xl font-baloo-bold pt-10 ${isNight ? "text-white/80" : "text-black"}`}>Creation d'histoire</Text>
       <Text className={`text-xl font-baloo pb-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>Ici, tout deviens possible !</Text>
       <ScrollView
         className="flex-1"
@@ -380,11 +380,12 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-600"}`}>Titre de l'histoire</Text>
+                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>Titre de l'histoire</Text>
 
                 <TextInput
-                  className="border border-gray-400 rounded-lg p-2"
+                  className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder="Ex: Pacha et la forêt magique"
+                  placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
                   value={formik.values.title}
                   onChangeText={formik.handleChange('title')}
                   onBlur={formik.handleBlur('title')}
@@ -408,11 +409,12 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
-                <Text className={` ${isNight ? "text-white/60" : "text-slate-600"} text-sm font-baloO mb-2`}>Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
                 <TextInput
-                  className="border border-gray-400 rounded-lg p-3"
+                  className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
+                  placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
                   value={formik.values.prompt}
                   onChangeText={formik.handleChange('prompt')}
                   onBlur={formik.handleBlur('prompt')}
@@ -422,7 +424,7 @@ export default function CreateStoryScreen() {
                   style={{ minHeight: 120 }}
                 />
                 <View className='flex flex-row gap-2'>
-                  <Text className="text-sm mt-1">{formik.values.prompt.length}/500</Text>
+                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm mt-1`}>{formik.values.prompt.length}/500</Text>
                   {formik.touched.prompt && formik.errors.prompt && (
                     <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
                   )}
@@ -443,7 +445,7 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
 
                 {/* Carrousel de styles */}
                 <Animated.ScrollView
@@ -515,7 +517,7 @@ export default function CreateStoryScreen() {
                   })}
                 </Animated.ScrollView>
 
-                {/* Indicateurs de page */}
+                {/* Indicateurs de style */}
                 <View className="flex-row justify-center mt-4 gap-2">
                   {STORY_STYLES.map((style, index) => {
                     const cardWidth = Dimensions.get('window').width * 0.6 + 12;
@@ -584,20 +586,20 @@ export default function CreateStoryScreen() {
             {/* Messages d'erreur résumés */}
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
-                <View className="mb-4 bg-red-50 rounded-2xl p-4">
-                  <Text className="text-red-800 font-baloo-semibold text-base mb-2">Informations manquantes</Text>
+                <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
+                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>Informations manquantes</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
-                      <Text className="text-red-700 text-sm">• {formik.errors.title}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.title}</Text>
                     )}
                     {formik.touched.prompt && formik.errors.prompt && (
-                      <Text className="text-red-700 text-sm">• {formik.errors.prompt}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.prompt}</Text>
                     )}
                     {formik.touched.numPages && formik.errors.numPages && (
-                      <Text className="text-red-700 text-sm">• {formik.errors.numPages}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.numPages}</Text>
                     )}
                     {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                      <Text className="text-red-700 text-sm">• {formik.errors.selectedStyle}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.selectedStyle}</Text>
                     )}
                   </View>
                 </View>
@@ -605,10 +607,10 @@ export default function CreateStoryScreen() {
 
             {/* 🖋️ Bouton */}
             <TouchableOpacity
-              className={`${isNight ? "bg-white" : "bg-black"} px-4 py-3 rounded-3xl items-center`}
+              className={`bg-black px-4 py-3 rounded-3xl items-center`}
               onPress={handleCreateClick}
             >
-              <Text className={`text-white font-baloo-semibold text-lg ${isNight ? "text-black/80" : "text-slate-600"} `}>Créer mon histoire !</Text>
+              <Text className="font-baloo-semibold text-lg text-white">Créer mon histoire !</Text>
             </TouchableOpacity>
           </View>
         )}
