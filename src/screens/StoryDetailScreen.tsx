@@ -25,9 +25,11 @@ import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { BlurView } from 'expo-blur';
+import * as Brightness from 'expo-brightness';
 import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import Toast from 'react-native-toast-message';
+import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 
 
 
@@ -53,6 +55,12 @@ export default function StoryDetailScreen() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [forceLandscape, setForceLandscape] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showMusicMenu, setShowMusicMenu] = useState(false);
+  const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
+  const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
+  const [brightness, setBrightness] = useState(1);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
   // Utiliser les hooks pour les favoris
   const { data: isFavorite = false, isLoading: isFavoriteLoading } = useCheckFavorite(Number(storyId));
@@ -212,6 +220,29 @@ export default function StoryDetailScreen() {
     };
   }, []);
 
+  // Garder les contrôles visibles quand le menu musique ou luminosité est ouvert
+  useEffect(() => {
+    if (showMusicMenu || showBrightnessMenu) {
+      // Annuler le timeout de masquage si un menu s'ouvre
+      if (hideTimeout.current) {
+        clearTimeout(hideTimeout.current);
+      }
+      // S'assurer que les contrôles sont visibles
+      if (!showControls) {
+        setShowControls(true);
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+      }
+    } else if (showControls) {
+      // Quand les menus se ferment, relancer le timer de masquage
+      showControlsWithFade();
+    }
+  }, [showMusicMenu, showBrightnessMenu]);
+
   // Gérer l'orientation quand la modal s'ouvre/ferme
   useEffect(() => {
     const handleOrientation = async () => {
@@ -262,14 +293,17 @@ export default function StoryDetailScreen() {
     if (hideTimeout.current) clearTimeout(hideTimeout.current);
 
     hideTimeout.current = setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true,
-      }).start(() => {
-        setShowControls(false);
-      });
+      // Ne pas masquer les contrôles si un menu est ouvert
+      if (!showMusicMenu && !showBrightnessMenu) {
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 300,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }).start(() => {
+          setShowControls(false);
+        });
+      }
     }, 4000);
   };
 
@@ -344,12 +378,15 @@ export default function StoryDetailScreen() {
 
 
   return (
-    <View className="flex-1 relative h-screen pt-10" style={{ backgroundColor: skyColor }}>
+    <View className="flex-1 relative h-screen pt-10 pb-4" style={{ backgroundColor: skyColor }}>
 
       {isNight && renderStars(50)}
       <ScrollView
+        ref={scrollViewRef}
         className="flex-grow px-4 z-20"
         contentContainerStyle={{ paddingBottom: 140 }}
+        scrollEventThrottle={16}
+        onScroll={handleGoBackTopScroll}
       >
 
         {/* Couverture */}
@@ -415,7 +452,7 @@ export default function StoryDetailScreen() {
               onPress={handleToggleShared}
               className="p-4 px-6 flex-row gap-2 items-center"
             >
-              <Text className='text-lg font-baloo-medium'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
+              <Text className='text-lg font-baloo-semibold'>{isShared ? 'Histoire partagée' : 'Partager l\'histoire ?'}</Text>
               {isShared && (
                 <Feather name='check' size={20} />
               )}
@@ -475,6 +512,10 @@ export default function StoryDetailScreen() {
             <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} />
           </TouchableOpacity>
         </BlurView>
+
+
+
+        {/* PLEIN ECRAN */}
         <Modal visible={isFullScreen} animationType="slide">
           <SafeAreaView style={{ flex: 1, backgroundColor: 'black' }}>
             <FlatList
@@ -486,32 +527,32 @@ export default function StoryDetailScreen() {
               onTouchStart={handleUserTouch}
               renderItem={({ item }) => (
                 <View
-                    style={{ width, height }}
-                    className="justify-center items-center"
-                  >
-                    <View className={`relative aspect-square ${isPortrait ? 'w-full' : ' h-full'}`}>
-                      <Image
-                        source={{ uri: item.imageUrl }}
-                        className="w-full h-full absolute top-0 left-0"
-                        resizeMode="contain"
-                      />
-                      <View
-                        className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
+                  style={{ width, height }}
+                  className="justify-center items-center"
+                >
+                  <View className={`relative aspect-square ${isPortrait ? 'w-full' : ' h-full'}`}>
+                    <Image
+                      source={{ uri: item.imageUrl }}
+                      className="w-full h-full absolute top-0 left-0"
+                      resizeMode="contain"
+                    />
+                    <View
+                      className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
+                    >
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: isPortrait ? 16 : 18,
+                          textAlign: 'left',
+                        }}
+                        className='font-baloo-medium'
                       >
-                        <Text
-                          style={{
-                            color: 'white',
-                            fontSize: isPortrait ? 16 : 18,
-                            textAlign: 'left',
-                          }}
-                          className='font-baloo-medium'
-                        >
-                          {item.text}
-                        </Text>
-                      </View>
+                        {item.text}
+                      </Text>
                     </View>
                   </View>
-              )}            />
+                </View>
+              )} />
 
             {showControls && (
               <Animated.View
@@ -526,31 +567,243 @@ export default function StoryDetailScreen() {
                 }}
                 pointerEvents="box-none"
               >
-                {/* Boutons en haut à droite */}
-                <View style={{ position: 'absolute', right: 16, top: 16, flexDirection: 'row', gap: 12 }}>
-                  {/* Bouton rotation */}
-                  <TouchableOpacity
-                    onPress={toggleOrientation}
-                    style={{
-                      backgroundColor: (forceLandscape || !isPortrait) ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
-                      borderRadius: 40,
-                      padding: 20
-                    }}
-                  >
-                    <Feather
-                      name={isPortrait ? "smartphone" : "tablet"}
-                      size={24}
-                      color={(forceLandscape || !isPortrait) ? "white" : "black"}
-                    />
-                  </TouchableOpacity>
+                {/* MENU FULL SCREEN */}
+                <View className='absolute top-4 left-4 right-4 flex flex-row justify-between'>
+                  {/* Bouton musique en haut à gauche */}
+                  <View className='flex flex-row gap-4 relative'>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setShowMusicMenu(!showMusicMenu);
+                          if (!showMusicMenu) setShowBrightnessMenu(false);
+                        }}
+                        style={{
+                          backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                          borderRadius: 40,
+                          width: 65,
+                          height: 65
+                        }}
+                        className='flex items-center justify-center'
+                      >
+                        <Feather
+                          name="music"
+                          size={24}
+                          color={selectedMusic ? "white" : "black"}
+                        />
+                      </TouchableOpacity>
 
-                  {/* Bouton fermer */}
-                  <TouchableOpacity
-                    onPress={() => setIsFullScreen(false)}
-                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, padding: 20 }}
-                  >
-                    <Feather name="x" size={24} color="black" />
-                  </TouchableOpacity>
+                      {/* Menu des musiques */}
+                      {showMusicMenu && (
+                        <BlurView
+                          intensity={50}
+                          tint="light"
+                          style={{
+                            position: 'absolute',
+                            top: 80,
+                            left: 0,
+                            borderRadius: 16,
+                            overflow: 'hidden',
+                            minWidth: 200,
+                            zIndex: 10,
+                          }}
+                        >
+                          <View style={{ padding: 8 }} className='bg-white/50'>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
+                              Musiques
+                            </Text>
+
+                            {/* Liste des musiques */}
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedMusic(null);
+                                setShowMusicMenu(false);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🔇 Aucune musique</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedMusic('ambient');
+                                setShowMusicMenu(false);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: selectedMusic === 'ambient' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🎵 Ambiance douce</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedMusic('adventure');
+                                setShowMusicMenu(false);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: selectedMusic === 'adventure' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>⚔️ Aventure</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedMusic('lullaby');
+                                setShowMusicMenu(false);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: selectedMusic === 'lullaby' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🌙 Berceuse</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => {
+                                setSelectedMusic('magical');
+                                setShowMusicMenu(false);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: selectedMusic === 'magical' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>✨ Magique</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </BlurView>
+                      )}
+
+                    {/* Bouton luminosité */}
+                      <TouchableOpacity
+                        onPress={() => {
+                          setShowBrightnessMenu(!showBrightnessMenu);
+                          if (!showBrightnessMenu) setShowMusicMenu(false);
+                        }}
+                        style={{
+                          backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                          borderRadius: 40,
+                          width: 65,
+                          height: 65
+                        }}
+                        className='flex justify-center items-center'
+
+                      >
+                        <Feather
+                          name="sun"
+                          size={24}
+                          color={showBrightnessMenu ? "white" : "black"}
+                        />
+                      </TouchableOpacity>
+
+                      {/* Menu de luminosité */}
+                      {showBrightnessMenu && (
+                        <BlurView
+                          intensity={50}
+                          tint="light"
+                          style={{
+                            position: 'absolute',
+                            top: 80,
+                            left: 0,
+                            borderRadius: 16,
+                            overflow: 'hidden',
+                            minWidth: 200,
+                            zIndex: 10,
+                          }}
+                        >
+                          <View style={{ padding: 16 }} className='bg-white/50'>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
+                              Luminosité
+                            </Text>
+
+                            {/* Presets de luminosité */}
+                            <TouchableOpacity
+                              onPress={async () => {
+                                setBrightness(0.3);
+                                await Brightness.setBrightnessAsync(0.3);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: brightness === 0.3 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🌑 Faible (30%)</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={async () => {
+                                setBrightness(0.5);
+                                await Brightness.setBrightnessAsync(0.5);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: brightness === 0.5 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🌓 Moyenne (50%)</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={async () => {
+                                setBrightness(0.7);
+                                await Brightness.setBrightnessAsync(0.7);
+                              }}
+                              style={{
+                                padding: 12,
+                                borderRadius: 8,
+                                backgroundColor: brightness === 0.7 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                              }}
+                            >
+                              <Text style={{ fontSize: 14 }}>🌕 Forte (70%)</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </BlurView>
+                      )}
+                  </View>
+                  <View className='flex flex-row gap-4'>
+                    {/* Bouton rotation */}
+                    <TouchableOpacity
+                      onPress={toggleOrientation}
+                      style={{
+                        backgroundColor: (forceLandscape || !isPortrait) ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 40,
+                        width: 65,
+                        height: 65
+                      }}
+                      className='flex justify-center items-center'
+                    >
+                      <Feather
+                        name={isPortrait ? "smartphone" : "tablet"}
+                        size={24}
+                        color={(forceLandscape || !isPortrait) ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Bouton fermer */}
+                    <TouchableOpacity
+                      onPress={() => setIsFullScreen(false)}
+                      style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)', borderRadius: 40, width: 65,
+                        height: 65
+                      }}
+                      className='flex justify-center items-center'
+                    >
+                      <Feather name="x" size={24} color="black" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
 
                 <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -562,6 +815,7 @@ export default function StoryDetailScreen() {
                   </TouchableOpacity>
                 </View>
               </Animated.View>
+
             )}
           </SafeAreaView>
         </Modal>
@@ -665,6 +919,16 @@ export default function StoryDetailScreen() {
           <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>
       </View>
+
+      {/* Bouton retour en haut */}
+      <GoBackTop
+        scrollViewRef={scrollViewRef}
+        showAfter={200}
+        onScroll={handleGoBackTopScroll}
+        isVisible={goBackTopVisible}
+        opacity={goBackTopOpacity}
+        scale={goBackTopScale}
+      />
     </View>
   );
 }

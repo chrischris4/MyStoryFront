@@ -37,5 +37,7 @@ export const useCheckFavorite = (storyId: number) => {
     staleTime: 1000 * 60 * 5, // Les données sont considérées comme fraîches pendant 5 minutes
     retry: 2,
     enabled: !!accessToken && !!storyId, // Ne lance la requête que si on a un token et un storyId
+    refetchOnMount: 'always', // Toujours refetch quand le composant se monte
+    refetchOnWindowFocus: true, // Refetch quand la fenêtre reprend le focus
   });
 };

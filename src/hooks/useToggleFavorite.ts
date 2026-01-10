@@ -57,12 +57,18 @@ export const useToggleFavorite = () => {
       // Retourner un contexte avec la valeur précédente pour le rollback
       return { previousValue, storyId: variables.storyId };
     },
-    onSuccess: () => {
-      // Invalider et refetch les queries liées aux favoris (sauf checkFavorite qui a déjà été mis à jour)
+    onSuccess: (_data, variables) => {
+      // Forcer la mise à jour du cache avec la nouvelle valeur
+      queryClient.setQueryData<boolean>(
+        ['checkFavorite', variables.storyId],
+        !variables.isFavorite
+      );
+
+      // Invalider et refetch les queries liées aux favoris
       queryClient.invalidateQueries({ queryKey: ['favoriteStories'] });
       queryClient.invalidateQueries({ queryKey: ['stories'] });
     },
-    onError: (error: Error, _variables, context) => {
+    onError: (error: Error, variables, context) => {
       console.error('Erreur lors du toggle favori:', error);
 
       // Rollback : restaurer la valeur précédente en cas d'erreur
@@ -71,6 +77,12 @@ export const useToggleFavorite = () => {
           ['checkFavorite', context.storyId],
           context.previousValue
         );
+      }
+
+      // Si l'erreur est une contrainte unique (favori déjà existant),
+      // forcer un refetch pour synchroniser avec le serveur
+      if (error.message.includes('Unique constraint') || error.message.includes('P2002')) {
+        queryClient.invalidateQueries({ queryKey: ['checkFavorite', variables.storyId] });
       }
     },
   });

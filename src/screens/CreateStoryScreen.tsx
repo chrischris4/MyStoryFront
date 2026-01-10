@@ -358,8 +358,8 @@ export default function CreateStoryScreen() {
           </TouchableOpacity>
         </View>
       )}
-      <Text className="text-4xl font-baloo-bold pt-10">Creation d'histoire</Text>
-      <Text className="text-xl font-baloo pb-4">Ici, tout deviens possible !</Text>
+      <Text className={`text-4xl font-baloo-bold pt-10 ${isNight ? "text-white/80" : "text-slate-600"}`}>Creation d'histoire</Text>
+      <Text className={`text-xl font-baloo pb-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>Ici, tout deviens possible !</Text>
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -380,7 +380,7 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-2xl font-baloo-semibold mb-2">Titre de l'histoire</Text>
+                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-600"}`}>Titre de l'histoire</Text>
 
                 <TextInput
                   className="border border-gray-400 rounded-lg p-2"
@@ -408,8 +408,8 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-2xl font-baloo-semibold">Résumé de l'histoire</Text>
-                <Text className="text-sm font-baloO mb-2">Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/60" : "text-slate-600"} text-sm font-baloO mb-2`}>Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
                 <TextInput
                   className="border border-gray-400 rounded-lg p-3"
                   placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
@@ -443,14 +443,14 @@ export default function CreateStoryScreen() {
                 tint='light'
                 style={{ padding: 16 }}
               >
-                <Text className="text-2xl font-baloo-semibold mb-4">Style de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
 
                 {/* Carrousel de styles */}
                 <Animated.ScrollView
                   ref={scrollViewRef}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  snapToInterval={Dimensions.get('window').width * 0.6 + 12}
+                  snapToInterval={Dimensions.get('window').width * 0.6}
                   decelerationRate="fast"
                   contentContainerStyle={{ paddingRight: 16 }}
                   onScroll={Animated.event(
@@ -534,7 +534,7 @@ export default function CreateStoryScreen() {
 
                     const dotColor = scrollX.interpolate({
                       inputRange,
-                      outputRange: ['rgba(209, 213, 219, 1)', 'rgba(0, 0, 0, 1)', 'rgba(209, 213, 219, 1)'],
+                      outputRange: ['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0.4)'],
                       extrapolate: 'clamp',
                     });
 
@@ -571,6 +571,7 @@ export default function CreateStoryScreen() {
                 style={{ padding: 16 }}
               >
                 <PageSelector
+                  isNight={isNight}
                   numPages={formik.values.numPages}
                   setNumPages={(n) => formik.setFieldValue('numPages', n)}
                 />
@@ -604,10 +605,10 @@ export default function CreateStoryScreen() {
 
             {/* 🖋️ Bouton */}
             <TouchableOpacity
-              className="bg-[#0D1821] px-4 py-3 rounded-3xl items-center"
+              className={`${isNight ? "bg-white" : "bg-black"} px-4 py-3 rounded-3xl items-center`}
               onPress={handleCreateClick}
             >
-              <Text className="text-white font-baloo-semibold text-lg">Créer mon histoire !</Text>
+              <Text className={`text-white font-baloo-semibold text-lg ${isNight ? "text-black/80" : "text-slate-600"} `}>Créer mon histoire !</Text>
             </TouchableOpacity>
           </View>
         )}

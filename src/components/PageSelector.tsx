@@ -5,9 +5,10 @@ import { Feather } from '@expo/vector-icons';
 interface PageSelectorProps {
   numPages: number;
   setNumPages: (n: number) => void;
+  isNight: boolean,
 }
 
-export default function PageSelector({ numPages, setNumPages }: PageSelectorProps) {
+export default function PageSelector({ numPages, setNumPages, isNight }: PageSelectorProps) {
   const maxPages = 10;
 
   const [currentIndex, setCurrentIndex] = useState(numPages - 6);
@@ -51,7 +52,7 @@ export default function PageSelector({ numPages, setNumPages }: PageSelectorProp
 
   return (
     <View className="text-center mb-4">
-      <Text className="text-2xl font-baloo-semibold mb-4">Nombre de pages</Text>
+      <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-2xl font-baloo-semibold mb-4`}>Nombre de pages</Text>
 
       <View className="flex-row justify-end items-center space-x-10">
         <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>

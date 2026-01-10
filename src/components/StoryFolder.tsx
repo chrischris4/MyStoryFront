@@ -155,7 +155,7 @@ export default function StoryFolder({
                         style={{ flex: expanded ? 1 : undefined }}
                     >
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
-                        <Text className="text-slate-500 text-lg font-baloo">{description}</Text>
+                        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
 
                         {expanded && (
                             <Pressable

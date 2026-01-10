@@ -152,30 +152,6 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
         <View
             className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
         >
-            {loading && (
-                <TouchableOpacity
-                    onPress={handleMinimize}
-                    style={{
-                        position: 'absolute',
-                        top: 12,
-                        right: 12,
-                        zIndex: 100,
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 20,
-                        width: 36,
-                        height: 36,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        shadowColor: '#000',
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.2,
-                        shadowRadius: 4,
-                        elevation: 4,
-                    }}
-                >
-                    <Feather name="minimize-2" size={20} color="#1F2937" />
-                </TouchableOpacity>
-            )}
             <Animated.View
                 style={{
                     flex: 1,
@@ -226,8 +202,30 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
 
                 {/* Contenu texte et boutons */}
                 {loading ? (
-                    <View className="flex-1 justify-end items-center mb-4">
-                        <Text className="mt-4 text-lg font-semibold">Nous préparons votre histoire</Text>
+                    <View className="flex h-full justify-end items-center relative mb-4">
+                        <Animated.View
+                            style={{
+                                backgroundColor: groundColor,
+                                borderWidth: 4,
+                                borderColor: groundBorderColor,
+                                width: '200%',
+                                alignSelf: 'center',
+                                aspectRatio: 1,
+                                borderRadius: 9999,
+                                position: 'absolute',
+                                bottom: '-130%',
+                            }}
+                        />
+                        <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-11/12 abolute top-4'>
+                            <Animated.Text className="text-xl font-baloo-medium text-center ">
+                                Création en cours
+                            </Animated.Text>
+                        </View>
+                        <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
+                            <Animated.Text className="text-base font-baloo text-center">
+                                Le temps de te chercher quelque chose à boire et ton histoire sera prète ! 
+                            </Animated.Text>
+                        </View>
                     </View>
                 ) : (
                     <View className="flex-1 w-full justify-between relative p-2">
@@ -248,7 +246,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                         <View>
                             <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
                                 <Animated.Text className="text-xl font-baloo text-center">
-                                    Votre histoire est prête !
+                                    Ton histoire est prête !
                                 </Animated.Text>
                             </View>
 
@@ -280,7 +278,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             }}
                         >
                             <Animated.Text className="text-lg font-baloo-medium text-center">
-                                Découvrir votre histoire
+                                Découvrir ton histoire
                             </Animated.Text>
                         </TouchableOpacity>
                         <TouchableOpacity
@@ -289,7 +287,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             onPress={handleMinimize}
                         >
                             <Animated.Text className="text-lg font-baloo-medium text-center">
-                                Je verrais plus tard
+                                Créer une nouvelle histoire !
                             </Animated.Text>
                         </TouchableOpacity>
                     </View>

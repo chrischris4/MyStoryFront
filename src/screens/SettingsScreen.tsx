@@ -79,7 +79,7 @@ export default function SettingsScreen() {
                 className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
-            <Text className='font-baloo-bold text-4xl pt-4'>Paramètres</Text>
+            <Text className={`font-baloo-bold text-4xl pt-4 ${isNight ? "text-white" : "text-slate-600"}`}>Paramètres</Text>
 
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
                 <BlurView intensity={50} tint='light' style={styles.section}>

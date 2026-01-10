@@ -317,7 +317,7 @@ export default function BillingScreen() {
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
             </View>
-            <Text className='font-baloo-semibold text-4xl pt-10'>Boutique</Text>
+            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-600"}`}>Boutique</Text>
             {/* <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text> */}
 
             {/* Boutons de jetons en disposition triangle */}
@@ -363,7 +363,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_5')} />
+                    <ShopButton isNight={isNight} isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_5')} />
                 </Animated.View>
 
                 {/* Button 10 jetons - En bas à gauche */}
@@ -382,7 +382,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_10')} />
+                    <ShopButton isNight={isNight} isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_10')} />
                 </Animated.View>
 
                 {/* Button 20 jetons - En bas à droite */}
@@ -401,7 +401,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
+                    <ShopButton isNight={isNight} isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
                 </Animated.View >
             </View>
 
@@ -423,7 +423,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
+                    <ShopButton isNight={isNight} title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
                 </Animated.View>
                 <Animated.View
                     style={{
@@ -440,7 +440,7 @@ export default function BillingScreen() {
                         ],
                     }}
                 >
-                    <ShopButton title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
+                    <ShopButton isNight={isNight} title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
                 </Animated.View>
                 <View className='absolute -top-36 self-center'>
                     <View className='w-72 h-44 relative'>

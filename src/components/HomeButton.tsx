@@ -12,6 +12,8 @@ type HomeButtonProps = {
 };
 
 export default function HomeButton({ onPress, title, description, icon, isNight, style }: HomeButtonProps) {
+  const iconColor = isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"; // white/80 ou slate-600
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -23,8 +25,15 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
         className="p-4 flex-col justify-between items-center bg-[#B4CDED]/40"
       >
         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo-semibold self-start`}>{title}</Text>
-        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-base font-baloo self-start`}>{description}</Text>
-        {icon && <View className="self-end mt-2">{icon}</View>}
+        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-base font-baloo self-start`}>{description}</Text>
+        {icon && (
+          <View className="self-end mt-2">
+            {React.isValidElement(icon)
+              ? React.cloneElement(icon, { color: iconColor } as any)
+              : icon
+            }
+          </View>
+        )}
       </BlurView>
     </TouchableOpacity>
   );
