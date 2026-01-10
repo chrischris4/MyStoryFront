@@ -24,8 +24,7 @@ const toastConfig = {
         style={{
           borderRadius: 16,
           overflow: 'hidden',
-          paddingVertical: 20,
-          paddingHorizontal: 24,
+          paddingVertical: 16,
         }}
       >
         <Text

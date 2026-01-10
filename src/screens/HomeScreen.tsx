@@ -7,7 +7,8 @@ import type { MainTabParamList } from '~/navigation/AppNavigator';
 import Background from '~/components/Background';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
-import { useUserStore } from '~/store/useUserStore';
+import { useUserStore, isPremiumUser } from '~/store/useUserStore';
+import { BlurView } from 'expo-blur';
 
 export default function HomeScreen() {
   const { isNight } = useTheme();
@@ -17,22 +18,30 @@ export default function HomeScreen() {
   const user = useUserStore((state) => state.user);
   const profile = {
     name: user?.profil.name || 'Prénom',
-    isPremium: user?.isPremium,
+    isPremium: isPremiumUser(user?.subscriptionPlan),
     imageUrl: user?.profil.imageUrl,
     storyCoin: user?.storyCoin || 0,
   };
 
-//   useEffect(() => {
-//   const logAuthState = async () => {
-//     const userString = await AsyncStorage.getItem('user');
-//     const user = userString ? JSON.parse(userString) : null;
-//     console.log('📧 Email:', user?.email);
-//     console.log('👤 Username:', user?.profil?.name);
-//     console.log('🆔 User ID:', user?.id);
-//   };
+  // Fonction pour obtenir le nom d'affichage du plan
+  const getPlanDisplayName = (planType?: string): string => {
+    if (!planType) return 'Premium';
 
-//   logAuthState();
-// }, []);
+    const planNames: { [key: string]: string } = {
+      'EXPLOROR': 'Explorateur',
+      'ADVENTURER': 'Aventurier',
+      'LEGEND': 'Légende',
+    };
+
+    return planNames[planType] || 'Premium';
+  };
+
+  const planName = getPlanDisplayName(user?.subscriptionPlan);
+
+  // Debug: log subscription plan
+  // console.log('🎯 User subscriptionPlan:', user?.subscriptionPlan);
+  // console.log('💎 isPremium:', profile.isPremium);
+  // console.log('📛 planName:', planName);
 
   return (
     <View className="flex-1 relative">
@@ -70,45 +79,43 @@ export default function HomeScreen() {
                 }}
                 className='absolute bottom-0 left-0'
               />
-              {profile.isPremium && (
-                <View
-                  className='self-center mx-auto absolute bottom-5'
-                >
 
-                  <View className='w-[140px] h-16 relative flex items-center justify-center'>
-                    <Text className="color-slate-600 text-xl font-medium mt-10 z-20">
-                      Fluner
-                    </Text>
-                    <View
-                      className='h-10 rounded-full absolute top-10 left-0 w-full'
-                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
-                    />
-                    <View
-                      className='h-14 w-14 rounded-full absolute -bottom-5 left-5'
-                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
-                    />
-                    <View
-                      className='h-14 w-14 rounded-full absolute -bottom-5 right-3'
-                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
-                    />
-                    <View
-                      className='h-20 w-20 rounded-full absolute top-3 left-12'
-                      style={{ backgroundColor: !isNight ? '#FFFFFF' : '#A0AEC9' }}
-                    />
-                  </View>
-                </View>
-              )}
             </View>
-            <View className="flex flex-row items-center gap-2 mt-4 mb-4">
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
-              <View className='flex flex-row items-center'>
-              <Text className={` ${isNight ? "text-[#eaeeff]" : "text-slate-700"} text-3xl font-baloo-semibold`}>{profile?.storyCoin || '0'}</Text>
-              </View>
-            </View>
+
           </View>
         </View>
 
-
+        <View className="flex flex-col w-11/12 items-center mt-2 mb-4">
+          <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
+          <View className='flex-row items-center w-full gap-4 justify-center'>
+            {profile.isPremium && (
+              <View style={{ flex: 1 }}>
+                <BlurView
+                  intensity={isNight ? 90 : 50}
+                  tint={isNight ? "dark" : "light"}
+                  className="py-2 rounded-2xl overflow-hidden"
+                  style={{ backgroundColor: isNight ? '#1e293b90' : '#ffffff90' }}
+                >
+                  <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
+                    {planName}
+                  </Text>
+                </BlurView>
+              </View>
+            )}
+            <View style={{ flex: 1 }}>
+              <BlurView
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? "dark" : "light"}
+                className="py-2 rounded-2xl overflow-hidden"
+                style={{ backgroundColor: isNight ? '#1e293b90' : '#ffffff90' }}
+              >
+                <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
+                  {profile?.storyCoin || '0'} Jetons
+                </Text>
+              </BlurView>
+            </View>
+          </View>
+        </View>
 
 
         <View className="flex flex-col gap-4 w-11/12">

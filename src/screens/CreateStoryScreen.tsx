@@ -376,8 +376,8 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={50}
-                tint='light'
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? 'dark' : 'light'}
                 style={{ padding: 16 }}
               >
                 <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>Titre de l'histoire</Text>
@@ -405,8 +405,8 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={50}
-                tint='light'
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? 'dark' : 'light'}
                 style={{ padding: 16 }}
               >
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
@@ -441,8 +441,8 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={50}
-                tint='light'
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? 'dark' : 'light'}
                 style={{ padding: 16 }}
               >
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
@@ -568,8 +568,8 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={50}
-                tint='light'
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? 'dark' : 'light'}
                 style={{ padding: 16 }}
               >
                 <PageSelector

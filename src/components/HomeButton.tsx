@@ -22,12 +22,12 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       <BlurView
         intensity={50}
         tint="light"
-        className="p-4 flex-col justify-between items-center bg-[#B4CDED]/40"
+        className="p-4 flex-col justify-between items-center"
       >
         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo-semibold self-start`}>{title}</Text>
         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-base font-baloo self-start`}>{description}</Text>
         {icon && (
-          <View className="self-end mt-2">
+          <View className="self-end">
             {React.isValidElement(icon)
               ? React.cloneElement(icon, { color: iconColor } as any)
               : icon

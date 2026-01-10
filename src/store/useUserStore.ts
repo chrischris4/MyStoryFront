@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export type SubscriptionPlan = 'FREE' | 'EXPLORER' | 'ADVENTURER' | 'LEGEND';
+
+// Helper function pour vérifier si l'utilisateur est premium
+export const isPremiumUser = (subscriptionPlan?: SubscriptionPlan): boolean => {
+  return subscriptionPlan !== undefined && subscriptionPlan !== 'FREE';
+};
+
 export type User = {
   id: number;
   email: string;
@@ -12,6 +19,11 @@ export type User = {
   storyCoin?: number;
   createdAt?: string;
   updatedAt?: string;
+  subscriptionPlan?: SubscriptionPlan;
+  profil?: {
+    name?: string;
+    imageUrl?: string;
+  };
 };
 
 type UserStore = {

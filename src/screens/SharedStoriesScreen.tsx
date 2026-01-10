@@ -9,7 +9,7 @@ import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
-import { useUserStore } from '~/store/useUserStore';
+import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
@@ -21,6 +21,7 @@ export default function SharedStoriesScreen() {
   const navigation = useNavigation<SharedStoriesScreenNavigationProp>();
   const { isNight } = useTheme();
   const user = useUserStore((state) => state.user);
+  const isPremium = isPremiumUser(user?.subscriptionPlan);
 
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -118,22 +119,6 @@ export default function SharedStoriesScreen() {
           style={{ width: 200, height: 200 }}
         />
       </Animated.View>
-      <Animated.View
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          alignSelf: 'center',
-        }}
-      >
-        <LottieView
-          ref={animationRef}
-          source={require('../../assets/animations/birds.json')}
-          autoPlay
-          loop={false}
-          style={{ width: 700, height: 500 }}
-        />
-      </Animated.View>
       {isNight && renderStars(50)}
 
       {/* Sol */}
@@ -145,7 +130,7 @@ export default function SharedStoriesScreen() {
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      {!user?.isPremium && (
+      {!isPremium && (
         <Animated.View
           style={{
             position: 'absolute',
@@ -167,14 +152,20 @@ export default function SharedStoriesScreen() {
         </Animated.View>
       )}
       <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl font-baloo-bold px-4 pt-4`}>Histoires partagées</Text>
-      <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
-        Découvrez les histoires partagées par la communauté !
-      </Text>
-      <View className="flex flex-col gap-4 mb-4">
+      {isPremium ? (
+        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
+          Découvrez les histoires partagées par la communauté !
+        </Text>
+      ) : (
+        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
+          Vous avez besoin d'un plan supérieur pour voir les histoire partagées
+        </Text>
+      )}
+      <View className="flex-1 gap-4 pb-4">
         <StoryFolder
           isNight={isNight}
           isShared={true}
-          isPremium={user?.isPremium}
+          isPremium={isPremium}
           title="Toutes les histoires"
           icon={<Feather name="share-2" size={24} color="#fff" />}
           storyType="ALL"
@@ -185,7 +176,7 @@ export default function SharedStoriesScreen() {
         <StoryFolder
           isNight={isNight}
           isShared={true}
-          isPremium={user?.isPremium}
+          isPremium={isPremium}
           title="Les plus apréciées"
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"

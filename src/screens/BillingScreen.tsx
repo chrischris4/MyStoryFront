@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Dimensions, TouchableOpacity, Animated } from 'react-native';
 import ShopButton from '~/components/ShopButton';
+import SubscriptionModal from '~/components/SubscriptionModal';
 import { useTheme } from '~/context/ThemeContext';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -49,6 +50,17 @@ export default function BillingScreen() {
 
     const [products, setProducts] = useState<RNIap.Product[]>([]);
     const { isNight } = useTheme();
+
+    // États pour la modal d'abonnement
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState<{
+        name: string;
+        features: string[];
+        monthlyPrice: string;
+        yearlyPrice: string;
+        monthlyProductId: string;
+        yearlyProductId: string;
+    } | null>(null);
 
     useEffect(() => {
         const initIAP = async () => {
@@ -100,6 +112,38 @@ export default function BillingScreen() {
         } catch (err) {
             console.warn('Erreur achat', err);
         }
+    };
+
+    const openSubscriptionModal = (planType: 'explorer' | 'adventurer' | 'legend') => {
+        const plans = {
+            explorer: {
+                name: 'Explorateur',
+                features: ['Accès aux histoires partagées', 'Annuler à tout moment'],
+                monthlyPrice: '$4.99/mois',
+                yearlyPrice: '$49.99/an',
+                monthlyProductId: 'explorer_monthly',
+                yearlyProductId: 'explorer_yearly',
+            },
+            adventurer: {
+                name: 'Aventurier',
+                features: ['Accès aux histoires partagées', '1 jeton par jour', 'Annuler à tout moment'],
+                monthlyPrice: '$14.99/mois',
+                yearlyPrice: '$149.99/an',
+                monthlyProductId: 'adventurer_monthly',
+                yearlyProductId: 'adventurer_yearly',
+            },
+            legend: {
+                name: 'Légende',
+                features: ['Accès aux histoires partagées', '2 jetons par jour', 'Annuler à tout moment'],
+                monthlyPrice: '$19.99/mois',
+                yearlyPrice: '$199.99/an',
+                monthlyProductId: 'legend_monthly',
+                yearlyProductId: 'legend_yearly',
+            },
+        };
+
+        setSelectedPlan(plans[planType]);
+        setModalVisible(true);
     };
 
     const skyColor = isNight ? '#020205' : '#87CEEB';
@@ -299,13 +343,8 @@ export default function BillingScreen() {
     };
 
     return (
-        <View className="flex-1 overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
+        <View className="flex-1 flex-col overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
             {isNight && renderStars(50)}
-            <View
-                className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-            />
-
             <View
                 className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
@@ -317,157 +356,109 @@ export default function BillingScreen() {
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
             </View>
-            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-600"}`}>Boutique</Text>
-            {/* <Text style={{ fontSize: 14, opacity: 0.7, marginBottom: 20 }}>Débloquez plus d'histoires magiques</Text> */}
+            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>Boutique</Text>
 
-            {/* Boutons de jetons en disposition triangle */}
-            <View style={{ height: 280, position: 'relative', marginTop: 20 }}>
-                <View className='absolute -top-1 self-center'>
-                    <View className='w-80 h-44 relative'>
-                        <View className='z-20 w-full top-6'>
-                            <Text className='font-baloo-semibold text-2xl text-center'>Paquet de Jetons</Text>
-                            <Text className='font-baloo text-lg text-center'>1 Jetons permet de crée une histoire !</Text>
-                        </View>
-                        <View
-                            className='h-20 rounded-full absolute -top-2 left-8 w-20'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-24 rounded-full absolute top-3.5 left-0 w-full'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-36 w-36 rounded-full absolute -top-8 left-20'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-28 w-28 rounded-full absolute -top-4 right-8'
-                            style={{ backgroundColor: cloudColor }}
-                        />
+            {/* Boutons de jetons*/}
+            <View className='flex-col w-full mb-4'>
+                <View className='self-center w-full'>
+                    <View className='z-20 w-full bg-white rounded-xl p-3 flex items-center justify-center'>
+                        <Text className='font-baloo-semibold text-xl text-center'>Paquet de Jetons</Text>
                     </View>
                 </View>
-                {/* Button 5 jetons - En haut au centre */}
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        top: 70,
-                        left: '50%',
-                        marginLeft: -45,
-                        width: 90,
-                        height: 90,
-                        zIndex: 20,
-                        opacity: opacity1,
-                        transform: [
-                            ...button1Anim.getTranslateTransform(),
-                            { scale: scale1 }
-                        ],
-                    }}
-                >
-                    <ShopButton isNight={isNight} isCoin={true} title="10" price="$9.99" onPress={() => buy('tokens_pack_5')} />
-                </Animated.View>
+                <View className='flex-row w-full gap-2'>
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            zIndex: 20,
+                            opacity: opacity1,
+                            transform: [
+                                ...button1Anim.getTranslateTransform(),
+                                { scale: scale1 }
+                            ],
+                        }}
+                    >
+                        <ShopButton amount={5} isNight={isNight} isCoin={true} title="Jetons" price="$4.99" onPress={() => buy('tokens_pack_5')} />
+                    </Animated.View>
 
-                {/* Button 10 jetons - En bas à gauche */}
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        bottom: 120,
-                        left: 20,
-                        width: 90,
-                        height: 90,
-                        zIndex: 20,
-                        opacity: opacity2,
-                        transform: [
-                            ...button2Anim.getTranslateTransform(),
-                            { scale: scale2 }
-                        ],
-                    }}
-                >
-                    <ShopButton isNight={isNight} isCoin={true} title="5" price="$4.99" onPress={() => buy('tokens_pack_10')} />
-                </Animated.View>
+                    {/* Button 10 jetons - En bas à gauche */}
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            zIndex: 20,
+                            opacity: opacity2,
+                            transform: [
+                                ...button2Anim.getTranslateTransform(),
+                                { scale: scale2 }
+                            ],
+                        }}
+                    >
+                        <ShopButton amount={10} isNight={isNight} isCoin={true} title="Jetons" price="$9.99" onPress={() => buy('tokens_pack_10')} />
+                    </Animated.View>
 
-                {/* Button 20 jetons - En bas à droite */}
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        bottom: 120,
-                        right: 20,
-                        width: 90,
-                        height: 90,
-                        zIndex: 20,
-                        opacity: opacity3,
-                        transform: [
-                            ...button3Anim.getTranslateTransform(),
-                            { scale: scale3 }
-                        ],
-                    }}
-                >
-                    <ShopButton isNight={isNight} isCoin={true} title="20" price="$18.99" onPress={() => buy('tokens_pack_20')} />
-                </Animated.View >
+                    {/* Button 20 jetons - En bas à droite */}
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            zIndex: 20,
+                            opacity: opacity3,
+                            transform: [
+                                ...button3Anim.getTranslateTransform(),
+                                { scale: scale3 }
+                            ],
+                        }}
+                    >
+                        <ShopButton amount={20} isNight={isNight} isCoin={true} title="Jetons" price="$18.99" onPress={() => buy('tokens_pack_20')} />
+                    </Animated.View >
+                </View>
             </View>
 
-            {/* Boutons Premium en position absolue */}
-            <View style={{ height: 280, position: 'relative', marginBottom: 0 }}>
-
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        bottom: 200,
-                        left: 20,
-                        width: 120,
-                        height: 120,
-                        zIndex: 20,
-                        opacity: opacity4,
-                        transform: [
-                            ...button4Anim.getTranslateTransform(),
-                            { scale: scale4 }
-                        ],
-                    }}
-                >
-                    <ShopButton isNight={isNight} title="Mensuel" price="$14.99/mois" onPress={() => buy('premium_monthly')} />
-                </Animated.View>
-                <Animated.View
-                    style={{
-                        position: 'absolute',
-                        bottom: 200,
-                        right: 20,
-                        width: 120,
-                        height: 120,
-                        opacity: opacity5,
-                        zIndex: 20,
-                        transform: [
-                            ...button5Anim.getTranslateTransform(),
-                            { scale: scale5 }
-                        ],
-                    }}
-                >
-                    <ShopButton isNight={isNight} title="Annuel" price="$149.99/an" onPress={() => buy('premium_yearly')} />
-                </Animated.View>
-                <View className='absolute -top-36 self-center'>
-                    <View className='w-72 h-44 relative'>
-                        <View className='z-20 top-4'>
-                            <Text className='font-baloo-semibold text-2xl text-center'>Abonnements</Text>
-
-                            <Text className='font-baloo text-lg text-center'>Accès aux histoires partagées</Text>
-
-                            <Text className='font-baloo text-lg text-center'>+10 Jetons par mois !</Text>
-                        </View>
-                        <View
-                            className='h-20 rounded-full absolute top-0 left-4 w-20'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-24 rounded-full absolute top-3.5 left-0 w-full'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-24 w-24 rounded-full absolute -top-2 right-10'
-                            style={{ backgroundColor: cloudColor }}
-                        />
-                        <View
-                            className='h-28 w-28 rounded-full absolute -top-8 right-28'
-                            style={{ backgroundColor: cloudColor }}
-                        />
+            {/* Boutons Premium*/}
+            <View className='flex flex-col w-full'>
+                <View className=' self-center w-full rounded-xl'>
+                    <View className='bg-white p-3 z-20 rounded-xl relative'>
+                        <Text className='font-baloo-semibold text-xl text-center'>Abonnements</Text>
                     </View>
+                </View>
+                <View className='flex-row w-full gap-2'>
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            zIndex: 20,
+                            opacity: opacity4,
+                            transform: [
+                                ...button4Anim.getTranslateTransform(),
+                                { scale: scale4 }
+                            ],
+                        }}
+                    >
+                        <ShopButton value='Hisoire partagées' isNight={isNight} title="Explorateur" price="Dès $4.99" onPress={() => openSubscriptionModal('explorer')} />
+                    </Animated.View>
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            zIndex: 20,
+                            opacity: opacity4,
+                            transform: [
+                                ...button4Anim.getTranslateTransform(),
+                                { scale: scale4 }
+                            ],
+                        }}
+                    >
+                        <ShopButton value='Hisoire partagées' value2='1 Jetons par jour' isNight={isNight} title="Aventurier" price="Dès $14.99" onPress={() => openSubscriptionModal('adventurer')} />
+                    </Animated.View>
+                    <Animated.View
+                        style={{
+                            flex: 1,
+                            opacity: opacity5,
+                            zIndex: 20,
+                            transform: [
+                                ...button5Anim.getTranslateTransform(),
+                                { scale: scale5 }
+                            ],
+                        }}
+                    >
+                        <ShopButton value='Hisoire partagées' isNight={isNight} value2='2 Jetons par jour' title="Légende" price="Dès $19.99" onPress={() => openSubscriptionModal('legend')} />
+                    </Animated.View>
                 </View>
             </View>
             {/* Chien */}
@@ -496,6 +487,7 @@ export default function BillingScreen() {
                 style={{
                     position: 'absolute',
                     bottom: -75,
+                    left: 20,
                     zIndex: 1
                 }}
                 className="self-center"
@@ -507,6 +499,42 @@ export default function BillingScreen() {
                     style={{ width: 500, height: 500, zIndex: 5 }}
                 />
             </Animated.View>
+            <Animated.View
+                style={{
+                    position: 'absolute',
+                    bottom: 60,
+                    left: -140,
+                }}
+            >
+                <LottieView
+                    ref={animationRef}
+                    source={require('../../assets/animations/tree.json')}
+                    autoPlay
+                    loop={false}
+                    style={{ width: 500, height: 500 }}
+                />
+            </Animated.View>
+
+            {/* Modal d'abonnement */}
+            {selectedPlan && (
+                <SubscriptionModal
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    planName={selectedPlan.name}
+                    planFeatures={selectedPlan.features}
+                    monthlyPrice={selectedPlan.monthlyPrice}
+                    yearlyPrice={selectedPlan.yearlyPrice}
+                    onSelectMonthly={() => {
+                        setModalVisible(false);
+                        buy(selectedPlan.monthlyProductId);
+                    }}
+                    onSelectYearly={() => {
+                        setModalVisible(false);
+                        buy(selectedPlan.yearlyProductId);
+                    }}
+                    isNight={isNight}
+                />
+            )}
         </View >
     );
 };

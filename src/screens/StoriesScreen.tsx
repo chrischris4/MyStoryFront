@@ -101,7 +101,7 @@ export default function StoriesScreen() {
       <Text className={` text-xl font-baloo mb-4 px-4 ${isNight ? "text-white" : "text-slate-600"}`}>
         Toutes vos aventures vous attendent ici !
       </Text>
-      <View className="flex flex-col gap-4 mb-4">
+      <View className="flex-1 gap-4 pb-4">
         <StoryFolder
           isNight={isNight}
           title="Tout"

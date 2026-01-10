@@ -4,30 +4,43 @@ import { BlurView } from 'expo-blur';
 
 type ShopButtonProps = {
   title: string;
+  value?: string;
   icon?: React.ReactNode;
   price: string;
   onPress: (event: GestureResponderEvent) => void;
   isCoin?: boolean;
   isNight: boolean;
+  amount?: number;
+  value2?: string;
 };
 
-export default function ShopButton({ onPress, title, price, icon, isNight, isCoin = false }: ShopButtonProps) {
-  const size = isCoin ? 90 : 110;
+export default function ShopButton({ onPress, title, price, icon, isNight, value, value2, amount, isCoin = false }: ShopButtonProps) {
 
   return (
     <TouchableOpacity
       onPress={onPress}
-      className='rounded-full'
-      style={{ width: size, height: size, overflow: 'hidden' }}
+      className='rounded-xl w-full mt-2 aspect-square'
+      style={{ overflow: 'hidden' }}
     >
       <BlurView
         intensity={50}
         tint="light"
-        className='flex items-center justify-center'
-        style={{ flex: 1, flexDirection: 'column' }}
+        className="flex flex-col w-full p-2 h-full relative"
+        style={{ backgroundColor: isNight ? '#00000090' : '#87CEEB90' }}
       >
-        <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 4 }} className={`${isNight ? "text-white" : "text-slate-600"}`}>{title}</Text>
-        <Text style={{ fontSize: 14, fontWeight: '300', textAlign: 'center' }} className={`${isNight ? "text-white/80" : "text-slate-600"}`}>{price}</Text>
+        <View className='flex flex-col'>
+          <Text className={`${isNight ? "text-white" : "text-slate-900"} text-lg font-baloo-semibold`}>{title}</Text>
+          {amount && (
+            <Text className={`${isNight ? "text-white" : "text-slate-900"} text-4xl pt-1 font-baloo-medium`}>{amount}</Text>
+          )}
+          {value && (
+            <Text className={`${isNight ? "text-white" : "text-slate-900"} text-sm font-baloo-medium`}>{value}</Text>
+          )}
+          {value2 && (
+            <Text className={`${isNight ? "text-white" : "text-slate-900"} text-sm font-baloo-medium`}>{value2}</Text>
+          )}
+        </View>
+        <Text className={`${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo self-end absolute bottom-2 right-2`}>{price}</Text>
         {icon && <View style={{ alignSelf: 'flex-end' }}>{icon}</View>}
       </BlurView>
     </TouchableOpacity>

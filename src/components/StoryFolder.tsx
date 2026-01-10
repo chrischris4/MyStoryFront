@@ -88,9 +88,14 @@ export default function StoryFolder({
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
+    const [showMessage, setShowMessage] = useState(false);
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
+    const messageOpacity = useSharedValue(0);
+    const messageTranslateY = useSharedValue(50);
+    const lockRotate = useSharedValue(0);
+    const lockScale = useSharedValue(1);
     const navigation = useNavigation<StoryFolderNavigationProp>();
     const animatedStyle = useAnimatedStyle(() => ({
         width: withTiming(width.value, { duration: 300 }),
@@ -99,15 +104,85 @@ export default function StoryFolder({
         transform: [{ translateY: withTiming(translateY.value, { duration: 300 }) }],
     }));
 
+    const messageStyle = useAnimatedStyle(() => ({
+        opacity: messageOpacity.value,
+        transform: [{ translateY: messageTranslateY.value }],
+    }));
+
+    const lockStyle = useAnimatedStyle(() => ({
+        transform: [
+            { rotate: `${lockRotate.value}deg` },
+            { scale: lockScale.value }
+        ],
+    }));
+
     const onLayout = (event: LayoutChangeEvent) => {
         const { y } = event.nativeEvent.layout;
         setLayoutY(y);
     };
 
+    const showPremiumMessage = () => {
+        // Animation du message
+        setShowMessage(true);
+        messageOpacity.value = withTiming(1, { duration: 300 });
+        messageTranslateY.value = withTiming(0, { duration: 300 });
+
+        // Animation du cadenas - secousse et agrandissement
+        lockScale.value = withTiming(1.3, { duration: 100 });
+        lockRotate.value = withTiming(-15, { duration: 100 });
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(15, { duration: 100 });
+        }, 100);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(-15, { duration: 100 });
+        }, 200);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(15, { duration: 100 });
+        }, 300);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(-12, { duration: 100 });
+        }, 400);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(12, { duration: 100 });
+        }, 500);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(-10, { duration: 100 });
+        }, 600);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(10, { duration: 100 });
+        }, 700);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(-5, { duration: 100 });
+        }, 800);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(5, { duration: 100 });
+        }, 900);
+
+        setTimeout(() => {
+            lockRotate.value = withTiming(0, { duration: 150 });
+            lockScale.value = withTiming(1, { duration: 150 });
+        }, 1000);
+
+        setTimeout(() => {
+            messageOpacity.value = withTiming(0, { duration: 300 });
+            messageTranslateY.value = withTiming(50, { duration: 300 });
+            setTimeout(() => setShowMessage(false), 300);
+        }, 3000);
+    };
+
     const handleToggle = () => {
-        // Empêcher l'expansion si l'utilisateur n'est pas premium et que c'est un dossier partagé
+        // Afficher un message si l'utilisateur n'est pas premium et que c'est un dossier partagé
         if (!isPremium && isShared && !expanded) {
-            navigation.navigate('BillingScreen');
+            showPremiumMessage();
             return;
         }
 
@@ -121,7 +196,7 @@ export default function StoryFolder({
             height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; // Laisser de la place pour la navbar
             translateY.value = -layoutY;
             // Retarder légèrement l'affichage du contenu pour une animation plus fluide
-            setTimeout(() => setShowContent(true), 150);
+            setTimeout(() => setShowContent(true), 1000);
         }
         setExpanded(!expanded);
     };
@@ -131,24 +206,29 @@ export default function StoryFolder({
         <Pressable
             onPress={() => {
                 if (!expanded) handleToggle();
-            }} className="flex items-center justify-center w-full z-20"
+            }}
+            className="flex items-center justify-center w-full"
+            style={{ zIndex: showMessage ? 9999 : 20 }}
             onLayout={onLayout}
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
                 {!isPremium && isShared && (
-                    <View className='absolute top-3 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'>
+                    <Animated.View
+                        style={[lockStyle]}
+                        className='absolute top-3 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'
+                    >
                         <Feather
                             name="lock"
                             size={20}
                             color='black'
                         />
 
-                    </View>
+                    </Animated.View>
                 )}
                 <BlurView
-                    intensity={50}
-                    tint="light"
-                    style={{ flex: 1, padding: 16, borderRadius: 24 }}
+                    intensity={isNight ? 90 : 50}
+                    tint={isNight ? "dark" : "light"}
+                    style={{ flex: 1, padding: 16, borderRadius: 24, }}
                 >
                     <View
                         className="w-full mb-4 relative"
@@ -235,6 +315,38 @@ export default function StoryFolder({
                     </View>
                 </BlurView>
             </Animated.View>
+
+            {showMessage && (
+                <Animated.View
+                    style={[
+                        messageStyle,
+                        {
+                            position: 'absolute',
+                            top: 50,
+                            left: 20,
+                            right: 20,
+                            backgroundColor: isNight ? '#1e293b' : '#334155',
+                            padding: 16,
+                            borderRadius: 12,
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            shadowColor: '#000',
+                            shadowOffset: { width: 0, height: 4 },
+                            shadowOpacity: 0.3,
+                            shadowRadius: 8,
+                            elevation: 8,
+                            zIndex: 50,
+                        },
+                    ]}
+                >
+                    <Text className="text-white font-baloo-medium">
+                        Il te faut un plan supérieur pour voir ces histoire
+                    </Text>
+                    <Text className="text-white font-baloo-medium">
+                        Va visiter la boutique près de l'arbre !
+                    </Text>
+                </Animated.View>
+            )}
         </Pressable>
     );
 }
