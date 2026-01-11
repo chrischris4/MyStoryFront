@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,12 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -26,6 +32,8 @@ import { useGroupMembers } from '~/hooks/useGroupMembers';
 import GroupCard from '~/components/GroupCard';
 import Toast from 'react-native-toast-message';
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 type TabType = 'myGroups' | 'search' | 'invitations';
 
 export default function GroupScreen() {
@@ -36,11 +44,40 @@ export default function GroupScreen() {
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [showGroupModal, setShowGroupModal] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState('');
+
+  // Animation pour la modal
+  const modalTranslateY = useSharedValue(SCREEN_HEIGHT);
+  const modalOpacity = useSharedValue(0);
+
+  const modalAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: modalTranslateY.value }],
+  }));
+
+  const overlayAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: modalOpacity.value,
+  }));
+
+  useEffect(() => {
+    if (showGroupModal) {
+      modalTranslateY.value = withSpring(0, {
+        damping: 20,
+        stiffness: 90,
+      });
+      modalOpacity.value = withTiming(1, { duration: 300 });
+    } else {
+      modalTranslateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 });
+      modalOpacity.value = withTiming(0, { duration: 300 });
+    }
+  }, [showGroupModal]);
 
   // Hooks pour les données
   const { data: myGroups = [], isLoading: isLoadingGroups } = useGroups();
   const { data: invitations = [], isLoading: isLoadingInvitations } = useGroupInvitations();
   const { data: searchResults = [], isLoading: isSearching } = useSearchGroups(searchQuery);
+  const { data: groupMembers = [], isLoading: isLoadingMembers } = useGroupMembers(selectedGroup?.id || 0);
 
   // Hooks pour les mutations
   const createGroupMutation = useCreateGroup();
@@ -196,13 +233,50 @@ export default function GroupScreen() {
     </TouchableOpacity>
   );
 
+  const handleOpenGroupModal = (group: any) => {
+    setSelectedGroup(group);
+    setShowGroupModal(true);
+  };
+
+  const handleCloseGroupModal = () => {
+    setShowGroupModal(false);
+    setSelectedGroup(null);
+    setInviteEmail('');
+  };
+
+  const handleInviteFromModal = async () => {
+    if (!selectedGroup || !inviteEmail.trim()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Veuillez entrer un email',
+      });
+      return;
+    }
+
+    try {
+      await inviteToGroupMutation.mutateAsync({ groupId: selectedGroup.id, email: inviteEmail });
+      Toast.show({
+        type: 'success',
+        text1: 'Succès',
+        text2: 'Invitation envoyée',
+      });
+      setInviteEmail('');
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Erreur',
+        text2: 'Impossible d\'envoyer l\'invitation',
+      });
+    }
+  };
+
   const renderMyGroupCard = (group: any) => (
     <GroupCard
       key={group.id}
       group={group}
       isNight={isNight}
-      onInviteUser={(email) => handleInviteUser(group.id, email)}
-      onRemoveMember={(memberId) => handleRemoveMember(group.id, memberId)}
+      onPress={() => handleOpenGroupModal(group)}
     />
   );
 
@@ -564,6 +638,150 @@ export default function GroupScreen() {
                   </TouchableOpacity>
                 </View>
               </BlurView>
+            </View>
+          )}
+
+          {/* Modal de détails du groupe */}
+          {showGroupModal && selectedGroup && (
+            <View className="absolute inset-0">
+              <Animated.View
+                style={[overlayAnimatedStyle, { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }]}
+              >
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={handleCloseGroupModal}
+                  style={{ flex: 1 }}
+                />
+              </Animated.View>
+              <Animated.View
+                style={[
+                  modalAnimatedStyle,
+                  {
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    maxHeight: SCREEN_HEIGHT * 0.9,
+                    paddingHorizontal: 16,
+                  }
+                ]}
+              >
+                <BlurView
+                  intensity={isNight ? 90 : 50}
+                  tint={isNight ? "dark" : "light"}
+                  className="w-full p-6 rounded-t-3xl overflow-hidden"
+                  style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
+                >
+                {/* Header */}
+                <View className="flex-row justify-between items-start mb-4">
+                  <View className="flex-1">
+                    <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-2xl font-baloo-semibold`}>
+                      {selectedGroup.name}
+                    </Text>
+                    <Text className={`${isNight ? 'text-white/70' : 'text-slate-600'} text-base font-baloo mt-1`}>
+                      {selectedGroup.description || 'Aucune description'}
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={handleCloseGroupModal} className="p-2">
+                    <Feather name="x" size={24} color={isNight ? '#ffffff' : '#1e293b'} />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Section invitation */}
+                <View className="mb-4">
+                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
+                    Inviter un membre
+                  </Text>
+                  <View className="flex-row gap-2">
+                    <TextInput
+                      value={inviteEmail}
+                      onChangeText={setInviteEmail}
+                      placeholder="Email de l'utilisateur"
+                      placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                      className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                    <TouchableOpacity
+                      onPress={handleInviteFromModal}
+                      className="bg-blue-500 px-4 py-2 rounded-xl justify-center"
+                      disabled={inviteToGroupMutation.isPending}
+                    >
+                      {inviteToGroupMutation.isPending ? (
+                        <ActivityIndicator size="small" color="#ffffff" />
+                      ) : (
+                        <Text className="text-white font-baloo-semibold">
+                          Inviter
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </View>
+
+                {/* Liste des membres */}
+                <View className="flex-1">
+                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
+                    Membres du groupe
+                  </Text>
+
+                  {isLoadingMembers ? (
+                    <View className="items-center py-8">
+                      <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
+                      <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo mt-2`}>
+                        Chargement...
+                      </Text>
+                    </View>
+                  ) : groupMembers.length === 0 ? (
+                    <View className="items-center py-8">
+                      <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
+                      <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
+                        Aucun membre dans ce groupe
+                      </Text>
+                    </View>
+                  ) : (
+                    <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                      {groupMembers.map((member: any) => {
+                        const user = member.user || member;
+                        const isOwner = member.role === 'OWNER' || selectedGroup.ownerId === user.id;
+                        const memberName = user.profil?.name || user.email || 'Utilisateur';
+
+                        return (
+                          <BlurView
+                            key={member.id}
+                            intensity={isNight ? 90 : 50}
+                            tint={isNight ? "dark" : "light"}
+                            className="p-3 rounded-xl mb-2 overflow-hidden"
+                            style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                          >
+                            <View className="flex-row justify-between items-center">
+                              <View className="flex-1">
+                                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
+                                  {memberName}
+                                </Text>
+                                {isOwner && (
+                                  <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} font-baloo text-sm`}>
+                                    Propriétaire
+                                  </Text>
+                                )}
+                              </View>
+
+                              {!isOwner && (
+                                <TouchableOpacity
+                                  onPress={() => handleRemoveMember(selectedGroup.id, user.id)}
+                                  className="p-2"
+                                >
+                                  <Feather name="user-x" size={20} color="#ef4444" />
+                                </TouchableOpacity>
+                              )}
+                            </View>
+                          </BlurView>
+                        );
+                      })}
+                    </ScrollView>
+                  )}
+                </View>
+              </BlurView>
+            </Animated.View>
             </View>
           )}
         </View>

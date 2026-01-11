@@ -74,7 +74,7 @@ export default function HomeScreen() {
                   width: 140,
                   height: 140,
                   borderRadius: 104,
-                  borderWidth: 4,
+                  borderWidth: 6,
                   borderColor: isNight ? '#FFFFFF' : '#FACC15',
                 }}
                 className='absolute bottom-0 left-0'
@@ -84,36 +84,34 @@ export default function HomeScreen() {
 
           </View>
         </View>
+        <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold mt-2`}>{profile?.name || 'Jean'}</Text>
 
-        <View className="flex flex-col w-11/12 items-center mt-2 mb-4">
-          <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold`}>{profile?.name || 'Jean'}</Text>
-          <View className='flex-row items-center w-full gap-4 justify-center'>
-            {profile.isPremium && (
-              <View style={{ flex: 1 }}>
-                <BlurView
-                  intensity={isNight ? 90 : 50}
-                  tint={isNight ? "dark" : "light"}
-                  className="py-2 rounded-2xl overflow-hidden"
-                  style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
-                >
-                  <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
-                    {planName}
-                  </Text>
-                </BlurView>
-              </View>
-            )}
-            <View style={{ flex: 1 }}>
+        <View className='flex-row items-center gap-4 self-center mb-4'>
+          {profile.isPremium && (
+            <View>
               <BlurView
                 intensity={isNight ? 90 : 50}
                 tint={isNight ? "dark" : "light"}
-                className="py-2 rounded-2xl overflow-hidden"
+                className="py-2 px-4 rounded-2xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
-                  {profile?.storyCoin || '0'} Jetons
+                  {planName}
                 </Text>
               </BlurView>
             </View>
+          )}
+          <View>
+            <BlurView
+              intensity={isNight ? 90 : 50}
+              tint={isNight ? "dark" : "light"}
+              className="py-2 px-4 rounded-2xl overflow-hidden"
+              style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+            >
+              <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
+                {profile?.storyCoin || '0'} Jetons
+              </Text>
+            </BlurView>
           </View>
         </View>
 
@@ -140,7 +138,7 @@ export default function HomeScreen() {
           </View>
           <View className='flex-row gap-4'>
             <HomeButton
-                          style="half"
+              style="half"
 
               isNight={isNight}
               onPress={() => navigation.navigate('SharedStories')}
@@ -149,7 +147,7 @@ export default function HomeScreen() {
               icon={<Feather name="users" size={24} color="#334155" />}
             />
             <HomeButton
-                          style="half"
+              style="half"
 
               isNight={isNight}
               onPress={() => navigation.navigate('BillingScreen')}
