@@ -46,6 +46,7 @@ export default function GroupScreen() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
+  const [isModalMounted, setIsModalMounted] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
 
   // Animation pour la modal
@@ -62,14 +63,20 @@ export default function GroupScreen() {
 
   useEffect(() => {
     if (showGroupModal) {
+      setIsModalMounted(true);
       modalTranslateY.value = withSpring(0, {
-        damping: 20,
-        stiffness: 90,
+        damping: 50,
+        stiffness: 400,
       });
-      modalOpacity.value = withTiming(1, { duration: 300 });
-    } else {
-      modalTranslateY.value = withTiming(SCREEN_HEIGHT, { duration: 300 });
-      modalOpacity.value = withTiming(0, { duration: 300 });
+      modalOpacity.value = withTiming(1, { duration: 200 });
+    } else if (isModalMounted) {
+      modalTranslateY.value = withTiming(SCREEN_HEIGHT, { duration: 250 });
+      modalOpacity.value = withTiming(0, { duration: 250 });
+      setTimeout(() => {
+        setIsModalMounted(false);
+        setSelectedGroup(null);
+        setInviteEmail('');
+      }, 250);
     }
   }, [showGroupModal]);
 
@@ -240,8 +247,6 @@ export default function GroupScreen() {
 
   const handleCloseGroupModal = () => {
     setShowGroupModal(false);
-    setSelectedGroup(null);
-    setInviteEmail('');
   };
 
   const handleInviteFromModal = async () => {
@@ -642,7 +647,7 @@ export default function GroupScreen() {
           )}
 
           {/* Modal de détails du groupe */}
-          {showGroupModal && selectedGroup && (
+          {isModalMounted && selectedGroup && (
             <View className="absolute inset-0">
               <Animated.View
                 style={[overlayAnimatedStyle, { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)' }]}
@@ -658,18 +663,20 @@ export default function GroupScreen() {
                   modalAnimatedStyle,
                   {
                     position: 'absolute',
-                    bottom: 0,
+                    bottom: 100,
+                    top: 100,
                     left: 0,
                     right: 0,
                     maxHeight: SCREEN_HEIGHT * 0.9,
                     paddingHorizontal: 16,
+                    zIndex: 50,
                   }
                 ]}
               >
                 <BlurView
                   intensity={isNight ? 90 : 50}
                   tint={isNight ? "dark" : "light"}
-                  className="w-full p-6 rounded-t-3xl overflow-hidden"
+                  className="w-full p-6 rounded-3xl self-start overflow-hidden h-full z-50"
                   style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
                 >
                 {/* Header */}

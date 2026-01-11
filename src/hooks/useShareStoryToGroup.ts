@@ -15,7 +15,7 @@ const shareStory = async (
     throw new Error('Utilisateur non authentifié');
   }
 
-  const response = await fetch(`${API_BASE_URL}/group/${input.groupId}/share-story`, {
+  const response = await fetch(`${API_BASE_URL}/group/${input.groupId}/share`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -25,7 +25,10 @@ const shareStory = async (
   });
 
   if (!response.ok) {
-    throw new Error('Erreur lors du partage de l\'histoire');
+    const errorData = await response.json().catch(() => null);
+    const errorMessage = errorData?.message || `Erreur ${response.status}: ${response.statusText}`;
+    console.error('Erreur API partage:', errorMessage, errorData);
+    throw new Error(errorMessage);
   }
 };
 
