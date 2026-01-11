@@ -58,14 +58,16 @@ export default function RegisterScreen() {
       }
 
       const accessToken = data.accessToken;
+      const refreshToken = data.refreshToken;
       await AsyncStorage.setItem('accessToken', accessToken);
+      await AsyncStorage.setItem('refreshToken', refreshToken);
 
       Toast.show({
         type: 'success',
         text1: 'Succès',
         text2: 'Compte créé avec succès !',
       });
-      navigation.navigate('CompleteProfileScreen', { accessToken });
+      navigation.navigate('CompleteProfileScreen', { accessToken, refreshToken });
 
     } catch (error) {
       Toast.show({

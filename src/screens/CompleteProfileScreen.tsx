@@ -26,7 +26,7 @@ const generateRandomUsername = (): string => {
 };
 
 export default function CompleteProfileScreen({ route, navigation }: Props) {
-    const { accessToken } = route.params;
+    const { accessToken, refreshToken } = route.params;
     const { login } = useAuth();
 
     const [imageUri, setImageUri] = useState<string | null>(null);
@@ -68,12 +68,9 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
 
     const handleSubmit = async (values: { name?: string } = { name: '' }, { setSubmitting, setFieldError }: any) => {
         try {
-            console.log('handleSubmit called with values:', values);
 
             // Utiliser le username par défaut si aucun n'est fourni
             const finalUsername = (values?.name || '').trim() || defaultUsername;
-
-            console.log('Final username:', finalUsername);
 
             let imageData: string | null = null;
             if (imageUri) {
@@ -93,13 +90,12 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
             });
 
             const data = await res.json();
-            console.log('Response data:', data);
 
             if (res.ok) {
                 // Mettre à jour le contexte d'authentification
                 // On ne passe pas de userData pour que login() récupère le profil complet depuis /profile/me
                 try {
-                    await login(accessToken);
+                    await login(accessToken, refreshToken);
 
                     // Naviguer vers MainTabs en réinitialisant la navigation stack
                     navigation.reset({

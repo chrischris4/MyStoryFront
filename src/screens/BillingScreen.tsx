@@ -17,7 +17,7 @@ export default function BillingScreen() {
     const STORE_PHRASES = [
         "Hey Jean ! Comment tu vas ?",
         "Oh ! Il y a quelqu'un ?",
-        "Je devrais flun un peu.." ,
+        "Je devrais flun un peu..",
         "J'ai les meilleurs offres sur le marché !",
         "Hmmmm ta grosse bite Harry ",
     ];
@@ -587,8 +587,8 @@ export default function BillingScreen() {
                     left: 20,
                     zIndex: 1
                 }}
-                className="self-center"
-            >                <View style={{ width: 500, height: 500, position: 'relative' }}>
+                className="self-center">
+                <View style={{ width: 500, height: 500, position: 'relative' }}>
                     {/* BULLE UNIQUE À GAUCHE */}
                     {showBubble && storePhrase && (
                         <StoreBubble

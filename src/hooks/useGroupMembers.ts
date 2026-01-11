@@ -33,6 +33,8 @@ const fetchGroupMembers = async (
   });
 
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error('fetchGroupMembers - Error response:', errorText);
     throw new Error('Erreur lors de la récupération des membres');
   }
 

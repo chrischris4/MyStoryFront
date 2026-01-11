@@ -8,12 +8,14 @@ import { Feather } from '@expo/vector-icons';
 import Background from '~/components/Background';
 import Toast from 'react-native-toast-message';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
+import EditProfilModal from '~/components/EditProfilModal';
 
 export default function SettingsScreen() {
     const navigation = useNavigation();
     const { isNight, toggleTheme } = useTheme();
     const { logout, user } = useAuth();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+    const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
     const skyColor = isNight ? '#020205' : '#87CEEB';
     const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
@@ -124,7 +126,7 @@ export default function SettingsScreen() {
                             </View>
                         </View>
                     )}
-                    <TouchableOpacity style={styles.button} onPress={handleBilling}>
+                    <TouchableOpacity style={styles.button} onPress={() => setIsEditProfilModalVisible(true)}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Modifier votre profil</Text>
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
@@ -213,6 +215,11 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
             </ScrollView>
+
+            <EditProfilModal
+                visible={isEditProfilModalVisible}
+                onClose={() => setIsEditProfilModalVisible(false)}
+            />
         </View>
     );
 }

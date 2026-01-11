@@ -7,7 +7,7 @@ export type RootStackParamList = {
   StoryDetail: { storyId: number };
   BillingScreen: undefined;
   GroupScreen: undefined;
-  CompleteProfileScreen: { accessToken: string };
+  CompleteProfileScreen: { accessToken: string; refreshToken: string };
 };
 
 // Tab Navigator - écrans avec BottomNavBar
