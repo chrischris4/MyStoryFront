@@ -14,6 +14,110 @@ import { BlurView } from 'expo-blur';
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BillingScreen() {
+    const STORE_PHRASES = [
+        "Hey Jean ! Comment tu vas ?",
+        "Oh ! Il y a quelqu'un ?",
+        "Je devrais flun un peu.." ,
+        "J'ai les meilleurs offres sur le marché !",
+        "Hmmmm ta grosse bite Harry ",
+    ];
+
+    function StoreBubble({
+        text,
+        style,
+    }: {
+        text: string;
+        style: any;
+    }) {
+        return (
+            <Animated.View
+                style={[
+                    {
+                        position: 'absolute',
+                        backgroundColor: 'white',
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 16,
+                        maxWidth: 150,
+                        shadowColor: '#000',
+                        shadowOpacity: 0.15,
+                        shadowRadius: 4,
+                        elevation: 4,
+                    },
+                    style,
+                ]}
+            >
+                <Text
+                    style={{
+                        fontSize: 12,
+                        color: '#333',
+                        textAlign: 'center',
+                    }}
+                >
+                    {text}
+                </Text>
+            </Animated.View>
+        );
+    }
+
+
+
+    const [showBubble, setShowBubble] = useState(false);
+    const showStoreBubble = () => {
+        const random =
+            STORE_PHRASES[Math.floor(Math.random() * STORE_PHRASES.length)];
+
+        setStorePhrase(random);
+        setShowBubble(true);
+
+        bubbleOpacity.setValue(0);
+        bubbleScale.setValue(0.8);
+
+        Animated.parallel([
+            Animated.timing(bubbleOpacity, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+            Animated.spring(bubbleScale, {
+                toValue: 1,
+                friction: 7,
+                useNativeDriver: true,
+            }),
+        ]).start();
+
+        // Disparition après 6s
+        setTimeout(() => {
+            Animated.timing(bubbleOpacity, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start(() => {
+                setShowBubble(false);
+            });
+        }, 6000);
+    };
+    useEffect(() => {
+        // Première apparition après 4s
+        const firstTimeout = setTimeout(() => {
+            showStoreBubble();
+        }, 4000);
+
+        // Puis toutes les 30s
+        const interval = setInterval(() => {
+            showStoreBubble();
+        }, 30000);
+
+        return () => {
+            clearTimeout(firstTimeout);
+            clearInterval(interval);
+        };
+    }, []);
+    const bubbleOpacity = useRef(new Animated.Value(0)).current;
+    const bubbleScale = useRef(new Animated.Value(0.8)).current;
+
+    const [storePhrase, setStorePhrase] = useState<string | null>(null);
+
     const navigation = useNavigation<StoryDetailNavigationProp>();
 
     // === GESTION DU MODULE IAP ===
@@ -484,14 +588,33 @@ export default function BillingScreen() {
                     zIndex: 1
                 }}
                 className="self-center"
-            >
-                <LottieView
-                    source={require('../../assets/animations/Store.json')}
-                    autoPlay
-                    loop={false}
-                    style={{ width: 500, height: 500, zIndex: 5 }}
-                />
+            >                <View style={{ width: 500, height: 500, position: 'relative' }}>
+                    {/* BULLE UNIQUE À GAUCHE */}
+                    {showBubble && storePhrase && (
+                        <StoreBubble
+                            text={storePhrase}
+                            style={{
+                                position: 'absolute',
+                                top: 230,
+                                left: 40,
+                                zIndex: 10,
+                                opacity: bubbleOpacity,
+                                transform: [{ scale: bubbleScale }],
+                            }}
+                        />
+                    )}
+
+                    {/* STORE */}
+                    <LottieView
+                        source={require('../../assets/animations/Store.json')}
+                        autoPlay
+                        loop={false}
+                        style={{ width: 500, height: 500 }}
+                    />
+                </View>
             </Animated.View>
+
+
             <Animated.View
                 style={{
                     position: 'absolute',

@@ -207,7 +207,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
                     <TouchableOpacity style={styles.button} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>Se déconnecter</Text>
                     </TouchableOpacity>

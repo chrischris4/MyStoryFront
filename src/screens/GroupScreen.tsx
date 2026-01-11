@@ -382,7 +382,6 @@ export default function GroupScreen() {
           {/* Tabs */}
           <View className="flex-row gap-2 mb-4">
             {renderTabButton('myGroups', 'Mes groupes', 'users')}
-            {renderTabButton('search', 'Rechercher', 'search')}
             {renderTabButton('invitations', 'Invitations', 'mail')}
           </View>
 
@@ -410,6 +409,48 @@ export default function GroupScreen() {
                   </BlurView>
                 </TouchableOpacity>
 
+
+                {myGroups.length >= 10 && (
+                  <View>
+                    <BlurView
+                      intensity={isNight ? 90 : 50}
+                      tint={isNight ? "dark" : "light"}
+                      className="mb-4 rounded-2xl overflow-hidden"
+                      style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                    >
+                      <View className="flex-row items-center px-4 py-3">
+                        <Feather name="search" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
+                        <TextInput
+                          value={searchQuery}
+                          onChangeText={setSearchQuery}
+                          placeholder="Rechercher un groupe..."
+                          placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                          className={`flex-1 ml-3 ${isNight ? 'text-white' : 'text-slate-800'} font-baloo text-base`}
+                        />
+                      </View>
+                    </BlurView>
+
+                    {isSearching ? (
+                      <View className="items-center py-8">
+                        <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
+                      </View>
+                    ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
+                      <BlurView
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? "dark" : "light"}
+                        className="p-8 rounded-2xl overflow-hidden items-center"
+                        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                      >
+                        <Feather name="search" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
+                        <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
+                          Aucun groupe trouvé
+                        </Text>
+                      </BlurView>
+                    ) : (
+                      searchResults.map(group => renderSearchGroupCard(group))
+                    )}
+                  </View>)}
+
                 {isLoadingGroups ? (
                   <View className="items-center py-8">
                     <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
@@ -428,49 +469,6 @@ export default function GroupScreen() {
                   </BlurView>
                 ) : (
                   myGroups.map(group => renderMyGroupCard(group))
-                )}
-              </View>
-            )}
-
-            {/* Rechercher */}
-            {activeTab === 'search' && (
-              <View>
-                <BlurView
-                  intensity={isNight ? 90 : 50}
-                  tint={isNight ? "dark" : "light"}
-                  className="mb-4 rounded-2xl overflow-hidden"
-                  style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
-                >
-                  <View className="flex-row items-center px-4 py-3">
-                    <Feather name="search" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
-                    <TextInput
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}
-                      placeholder="Rechercher un groupe..."
-                      placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                      className={`flex-1 ml-3 ${isNight ? 'text-white' : 'text-slate-800'} font-baloo text-base`}
-                    />
-                  </View>
-                </BlurView>
-
-                {isSearching ? (
-                  <View className="items-center py-8">
-                    <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                  </View>
-                ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
-                  <BlurView
-                    intensity={isNight ? 90 : 50}
-                    tint={isNight ? "dark" : "light"}
-                    className="p-8 rounded-2xl overflow-hidden items-center"
-                    style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
-                  >
-                    <Feather name="search" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
-                    <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                      Aucun groupe trouvé
-                    </Text>
-                  </BlurView>
-                ) : (
-                  searchResults.map(group => renderSearchGroupCard(group))
                 )}
               </View>
             )}
