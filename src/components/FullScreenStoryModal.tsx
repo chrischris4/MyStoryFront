@@ -14,11 +14,11 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import type { StoryPage } from '~/types';
+import type { Page } from '~/types';
 
 interface FullScreenStoryModalProps {
   visible: boolean;
-  pages: StoryPage[];
+  pages: Page[];
   isNight: boolean;
   onClose: () => void;
 }
@@ -138,7 +138,7 @@ export default function FullScreenStoryModal({
 
   return (
     <Modal visible={visible} animationType="slide">
-      <SafeAreaView style={{ flex: 1, backgroundColor: selectedBackground }}>
+      <SafeAreaView style={{ backgroundColor: selectedBackground }}>
         <FlatList
           ref={flatListRef}
           data={sortedPages}

@@ -6,6 +6,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   StoryDetail: { storyId: number };
   BillingScreen: undefined;
+  GroupScreen: undefined;
   CompleteProfileScreen: { accessToken: string };
 };
 

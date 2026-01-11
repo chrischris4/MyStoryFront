@@ -14,6 +14,7 @@ import CompleteProfileScreen from '~/screens/CompleteProfileScreen';
 import OpeningScreen from '~/screens/Opening';
 import BillingScreen from '~/screens/BillingScreen';
 import SettingsScreen from '~/screens/SettingsScreen';
+import GroupScreen from '~/screens/GroupScreen';
 import ProtectedRoute from '~/components/ProtectedRoute';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import FloatingStoryCreation from '~/components/FloatingStoryCreation';
@@ -81,6 +82,13 @@ function AppNavigatorContent() {
                 {(props) => (
                     <ProtectedRoute>
                         <BillingScreen {...props} />
+                    </ProtectedRoute>
+                )}
+            </Stack.Screen>
+            <Stack.Screen name="GroupScreen">
+                {(props) => (
+                    <ProtectedRoute>
+                        <GroupScreen {...props} />
                     </ProtectedRoute>
                 )}
             </Stack.Screen>

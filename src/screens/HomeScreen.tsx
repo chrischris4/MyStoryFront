@@ -132,20 +132,32 @@ export default function HomeScreen() {
               style="half"
 
               isNight={isNight}
-              onPress={() => navigation.navigate('CreateStory')}
-              title="Créer une histoire"
-              description="Laissez parler votre imagination"
+              onPress={() => navigation.navigate('GroupScreen')}
+              title="Mes groupes"
+              description="Partage tes histoires avec eux ! "
               icon={<Feather name="plus" size={24} color="#334155" />}
             />
           </View>
-          <HomeButton
-            isNight={isNight}
-            onPress={() => navigation.navigate('SharedStories')}
-            title="Découvrir"
-            description="Parcourez les histoires partagées par les autres utilisateurs !"
-            icon={<Feather name="users" size={24} color="#334155" />}
-          />
+          <View className='flex-row gap-4'>
+            <HomeButton
+                          style="half"
 
+              isNight={isNight}
+              onPress={() => navigation.navigate('SharedStories')}
+              title="Découvrir"
+              description="Parcourez les histoires partagées sur Flun !"
+              icon={<Feather name="users" size={24} color="#334155" />}
+            />
+            <HomeButton
+                          style="half"
+
+              isNight={isNight}
+              onPress={() => navigation.navigate('BillingScreen')}
+              title="Boutique"
+              description="Paquets de Jetons disponibles !"
+              icon={<Feather name="home" size={24} color="#334155" />}
+            />
+          </View>
         </View>
         {isNight && (
           <View
