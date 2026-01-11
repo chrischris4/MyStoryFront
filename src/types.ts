@@ -48,4 +48,5 @@ export type Story = {
   isShared?: boolean;
   createdAt?: string;
   user?: User;
+  coverUrl?: string;
 };

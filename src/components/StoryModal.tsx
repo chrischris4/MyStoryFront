@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
-import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import LottieView from 'lottie-react-native';
 

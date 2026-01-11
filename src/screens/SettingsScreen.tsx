@@ -199,7 +199,7 @@ export default function SettingsScreen() {
                                 </Text>
                         </View>
                     ) : (
-                        <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-base font-baloo mb-4`}>
+                        <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-lg font-baloo mb-4`}>
                             Vous n'avez pas d'abonnement actif
                         </Text>
                     )}

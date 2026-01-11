@@ -283,7 +283,7 @@ export default function StoryFolder({
                                 windowSize={5}
                                 removeClippedSubviews={true}
                                 renderItem={({ item }) => {
-                                    const firstPageImage = item.pages?.[0]?.imageUrl;
+                                    const cover = item.coverUrl;
 
                                     return (
                                         <TouchableOpacity
@@ -294,9 +294,9 @@ export default function StoryFolder({
                                         >
                                             <Text className="text-xl font-baloo-semibold mb-1">{item.title}</Text>
 
-                                            {firstPageImage && (
+                                            {cover && (
                                                 <Image
-                                                    source={{ uri: firstPageImage }}
+                                                    source={{ uri: cover }}
                                                     style={{ width: '100%', height: 150, borderRadius: 8 }}
                                                     contentFit="cover"
                                                     cachePolicy="memory-disk"

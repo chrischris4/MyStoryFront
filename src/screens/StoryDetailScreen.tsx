@@ -331,7 +331,7 @@ export default function StoryDetailScreen() {
                 className='w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden'
               >
                 <Image
-                  source={{ uri: story.pages[0].imageUrl }}
+                  source={{ uri: story.coverUrl }}
                   resizeMode="cover"
                   className='w-full h-full'
                 />
