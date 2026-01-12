@@ -19,6 +19,8 @@ import type { Page } from '~/types';
 interface FullScreenStoryModalProps {
   visible: boolean;
   pages: Page[];
+  coverUrl?: string;
+  title?: string;
   isNight: boolean;
   onClose: () => void;
 }
@@ -26,6 +28,8 @@ interface FullScreenStoryModalProps {
 export default function FullScreenStoryModal({
   visible,
   pages,
+  coverUrl,
+  title,
   isNight,
   onClose,
 }: FullScreenStoryModalProps) {
@@ -45,6 +49,13 @@ export default function FullScreenStoryModal({
 
   const { width, height } = useWindowDimensions();
   const isPortrait = height >= width;
+
+  const sortedPages = [...pages].sort((a, b) => a.pageIndex - b.pageIndex);
+
+  // Créer un tableau avec la cover en premier (si elle existe) puis les pages
+  const allItems = coverUrl
+    ? [{ id: 'cover', imageUrl: coverUrl, isCover: true }, ...sortedPages.map(p => ({ ...p, isCover: false }))]
+    : sortedPages.map(p => ({ ...p, isCover: false }));
 
   const handleUserTouch = () => {
     // Si un menu est ouvert, le fermer au lieu de toggler les contrôles
@@ -101,15 +112,13 @@ export default function FullScreenStoryModal({
   };
 
   const goToNextPage = () => {
-    if (currentPageIndex < sortedPages.length - 1) {
+    if (currentPageIndex < allItems.length - 1) {
       flatListRef.current?.scrollToIndex({
         index: currentPageIndex + 1,
         animated: true,
       });
     }
   };
-
-  const sortedPages = [...pages].sort((a, b) => a.pageIndex - b.pageIndex);
 
   useEffect(() => {
     return () => {
@@ -141,7 +150,7 @@ export default function FullScreenStoryModal({
       <SafeAreaView style={{ backgroundColor: selectedBackground }}>
         <FlatList
           ref={flatListRef}
-          data={sortedPages}
+          data={allItems}
           keyExtractor={(item) => item.id.toString()}
           horizontal
           pagingEnabled
@@ -168,20 +177,40 @@ export default function FullScreenStoryModal({
                   }}
                   contentFit="contain"
                 />
-                <View
-                  className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
-                >
-                  <Text
-                    style={{
-                      color: 'white',
-                      fontSize: isPortrait ? 16 : 18,
-                      textAlign: 'left',
-                    }}
-                    className='font-baloo-medium'
+                {/* Afficher le titre si c'est la cover */}
+                {item.isCover && title && (
+                  <View
+                    className={`absolute top-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
                   >
-                    {item.text}
-                  </Text>
-                </View>
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: isPortrait ? 20 : 24,
+                        textAlign: 'center',
+                      }}
+                      className='font-baloo-bold'
+                    >
+                      {title}
+                    </Text>
+                  </View>
+                )}
+                {/* Afficher le texte seulement si ce n'est pas la cover */}
+                {!item.isCover && (
+                  <View
+                    className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
+                  >
+                    <Text
+                      style={{
+                        color: 'white',
+                        fontSize: isPortrait ? 16 : 18,
+                        textAlign: 'left',
+                      }}
+                      className='font-baloo-medium'
+                    >
+                      {item.text}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           )}
@@ -569,16 +598,16 @@ export default function FullScreenStoryModal({
 
               <TouchableOpacity
                 onPress={goToNextPage}
-                disabled={currentPageIndex === sortedPages.length - 1}
+                disabled={currentPageIndex === allItems.length - 1}
                 style={{
-                  backgroundColor: currentPageIndex === sortedPages.length - 1 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
+                  backgroundColor: currentPageIndex === allItems.length - 1 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
                   borderRadius: 40,
                   padding: 20,
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
               >
-                <Feather name="chevron-right" size={24} color={currentPageIndex === sortedPages.length - 1 ? '#999' : 'black'} />
+                <Feather name="chevron-right" size={24} color={currentPageIndex === allItems.length - 1 ? '#999' : 'black'} />
               </TouchableOpacity>
             </View>
           </Animated.View>

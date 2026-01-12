@@ -451,6 +451,8 @@ export default function StoryDetailScreen() {
         <FullScreenStoryModal
           visible={isFullScreen}
           pages={story.pages}
+          coverUrl={story.coverUrl}
+          title={story.title}
           isNight={isNight}
           onClose={() => setIsFullScreen(false)}
         />
