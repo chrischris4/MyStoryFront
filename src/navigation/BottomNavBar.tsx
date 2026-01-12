@@ -3,11 +3,16 @@ import { View, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
+import { useSound } from '~/context/SoundContext';
+import * as Haptics from 'expo-haptics';
 
 export default function BottomNavBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const flowerTranslateY = useRef(new Animated.Value(50)).current;
   const flowerOpacity = useRef(new Animated.Value(0)).current;
   const flowerPosition = useRef(new Animated.Value(0)).current;
+
+  // Hook pour les sons
+  const { playSound } = useSound();
 
   // Tableau des boutons avec leur écran et icône
   const navItems = [
@@ -83,7 +88,11 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
         return (
           <TouchableOpacity
             key={item.screen}
-            onPress={() => navigation.navigate(item.screen)}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              playSound('pop');
+              navigation.navigate(item.screen);
+            }}
             className="items-center"
           >
             <View className={` ${isActive ? "bg-yellow-800" : ""} h-16 w-16 rounded-full flex items-center justify-center`}>

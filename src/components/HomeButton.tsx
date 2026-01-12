@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { useSound } from '~/context/SoundContext';
+import * as Haptics from 'expo-haptics';
 
 type HomeButtonProps = {
   title: string;
@@ -13,9 +15,17 @@ type HomeButtonProps = {
 
 export default function HomeButton({ onPress, title, description, icon, isNight, style }: HomeButtonProps) {
   const iconColor = isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)";
+  const { playSound } = useSound();
+
+  const handlePress = (event: GestureResponderEvent) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    playSound('click');
+    onPress(event);
+  };
+
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={handlePress}
       className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10`}
     >
       <BlurView

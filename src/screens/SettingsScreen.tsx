@@ -9,6 +9,8 @@ import Background from '~/components/Background';
 import Toast from 'react-native-toast-message';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import EditProfilModal from '~/components/EditProfilModal';
+import { useSound } from '~/context/SoundContext';
+import * as Haptics from 'expo-haptics';
 
 export default function SettingsScreen() {
     const navigation = useNavigation();
@@ -16,6 +18,9 @@ export default function SettingsScreen() {
     const { logout, user } = useAuth();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
+
+    // Hook pour les sons
+    const { playSound } = useSound();
     const skyColor = isNight ? '#020205' : '#87CEEB';
     const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
@@ -44,6 +49,9 @@ export default function SettingsScreen() {
 
     const handleLogout = async () => {
         // Utiliser un modal de confirmation personnalisé ou directement logout
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        playSound('click');
+
         const userName = user?.profil?.name || 'ami';
         await logout();
         navigation.navigate('Login' as never);
@@ -55,6 +63,8 @@ export default function SettingsScreen() {
     };
 
     const handleBilling = () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        playSound('click');
         navigation.navigate('BillingScreen' as never);
     };
 
@@ -126,7 +136,11 @@ export default function SettingsScreen() {
                             </View>
                         </View>
                     )}
-                    <TouchableOpacity style={styles.button} onPress={() => setIsEditProfilModalVisible(true)}>
+                    <TouchableOpacity style={styles.button} onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        playSound('pop');
+                        setIsEditProfilModalVisible(true);
+                    }}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Modifier votre profil</Text>
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
@@ -142,7 +156,11 @@ export default function SettingsScreen() {
                         )}
                     </View>
                     <TouchableOpacity
-                        onPress={toggleTheme}
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            playSound('toggle');
+                            toggleTheme();
+                        }}
                         style={styles.button}
                     >
                         <View className="flex-row items-center justify-center gap-2">

@@ -27,6 +27,8 @@ import { useStoryGroups } from '~/hooks/useStoryGroups';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
+import { useSound } from '~/context/SoundContext';
+import * as Haptics from 'expo-haptics';
 
 
 
@@ -53,6 +55,9 @@ export default function StoryDetailScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
+  // Hook pour les sons
+  const { playSound } = useSound();
+
   // Utiliser les hooks pour les favoris
   const { data: isFavorite = false, isLoading: isFavoriteLoading } = useCheckFavorite(Number(storyId));
   const toggleFavoriteMutation = useToggleFavorite();
@@ -63,20 +68,24 @@ export default function StoryDetailScreen() {
   const shareStoryMutation = useShareStoryToGroup();
 
   // Debug: vérifier les groupes partagés
-  useEffect(() => {
-    console.log('🔍 Shared groups:', sharedGroups);
-    console.log('🔍 Is loading shared groups:', isLoadingSharedGroups);
-    if (sharedGroupsError) {
-      console.error('❌ Error loading shared groups:', sharedGroupsError);
-    }
-  }, [sharedGroups, isLoadingSharedGroups, sharedGroupsError]);
+  // useEffect(() => {
+  //   console.log('🔍 Shared groups:', sharedGroups);
+  //   console.log('🔍 Is loading shared groups:', isLoadingSharedGroups);
+  //   if (sharedGroupsError) {
+  //     console.error('❌ Error loading shared groups:', sharedGroupsError);
+  //   }
+  // }, [sharedGroups, isLoadingSharedGroups, sharedGroupsError]);
 
   const handleToggleFavorite = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    playSound('click');
+
     toggleFavoriteMutation.mutate(
       { storyId: Number(storyId), isFavorite },
       {
         onSuccess: () => {
-          console.log('✅ Favori mis à jour avec succès');
+          // console.log('✅ Favori mis à jour avec succès');
+          playSound('success');
         },
         onError: (error) => {
           Toast.show({
@@ -138,6 +147,9 @@ export default function StoryDetailScreen() {
   };
 
   const handleToggleGroup = (groupId: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    playSound('pop');
+
     setSelectedGroups(prev =>
       prev.includes(groupId)
         ? prev.filter(id => id !== groupId)
@@ -159,6 +171,9 @@ export default function StoryDetailScreen() {
       return;
     }
 
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    playSound('click');
+
     try {
       // Partager l'histoire uniquement aux nouveaux groupes
       await Promise.all(
@@ -170,6 +185,7 @@ export default function StoryDetailScreen() {
         )
       );
 
+      playSound('success');
       Toast.show({
         type: 'success',
         text1: 'Succès',
@@ -188,6 +204,9 @@ export default function StoryDetailScreen() {
   };
 
   const handleDeleteStory = async () => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    playSound('click');
+
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
@@ -208,6 +227,7 @@ export default function StoryDetailScreen() {
 
       if (response.ok) {
         setShowDeleteModal(false);
+        playSound('success');
         Toast.show({
           type: 'success',
           text1: 'Succès',
@@ -401,7 +421,11 @@ export default function StoryDetailScreen() {
             className='flex items-center'
           >
             <TouchableOpacity
-              onPress={() => setShowShareModal(true)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                playSound('pop');
+                setShowShareModal(true);
+              }}
               className="flex-row gap-2 items-center"
             >
               <Text className={`px-4 text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
@@ -528,7 +552,11 @@ export default function StoryDetailScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={() => setShowDeleteModal(false)}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    playSound('pop');
+                    setShowDeleteModal(false);
+                  }}
                   className="bg-gray-200 p-4 rounded-xl items-center"
                 >
                   <Text className="text-gray-800 font-baloo-semibold text-lg">
@@ -720,13 +748,21 @@ export default function StoryDetailScreen() {
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setIsFullScreen(true)}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            playSound('click');
+            setIsFullScreen(true);
+          }}
           className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-6 gap-2 items-center justify-center rounded-full">
           <Text className='text-white text-lg font-baloo-medium'>Lire en plein écran </Text>
           <Feather name="play" size={20} color="white" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => setShowDeleteModal(true)}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            playSound('pop');
+            setShowDeleteModal(true);
+          }}
         >
           <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>

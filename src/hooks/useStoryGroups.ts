@@ -18,15 +18,13 @@ const fetchStoryGroups = async (
     throw new Error('Utilisateur non authentifié');
   }
 
-  console.log(`🌐 Fetching story groups from: ${API_BASE_URL}/story/${storyId}/groups`);
-
   const response = await fetch(`${API_BASE_URL}/story/${storyId}/groups`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  console.log(`📡 Response status: ${response.status}`);
+  // console.log(`📡 Response status: ${response.status}`);
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
@@ -35,7 +33,6 @@ const fetchStoryGroups = async (
   }
 
   const data = await response.json();
-  console.log('✅ Story groups fetched:', data);
   return data;
 };
 

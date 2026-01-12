@@ -1,5 +1,6 @@
 import { ThemeProvider } from '~/context/ThemeContext';
 import { AuthProvider } from '~/context/AuthContext';
+import { SoundProvider } from '~/context/SoundContext';
 import './global.css';
 
 import AppNavigator from './src/navigation/AppNavigator';
@@ -117,8 +118,10 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <ThemeProvider>
-            <AppNavigator />
-            <StatusBar style="auto" />
+            <SoundProvider>
+              <AppNavigator />
+              <StatusBar style="auto" />
+            </SoundProvider>
           </ThemeProvider>
         </AuthProvider>
       </QueryClientProvider>
