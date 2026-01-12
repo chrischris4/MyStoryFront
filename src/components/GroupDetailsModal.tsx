@@ -20,6 +20,9 @@ import { useTheme } from '~/context/ThemeContext';
 import { useGroupMembers } from '~/hooks/useGroupMembers';
 import { useInviteToGroup } from '~/hooks/useInviteToGroup';
 import { useRemoveMember } from '~/hooks/useRemoveMember';
+import { useGroupStories } from '~/hooks/useGroupStories';
+import { useSound } from '~/context/SoundContext';
+import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -32,8 +35,10 @@ type GroupDetailsModalProps = {
 
 export default function GroupDetailsModal({ visible, group, onClose }: GroupDetailsModalProps) {
   const { isNight } = useTheme();
+  const { playSound } = useSound();
   const [isModalMounted, setIsModalMounted] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
+  const [activeTab, setActiveTab] = useState<'members' | 'stories'>('members');
 
   // Animation
   const modalTranslateY = useSharedValue(SCREEN_HEIGHT);
@@ -67,6 +72,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
 
   // Hooks
   const { data: fetchedMembers = [], isLoading: isLoadingMembers } = useGroupMembers(group?.id || 0);
+  const { data: groupStories = [], isLoading: isLoadingStories } = useGroupStories(group?.id || 0);
   const inviteToGroupMutation = useInviteToGroup();
   const removeMemberMutation = useRemoveMember();
 
@@ -192,37 +198,91 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             </TouchableOpacity>
           </View>
 
-          {/* Section invitation */}
-          <View className="mb-4">
-            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
-              Inviter un membre
-            </Text>
-            <View className="flex-row gap-2">
-              <TextInput
-                value={inviteEmail}
-                onChangeText={setInviteEmail}
-                placeholder="Email de l'utilisateur"
-                placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-              <TouchableOpacity
-                onPress={handleInvite}
-                className="bg-blue-500 px-4 py-2 rounded-xl justify-center"
-                disabled={inviteToGroupMutation.isPending}
-              >
-                {inviteToGroupMutation.isPending ? (
-                  <ActivityIndicator size="small" color="#ffffff" />
-                ) : (
-                  <Text className="text-white font-baloo-semibold">Inviter</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+          {/* Tab Buttons */}
+          <View className="flex-row mb-4 gap-2">
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                playSound('click');
+                setActiveTab('members');
+              }}
+              className={`flex-1 py-3 rounded-xl ${
+                activeTab === 'members' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
+              }`}
+            >
+              <View className="flex-row items-center justify-center gap-2">
+                <Feather
+                  name="users"
+                  size={18}
+                  color={activeTab === 'members' ? '#ffffff' : (isNight ? '#94a3b8' : '#64748b')}
+                />
+                <Text className={`font-baloo-semibold ${
+                  activeTab === 'members' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
+                }`}>
+                  Membres
+                </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                playSound('click');
+                setActiveTab('stories');
+              }}
+              className={`flex-1 py-3 rounded-xl ${
+                activeTab === 'stories' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
+              }`}
+            >
+              <View className="flex-row items-center justify-center gap-2">
+                <Feather
+                  name="book"
+                  size={18}
+                  color={activeTab === 'stories' ? '#ffffff' : (isNight ? '#94a3b8' : '#64748b')}
+                />
+                <Text className={`font-baloo-semibold ${
+                  activeTab === 'stories' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
+                }`}>
+                  Histoires
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
 
+          {/* Section invitation */}
+          {activeTab === 'members' && (
+            <View className="mb-4">
+              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
+                Inviter un membre
+              </Text>
+              <View className="flex-row gap-2">
+                <TextInput
+                  value={inviteEmail}
+                  onChangeText={setInviteEmail}
+                  placeholder="Email de l'utilisateur"
+                  placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                  className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+                <TouchableOpacity
+                  onPress={handleInvite}
+                  className="bg-blue-500 px-4 py-2 rounded-xl justify-center"
+                  disabled={inviteToGroupMutation.isPending}
+                >
+                  {inviteToGroupMutation.isPending ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <Text className="text-white font-baloo-semibold">Inviter</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
           {/* Liste des membres */}
-          <View className="flex-1">
+          {activeTab === 'members' && (
+            <View className="flex-1">
             <View className="flex-row items-center justify-between mb-3">
               <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
                 Membres du groupe
@@ -290,7 +350,69 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 })}
               </ScrollView>
             )}
-          </View>
+            </View>
+          )}
+
+          {/* Section Histoires */}
+          {activeTab === 'stories' && (
+            <View className="flex-1">
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
+                  Histoires du groupe
+                </Text>
+                <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
+                  <Feather name="book" size={14} color="#3b82f6" />
+                  <Text className="text-blue-500 font-baloo-semibold text-sm">
+                    {groupStories.length}
+                  </Text>
+                </View>
+              </View>
+
+              {isLoadingStories ? (
+                <View className="items-center py-8">
+                  <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
+                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo mt-2`}>
+                    Chargement...
+                  </Text>
+                </View>
+              ) : groupStories.length === 0 ? (
+                <View className="items-center py-8">
+                  <Feather name="book-open" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
+                  <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
+                    Aucune histoire partagée dans ce groupe
+                  </Text>
+                </View>
+              ) : (
+                <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                  {groupStories.map((story: any) => {
+                    const authorName = story.author?.profil?.name || story.author?.email || 'Auteur inconnu';
+
+                    return (
+                      <BlurView
+                        key={story.id}
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? 'dark' : 'light'}
+                        className="p-3 rounded-xl mb-2 overflow-hidden"
+                        style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                      >
+                        <View className="flex-row justify-between items-center">
+                          <View className="flex-1">
+                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
+                              {story.title}
+                            </Text>
+                            <Text className={`${isNight ? 'text-white/60' : 'text-slate-600'} font-baloo text-sm`}>
+                              Par {authorName}
+                            </Text>
+                          </View>
+                          <Feather name="book-open" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
+                        </View>
+                      </BlurView>
+                    );
+                  })}
+                </ScrollView>
+              )}
+            </View>
+          )}
         </BlurView>
       </Animated.View>
     </View>
