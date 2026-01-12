@@ -23,6 +23,7 @@ import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useGroups } from '~/hooks/useGroups';
 import { useShareStoryToGroup } from '~/hooks/useShareStoryToGroup';
+import { useStoryGroups } from '~/hooks/useStoryGroups';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
@@ -58,7 +59,17 @@ export default function StoryDetailScreen() {
 
   // Hooks pour les groupes
   const { data: myGroups = [] } = useGroups();
+  const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
   const shareStoryMutation = useShareStoryToGroup();
+
+  // Debug: vérifier les groupes partagés
+  useEffect(() => {
+    console.log('🔍 Shared groups:', sharedGroups);
+    console.log('🔍 Is loading shared groups:', isLoadingSharedGroups);
+    if (sharedGroupsError) {
+      console.error('❌ Error loading shared groups:', sharedGroupsError);
+    }
+  }, [sharedGroups, isLoadingSharedGroups, sharedGroupsError]);
 
   const handleToggleFavorite = () => {
     toggleFavoriteMutation.mutate(
@@ -135,19 +146,23 @@ export default function StoryDetailScreen() {
   };
 
   const handleShareToGroups = async () => {
-    if (selectedGroups.length === 0) {
+    // Filtrer pour ne partager qu'aux nouveaux groupes (pas déjà partagés)
+    const sharedGroupIds = sharedGroups.map((g: any) => g.id);
+    const newGroupsToShare = selectedGroups.filter(id => !sharedGroupIds.includes(id));
+
+    if (newGroupsToShare.length === 0) {
       Toast.show({
-        type: 'error',
-        text1: 'Erreur',
-        text2: 'Veuillez sélectionner au moins un groupe',
+        type: 'info',
+        text1: 'Information',
+        text2: 'Aucun nouveau groupe sélectionné',
       });
       return;
     }
 
     try {
-      // Partager l'histoire à chaque groupe sélectionné
+      // Partager l'histoire uniquement aux nouveaux groupes
       await Promise.all(
-        selectedGroups.map(groupId =>
+        newGroupsToShare.map(groupId =>
           shareStoryMutation.mutateAsync({
             groupId,
             storyId: Number(storyId),
@@ -158,8 +173,9 @@ export default function StoryDetailScreen() {
       Toast.show({
         type: 'success',
         text1: 'Succès',
-        text2: `Histoire partagée à ${selectedGroups.length} groupe(s)`,
+        text2: `Histoire partagée à ${newGroupsToShare.length} nouveau(x) groupe(s)`,
       });
+      setSelectedGroups([]); // Réinitialiser la sélection après le partage
       setShowShareModal(false);
     } catch (error: any) {
       console.error('Erreur lors du partage:', error);
@@ -248,6 +264,14 @@ export default function StoryDetailScreen() {
   useEffect(() => {
     fetchStory();
   }, [storyId]);
+
+  // Initialiser selectedGroups avec les groupes déjà partagés quand la modal s'ouvre
+  useEffect(() => {
+    if (showShareModal && sharedGroups.length > 0) {
+      const sharedGroupIds = sharedGroups.map((g: any) => g.id);
+      setSelectedGroups(sharedGroupIds);
+    }
+  }, [showShareModal, sharedGroups]);
 
   if (loading) {
     return (
@@ -381,9 +405,13 @@ export default function StoryDetailScreen() {
               className="flex-row gap-2 items-center"
             >
               <Text className={`px-4 text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                {isShared ? 'Histoire partagée' : selectedGroups.length > 0 ? `Partagé à ${selectedGroups.length} groupe(s)` : 'Partager l\'histoire'}
+                {isShared
+                  ? 'Histoire partagée'
+                  : sharedGroups.length > 0
+                    ? `Partagée à ${sharedGroups.length} groupe(s)`
+                    : 'Partager l\'histoire'}
               </Text>
-              {(isShared || selectedGroups.length > 0) && (
+              {(isShared || sharedGroups.length > 0) && (
                 <Feather name='check' size={20} color={isNight ? '#fff' : '#000'} />
               )}
             </TouchableOpacity>
@@ -517,7 +545,10 @@ export default function StoryDetailScreen() {
           visible={showShareModal}
           transparent
           animationType="fade"
-          onRequestClose={() => setShowShareModal(false)}
+          onRequestClose={() => {
+            setSelectedGroups([]);
+            setShowShareModal(false);
+          }}
         >
           <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <BlurView
@@ -581,53 +612,70 @@ export default function StoryDetailScreen() {
                       </Text>
                     </BlurView>
                   ) : (
-                    myGroups.map((group: any) => (
-                      <TouchableOpacity
-                        key={group.id}
-                        onPress={() => handleToggleGroup(group.id)}
-                        className="mb-2"
-                      >
-                        <BlurView
-                          intensity={isNight ? 90 : 50}
-                          tint={isNight ? "dark" : "light"}
-                          className={`p-3 rounded-xl overflow-hidden ${selectedGroups.includes(group.id) ? 'border-2 border-blue-500' : ''}`}
-                          style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                    myGroups.map((group: any) => {
+                      const isAlreadyShared = sharedGroups.some((g: any) => g.id === group.id);
+                      const isSelected = selectedGroups.includes(group.id);
+
+                      return (
+                        <TouchableOpacity
+                          key={group.id}
+                          onPress={() => handleToggleGroup(group.id)}
+                          className="mb-2"
                         >
-                          <View className="flex-row items-center justify-between">
-                            <View className="flex-1">
-                              <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                                {group.name}
-                              </Text>
-                              <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                                {group._count?.members || 0} membres
-                              </Text>
+                          <BlurView
+                            intensity={isNight ? 90 : 50}
+                            tint={isNight ? "dark" : "light"}
+                            className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
+                            style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                          >
+                            <View className="flex-row items-center justify-between">
+                              <View className="flex-1">
+                                <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
+                                  {group.name}
+                                </Text>
+                                <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
+                                  {group._count?.members || 0} membres {isAlreadyShared ? '• Déjà partagé' : ''}
+                                </Text>
+                              </View>
+                              {isSelected && (
+                                <Feather
+                                  name="check-circle"
+                                  size={20}
+                                  color={isAlreadyShared ? "#10b981" : "#3b82f6"}
+                                />
+                              )}
                             </View>
-                            {selectedGroups.includes(group.id) && (
-                              <Feather name="check-circle" size={20} color="#3b82f6" />
-                            )}
-                          </View>
-                        </BlurView>
-                      </TouchableOpacity>
-                    ))
+                          </BlurView>
+                        </TouchableOpacity>
+                      );
+                    })
                   )}
                 </ScrollView>
               </View>
 
               {/* Boutons d'action */}
               <View className="flex-col gap-3 mt-4">
-                {selectedGroups.length > 0 && (
-                  <TouchableOpacity
-                    onPress={handleShareToGroups}
-                    className="bg-blue-600 p-4 rounded-xl items-center"
-                  >
-                    <Text className="text-white font-baloo-semibold text-lg">
-                      Partager à {selectedGroups.length} groupe(s)
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                {selectedGroups.length > 0 && (() => {
+                  const sharedGroupIds = sharedGroups.map((g: any) => g.id);
+                  const newGroupsCount = selectedGroups.filter(id => !sharedGroupIds.includes(id)).length;
+
+                  return newGroupsCount > 0 && (
+                    <TouchableOpacity
+                      onPress={handleShareToGroups}
+                      className="bg-blue-600 p-4 rounded-xl items-center"
+                    >
+                      <Text className="text-white font-baloo-semibold text-lg">
+                        Partager à {newGroupsCount} nouveau(x) groupe(s)
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })()}
 
                 <TouchableOpacity
-                  onPress={() => setShowShareModal(false)}
+                  onPress={() => {
+                    setSelectedGroups([]); // Réinitialiser la sélection
+                    setShowShareModal(false);
+                  }}
                   className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
                 >
                   <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
