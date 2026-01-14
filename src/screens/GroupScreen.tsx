@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
@@ -23,6 +22,7 @@ import { useJoinGroup } from '~/hooks/useJoinGroup';
 import GroupCard from '~/components/GroupCard';
 import GroupDetailsModal from '~/components/GroupDetailsModal';
 import Toast from 'react-native-toast-message';
+import StarryBackground from '~/components/StarryBackground';
 
 type TabType = 'myGroups' | 'search' | 'invitations';
 
@@ -297,41 +297,11 @@ export default function GroupScreen() {
       </BlurView>
     );
   };
-  const renderStars = (count: number) => {
-    const stars = [];
-    const { width, height } = Dimensions.get('window');
-
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 1;
-      const top = Math.random() * (height * 0.5);
-      const left = Math.random() * width;
-      const opacity = Math.random() * 0.8 + 0.2;
-
-      stars.push(
-        <View
-          key={`star-${i}`}
-          style={{
-            position: 'absolute',
-            top,
-            left,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: '#FFFFFF',
-            opacity,
-          }}
-        />
-      );
-    }
-
-    return stars;
-  };
-
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
   return (
     <View className="flex-1 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
-      {isNight && renderStars(50)}
+      {isNight && <StarryBackground starCount={50} />}
       <View
         className='absolute bottom-0 -right-32 w-72 border-4 rounded-full h-36 flex flex-row items-center justify-between p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

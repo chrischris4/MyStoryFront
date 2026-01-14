@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Dimensions, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { CompositeNavigationProp } from '@react-navigation/native';
@@ -11,6 +11,7 @@ import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
+import StarryBackground from '~/components/StarryBackground';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
@@ -71,36 +72,6 @@ export default function SharedStoriesScreen() {
   }, []);
 
 
-  const renderStars = (count: number) => {
-    const stars = [];
-    const { width, height } = Dimensions.get('window');
-
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 1;
-      const top = Math.random() * (height * 0.5);
-      const left = Math.random() * width;
-      const opacity = Math.random() * 0.8 + 0.2;
-
-      stars.push(
-        <View
-          key={`star-${i}`}
-          style={{
-            position: 'absolute',
-            top,
-            left,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: '#FFFFFF',
-            opacity,
-          }}
-        />
-      );
-    }
-
-    return stars;
-  };
-
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>
@@ -119,7 +90,7 @@ export default function SharedStoriesScreen() {
           style={{ width: 200, height: 200 }}
         />
       </Animated.View>
-      {isNight && renderStars(50)}
+      {isNight && <StarryBackground starCount={50} />}
 
       {/* Sol */}
       <View

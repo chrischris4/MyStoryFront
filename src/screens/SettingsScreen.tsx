@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, StyleSheet, Dimensions, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
 import { Feather } from '@expo/vector-icons';
-import Background from '~/components/Background';
 import Toast from 'react-native-toast-message';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import EditProfilModal from '~/components/EditProfilModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
+import StarryBackground from '~/components/StarryBackground';
 
 export default function SettingsScreen() {
     const navigation = useNavigation();
@@ -68,39 +68,9 @@ export default function SettingsScreen() {
         navigation.navigate('BillingScreen' as never);
     };
 
-    const renderStars = (count: number) => {
-        const stars = [];
-        const { width, height } = Dimensions.get('window');
-
-        for (let i = 0; i < count; i++) {
-            const size = Math.random() * 2 + 1; // taille entre 1 et 3
-            const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
-            const left = Math.random() * width;
-            const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
-
-            stars.push(
-                <View
-                    key={`star-${i}`}
-                    style={{
-                        position: 'absolute',
-                        top,
-                        left,
-                        width: size,
-                        height: size,
-                        borderRadius: size / 2,
-                        backgroundColor: '#FFFFFF',
-                        opacity,
-                    }}
-                />
-            );
-        }
-
-        return stars;
-    };
-
     return (
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
-            {isNight && renderStars(50)}
+            {isNight && <StarryBackground starCount={50} />}
 
             {/* Sol */}
             <View

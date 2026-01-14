@@ -10,6 +10,7 @@ import { RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { BlurView } from 'expo-blur';
+import StarryBackground from '~/components/StarryBackground';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -417,39 +418,9 @@ export default function BillingScreen() {
 
     }, []);
 
-    const renderStars = (count: number) => {
-        const stars = [];
-        const { width, height } = Dimensions.get('window');
-
-        for (let i = 0; i < count; i++) {
-            const size = Math.random() * 2 + 1;
-            const top = Math.random() * (height * 0.5);
-            const left = Math.random() * width;
-            const opacity = Math.random() * 0.8 + 0.2;
-
-            stars.push(
-                <View
-                    key={`star-${i}`}
-                    style={{
-                        position: 'absolute',
-                        top,
-                        left,
-                        width: size,
-                        height: size,
-                        borderRadius: size / 2,
-                        backgroundColor: '#FFFFFF',
-                        opacity,
-                    }}
-                />
-            );
-        }
-
-        return stars;
-    };
-
     return (
         <View className="flex-1 flex-col overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
-            {isNight && renderStars(50)}
+            {isNight && <StarryBackground starCount={50} />}
             <View
                 className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

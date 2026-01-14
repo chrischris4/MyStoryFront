@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
-import { View, Text, Dimensions, Animated } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useStories } from '~/hooks/useStories';
 import { useFavoriteStories } from '~/hooks/useFavoriteStories';
+import StarryBackground from '~/components/StarryBackground';
 
 export default function StoriesScreen() {
   const { isNight } = useTheme();
@@ -20,36 +21,6 @@ export default function StoriesScreen() {
   const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
-
-  const renderStars = (count: number) => {
-    const stars = [];
-    const { width, height } = Dimensions.get('window');
-
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 1; // taille entre 1 et 3
-      const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
-      const left = Math.random() * width;
-      const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
-
-      stars.push(
-        <View
-          key={`star-${i}`}
-          style={{
-            position: 'absolute',
-            top,
-            left,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: '#FFFFFF',
-            opacity,
-          }}
-        />
-      );
-    }
-
-    return stars;
-  };
 
   return (
     <View className="flex-1 pt-10 relative"
@@ -86,7 +57,7 @@ export default function StoriesScreen() {
           style={{ width: 700, height: 500 }}
         />
       </Animated.View>
-      {isNight && renderStars(50)}
+      {isNight && <StarryBackground starCount={50} />}
 
       {/* Sol */}
       <View

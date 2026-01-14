@@ -19,6 +19,7 @@ import type { MainTabParamList, RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
+import StarryBackground from '~/components/StarryBackground';
 
 
 
@@ -239,36 +240,6 @@ export default function CreateStoryScreen() {
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
-  const renderStars = (count: number) => {
-    const stars = [];
-    const { width, height } = Dimensions.get('window');
-
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 1; // taille entre 1 et 3
-      const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
-      const left = Math.random() * width;
-      const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
-
-      stars.push(
-        <View
-          key={`star-${i}`}
-          style={{
-            position: 'absolute',
-            top,
-            left,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: '#FFFFFF',
-            opacity,
-          }}
-        />
-      );
-    }
-
-    return stars;
-  };
-
   return (
     <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
       {/* Bouton de test pour ouvrir/fermer la StoryModal */}
@@ -286,7 +257,7 @@ export default function CreateStoryScreen() {
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
       </TouchableOpacity>
 
-      {isNight && renderStars(50)}
+      {isNight && <StarryBackground starCount={50} />}
       <View
         className='absolute bottom-10 border-4 self-center h-28 rounded-t-full w-[100%] z-0'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

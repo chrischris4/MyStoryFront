@@ -1,5 +1,5 @@
-import { Group } from '~/hooks/useGroups';
 import { useUserStore } from '~/store/useUserStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000';
 
@@ -19,11 +19,15 @@ type RequestOptions = {
   body?: any;
   headers?: Record<string, string>;
   requiresAuth?: boolean;
+  token?: string | null;
+  _isRetry?: boolean; // Flag interne pour éviter les boucles infinies
 };
 
-class ApiService {
+export class ApiService {
   private baseUrl: string;
   private onUnauthorized?: () => void;
+  private isRefreshing = false;
+  private refreshPromise: Promise<boolean> | null = null;
 
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -33,8 +37,71 @@ class ApiService {
     this.onUnauthorized = handler;
   }
 
-  private getAuthToken(): string | null {
-    return useUserStore.getState().accessToken;
+  private getAuthToken(tokenOverride?: string | null): string | null {
+    return tokenOverride ?? useUserStore.getState().accessToken;
+  }
+
+  private getRefreshToken(): string | null {
+    return useUserStore.getState().refreshToken;
+  }
+
+  /**
+   * Tente de rafraîchir le token
+   * Retourne true si le refresh a réussi, false sinon
+   */
+  private async tryRefreshToken(): Promise<boolean> {
+    // Si un refresh est déjà en cours, attendre son résultat
+    if (this.isRefreshing && this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = this.doRefreshToken();
+
+    try {
+      return await this.refreshPromise;
+    } finally {
+      this.isRefreshing = false;
+      this.refreshPromise = null;
+    }
+  }
+
+  private async doRefreshToken(): Promise<boolean> {
+    const refreshToken = this.getRefreshToken();
+
+    if (!refreshToken) {
+     return false;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (response.ok) {
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await response.json();
+
+
+        // Mettre à jour AsyncStorage
+        await AsyncStorage.setItem('accessToken', newAccessToken);
+        await AsyncStorage.setItem('refreshToken', newRefreshToken);
+
+        // Mettre à jour le store Zustand
+        useUserStore.getState().setTokens(newAccessToken, newRefreshToken);
+
+        return true;
+      } else {
+        console.error('❌ ApiService.tryRefreshToken - Refresh échoué, status:', response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ ApiService.tryRefreshToken - Erreur:', error);
+      return false;
+    }
   }
 
   private async request<T>(
@@ -46,24 +113,26 @@ class ApiService {
       body,
       headers = {},
       requiresAuth = true,
+      token: tokenOverride,
+      _isRetry = false,
     } = options;
 
     const url = `${this.baseUrl}${endpoint}`;
+    const token = this.getAuthToken(tokenOverride);
 
+
+    
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
       ...headers,
     };
 
-    // Ajouter le token d'authentification si nécessaire
-    if (requiresAuth) {
-      const token = this.getAuthToken();
-      if (token) {
-        requestHeaders['Authorization'] = `Bearer ${token}`;
-      } else {
-        throw new ApiError('Non authentifié', 401);
-      }
+    if (requiresAuth && !token) {
+      console.error('❌ ApiService.request - Pas de token');
+      throw new ApiError('Non authentifié', 401);
     }
+
+    if (requiresAuth) requestHeaders['Authorization'] = `Bearer ${token}`;
 
     try {
       const response = await fetch(url, {
@@ -72,17 +141,32 @@ class ApiService {
         body: body ? JSON.stringify(body) : undefined,
       });
 
-      // Gérer les erreurs 401 (non autorisé)
-      if (response.status === 401) {
-        if (this.onUnauthorized) {
-          this.onUnauthorized();
+
+      
+      if (response.status === 401 && requiresAuth && !_isRetry) {
+
+        
+        const refreshed = await this.tryRefreshToken();
+
+        if (refreshed) {
+          // Réessayer la requête avec le nouveau token
+          return this.request<T>(endpoint, { ...options, _isRetry: true });
         }
+
+        // Si refresh échoue, déclencher onUnauthorized
+        console.error('❌ ApiService.request - Refresh échoué, déconnexion...');
+        if (this.onUnauthorized) this.onUnauthorized();
         throw new ApiError('Session expirée', 401);
       }
 
-      // Gérer les autres erreurs HTTP
+      if (response.status === 401) {
+        if (this.onUnauthorized) this.onUnauthorized();
+        throw new ApiError('Session expirée', 401);
+      }
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
+        console.error('❌ ApiService.request - Erreur HTTP', response.status, errorData);
         throw new ApiError(
           errorData?.message || `Erreur HTTP ${response.status}`,
           response.status,
@@ -90,67 +174,51 @@ class ApiService {
         );
       }
 
-      // Gérer les réponses vides (ex: DELETE)
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
-        return await response.json();
+        const data = await response.json();
+        return data;
       }
 
       return {} as T;
     } catch (error) {
-      if (error instanceof ApiError) {
-        throw error;
-      }
-      throw new ApiError(
-        error instanceof Error ? error.message : 'Erreur réseau',
-        0
-      );
+      console.error('❌ ApiService.request - Exception', error);
+      if (error instanceof ApiError) throw error;
+      throw new ApiError(error instanceof Error ? error.message : 'Erreur réseau', 0);
     }
   }
 
   // Méthodes HTTP de base
-  async get<T>(endpoint: string, requiresAuth = true): Promise<T> {
-    return this.request<T>(endpoint, { method: 'GET', requiresAuth });
+  async get<T>(endpoint: string, requiresAuth = true, token?: string) {
+    return this.request<T>(endpoint, { method: 'GET', requiresAuth, token });
+  }
+  async post<T>(endpoint: string, body?: any, requiresAuth = true, token?: string) {
+    return this.request<T>(endpoint, { method: 'POST', body, requiresAuth, token });
+  }
+  async put<T>(endpoint: string, body?: any, requiresAuth = true, token?: string) {
+    return this.request<T>(endpoint, { method: 'PUT', body, requiresAuth, token });
+  }
+  async patch<T>(endpoint: string, body?: any, requiresAuth = true, token?: string) {
+    return this.request<T>(endpoint, { method: 'PATCH', body, requiresAuth, token });
+  }
+  async delete<T>(endpoint: string, body?: any, requiresAuth = true, token?: string) {
+    return this.request<T>(endpoint, { method: 'DELETE', body, requiresAuth, token });
   }
 
-  async post<T>(endpoint: string, body?: any, requiresAuth = true): Promise<T> {
-    return this.request<T>(endpoint, { method: 'POST', body, requiresAuth });
-  }
-
-  async put<T>(endpoint: string, body?: any, requiresAuth = true): Promise<T> {
-    return this.request<T>(endpoint, { method: 'PUT', body, requiresAuth });
-  }
-
-  async patch<T>(endpoint: string, body?: any, requiresAuth = true): Promise<T> {
-    return this.request<T>(endpoint, { method: 'PATCH', body, requiresAuth });
-  }
-
-  async delete<T>(endpoint: string, body?: any, requiresAuth = true): Promise<T> {
-    return this.request<T>(endpoint, { method: 'DELETE', body, requiresAuth });
-  }
-
-  // Méthodes spécifiques pour l'authentification
+  // --- Auth ---
   async login(email: string, password: string) {
-    return this.post<{ accessToken: string; refreshToken: string }>(
-      '/auth/login',
-      { email, password },
-      false
-    );
+    return this.post<{ accessToken: string; refreshToken: string }>('/auth/login', { email, password }, false);
   }
 
   async register(email: string, password: string, username?: string) {
-    return this.post<{ accessToken: string; refreshToken: string }>( // ← Ajouter refreshToken
-      '/auth/register',
-      { email, password, username },
-      false
-    );
+    return this.post<{ accessToken: string; refreshToken: string }>('/auth/register', { email, password, username }, false);
   }
 
   async getProfile() {
     return this.get<any>('/profile/me');
   }
 
-  // Méthodes pour les stories
+  // --- Stories ---
   async getStories() {
     return this.get<any[]>('/story');
   }
@@ -159,8 +227,8 @@ class ApiService {
     return this.get<any[]>('/story/shared');
   }
 
-    async getSharedStoriesGroup(id: number) {
-    return this.get<any[]>(`/story/${id}/shared-groups`);
+  async getSharedStoriesGroup(storyId: number) {
+    return this.get<any[]>(`/story/${storyId}/groups`);
   }
 
   async getStoryDetail(id: number) {
@@ -175,56 +243,50 @@ class ApiService {
     return this.delete<any>(`/story/${id}`);
   }
 
-  // Méthodes pour les favoris
+  // --- Favoris ---
   async getFavoriteStories() {
     return this.get<any[]>('/favorite-story/me');
   }
-
   async addFavorite(storyId: number) {
     return this.post<any>('/favorite-story', { storyId });
   }
-
   async removeFavorite(storyId: number) {
     return this.delete<any>('/favorite-story', { storyId });
   }
 
-  // Groupes
-async getMyGroups() {
-  return this.get<Group[]>(`/group`);
+  // --- Groupes ---
+  async getMyGroups() {
+    return this.get<any[]>('/group');
+  }
+  async getGroupMembers(groupId: number) {
+    return this.get<any[]>(`/group/${groupId}/members`);
+  }
+  async getGroupStories(groupId: number) {
+    return this.get<any[]>(`/group/${groupId}/stories`);
+  }
+  async getGroupInvitations() {
+    return this.get<any[]>('/group/invitations');
+  }
+  async createGroup(dto: any) {
+    return this.post<any>('/group', dto);
+  }
+  async shareStoryWithGroup(groupId: number, storyId: number) {
+    return this.post(`/group/${groupId}/share`, { storyId });
+  }
+  async acceptInvitation(invitationId: number) {
+    return this.post(`/group/invitations/${invitationId}/accept`);
+  }
+  async declineInvitation(invitationId: number) {
+    return this.post(`/group/invitations/${invitationId}/decline`);
+  }
+  async leaveGroup(groupId: number) {
+    return this.post(`/group/${groupId}/leave`);
+  }
+  async removeMember(groupId: number, memberId: number) {
+    return this.delete(`/group/${groupId}/members/${memberId}`);
+  }
 }
 
-async getGroupMembers(groupId: number) {
-  return this.get<any[]>(`/group/${groupId}/members`);
-}
-
-async createGroup(dto: any) {
-  return this.post<Group>(`/group`, dto);
-}
-
-async shareStoryWithGroup(groupId: number, storyId: number) {
-  return this.post(`/group/${groupId}/share`, { storyId });
-}
-
-async acceptInvitation(invitationId: number) {
-  return this.post(`/group/invitations/${invitationId}/accept`);
-}
-
-async declineInvitation(invitationId: number) {
-  return this.post(`/group/invitations/${invitationId}/decline`);
-}
-
-async leaveGroup(groupId: number) {
-  return this.post(`/group/${groupId}/leave`);
-}
-
-async removeMember(groupId: number, memberId: number) {
-  return this.delete(`/group/${groupId}/members/${memberId}`);
-}
-
-}
-
-// Instance singleton
+// --- Instance singleton ---
 export const api = new ApiService(API_BASE_URL);
-
-// Hook pour faciliter l'utilisation dans les composants
 export const useApi = () => api;

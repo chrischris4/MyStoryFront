@@ -1,6 +1,7 @@
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, Easing, Dimensions } from 'react-native';
+import StarryBackground from './StarryBackground';
 
 type BackgroundProps = {
     isNight?: boolean;
@@ -44,44 +45,12 @@ export default function Background({ isNight = false }: BackgroundProps) {
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
-    // Génère n étoiles aléatoires
-    const renderStars = (count: number) => {
-        const stars = [];
-        const { width, height } = Dimensions.get('window');
-
-        for (let i = 0; i < count; i++) {
-            const size = Math.random() * 2 + 1; // taille entre 1 et 3
-            const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
-            const left = Math.random() * width;
-            const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
-
-            stars.push(
-                <View
-                    key={`star-${i}`}
-                    style={{
-                        position: 'absolute',
-                        top,
-                        left,
-                        width: size,
-                        height: size,
-                        borderRadius: size / 2,
-                        backgroundColor: '#FFFFFF',
-                        opacity,
-                    }}
-                />
-            );
-        }
-
-        return stars;
-    };
-
-
     return (
         <View
             className="flex-1 p-4 relative"
             style={{ backgroundColor: skyColor }}
         >
-            {isNight && renderStars(50)}
+            {isNight && <StarryBackground starCount={50} />}
 
             {/* Sol */}
             <View

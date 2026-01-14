@@ -6,6 +6,7 @@ import type { RootStackParamList } from '~/types';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { BlurView } from 'expo-blur';
 import LottieView from 'lottie-react-native';
+import StarryBackground from './StarryBackground';
 
 type StoryPage = {
     page: number;
@@ -112,33 +113,6 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
     });
 
 
-    // Génération des étoiles
-    const renderStars = (count: number) => {
-        const stars = [];
-        const { width, height } = Dimensions.get('window');
-        for (let i = 0; i < count; i++) {
-            const size = Math.random() * 2 + 1;
-            const top = Math.random() * (height * 0.5);
-            const left = Math.random() * width;
-            const opacity = Math.random() * 0.8 + 0.2;
-            stars.push(
-                <View
-                    key={`star-${i}`}
-                    style={{
-                        position: 'absolute',
-                        top,
-                        left,
-                        width: size,
-                        height: size,
-                        borderRadius: size / 2,
-                        backgroundColor: '#FFFFFF',
-                        opacity,
-                    }}
-                />
-            );
-        }
-        return stars;
-    };
     const { width: screenWidth } = Dimensions.get('window');
     const orbitSize = screenWidth * 1.4;
     const sunSize = orbitSize * 0.22;
@@ -161,9 +135,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                 }}
             >
                 {/* Étoiles */}
-                <Animated.View style={{ opacity: starsOpacity }}>
-                    {renderStars(50)}
-                </Animated.View>
+                <StarryBackground starCount={50} animatedStyle={{ opacity: starsOpacity }} />
 
                 {/* Cercle Soleil / Lune */}
                 <Animated.View

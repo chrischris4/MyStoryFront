@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Modal,
-  Dimensions,
   Animated,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
@@ -29,6 +28,7 @@ import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
+import StarryBackground from '~/components/StarryBackground';
 
 
 
@@ -315,42 +315,10 @@ export default function StoryDetailScreen() {
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
-  // Génère n étoiles aléatoires
-  const renderStars = (count: number) => {
-    const stars = [];
-    const { width, height } = Dimensions.get('window');
-
-    for (let i = 0; i < count; i++) {
-      const size = Math.random() * 2 + 1; // taille entre 1 et 3
-      const top = Math.random() * (height * 0.5); // moitié supérieure de l'écran
-      const left = Math.random() * width;
-      const opacity = Math.random() * 0.8 + 0.2; // variation d'opacité
-
-      stars.push(
-        <View
-          key={`star-${i}`}
-          style={{
-            position: 'absolute',
-            top,
-            left,
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            backgroundColor: '#FFFFFF',
-            opacity,
-          }}
-        />
-      );
-    }
-
-    return stars;
-  };
-
-
   return (
     <View className="flex-1 relative h-screen pt-10 pb-4" style={{ backgroundColor: skyColor }}>
 
-      {isNight && renderStars(50)}
+      {isNight && <StarryBackground starCount={50} />}
       <ScrollView
         ref={scrollViewRef}
         className="flex-grow px-4 z-20"
