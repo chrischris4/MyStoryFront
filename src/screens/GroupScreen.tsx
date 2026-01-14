@@ -349,10 +349,10 @@ export default function GroupScreen() {
         </TouchableOpacity>
       </View>
       <SafeAreaView className="flex-1">
-        <View className="flex-1 w-full px-4 pt-6">
+        <View className="flex-1 w-full px-4 pt-4">
           {/* Header */}
-          <View className="pt-6 mb-4">
-            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-4xl font-baloo-semibold`}>
+          <View className="mb-4">
+            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-4xl font-baloo-semibold pt-4`}>
               Mes groupes
             </Text>
             <View style={{ width: 24 }} />
@@ -368,7 +368,7 @@ export default function GroupScreen() {
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
             {/* Mes groupes */}
             {activeTab === 'myGroups' && (
-              <View>
+              <View className='mb-24'>
                 <TouchableOpacity
                   onPress={() => setShowCreateModal(true)}
                   className="mb-4"

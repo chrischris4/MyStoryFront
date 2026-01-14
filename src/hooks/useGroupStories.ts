@@ -43,8 +43,11 @@ export const useGroupStories = (groupId: number) => {
   const accessToken = useUserStore((state) => state.accessToken);
 
   return useQuery({
-    queryKey: ['groupStories', groupId],
-    queryFn: () => fetchGroupStories(groupId, accessToken),
+    queryKey: ['groupStories', groupId, accessToken],
+    queryFn: () => {
+      const currentToken = useUserStore.getState().accessToken;
+      return fetchGroupStories(groupId, currentToken);
+    },
     enabled: !!accessToken && !!groupId,
   });
 };

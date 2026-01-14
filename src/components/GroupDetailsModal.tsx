@@ -16,6 +16,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '~/types';
 import { useTheme } from '~/context/ThemeContext';
 import { useGroupMembers } from '~/hooks/useGroupMembers';
 import { useInviteToGroup } from '~/hooks/useInviteToGroup';
@@ -36,6 +39,7 @@ type GroupDetailsModalProps = {
 export default function GroupDetailsModal({ visible, group, onClose }: GroupDetailsModalProps) {
   const { isNight } = useTheme();
   const { playSound } = useSound();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalMounted, setIsModalMounted] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [activeTab, setActiveTab] = useState<'members' | 'stories'>('members');
@@ -388,25 +392,35 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                     const authorName = story.author?.profil?.name || story.author?.email || 'Auteur inconnu';
 
                     return (
-                      <BlurView
+                      <TouchableOpacity
                         key={story.id}
-                        intensity={isNight ? 90 : 50}
-                        tint={isNight ? 'dark' : 'light'}
-                        className="p-3 rounded-xl mb-2 overflow-hidden"
-                        style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          playSound('click');
+                          onClose();
+                          navigation.navigate('StoryDetail', { storyId: story.id });
+                        }}
+                        activeOpacity={0.7}
                       >
-                        <View className="flex-row justify-between items-center">
-                          <View className="flex-1">
-                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
-                              {story.title}
-                            </Text>
-                            <Text className={`${isNight ? 'text-white/60' : 'text-slate-600'} font-baloo text-sm`}>
-                              Par {authorName}
-                            </Text>
+                        <BlurView
+                          intensity={isNight ? 90 : 50}
+                          tint={isNight ? 'dark' : 'light'}
+                          className="p-3 rounded-xl mb-2 overflow-hidden"
+                          style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                        >
+                          <View className="flex-row justify-between items-center">
+                            <View className="flex-1">
+                              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
+                                {story.title}
+                              </Text>
+                              <Text className={`${isNight ? 'text-white/60' : 'text-slate-600'} font-baloo text-sm`}>
+                                Par {authorName}
+                              </Text>
+                            </View>
+                            <Feather name="chevron-right" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
                           </View>
-                          <Feather name="book-open" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
-                        </View>
-                      </BlurView>
+                        </BlurView>
+                      </TouchableOpacity>
                     );
                   })}
                 </ScrollView>

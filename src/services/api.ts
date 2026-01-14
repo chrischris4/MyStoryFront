@@ -1,4 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Group } from '~/hooks/useGroups';
+import { useUserStore } from '~/store/useUserStore';
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000';
 
@@ -32,13 +33,8 @@ class ApiService {
     this.onUnauthorized = handler;
   }
 
-  private async getAuthToken(): Promise<string | null> {
-    try {
-      return await AsyncStorage.getItem('accessToken');
-    } catch (error) {
-      console.error('Erreur lors de la récupération du token:', error);
-      return null;
-    }
+  private getAuthToken(): string | null {
+    return useUserStore.getState().accessToken;
   }
 
   private async request<T>(
@@ -61,7 +57,7 @@ class ApiService {
 
     // Ajouter le token d'authentification si nécessaire
     if (requiresAuth) {
-      const token = await this.getAuthToken();
+      const token = this.getAuthToken();
       if (token) {
         requestHeaders['Authorization'] = `Bearer ${token}`;
       } else {
@@ -135,20 +131,20 @@ class ApiService {
 
   // Méthodes spécifiques pour l'authentification
   async login(email: string, password: string) {
-  return this.post<{ accessToken: string; refreshToken: string }>(
-    '/auth/login',
-    { email, password },
-    false
-  );
-}
+    return this.post<{ accessToken: string; refreshToken: string }>(
+      '/auth/login',
+      { email, password },
+      false
+    );
+  }
 
-async register(email: string, password: string, username?: string) {
-  return this.post<{ accessToken: string; refreshToken: string }>( // ← Ajouter refreshToken
-    '/auth/register',
-    { email, password, username },
-    false
-  );
-}
+  async register(email: string, password: string, username?: string) {
+    return this.post<{ accessToken: string; refreshToken: string }>( // ← Ajouter refreshToken
+      '/auth/register',
+      { email, password, username },
+      false
+    );
+  }
 
   async getProfile() {
     return this.get<any>('/profile/me');
@@ -161,6 +157,10 @@ async register(email: string, password: string, username?: string) {
 
   async getSharedStories() {
     return this.get<any[]>('/story/shared');
+  }
+
+    async getSharedStoriesGroup(id: number) {
+    return this.get<any[]>(`/story/${id}/shared-groups`);
   }
 
   async getStoryDetail(id: number) {
@@ -187,6 +187,40 @@ async register(email: string, password: string, username?: string) {
   async removeFavorite(storyId: number) {
     return this.delete<any>('/favorite-story', { storyId });
   }
+
+  // Groupes
+async getMyGroups() {
+  return this.get<Group[]>(`/group`);
+}
+
+async getGroupMembers(groupId: number) {
+  return this.get<any[]>(`/group/${groupId}/members`);
+}
+
+async createGroup(dto: any) {
+  return this.post<Group>(`/group`, dto);
+}
+
+async shareStoryWithGroup(groupId: number, storyId: number) {
+  return this.post(`/group/${groupId}/share`, { storyId });
+}
+
+async acceptInvitation(invitationId: number) {
+  return this.post(`/group/invitations/${invitationId}/accept`);
+}
+
+async declineInvitation(invitationId: number) {
+  return this.post(`/group/invitations/${invitationId}/decline`);
+}
+
+async leaveGroup(groupId: number) {
+  return this.post(`/group/${groupId}/leave`);
+}
+
+async removeMember(groupId: number, memberId: number) {
+  return this.delete(`/group/${groupId}/members/${memberId}`);
+}
+
 }
 
 // Instance singleton
