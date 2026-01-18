@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, Dimensions, View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { Animated, Easing, useWindowDimensions, View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -113,7 +113,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
     });
 
 
-    const { width: screenWidth } = Dimensions.get('window');
+    const { width: screenWidth } = useWindowDimensions();
     const orbitSize = screenWidth * 1.4;
     const sunSize = orbitSize * 0.22;
     const moonSize = orbitSize * 0.15;

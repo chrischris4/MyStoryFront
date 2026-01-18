@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Easing, Dimensions } from 'react-native';
+import { View, Animated, Easing, useWindowDimensions } from 'react-native';
 import StarryBackground from './StarryBackground';
 
 type BackgroundProps = {
@@ -8,7 +8,9 @@ type BackgroundProps = {
 };
 
 export default function Background({ isNight = false }: BackgroundProps) {
+    const { width } = useWindowDimensions();
     const cloudAnim = useRef(new Animated.Value(0)).current;
+    const translateX = useRef(new Animated.Value(width)).current;
 
     useEffect(() => {
         Animated.loop(
@@ -26,8 +28,6 @@ export default function Background({ isNight = false }: BackgroundProps) {
     useEffect(() => {
         animationRef.current?.play();
     }, []);
-
-    const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
 
     useEffect(() => {
         animationRef.current?.play();

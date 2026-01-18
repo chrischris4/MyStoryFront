@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Dimensions, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, useWindowDimensions, TouchableOpacity, Animated } from 'react-native';
 import ShopButton from '~/components/ShopButton';
 import SubscriptionModal from '~/components/SubscriptionModal';
 import { useTheme } from '~/context/ThemeContext';
@@ -156,6 +156,7 @@ export default function BillingScreen() {
 
     const [products, setProducts] = useState<RNIap.Product[]>([]);
     const { isNight } = useTheme();
+    const { width: screenWidth } = useWindowDimensions();
 
     // États pour la modal d'abonnement
     const [modalVisible, setModalVisible] = useState(false);
@@ -289,14 +290,13 @@ export default function BillingScreen() {
 
         // Animation de déplacement de gauche à droite pour le chien
         Animated.timing(translateX, {
-            toValue: Dimensions.get('window').width, // Se déplace vers la droite hors écran
+            toValue: screenWidth, // Se déplace vers la droite hors écran
             duration: 8000, // 8 secondes pour traverser l'écran
             useNativeDriver: true,
         }).start();
 
         // Animations séquentielles pour les boutons
-        const { width } = Dimensions.get('window');
-        const centerX = width / 2;
+        const centerX = screenWidth / 2;
 
 
         setTimeout(() => {

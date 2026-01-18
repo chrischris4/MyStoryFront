@@ -41,7 +41,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const { playSound } = useSound();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalMounted, setIsModalMounted] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteUsername, setInviteUsername] = useState('');
   const [activeTab, setActiveTab] = useState<'members' | 'stories'>('members');
 
   // Animation
@@ -69,7 +69,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
       modalOpacity.value = withTiming(0, { duration: 250 });
       setTimeout(() => {
         setIsModalMounted(false);
-        setInviteEmail('');
+        setInviteUsername('');
       }, 250);
     }
   }, [visible]);
@@ -86,25 +86,25 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const memberCount = groupMembers.length;
 
   const handleInvite = async () => {
-    if (!inviteEmail.trim()) {
+    if (!inviteUsername.trim()) {
       Toast.show({
         type: 'error',
-        text1: 'Email requis',
-        text2: 'Veuillez entrer un email',
+        text1: 'Nom requis',
+        text2: 'Veuillez entrer un nom d\'utilisateur',
       });
       return;
     }
 
     inviteToGroupMutation.mutate(
-      { groupId: group.id, email: inviteEmail },
+      { groupId: group.id, name: inviteUsername },
       {
         onSuccess: () => {
           Toast.show({
             type: 'success',
             text1: 'Invitation envoyée',
-            text2: `Une invitation a été envoyée à ${inviteEmail}`,
+            text2: `Une invitation a été envoyée à ${inviteUsername}`,
           });
-          setInviteEmail('');
+          setInviteUsername('');
         },
         onError: (error: any) => {
           Toast.show({
@@ -117,9 +117,9 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
     );
   };
 
-  const handleRemoveMember = (groupId: number, userId: number) => {
+  const handleRemoveMember = (groupId: number, memberId: number) => {
     removeMemberMutation.mutate(
-      { groupId, userId },
+      { groupId, memberId },
       {
         onSuccess: () => {
           Toast.show({
@@ -261,12 +261,11 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
               </Text>
               <View className="flex-row gap-2">
                 <TextInput
-                  value={inviteEmail}
-                  onChangeText={setInviteEmail}
-                  placeholder="Email de l'utilisateur"
+                  value={inviteUsername}
+                  onChangeText={setInviteUsername}
+                  placeholder="Nom d'utilisateur"
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                   className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
-                  keyboardType="email-address"
                   autoCapitalize="none"
                 />
                 <TouchableOpacity
@@ -342,7 +341,10 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
 
                         {!isOwner && (
                           <TouchableOpacity
-                            onPress={() => handleRemoveMember(group.id, user.id)}
+                            onPress={() => {
+                              console.log('🔵 Remove member:', { groupId: group.id, memberId: member.id, userId: user.id });
+                              handleRemoveMember(group.id, user.id);
+                            }}
                             className="p-2"
                           >
                             <Feather name="user-x" size={20} color="#ef4444" />

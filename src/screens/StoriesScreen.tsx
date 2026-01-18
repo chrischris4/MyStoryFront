@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, useWindowDimensions } from 'react-native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
@@ -15,8 +15,9 @@ export default function StoriesScreen() {
   const { data: stories = [], isLoading: isLoadingStories } = useStories();
   const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
 
+  const { width } = useWindowDimensions();
   const animationRef = useRef(null);
-  const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const translateX = useRef(new Animated.Value(width)).current;
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';

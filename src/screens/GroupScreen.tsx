@@ -5,9 +5,9 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -299,6 +299,7 @@ export default function GroupScreen() {
   };
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
   return (
     <View className="flex-1 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
       {isNight && <StarryBackground starCount={50} />}

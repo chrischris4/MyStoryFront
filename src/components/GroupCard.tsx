@@ -11,6 +11,8 @@ type GroupCardProps = {
 
 export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
     const memberCount = group._count?.members || 0;
+        const storiesCount = group._count?.stories || 0;
+
 
     return (
         <TouchableOpacity onPress={onPress} className="mb-3">
@@ -26,11 +28,19 @@ export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
                 <Text className={`${isNight ? "text-white/70" : "text-slate-600"} text-base font-baloo mt-1`}>
                     {group.description || 'Aucune description'}
                 </Text>
-                <View className="flex-row items-center mt-2">
+                <View className="flex-row items-center mt-2 gap-4">
+                    <View className='flex flex-row items-center gap-1'>
                     <Feather name="users" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
                         {memberCount} membres
                     </Text>
+                    </View>
+                    <View className='flex flex-row items-center gap-1'>
+                    <Feather name="book" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
+                    <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
+                        {storiesCount} histoires
+                    </Text>
+                    </View>
                 </View>
             </BlurView>
         </TouchableOpacity>

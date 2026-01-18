@@ -34,7 +34,7 @@ const toastConfig = {
             fontFamily: 'Baloo2-Bold',
             textAlign: 'center',
             marginBottom: 4,
-            color: '#1F2937',
+            color: '#ffffff',
           }}
         >
           {props.text1}
@@ -44,7 +44,7 @@ const toastConfig = {
             fontSize: 16,
             fontFamily: 'Baloo2-Regular',
             textAlign: 'center',
-            color: '#4B5563',
+            color: '#ffffff',
           }}
         >
           {props.text2}
@@ -70,7 +70,7 @@ const toastConfig = {
             fontFamily: 'Baloo2-Bold',
             textAlign: 'center',
             marginBottom: 4,
-            color: '#DC2626',
+            color: '#ffffff',
           }}
         >
           {props.text1}
@@ -80,7 +80,7 @@ const toastConfig = {
             fontSize: 16,
             fontFamily: 'Baloo2-Regular',
             textAlign: 'center',
-            color: '#991B1B',
+            color: '#ffffff',
           }}
         >
           {props.text2}

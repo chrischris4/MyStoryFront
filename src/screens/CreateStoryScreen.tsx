@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Dimensions, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, ImageBackground } from 'react-native';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
@@ -93,6 +93,7 @@ export default function CreateStoryScreen() {
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const { isNight } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -223,7 +224,7 @@ export default function CreateStoryScreen() {
     animationRef.current?.play();
   }, []);
 
-  const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const translateX = useRef(new Animated.Value(screenWidth)).current;
 
   useEffect(() => {
     animationRef.current?.play();
@@ -423,7 +424,7 @@ export default function CreateStoryScreen() {
                   ref={scrollViewRef}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  snapToInterval={Dimensions.get('window').width * 0.6}
+                  snapToInterval={screenWidth * 0.6}
                   decelerationRate="fast"
                   contentContainerStyle={{ paddingRight: 16 }}
                   onScroll={Animated.event(
@@ -439,7 +440,7 @@ export default function CreateStoryScreen() {
                         key={style.id}
                         onPress={() => formik.setFieldValue('selectedStyle', style.id)}
                         style={{
-                          width: Dimensions.get('window').width * 0.6,
+                          width: screenWidth * 0.6,
                           marginRight: 12,
                           borderRadius: 22,
                           overflow: 'hidden',
@@ -491,7 +492,7 @@ export default function CreateStoryScreen() {
                 {/* Indicateurs de style */}
                 <View className="flex-row justify-center mt-4 gap-2">
                   {STORY_STYLES.map((style, index) => {
-                    const cardWidth = Dimensions.get('window').width * 0.6 + 12;
+                    const cardWidth = screenWidth * 0.6 + 12;
 
                     const inputRange = [
                       (index - 1) * cardWidth,

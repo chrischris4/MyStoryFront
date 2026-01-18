@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Animated, Dimensions, StyleSheet } from 'react-native';
+import { View, Animated, useWindowDimensions, StyleSheet } from 'react-native';
 
 type StarryBackgroundProps = {
   starCount?: number;
@@ -20,7 +20,7 @@ export default function StarryBackground({
   maxHeight,
   animatedStyle
 }: StarryBackgroundProps) {
-  const { width, height } = Dimensions.get('window');
+  const { width, height } = useWindowDimensions();
   const effectiveMaxHeight = maxHeight ?? height * 0.5;
 
   // Générer les étoiles une seule fois

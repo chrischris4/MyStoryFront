@@ -1,105 +1,84 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
-import { Audio } from 'expo-av';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useAudioPlayer } from 'expo-audio';
 
 type SoundName = 'click' | 'pop' | 'success' | 'error' | 'toggle';
 
-// Configuration des sons - les chemins doivent être statiques pour React Native
-const soundFiles: Record<SoundName, any> = {
-  click: require('../../assets/sounds/click.wav'),
-  pop: require('../../assets/sounds/pop.mp3'),
-  success: require('../../assets/sounds/success.wav'),
-  error: require('../../assets/sounds/error.wav'),
-  toggle: require('../../assets/sounds/toggle.wav'),
+// Configuration des sons avec leur volume (0 à 1)
+const soundConfig: Record<SoundName, { source: any; volume: number }> = {
+  click: { source: require('../../assets/sounds/click.wav'), volume: 0.5 },
+  pop: { source: require('../../assets/sounds/pop.mp3'), volume: 0.5 },
+  success: { source: require('../../assets/sounds/success.wav'), volume: 0.6 },
+  error: { source: require('../../assets/sounds/error.wav'), volume: 0.6 },
+  toggle: { source: require('../../assets/sounds/toggle.wav'), volume: 0.5 },
 };
 
 interface SoundContextType {
-  playSound: (name: SoundName) => Promise<void>;
-  isLoaded: boolean;
+  playSound: (name: SoundName) => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
 
-export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const soundsRef = useRef<Record<string, Audio.Sound>>({});
-  const isLoadedRef = useRef(false);
+// Composant pour gérer un son individuel
+function SoundPlayer({
+  source,
+  volume,
+  onReady
+}: {
+  source: any;
+  volume: number;
+  onReady: (play: () => void) => void;
+}) {
+  const player = useAudioPlayer(source);
 
   useEffect(() => {
-    const loadSounds = async () => {
+    player.volume = volume;
+    onReady(() => {
+      player.seekTo(0);
+      player.play();
+    });
+  }, [player, volume, onReady]);
+
+  return null;
+}
+
+export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const playFunctionsRef = useRef<Record<SoundName, () => void>>({} as Record<SoundName, () => void>);
+  const [isReady, setIsReady] = useState(false);
+  const readyCountRef = useRef(0);
+  const totalSounds = Object.keys(soundConfig).length;
+
+  const handleSoundReady = (name: SoundName) => (playFn: () => void) => {
+    playFunctionsRef.current[name] = playFn;
+    readyCountRef.current += 1;
+    if (readyCountRef.current >= totalSounds) {
+      setIsReady(true);
+    }
+  };
+
+  const playSound = (name: SoundName) => {
+    if (!isReady) {
+      return;
+    }
+    const playFn = playFunctionsRef.current[name];
+    if (playFn) {
       try {
-        // console.log('🔊 Starting to load sounds...');
-
-        // Configurer le mode audio
-        await Audio.setAudioModeAsync({
-          playsInSilentModeIOS: true,
-          staysActiveInBackground: false,
-          allowsRecordingIOS: false,
-          shouldDuckAndroid: false,
-          playThroughEarpieceAndroid: false,
-        });
-
-        const loadedSounds: Record<string, Audio.Sound> = {};
-
-        for (const [name, source] of Object.entries(soundFiles)) {
-          if (source) {
-            try {
-              // console.log(`🔊 Loading sound: ${name}`);
-              const { sound } = await Audio.Sound.createAsync(source, {
-                shouldPlay: false,
-                volume: 1.0,
-              });
-              await sound.setVolumeAsync(1.0);
-              loadedSounds[name] = sound;
-              // console.log(`✅ Sound loaded successfully: ${name}`);
-            } catch (error) {
-              console.warn(`❌ Failed to load sound: ${name}`, error);
-            }
-          }
-        }
-
-        soundsRef.current = loadedSounds;
-        isLoadedRef.current = true;
-        // console.log(`🔊 All sounds loaded. Total: ${Object.keys(loadedSounds).length}`);
+        playFn();
       } catch (error) {
-        console.error('❌ Error loading sounds:', error);
+        console.warn(`❌ Failed to play sound: ${name}`, error);
       }
-    };
-
-    loadSounds();
-
-    return () => {
-      Object.values(soundsRef.current).forEach(sound => {
-        sound.unloadAsync().catch(() => {});
-      });
-    };
-  }, []);
-
-  const playSound = async (name: SoundName) => {
-    try {
-      // console.log(`🔊 Attempting to play sound: ${name}`);
-      // console.log(`🔊 isLoaded: ${isLoadedRef.current}`);
-      // console.log(`🔊 Available sounds:`, Object.keys(soundsRef.current));
-
-      const sound = soundsRef.current[name];
-      if (!sound) {
-        console.warn(`⚠️ Sound not found: ${name}`);
-        return;
-      }
-
-      if (!isLoadedRef.current) {
-        console.warn(`⚠️ Sounds not loaded yet`);
-        return;
-      }
-
-      await sound.setPositionAsync(0);
-      await sound.playAsync();
-      // console.log(`✅ Playing sound: ${name}`);
-    } catch (error) {
-      console.warn(`❌ Failed to play sound: ${name}`, error);
     }
   };
 
   return (
-    <SoundContext.Provider value={{ playSound, isLoaded: isLoadedRef.current }}>
+    <SoundContext.Provider value={{ playSound }}>
+      {Object.entries(soundConfig).map(([name, config]) => (
+        <SoundPlayer
+          key={name}
+          source={config.source}
+          volume={config.volume}
+          onReady={handleSoundReady(name as SoundName)}
+        />
+      ))}
       {children}
     </SoundContext.Provider>
   );

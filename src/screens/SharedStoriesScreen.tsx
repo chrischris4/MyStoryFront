@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, useWindowDimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { CompositeNavigationProp } from '@react-navigation/native';
@@ -27,8 +27,9 @@ export default function SharedStoriesScreen() {
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { width } = useWindowDimensions();
   const animationRef = useRef(null);
-  const translateX = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const translateX = useRef(new Animated.Value(width)).current;
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';

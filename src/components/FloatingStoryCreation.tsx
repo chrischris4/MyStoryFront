@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { View, TouchableOpacity, Text, Dimensions, Animated, PanResponder } from 'react-native';
+import { View, TouchableOpacity, Text, useWindowDimensions, Animated, PanResponder } from 'react-native';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
@@ -10,7 +10,7 @@ export default function FloatingStoryCreation() {
   const navigation = useNavigation();
   const { isCreating, isMinimized, loading, storyPages, title, maximize, close } = useStoryCreationStore();
 
-  const { width, height } = Dimensions.get('window');
+  const { width, height } = useWindowDimensions();
   const miniWidth = width * 0.35;
   const miniHeight = miniWidth * 1.4;
 

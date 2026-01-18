@@ -10,6 +10,11 @@ const acceptInvitation = async (
     throw new Error('Utilisateur non authentifié');
   }
 
+  console.log('🔵 Accept invitation request:', {
+    url: `${API_BASE_URL}/group/invitation/${invitationId}/accept`,
+    invitationId,
+  });
+
   const response = await fetch(`${API_BASE_URL}/group/invitation/${invitationId}/accept`, {
     method: 'POST',
     headers: {
@@ -17,9 +22,16 @@ const acceptInvitation = async (
     },
   });
 
+  console.log('🔵 Accept invitation response status:', response.status);
+
   if (!response.ok) {
-    throw new Error('Erreur lors de l\'acceptation de l\'invitation');
+    const errorData = await response.json().catch(() => ({}));
+    console.log('🔴 Accept invitation error:', errorData);
+    throw new Error(errorData.message || 'Erreur lors de l\'acceptation de l\'invitation');
   }
+
+  const data = await response.json().catch(() => ({}));
+  console.log('🟢 Accept invitation success:', data);
 };
 
 export const useAcceptInvitation = () => {
