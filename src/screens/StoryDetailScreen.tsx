@@ -23,6 +23,7 @@ import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useGroups } from '~/hooks/useGroups';
 import { useShareStoryToGroup } from '~/hooks/useShareStoryToGroup';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
+import { useDeleteStory } from '~/hooks/useDeleteStory';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
@@ -66,6 +67,7 @@ export default function StoryDetailScreen() {
   const { data: myGroups = [] } = useGroups();
   const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
   const shareStoryMutation = useShareStoryToGroup();
+  const deleteStoryMutation = useDeleteStory();
 
   // Debug: vérifier les groupes partagés
   // useEffect(() => {
@@ -203,29 +205,12 @@ export default function StoryDetailScreen() {
     }
   };
 
-  const handleDeleteStory = async () => {
+  const handleDeleteStory = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     playSound('click');
 
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        Toast.show({
-          type: 'error',
-          text1: 'Erreur',
-          text2: 'Utilisateur non authentifié',
-        });
-        return;
-      }
-
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/${storyId}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
+    deleteStoryMutation.mutate(Number(storyId), {
+      onSuccess: () => {
         setShowDeleteModal(false);
         playSound('success');
         Toast.show({
@@ -233,25 +218,18 @@ export default function StoryDetailScreen() {
           text1: 'Succès',
           text2: 'Histoire supprimée avec succès',
         });
-        // Naviguer après un court délai pour laisser le toast s'afficher
         setTimeout(() => {
           navigation.navigate('MainTabs');
         }, 1000);
-      } else {
+      },
+      onError: (error: any) => {
         Toast.show({
           type: 'error',
           text1: 'Erreur',
-          text2: 'Impossible de supprimer l\'histoire',
+          text2: error.message || 'Impossible de supprimer l\'histoire',
         });
-      }
-    } catch (err) {
-      console.error('Erreur lors de la suppression:', err);
-      Toast.show({
-        type: 'error',
-        text1: 'Erreur',
-        text2: 'Une erreur est survenue',
-      });
-    }
+      },
+    });
   };
 
 
