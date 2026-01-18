@@ -15,6 +15,7 @@ import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import type { Page } from '~/types';
+import { StoryBackground, type BackgroundType } from './StoryBackgrounds';
 
 interface FullScreenStoryModalProps {
   visible: boolean;
@@ -40,7 +41,7 @@ export default function FullScreenStoryModal({
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
   const [brightness, setBrightness] = useState(1);
   const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
-  const [selectedBackground, setSelectedBackground] = useState<string>('black');
+  const [selectedBackground, setSelectedBackground] = useState<BackgroundType>('black');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -147,7 +148,9 @@ export default function FullScreenStoryModal({
 
   return (
     <Modal visible={visible} animationType="slide">
-      <SafeAreaView style={{ backgroundColor: selectedBackground }}>
+      <SafeAreaView style={{ backgroundColor: 'black' }}>
+        {/* Background animé */}
+        <StoryBackground type={selectedBackground} width={width} height={height} />
         <FlatList
           ref={flatListRef}
           data={allItems}
@@ -517,78 +520,96 @@ export default function FullScreenStoryModal({
                     tint={isNight ? "dark" : "light"}
                     style={{
                       position: 'absolute',
-                      top: -125,
+                      top: -180,
                       borderRadius: 16,
                       overflow: 'hidden',
-                      minWidth: 200,
+                      minWidth: 280,
                       zIndex: 10,
                     }}
                     className='self-center'
                   >
-                    <View style={{ padding: 8 }} className='bg-white/50'>
-                      <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
+                    <View style={{ padding: 12 }} className='bg-white/50'>
+                      <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
                         Arrière-plan
                       </Text>
 
-                      <View className='flex flex-row gap-3 p-4 pt-0'>
+                      <View className='flex flex-row flex-wrap gap-3 justify-center'>
                         <TouchableOpacity
-                          onPress={() => {
-                            setSelectedBackground('black');
-                          }}
+                          onPress={() => setSelectedBackground('black')}
                           style={{
-                            borderRadius: 8,
-                            backgroundColor: selectedBackground === 'black' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'black' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 32 }}>⚫</Text>
+                          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: '#000', borderWidth: 2, borderColor: '#333' }} />
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Noir</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => {
-                            setSelectedBackground('#1a1a1a');
-                          }}
+                          onPress={() => setSelectedBackground('starry-night')}
                           style={{
-                            borderRadius: 8,
-                            backgroundColor: selectedBackground === '#1a1a1a' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'starry-night' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 32 }}>⚫</Text>
+                          <Text style={{ fontSize: 36 }}>🌙</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Étoilé</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => {
-                            setSelectedBackground('#1e3a5f');
-                          }}
+                          onPress={() => setSelectedBackground('ocean-waves')}
                           style={{
-                            borderRadius: 8,
-                            backgroundColor: selectedBackground === '#1e3a5f' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'ocean-waves' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 32 }}>🔵</Text>
+                          <Text style={{ fontSize: 36 }}>🌊</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Océan</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => {
-                            setSelectedBackground('#2d1b2e');
-                          }}
+                          onPress={() => setSelectedBackground('forest-magic')}
                           style={{
-                            borderRadius: 8,
-                            backgroundColor: selectedBackground === '#2d1b2e' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'forest-magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 32 }}>🟣</Text>
+                          <Text style={{ fontSize: 36 }}>🌲</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Forêt</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => {
-                            setSelectedBackground('#1a2e1a');
-                          }}
+                          onPress={() => setSelectedBackground('sunset-dream')}
                           style={{
-                            borderRadius: 8,
-                            backgroundColor: selectedBackground === '#1a2e1a' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'sunset-dream' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 32 }}>🟢</Text>
+                          <Text style={{ fontSize: 36 }}>🌅</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Coucher</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => setSelectedBackground('aurora')}
+                          style={{
+                            borderRadius: 12,
+                            padding: 8,
+                            backgroundColor: selectedBackground === 'aurora' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Text style={{ fontSize: 36 }}>✨</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>Aurore</Text>
                         </TouchableOpacity>
                       </View>
                     </View>

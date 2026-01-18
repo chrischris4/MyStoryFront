@@ -372,17 +372,33 @@ export default function StoryDetailScreen() {
                 playSound('pop');
                 setShowShareModal(true);
               }}
-              className="flex-row gap-2 items-center"
+              className="flex-row gap-2 items-center px-2"
             >
-              <Text className={`px-4 text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                {isShared
-                  ? 'Histoire partagée'
-                  : sharedGroups.length > 0
-                    ? `Partagée à ${sharedGroups.length} groupe(s)`
-                    : 'Partager l\'histoire'}
-              </Text>
-              {(isShared || sharedGroups.length > 0) && (
-                <Feather name='check' size={20} color={isNight ? '#fff' : '#000'} />
+              {(isShared || sharedGroups.length > 0) ? (
+                <>
+                  <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
+                    Partagée
+                  </Text>
+                  {isShared && (
+                    <Feather name='globe' size={18} color={isNight ? '#fff' : '#000'} />
+                  )}
+                  {sharedGroups.length > 0 && (
+                    <View className="flex-row items-center gap-1">
+                      <Feather name='users' size={18} color={isNight ? '#fff' : '#000'} />
+                      <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>
+                        {sharedGroups.length}
+                      </Text>
+                    </View>
+                  )}
+                  
+                </>
+              ) : (
+                <>
+                  <Feather name='share' size={18} color={isNight ? '#fff' : '#000'} />
+                  <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
+                    Partager
+                  </Text>
+                </>
               )}
             </TouchableOpacity>
           </BlurView>

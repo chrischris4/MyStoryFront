@@ -9,9 +9,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { Text, View } from 'react-native';
+import { initI18n } from '~/i18n';
 
 const queryClient = new QueryClient();
 
@@ -101,15 +102,24 @@ export default function App() {
     'Baloo2-Bold': require('./assets/fonts/Baloo2-Bold.ttf'),
     'Baloo2-ExtraBold': require('./assets/fonts/Baloo2-ExtraBold.ttf'),
   });
+  const [i18nReady, setI18nReady] = useState(false);
 
   useEffect(() => {
-    if (fontsLoaded || fontError) {
-      // Cacher le splash screen quand les fonts sont chargées
+    initI18n().then(() => setI18nReady(true));
+  }, []);
+
+  useEffect(() => {
+    if ((fontsLoaded || fontError) && i18nReady) {
+      // Cacher le splash screen quand les fonts et i18n sont chargés
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, fontError]);
+  }, [fontsLoaded, fontError, i18nReady]);
 
   if (!fontsLoaded && !fontError) {
+    return null;
+  }
+
+  if (!i18nReady) {
     return null;
   }
 

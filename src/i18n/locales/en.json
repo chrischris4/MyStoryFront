@@ -1,0 +1,76 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "close": "Close",
+    "retry": "Retry"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 6 characters"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "defaultName": "First name",
+    "tokens": "Tokens",
+    "myStories": "My stories",
+    "myStoriesDesc": "Let your imagination speak",
+    "myGroups": "My groups",
+    "myGroupsDesc": "Share your stories with them!",
+    "discover": "Discover",
+    "discoverDesc": "Browse stories shared on Flun!",
+    "shop": "Shop",
+    "shopDesc": "Token packs available!",
+    "createStory": "Create a story",
+    "noStories": "You don't have any stories yet"
+  },
+  "story": {
+    "title": "Title",
+    "description": "Description",
+    "create": "Create",
+    "generating": "Generating...",
+    "generationSuccess": "Story generated successfully!",
+    "generationError": "Error generating story"
+  },
+  "plans": {
+    "explorer": "Explorer",
+    "adventurer": "Adventurer",
+    "legend": "Legend"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "account": "Account",
+    "privacy": "Privacy",
+    "about": "About"
+  },
+  "errors": {
+    "networkError": "Connection error",
+    "serverError": "Server error",
+    "unknownError": "An error occurred"
+  }
+}
