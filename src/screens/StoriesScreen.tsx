@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, Text, Animated, useWindowDimensions } from 'react-native';
+import { View, Text, Animated } from 'react-native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
@@ -10,16 +10,10 @@ import StarryBackground from '~/components/StarryBackground';
 
 export default function StoriesScreen() {
   const { isNight } = useTheme();
-
-  // Utiliser les hooks TanStack Query pour récupérer les histoires et les favoris
   const { data: stories = [], isLoading: isLoadingStories } = useStories();
   const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
-
-  const { width } = useWindowDimensions();
   const animationRef = useRef(null);
-  const translateX = useRef(new Animated.Value(width)).current;
   const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
@@ -41,23 +35,6 @@ export default function StoriesScreen() {
           style={{ width: 200, height: 200 }}
         />
       </Animated.View>
-      <Animated.View
-        style={{
-          // transform: [{ translateX }],
-          position: 'absolute',
-          bottom: 0,
-          right: 0,
-          alignSelf: 'center',
-        }}
-      >
-        <LottieView
-          ref={animationRef}
-          source={require('../../assets/animations/birds.json')}
-          autoPlay
-          loop={false}
-          style={{ width: 700, height: 500 }}
-        />
-      </Animated.View>
       {isNight && <StarryBackground starCount={50} />}
 
       {/* Sol */}
@@ -73,7 +50,7 @@ export default function StoriesScreen() {
       <Text className={` text-xl font-baloo mb-4 px-4 ${isNight ? "text-white" : "text-slate-600"}`}>
         Toutes vos aventures vous attendent ici !
       </Text>
-      <View className="flex-1 gap-4 pb-4">
+      <View className="flex-1 gap-4">
         <StoryFolder
           isNight={isNight}
           title="Tout"

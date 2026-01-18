@@ -461,7 +461,8 @@ export default function GroupScreen() {
                         loop={true}
                         style={{ width: 200, height: 200 }}
                       />
-                    </Animated.View>                  </View>
+                    </Animated.View>                  
+                    </View>
                 ) : invitations.length === 0 ? (
                   <BlurView
                     intensity={isNight ? 90 : 50}
