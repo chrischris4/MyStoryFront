@@ -179,27 +179,28 @@ export default function StoryFolder({
         }, 3000);
     };
 
-    const handleToggle = () => {
-        // Afficher un message si l'utilisateur n'est pas premium et que c'est un dossier partagé
-        if (!isPremium && isShared && !expanded) {
-            showPremiumMessage();
-            return;
-        }
+const handleToggle = () => {
+    if (!isPremium && isShared && !expanded) {
+        showPremiumMessage();
+        return;
+    }
 
-        if (expanded) {
-            setShowContent(false);
-            width.value = SCREEN_WIDTH / 1.08;
-            height.value = 84;
-            translateY.value = 0;
-        } else {
-            width.value = SCREEN_WIDTH;
-            height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; // Laisser de la place pour la navbar
-            translateY.value = -layoutY;
-            // Retarder légèrement l'affichage du contenu pour une animation plus fluide
-            setTimeout(() => setShowContent(true), 1000);
-        }
-        setExpanded(!expanded);
-    };
+    if (expanded) {
+        setShowContent(false);
+        width.value = SCREEN_WIDTH / 1.08;
+        height.value = 84;
+        translateY.value = 0;
+    } else {
+        const EXPANDED_TOP = 10; // top souhaité
+        width.value = SCREEN_WIDTH;
+        height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; 
+        translateY.value = EXPANDED_TOP - layoutY;
+        setTimeout(() => setShowContent(true), 1000);
+    }
+
+    setExpanded(!expanded);
+};
+
 
 
     return (
