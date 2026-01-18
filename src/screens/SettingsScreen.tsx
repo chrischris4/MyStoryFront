@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -20,7 +20,7 @@ export default function SettingsScreen() {
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
 
     // Hook pour les sons
-    const { playSound } = useSound();
+    const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects } = useSound();
     const skyColor = isNight ? '#020205' : '#87CEEB';
     const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
@@ -149,6 +149,29 @@ export default function SettingsScreen() {
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Sons</Text>
+                        <Feather name="volume-2" size={20} color={isNight ? "#fff" : "#000"} />
+                    </View>
+                    <View className='flex flex-row justify-between items-center mb-3'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>Musique de fond</Text>
+                        <Switch
+                            value={isMusicEnabled}
+                            onValueChange={toggleBackgroundMusic}
+                            thumbColor={isMusicEnabled ? '#38A169' : '#ccc'}
+                        />
+                    </View>
+                    <View className='flex flex-row justify-between items-center'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>Effets sonores</Text>
+                        <Switch
+                            value={areSoundEffectsEnabled}
+                            onValueChange={toggleSoundEffects}
+                            thumbColor={areSoundEffectsEnabled ? '#38A169' : '#ccc'}
+                        />
+                    </View>
+                </BlurView>
+
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                    <View className='flex flex-row justify-between mb-4'>
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Notifications</Text>
                         <Feather name="bell" size={20} color={isNight ? "#fff" : "#000"} />
@@ -194,6 +217,36 @@ export default function SettingsScreen() {
 
                     <TouchableOpacity style={styles.button} onPress={handleBilling}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Gérer mon abonnement</Text>
+                    </TouchableOpacity>
+                </BlurView>
+
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Contact</Text>
+                        <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
+                    </View>
+                    <TouchableOpacity
+                        style={styles.button}
+                        className='mb-3'
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            playSound('click');
+                            Linking.openURL('mailto:support@flun.app');
+                        }}
+                    >
+                        <Feather name="mail" size={18} color={isNight ? "#fff" : "#000"} />
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>support@flun.app</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            playSound('click');
+                            Linking.openURL('https://flun.app');
+                        }}
+                    >
+                        <Feather name="globe" size={18} color={isNight ? "#fff" : "#000"} />
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>flun.app</Text>
                     </TouchableOpacity>
                 </BlurView>
 

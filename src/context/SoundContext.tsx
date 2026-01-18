@@ -17,6 +17,7 @@ const soundConfig: Record<SoundName, { source: any; volume: number }> = {
 const backgroundMusicSource = require('../../assets/sounds/Petite Boucle de Joie.mp3');
 const MUSIC_VOLUME_KEY = '@music_volume';
 const MUSIC_ENABLED_KEY = '@music_enabled';
+const SOUND_EFFECTS_ENABLED_KEY = '@sound_effects_enabled';
 
 interface SoundContextType {
   playSound: (name: SoundName) => void;
@@ -28,6 +29,9 @@ interface SoundContextType {
   musicVolume: number;
   isMusicPlaying: boolean;
   isMusicEnabled: boolean;
+  // Effets sonores
+  areSoundEffectsEnabled: boolean;
+  toggleSoundEffects: () => void;
 }
 
 const SoundContext = createContext<SoundContextType | undefined>(undefined);
@@ -96,17 +100,24 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [isMusicEnabled, setIsMusicEnabled] = useState(true);
   const musicControlsRef = useRef<{ play: () => void; pause: () => void; setVolume: (v: number) => void } | null>(null);
 
+  // État des effets sonores
+  const [areSoundEffectsEnabled, setAreSoundEffectsEnabled] = useState(true);
+
   // Charger les préférences au démarrage
   useEffect(() => {
     const loadPreferences = async () => {
       try {
         const savedVolume = await AsyncStorage.getItem(MUSIC_VOLUME_KEY);
         const savedEnabled = await AsyncStorage.getItem(MUSIC_ENABLED_KEY);
+        const savedSoundEffects = await AsyncStorage.getItem(SOUND_EFFECTS_ENABLED_KEY);
         if (savedVolume !== null) {
           setMusicVolumeState(parseFloat(savedVolume));
         }
         if (savedEnabled !== null) {
           setIsMusicEnabled(savedEnabled === 'true');
+        }
+        if (savedSoundEffects !== null) {
+          setAreSoundEffectsEnabled(savedSoundEffects === 'true');
         }
       } catch (error) {
         console.warn('Failed to load music preferences:', error);
@@ -128,7 +139,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const playSound = (name: SoundName) => {
-    if (!isReady) {
+    if (!isReady || !areSoundEffectsEnabled) {
       return;
     }
     const playFn = playFunctionsRef.current[name];
@@ -139,6 +150,12 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         console.warn(`❌ Failed to play sound: ${name}`, error);
       }
     }
+  };
+
+  const toggleSoundEffects = async () => {
+    const newEnabled = !areSoundEffectsEnabled;
+    setAreSoundEffectsEnabled(newEnabled);
+    await AsyncStorage.setItem(SOUND_EFFECTS_ENABLED_KEY, String(newEnabled));
   };
 
   const playBackgroundMusic = () => {
@@ -189,6 +206,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         musicVolume,
         isMusicPlaying,
         isMusicEnabled,
+        areSoundEffectsEnabled,
+        toggleSoundEffects,
       }}
     >
       {Object.entries(soundConfig).map(([name, config]) => (
