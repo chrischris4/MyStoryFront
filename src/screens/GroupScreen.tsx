@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -23,6 +24,7 @@ import GroupCard from '~/components/GroupCard';
 import GroupDetailsModal from '~/components/GroupDetailsModal';
 import Toast from 'react-native-toast-message';
 import StarryBackground from '~/components/StarryBackground';
+import LottieView from 'lottie-react-native';
 
 type TabType = 'myGroups' | 'search' | 'invitations';
 
@@ -382,8 +384,18 @@ export default function GroupScreen() {
 
                     {isSearching ? (
                       <View className="items-center py-8">
-                        <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                      </View>
+                        <Animated.View
+                          style={{
+                            alignSelf: 'center',
+                          }}
+                        >
+                          <LottieView
+                            source={require('../../assets/animations/Loading.json')}
+                            autoPlay
+                            loop={true}
+                            style={{ width: 200, height: 200 }}
+                          />
+                        </Animated.View>                      </View>
                     ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
                       <BlurView
                         intensity={isNight ? 90 : 50}
@@ -403,8 +415,18 @@ export default function GroupScreen() {
 
                 {isLoadingGroups ? (
                   <View className="items-center py-8">
-                    <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                  </View>
+                    <Animated.View
+                      style={{
+                        alignSelf: 'center',
+                      }}
+                    >
+                      <LottieView
+                        source={require('../../assets/animations/Loading.json')}
+                        autoPlay
+                        loop={true}
+                        style={{ width: 200, height: 200 }}
+                      />
+                    </Animated.View>                  </View>
                 ) : myGroups.length === 0 ? (
                   <BlurView
                     intensity={isNight ? 90 : 50}
@@ -428,8 +450,18 @@ export default function GroupScreen() {
               <View>
                 {isLoadingInvitations ? (
                   <View className="items-center py-8">
-                    <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                  </View>
+                    <Animated.View
+                      style={{
+                        alignSelf: 'center',
+                      }}
+                    >
+                      <LottieView
+                        source={require('../../assets/animations/Loading.json')}
+                        autoPlay
+                        loop={true}
+                        style={{ width: 200, height: 200 }}
+                      />
+                    </Animated.View>                  </View>
                 ) : invitations.length === 0 ? (
                   <BlurView
                     intensity={isNight ? 90 : 50}

@@ -436,7 +436,10 @@ export default function BillingScreen() {
 
             {/* Boutons de jetons*/}
             <View className='flex-col w-full mt-4'>
-                <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Paquets de Jetons</Text>
+                <View className='flex flex-row gap-2 items-center'>
+                    <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Paquets de Jetons</Text>
+                    <Text className={`font-baloo text-base -mb-1 ${isNight ? 'text-white' : 'text-slate-900'}`}>( 1 jeton = 1 histoire ! )</Text>
+                </View>
                 <View className='flex-row w-full gap-2'>
                     <Animated.View
                         style={{

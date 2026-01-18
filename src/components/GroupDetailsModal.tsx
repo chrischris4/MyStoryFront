@@ -27,6 +27,7 @@ import { useGroupStories } from '~/hooks/useGroupStories';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
+import LottieView from 'lottie-react-native';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -210,9 +211,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 playSound('click');
                 setActiveTab('members');
               }}
-              className={`flex-1 py-3 rounded-xl ${
-                activeTab === 'members' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
-              }`}
+              className={`flex-1 py-3 rounded-xl ${activeTab === 'members' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
+                }`}
             >
               <View className="flex-row items-center justify-center gap-2">
                 <Feather
@@ -220,9 +220,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   size={18}
                   color={activeTab === 'members' ? '#ffffff' : (isNight ? '#94a3b8' : '#64748b')}
                 />
-                <Text className={`font-baloo-semibold ${
-                  activeTab === 'members' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
-                }`}>
+                <Text className={`font-baloo-semibold ${activeTab === 'members' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
+                  }`}>
                   Membres
                 </Text>
               </View>
@@ -234,9 +233,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 playSound('click');
                 setActiveTab('stories');
               }}
-              className={`flex-1 py-3 rounded-xl ${
-                activeTab === 'stories' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
-              }`}
+              className={`flex-1 py-3 rounded-xl ${activeTab === 'stories' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
+                }`}
             >
               <View className="flex-row items-center justify-center gap-2">
                 <Feather
@@ -244,9 +242,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   size={18}
                   color={activeTab === 'stories' ? '#ffffff' : (isNight ? '#94a3b8' : '#64748b')}
                 />
-                <Text className={`font-baloo-semibold ${
-                  activeTab === 'stories' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
-                }`}>
+                <Text className={`font-baloo-semibold ${activeTab === 'stories' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
+                  }`}>
                   Histoires
                 </Text>
               </View>
@@ -286,76 +283,84 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {/* Liste des membres */}
           {activeTab === 'members' && (
             <View className="flex-1">
-            <View className="flex-row items-center justify-between mb-3">
-              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
-                Membres du groupe
-              </Text>
-              <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
-                <Feather name="users" size={14} color="#3b82f6" />
-                <Text className="text-blue-500 font-baloo-semibold text-sm">
-                  {memberCount}
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
+                  Membres du groupe
                 </Text>
+                <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
+                  <Feather name="users" size={14} color="#3b82f6" />
+                  <Text className="text-blue-500 font-baloo-semibold text-sm">
+                    {memberCount}
+                  </Text>
+                </View>
               </View>
-            </View>
 
-            {isLoadingMembers ? (
-              <View className="items-center py-8">
-                <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo mt-2`}>
-                  Chargement...
-                </Text>
-              </View>
-            ) : groupMembers.length === 0 ? (
-              <View className="items-center py-8">
-                <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
-                <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                  Aucun membre dans ce groupe
-                </Text>
-              </View>
-            ) : (
-              <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-                {groupMembers.map((member: any) => {
-                  const user = member.user || member;
-                  const isOwner = member.role === 'OWNER' || group.ownerId === user.id;
-                  const memberName = user.profil?.name || user.email || 'Utilisateur';
+              {isLoadingMembers ? (
+                <View className="items-center py-8">
+                  <Animated.View
+                    style={{
+                      alignSelf: 'center',
+                    }}
+                  >
+                    <LottieView
+                      source={require('../../assets/animations/Loading.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 200, height: 200 }}
+                    />
+                  </Animated.View>
+                </View>
+              ) : groupMembers.length === 0 ? (
+                <View className="items-center py-8">
+                  <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
+                  <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
+                    Aucun membre dans ce groupe
+                  </Text>
+                </View>
+              ) : (
+                <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                  {groupMembers.map((member: any) => {
+                    const user = member.user || member;
+                    const isOwner = member.role === 'OWNER' || group.ownerId === user.id;
+                    const memberName = user.profil?.name || user.email || 'Utilisateur';
 
-                  return (
-                    <BlurView
-                      key={member.id}
-                      intensity={isNight ? 90 : 50}
-                      tint={isNight ? 'dark' : 'light'}
-                      className="p-3 rounded-xl mb-2 overflow-hidden"
-                      style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
-                    >
-                      <View className="flex-row justify-between items-center">
-                        <View className="flex-1">
-                          <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
-                            {memberName}
-                          </Text>
-                          {isOwner && (
-                            <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} font-baloo text-sm`}>
-                              Propriétaire
+                    return (
+                      <BlurView
+                        key={member.id}
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? 'dark' : 'light'}
+                        className="p-3 rounded-xl mb-2 overflow-hidden"
+                        style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                      >
+                        <View className="flex-row justify-between items-center">
+                          <View className="flex-1">
+                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
+                              {memberName}
                             </Text>
+                            {isOwner && (
+                              <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} font-baloo text-sm`}>
+                                Propriétaire
+                              </Text>
+                            )}
+                          </View>
+
+                          {!isOwner && (
+                            <TouchableOpacity
+                              onPress={() => {
+                                console.log('🔵 Remove member:', { groupId: group.id, memberId: member.id, userId: user.id });
+                                handleRemoveMember(group.id, user.id);
+                              }}
+                              className="p-2"
+                            >
+                              <Feather name="user-x" size={20} color="#ef4444" />
+                            </TouchableOpacity>
                           )}
                         </View>
-
-                        {!isOwner && (
-                          <TouchableOpacity
-                            onPress={() => {
-                              console.log('🔵 Remove member:', { groupId: group.id, memberId: member.id, userId: user.id });
-                              handleRemoveMember(group.id, user.id);
-                            }}
-                            className="p-2"
-                          >
-                            <Feather name="user-x" size={20} color="#ef4444" />
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    </BlurView>
-                  );
-                })}
-              </ScrollView>
-            )}
+                      </BlurView>
+                    );
+                  })}
+                </ScrollView>
+              )}
             </View>
           )}
 
@@ -376,10 +381,18 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
 
               {isLoadingStories ? (
                 <View className="items-center py-8">
-                  <ActivityIndicator size="large" color={isNight ? '#ffffff' : '#1e293b'} />
-                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo mt-2`}>
-                    Chargement...
-                  </Text>
+                  <Animated.View
+                    style={{
+                      alignSelf: 'center',
+                    }}
+                  >
+                    <LottieView
+                      source={require('../../assets/animations/Loading.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 200, height: 200 }}
+                    />
+                  </Animated.View>
                 </View>
               ) : groupStories.length === 0 ? (
                 <View className="items-center py-8">
