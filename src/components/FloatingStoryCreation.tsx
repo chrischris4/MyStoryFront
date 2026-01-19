@@ -3,7 +3,6 @@ import { View, TouchableOpacity, Text, useWindowDimensions, Animated, PanRespond
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
-import LottieView from 'lottie-react-native';
 import { Feather } from '@expo/vector-icons';
 
 export default function FloatingStoryCreation() {
@@ -119,12 +118,6 @@ export default function FloatingStoryCreation() {
         <View className="flex-1 items-center justify-center p-2">
           {loading ? (
             <>
-              <LottieView
-                source={require('../../assets/animations/HappyDog.json')}
-                autoPlay
-                loop
-                style={{ width: miniWidth * 0.7, height: miniWidth * 0.7 }}
-              />
               <Text className="text-white text-[10px] text-center mt-1 font-medium">
                 Création...
               </Text>

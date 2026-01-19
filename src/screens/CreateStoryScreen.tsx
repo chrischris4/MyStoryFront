@@ -242,7 +242,7 @@ export default function CreateStoryScreen() {
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
   return (
-    <View className="flex-1 pt-4 px-4 relative" style={{ backgroundColor: skyColor }}>
+    <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
       {/* Bouton de test pour ouvrir/fermer la StoryModal */}
       <TouchableOpacity
         className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
@@ -260,80 +260,68 @@ export default function CreateStoryScreen() {
 
       {isNight && <StarryBackground starCount={50} />}
       <View
-        className='absolute bottom-10 border-4 self-center h-28 rounded-t-full w-[100%] z-0'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%]'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      {storyCoin === 0 && (
-        <View className='absolute bottom-60 self-center'>
-          <View className="bg-white rounded-3xl px-6 py-4 mb-4 relative" style={{
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 8,
-            elevation: 4,
-            maxWidth: 280
-          }}>
-            <Text className="text-base font-baloo-semibold text-center text-gray-800">
-              Vous avez besoin de Story Coins pour créer une histoire !
-            </Text>
-            {/* Petite pointe de la bulle */}
-            <View style={{
-              position: 'absolute',
-              bottom: -10,
-              left: '50%',
-              marginLeft: -10,
-              width: 0,
-              height: 0,
-              backgroundColor: 'transparent',
-              borderStyle: 'solid',
-              borderLeftWidth: 10,
-              borderRightWidth: 10,
-              borderTopWidth: 10,
-              borderLeftColor: 'transparent',
-              borderRightColor: 'transparent',
-              borderTopColor: 'white',
-            }} />
-          </View>
-        </View>
-      )}
-      {storyCoin === 0 && (
-        <Animated.View
-          style={{
-            position: 'absolute',
-            bottom: 50,
-            zIndex: 1
-          }}
-          className="self-center"
-        >
-          <LottieView
-            source={require('../../assets/animations/HappyDog.json')}
-            autoPlay
-            loop={true}
-            style={{ width: 250, height: 250, zIndex: 5 }}
-          />
-        </Animated.View>
-      )}
       <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {storyCoin === 0 && (
-        <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 100 }}>
-          <TouchableOpacity
-            className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
-            onPress={() => navigation.navigate('BillingScreen')}
+        <>
+          <Animated.View
+            style={{
+              position: 'absolute',
+              bottom: 110,
+              right: 50,
+            }}
           >
-            <Text className="text-gray-800 font-baloo-semibold text-center text-base">
-              Obtenir des Story Coins
-            </Text>
-            <Feather name="arrow-right" size={20} color="#000" />
-          </TouchableOpacity>
-        </View>
+            <LottieView
+              ref={animationRef}
+              source={require('../../assets/animations/tree.json')}
+              autoPlay
+              loop={false}
+              style={{ width: 200, height: 200 }}
+            />
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              position: 'absolute',
+              bottom: 65,
+              right: -15,
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => navigation.navigate('BillingScreen')}
+              activeOpacity={0.8}
+            >
+              <LottieView
+                source={require('../../assets/animations/Store.json')}
+                autoPlay
+                loop={false}
+                style={{ width: 200, height: 200, zIndex: 5 }}
+              />
+            </TouchableOpacity>
+          </Animated.View>
+          <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 100 }}>
+            <TouchableOpacity
+              className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
+              onPress={() => navigation.navigate('BillingScreen')}
+            >
+              <Text className="text-gray-800 font-baloo-semibold text-center text-base">
+                Obtenir des Story Coins
+              </Text>
+              <Feather name="arrow-right" size={20} color="#000" />
+            </TouchableOpacity>
+          </View>
+        </>
       )}
-      <Text className={`text-4xl font-baloo-bold pt-10 ${isNight ? "text-white/80" : "text-black"}`}>Creation d'histoire</Text>
-      <Text className={`text-xl font-baloo pb-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>Ici, tout deviens possible !</Text>
+
+      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white/80" : "text-black"}`}>Creation d'histoire</Text>
+      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>Ici, tout deviens possible !</Text>
       <ScrollView
-        className="flex-1"
+        className="flex-1 px-4"
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
