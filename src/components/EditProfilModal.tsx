@@ -18,7 +18,8 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
   const { mutate: editProfil, isPending } = useEditProfil();
 
   const [name, setName] = useState(user?.profil?.name || '');
-  const [imageUrl, setImageUrl] = useState(user?.profil?.imageUrl || '');
+  const [newImageUri, setNewImageUri] = useState<string | null>(null); // URI locale de la nouvelle image
+  const currentImageUrl = user?.profil?.imageUrl || ''; // URL existante sur R2
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -36,21 +37,19 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     });
 
     if (!result.canceled && result.assets[0]) {
-      // Ici vous devrez uploader l'image vers votre serveur et récupérer l'URL
-      // Pour l'instant, on utilise l'URI local
-      setImageUrl(result.assets[0].uri);
+      setNewImageUri(result.assets[0].uri);
     }
   };
 
   const handleSave = () => {
-    const updates: { name?: string; imageUrl?: string } = {};
+    const updates: { name?: string; imageUri?: string } = {};
 
     if (name !== user?.profil?.name) {
       updates.name = name;
     }
 
-    if (imageUrl !== user?.profil?.imageUrl) {
-      updates.imageUrl = imageUrl;
+    if (newImageUri) {
+      updates.imageUri = newImageUri;
     }
 
     if (Object.keys(updates).length === 0) {
@@ -107,7 +106,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
             <View className="items-center mb-6">
               <TouchableOpacity onPress={pickImage} className="relative">
                 <Image
-                  source={imageUrl ? { uri: imageUrl } : require('../../assets/default-avatar.png')}
+                  source={newImageUri || currentImageUrl ? { uri: newImageUri || currentImageUrl } : require('../../assets/default-avatar.png')}
                   className="w-24 h-24 rounded-full"
                   style={{ backgroundColor: '#E2E8F0' }}
                 />

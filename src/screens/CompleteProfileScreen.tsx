@@ -55,38 +55,33 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
         }
     };
 
-    const convertToBase64 = async (uri: string): Promise<string> => {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        return new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    };
-
     const handleSubmit = async (values: { name?: string } = { name: '' }, { setSubmitting, setFieldError }: any) => {
         try {
 
             // Utiliser le username par défaut si aucun n'est fourni
             const finalUsername = (values?.name || '').trim() || defaultUsername;
 
-            let imageData: string | null = null;
+            const formData = new FormData();
+            formData.append('name', finalUsername);
+
             if (imageUri) {
-                imageData = await convertToBase64(imageUri);
+                const filename = imageUri.split('/').pop() || 'profile.jpg';
+                const match = /\.(\w+)$/.exec(filename);
+                const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+                formData.append('image', {
+                    uri: imageUri,
+                    name: filename,
+                    type,
+                } as any);
             }
 
             const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/profile`, {
                 method: 'PATCH',
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: finalUsername,
-                    imageUrl: imageData,
-                }),
+                body: formData,
             });
 
             const data = await res.json();

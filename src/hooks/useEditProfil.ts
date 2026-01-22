@@ -4,7 +4,7 @@ import { API_BASE_URL } from '~/config/api';
 
 type EditProfilInput = {
   name?: string;
-  imageUrl?: string;
+  imageUri?: string; // URI locale de l'image (depuis ImagePicker)
 };
 
 type Profil = {
@@ -22,13 +22,32 @@ const editProfil = async (
   if (!token) {
     throw new Error('Utilisateur non authentifié');
   }
+
+  const formData = new FormData();
+
+  if (input.name) {
+    formData.append('name', input.name);
+  }
+
+  if (input.imageUri) {
+    const filename = input.imageUri.split('/').pop() || 'profile.jpg';
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `image/${match[1]}` : 'image/jpeg';
+
+    formData.append('image', {
+      uri: input.imageUri,
+      name: filename,
+      type,
+    } as any);
+  }
+
   const response = await fetch(`${API_BASE_URL}/profile`, {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
+      // Pas de Content-Type, fetch le définit automatiquement avec boundary pour FormData
     },
-    body: JSON.stringify(input),
+    body: formData,
   });
 
   if (!response.ok) {
