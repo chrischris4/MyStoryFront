@@ -13,8 +13,15 @@ import { useEffect, useState } from 'react';
 import { BlurView } from 'expo-blur';
 import { Text, View } from 'react-native';
 import { initI18n } from '~/i18n';
+import { useNotifications } from '~/hooks/useNotifications';
 
 const queryClient = new QueryClient();
+
+// Composant pour initialiser les notifications (doit être dans AuthProvider)
+function NotificationHandler() {
+  useNotifications();
+  return null;
+}
 
 // Configuration personnalisée des toasts
 const toastConfig = {
@@ -127,6 +134,7 @@ export default function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <NotificationHandler />
           <ThemeProvider>
             <SoundProvider>
               <AppNavigator />

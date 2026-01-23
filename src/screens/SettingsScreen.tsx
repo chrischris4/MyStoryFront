@@ -20,7 +20,7 @@ export default function SettingsScreen() {
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
 
     // Hook pour les sons
-    const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects } = useSound();
+    const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
     const skyColor = isNight ? '#020205' : '#87CEEB';
     const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
@@ -51,6 +51,7 @@ export default function SettingsScreen() {
         // Utiliser un modal de confirmation personnalisé ou directement logout
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         playSound('click');
+        pauseBackgroundMusic();
 
         const userName = user?.profil?.name || 'ami';
         await logout();

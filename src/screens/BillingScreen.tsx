@@ -9,8 +9,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
-import { BlurView } from 'expo-blur';
 import StarryBackground from '~/components/StarryBackground';
+import { useIAP } from '~/hooks/useIAP';
+import { usePurchaseProduct } from '~/hooks/usePurchaseProduct';
+import { usePurchaseSubscription } from '~/hooks/usePurchaseSubscription';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -121,40 +123,11 @@ export default function BillingScreen() {
 
     const navigation = useNavigation<StoryDetailNavigationProp>();
 
-    // === GESTION DU MODULE IAP ===
-    let RNIap;
-    if (__DEV__) {
-        RNIap = {
-            initConnection: async () => true,
-            flushFailedPurchasesCachedAsPendingAndroid: async () => { },
-            getProducts: async ({ skus }: { skus: string[] }) =>
-                skus.map((sku) => ({
-                    productId: sku,
-                    title: sku,
-                    description: 'Produit simulé pour dev',
-                    localizedPrice: '$0.99',
-                })),
-            getSubscriptions: async ({ skus }: { skus: string[] }) =>
-                skus.map((sku) => ({
-                    productId: sku,
-                    title: sku,
-                    description: 'Abonnement simulé pour dev',
-                    localizedPrice: '$1.99',
-                })),
-            requestPurchase: async ({ sku }: { sku: string }) => console.log('Achat simulé', sku),
-            purchaseUpdatedListener: (cb: any) => ({ remove: () => { } }),
-            purchaseErrorListener: (cb: any) => ({ remove: () => { } }),
-            finishTransaction: async () => { },
-            endConnection: async () => { },
-        };
-    } else {
-        RNIap = require('react-native-iap');
-    }
+    // === HOOKS IAP ===
+    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading } = useIAP();
+    const { mutate: verifyProduct, isPending: isVerifyingProduct } = usePurchaseProduct();
+    const { mutate: verifySubscription, isPending: isVerifyingSubscription } = usePurchaseSubscription();
 
-    // === PRODUITS ===
-    const itemSkus = ['tokens_pack_5', 'tokens_pack_10', 'tokens_pack_20', 'premium_monthly', 'premium_yearly'];
-
-    const [products, setProducts] = useState<RNIap.Product[]>([]);
     const { isNight } = useTheme();
     const { width: screenWidth } = useWindowDimensions();
 
@@ -162,6 +135,7 @@ export default function BillingScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<{
         name: string;
+        planId: number;
         features: string[];
         monthlyPrice: string;
         yearlyPrice: string;
@@ -169,55 +143,97 @@ export default function BillingScreen() {
         yearlyProductId: string;
     } | null>(null);
 
+    // Mapping des productId vers planId (à adapter selon ta BDD)
+    const planIdMapping: Record<string, number> = {
+        'explorer_monthly': 1,
+        'explorer_yearly': 1,
+        'adventurer_monthly': 2,
+        'adventurer_yearly': 2,
+        'legend_monthly': 3,
+        'legend_yearly': 3,
+    };
+
+    // Configurer les callbacks IAP
     useEffect(() => {
-        const initIAP = async () => {
-            try {
-                await RNIap.initConnection();
-                await RNIap.flushFailedPurchasesCachedAsPendingAndroid();
-                const items = await RNIap.getProducts({ skus: itemSkus });
-                const subs = await RNIap.getSubscriptions({ skus: itemSkus });
-                setProducts([...items, ...subs]);
-            } catch (err) {
-                console.warn('Erreur IAP init:', err);
-            }
-        };
+        setOnPurchaseSuccess(async (purchase) => {
+            const isTokenPack = purchase.productId.includes('tokens_pack');
 
-        initIAP();
-
-        const purchaseUpdate = RNIap.purchaseUpdatedListener(async (purchase: RNIap.Purchase) => {
-            const receipt = purchase.transactionReceipt;
-            if (receipt) {
-                const isTokenPack = purchase.productId.includes('tokens_pack');
-                Toast.show({
-                    type: 'success',
-                    text1: isTokenPack ? 'Jetons achetés' : 'Abonnement activé',
-                    text2: isTokenPack ? 'Tu as reçu tes jetons !' : 'Bienvenue Premium !',
-                });
-                await RNIap.finishTransaction({ purchase, isConsumable: true });
+            if (isTokenPack) {
+                // Valider l'achat de jetons côté backend
+                verifyProduct(
+                    {
+                        productId: purchase.productId,
+                        transactionId: purchase.transactionId,
+                        receipt: purchase.transactionReceipt,
+                        purchaseToken: purchase.purchaseToken,
+                    },
+                    {
+                        onSuccess: (data) => {
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Jetons achetés !',
+                                text2: `+${data.coinsAdded} jetons ajoutés à ton compte`,
+                            });
+                        },
+                        onError: (error) => {
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Erreur de validation',
+                                text2: error.message,
+                            });
+                        },
+                    }
+                );
+            } else {
+                // Valider l'abonnement côté backend
+                const planId = planIdMapping[purchase.productId] || 1;
+                verifySubscription(
+                    {
+                        productId: purchase.productId,
+                        planId,
+                        transactionId: purchase.transactionId,
+                        receipt: purchase.transactionReceipt,
+                        purchaseToken: purchase.purchaseToken,
+                    },
+                    {
+                        onSuccess: () => {
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Abonnement activé !',
+                                text2: 'Bienvenue Premium !',
+                            });
+                        },
+                        onError: (error) => {
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Erreur de validation',
+                                text2: error.message,
+                            });
+                        },
+                    }
+                );
             }
         });
 
-        const purchaseError = RNIap.purchaseErrorListener((error: any) => {
-            console.warn('Erreur d\'achat', error);
+        setOnPurchaseError((error) => {
             Toast.show({
                 type: 'error',
-                text1: 'Erreur d\'achat',
+                text1: "Erreur d'achat",
                 text2: error.message,
             });
         });
-
-        return () => {
-            purchaseUpdate.remove();
-            purchaseError.remove();
-            RNIap.endConnection();
-        };
     }, []);
 
     const buy = async (sku: string) => {
         try {
-            await RNIap.requestPurchase({ sku });
-        } catch (err) {
+            await requestPurchase(sku);
+        } catch (err: any) {
             console.warn('Erreur achat', err);
+            Toast.show({
+                type: 'error',
+                text1: "Erreur d'achat",
+                text2: err.message || 'Une erreur est survenue',
+            });
         }
     };
 
@@ -225,6 +241,7 @@ export default function BillingScreen() {
         const plans = {
             explorer: {
                 name: 'Explorateur',
+                planId: 1,
                 features: ['Accès aux histoires partagées', 'Annuler à tout moment'],
                 monthlyPrice: '$4.99/mois',
                 yearlyPrice: '$49.99/an',
@@ -233,6 +250,7 @@ export default function BillingScreen() {
             },
             adventurer: {
                 name: 'Aventurier',
+                planId: 2,
                 features: ['Accès aux histoires partagées', '1 jeton par jour', 'Annuler à tout moment'],
                 monthlyPrice: '$14.99/mois',
                 yearlyPrice: '$149.99/an',
@@ -241,6 +259,7 @@ export default function BillingScreen() {
             },
             legend: {
                 name: 'Légende',
+                planId: 3,
                 features: ['Accès aux histoires partagées', '2 jetons par jour', 'Annuler à tout moment'],
                 monthlyPrice: '$19.99/mois',
                 yearlyPrice: '$199.99/an',
