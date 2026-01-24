@@ -6,6 +6,7 @@ import { useEditProfil } from '~/hooks/useEditProfil';
 import { useAuth } from '~/context/AuthContext';
 import { useTheme } from '~/context/ThemeContext';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 type EditProfilModalProps = {
   visible: boolean;
@@ -13,6 +14,7 @@ type EditProfilModalProps = {
 };
 
 export default function EditProfilModal({ visible, onClose }: EditProfilModalProps) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { isNight } = useTheme();
   const { mutate: editProfil, isPending } = useEditProfil();
@@ -25,7 +27,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      Alert.alert('Permission requise', 'Vous devez autoriser l\'accès à vos photos pour changer votre image de profil.');
+      Alert.alert(t('profile.permissionRequired'), t('profile.photoPermissionMessage'));
       return;
     }
 
@@ -55,8 +57,8 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     if (Object.keys(updates).length === 0) {
       Toast.show({
         type: 'info',
-        text1: 'Aucune modification',
-        text2: 'Vous n\'avez apporté aucune modification',
+        text1: t('profile.noChanges'),
+        text2: t('profile.noChangesMessage'),
       });
       onClose();
       return;
@@ -66,16 +68,16 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
       onSuccess: () => {
         Toast.show({
           type: 'success',
-          text1: 'Profil modifié',
-          text2: 'Votre profil a été mis à jour avec succès',
+          text1: t('profile.profileUpdated'),
+          text2: t('profile.profileUpdatedMessage'),
         });
         onClose();
       },
       onError: (error) => {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: error instanceof Error ? error.message : 'Une erreur est survenue',
+          text1: t('common.error'),
+          text2: error instanceof Error ? error.message : t('errors.unknownError'),
         });
       },
     });
@@ -93,10 +95,10 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
           {/* Header */}
           <View className={`${isNight ? 'bg-slate-900' : 'bg-[#0D1821]'} p-6`}>
             <Text className="text-white text-2xl font-baloo-bold text-center">
-              Modifier votre profil
+              {t('settings.editProfile')}
             </Text>
             <Text className="text-white/70 text-sm font-baloo text-center mt-2">
-              Personnalisez votre nom et photo de profil
+              {t('profile.customizeProfile')}
             </Text>
           </View>
 
@@ -115,20 +117,20 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
                 </View>
               </TouchableOpacity>
               <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} text-sm font-baloo mt-2`}>
-                Appuyez pour changer votre photo
+                {t('profile.tapToChangePhoto')}
               </Text>
             </View>
 
             {/* Nom */}
             <View className="mb-4">
               <Text className={`${isNight ? 'text-white' : 'text-gray-500'} text-sm font-baloo-semibold mb-2`}>
-                Nom d'affichage
+                {t('profile.displayName')}
               </Text>
               <TextInput
                 className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'} rounded-xl p-4 text-lg font-baloo`}
                 value={name}
                 onChangeText={setName}
-                placeholder="Entrez votre nom"
+                placeholder={t('profile.enterName')}
                 placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
               />
             </View>
@@ -142,7 +144,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
               disabled={isPending}
             >
               <Text className="text-white font-baloo-bold text-lg">
-                {isPending ? 'Enregistrement...' : 'Enregistrer'}
+                {isPending ? t('common.loading') : t('common.save')}
               </Text>
             </TouchableOpacity>
 
@@ -152,7 +154,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
               disabled={isPending}
             >
               <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
-                Annuler
+                {t('common.cancel')}
               </Text>
             </TouchableOpacity>
           </View>

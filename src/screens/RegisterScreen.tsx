@@ -6,21 +6,23 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
-
-const registerSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Email invalide')
-    .required('L\'email est requis'),
-  password: Yup.string()
-    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
-    .required('Le mot de passe est requis'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Les mots de passe ne correspondent pas')
-    .required('La confirmation du mot de passe est requise'),
-});
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const registerSchema = Yup.object().shape({
+    email: Yup.string()
+      .email(t('auth.emailInvalid'))
+      .required(t('auth.emailRequired')),
+    password: Yup.string()
+      .min(6, t('auth.passwordMinLength'))
+      .required(t('auth.passwordRequired')),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password')], t('auth.passwordMismatch'))
+      .required(t('auth.confirmPasswordRequired')),
+  });
 
   const handleRegister = async (
     values: { email: string; password: string },
@@ -40,17 +42,17 @@ export default function RegisterScreen() {
         if (res.status === 409) {
           // Conflit - email ou nom déjà utilisé
           if (data.message?.includes('email')) {
-            setFieldError('email', data.message || 'Cet email est déjà utilisé');
+            setFieldError('email', data.message || t('auth.emailAlreadyUsed'));
           } else {
             // Erreur générique pour les conflits
-            setFieldError('email', data.message || 'Erreur lors de l\'inscription');
+            setFieldError('email', data.message || t('auth.registerError'));
           }
         } else {
           // Autres erreurs
           Toast.show({
             type: 'error',
-            text1: 'Erreur',
-            text2: data.message || 'Erreur lors de l\'inscription',
+            text1: t('common.error'),
+            text2: data.message || t('auth.registerError'),
           });
         }
         setSubmitting(false);
@@ -64,16 +66,16 @@ export default function RegisterScreen() {
 
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Compte créé avec succès !',
+        text1: t('common.success'),
+        text2: t('auth.accountCreated'),
       });
       navigation.navigate('CompleteProfileScreen', { accessToken, refreshToken });
 
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Une erreur réseau est survenue',
+        text1: t('common.error'),
+        text2: t('auth.networkError'),
       });
       setSubmitting(false);
     }
@@ -83,7 +85,7 @@ export default function RegisterScreen() {
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[70%]'>
-          <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">Inscription</Text>
+          <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">{t('auth.register')}</Text>
 
           <Formik
             initialValues={{ email: '', password: '', confirmPassword: '' }}
@@ -95,7 +97,7 @@ export default function RegisterScreen() {
                 <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder="Email"
+                    placeholder={t('auth.email')}
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -109,7 +111,7 @@ export default function RegisterScreen() {
                 <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder="Mot de passe"
+                    placeholder={t('auth.password')}
                     secureTextEntry
                     value={values.password}
                     onChangeText={handleChange('password')}
@@ -123,7 +125,7 @@ export default function RegisterScreen() {
                 <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder="Confirmez le mot de passe"
+                    placeholder={t('auth.confirmPassword')}
                     secureTextEntry
                     value={values.confirmPassword}
                     onChangeText={handleChange('confirmPassword')}
@@ -140,12 +142,12 @@ export default function RegisterScreen() {
                   disabled={isSubmitting}
                 >
                   <Text className="text-white text-lg font-baloo-semibold text-center">
-                    {isSubmitting ? 'Inscription en cours...' : 'S\'inscrire'}
+                    {isSubmitting ? t('auth.registering') : t('auth.registerButton')}
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                  <Text className="text-[#38b6ff] text-center font-baloo">Déjà un compte ? Se connecter</Text>
+                  <Text className="text-[#38b6ff] text-center font-baloo">{t('auth.hasAccount')}</Text>
                 </TouchableOpacity>
               </>
             )}

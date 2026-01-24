@@ -7,17 +7,9 @@ import * as Yup from 'yup';
 import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CompleteProfileScreen'>;
-
-// Schéma de validation Yup
-const validationSchema = Yup.object().shape({
-    name: Yup.string()
-        .min(3, 'Le pseudo doit contenir au moins 3 caractères')
-        .max(20, 'Le pseudo ne peut pas dépasser 20 caractères')
-        .matches(/^[a-zA-Z0-9_-]*$/, 'Seuls les lettres, chiffres, tirets (-) et underscores (_) sont autorisés')
-        .optional(),
-});
 
 // Fonction pour générer un username aléatoire
 const generateRandomUsername = (): string => {
@@ -26,19 +18,29 @@ const generateRandomUsername = (): string => {
 };
 
 export default function CompleteProfileScreen({ route, navigation }: Props) {
+    const { t } = useTranslation();
     const { accessToken, refreshToken } = route.params;
     const { login } = useAuth();
 
     const [imageUri, setImageUri] = useState<string | null>(null);
     const defaultUsername = useMemo(() => generateRandomUsername(), []);
 
+    // Schéma de validation Yup
+    const validationSchema = Yup.object().shape({
+        name: Yup.string()
+            .min(3, t('profile.pseudoMinLength'))
+            .max(20, t('profile.pseudoMaxLength'))
+            .matches(/^[a-zA-Z0-9_-]*$/, t('profile.pseudoInvalidChars'))
+            .optional(),
+    });
+
     const pickImage = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permissionResult.granted) {
             Toast.show({
                 type: 'error',
-                text1: 'Permission refusée',
-                text2: 'Nous avons besoin de la permission pour accéder à vos photos.',
+                text1: t('profile.permissionDenied'),
+                text2: t('profile.photoPermissionMessage'),
             });
             return;
         }
@@ -101,8 +103,8 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                     console.error('Erreur lors de la connexion:', loginError);
                     Toast.show({
                         type: 'error',
-                        text1: 'Erreur',
-                        text2: 'Erreur lors de la connexion. Veuillez vous reconnecter.',
+                        text1: t('common.error'),
+                        text2: t('profile.loginError'),
                     });
                     navigation.reset({
                         index: 0,
@@ -114,28 +116,28 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                 if (res.status === 409) {
                     // Conflit - nom d'utilisateur déjà pris
                     if (data.message?.includes('nom')) {
-                        setFieldError('name', data.message || 'Ce nom d\'utilisateur est déjà pris');
+                        setFieldError('name', data.message || t('profile.pseudoTaken'));
                     } else {
                         Toast.show({
                             type: 'error',
-                            text1: 'Erreur',
-                            text2: data.message || 'Erreur lors de la mise à jour du profil.',
+                            text1: t('common.error'),
+                            text2: data.message || t('profile.profileUpdateError'),
                         });
                     }
                 } else {
                     // Autres erreurs
                     Toast.show({
                         type: 'error',
-                        text1: 'Erreur',
-                        text2: data.message || 'Erreur lors de la mise à jour du profil.',
+                        text1: t('common.error'),
+                        text2: data.message || t('profile.profileUpdateError'),
                     });
                 }
             }
         } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Erreur',
-                text2: 'Une erreur réseau est survenue.',
+                text1: t('common.error'),
+                text2: t('auth.networkError'),
             });
         } finally {
             setSubmitting(false);
@@ -146,7 +148,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
         <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
             <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
                 <View className='w-[70%]'>
-                    <Text className='font-bold text-xl mb-2 text-center text-gray-800'>Complétez votre profil</Text>
+                    <Text className='font-bold text-xl mb-2 text-center text-gray-800'>{t('profile.completeProfile')}</Text>
                     <Formik
                         initialValues={{ name: '' }}
                         validationSchema={validationSchema}
@@ -154,13 +156,13 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
                             <View className='w-full'>
-                                <Text className='font-semibold text-base mb-1'>Pseudo</Text>
+                                <Text className='font-semibold text-base mb-1'>{t('profile.pseudo')}</Text>
                                 <Text className='text-gray-500 text-xs mb-2'>
-                                    Par défaut: {defaultUsername}
+                                    {t('profile.defaultPseudo', { name: defaultUsername })}
                                 </Text>
                                 <TextInput
                                     className={`w-full border ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 mb-2`}
-                                    placeholder={`Ex: ${defaultUsername}`}
+                                    placeholder={t('profile.pseudoPlaceholder', { name: defaultUsername })}
                                     value={values.name}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}
@@ -170,7 +172,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                                     <Text className='text-red-500 text-sm mb-2'>{errors.name}</Text>
                                 )}
 
-                                <Text className='font-semibold text-base mb-2 mt-2'>Photo de profil</Text>
+                                <Text className='font-semibold text-base mb-2 mt-2'>{t('profile.profilePicture')}</Text>
                                 <TouchableOpacity onPress={pickImage}>
                                     <View className='items-center mb-3'>
                                         {imageUri ? (
@@ -180,7 +182,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                                             />
                                         ) : (
                                             <View className="w-24 h-24 rounded-full border-2 border-dashed border-gray-400 justify-center items-center bg-gray-100">
-                                                <Text className='text-gray-500 text-xs text-center'>Toucher pour{'\n'}ajouter</Text>
+                                                <Text className='text-gray-500 text-xs text-center'>{t('profile.tapToAdd')}</Text>
                                             </View>
                                         )}
                                     </View>
@@ -192,7 +194,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                                     disabled={isSubmitting}
                                 >
                                     <Text className='text-white font-semibold text-center'>
-                                        {isSubmitting ? 'Envoi...' : 'Continuer'}
+                                        {isSubmitting ? t('profile.sending') : t('profile.continue')}
                                     </Text>
                                 </TouchableOpacity>
 
@@ -205,7 +207,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                                     disabled={isSubmitting}
                                 >
                                     <Text className='text-[#38b6ff] text-center'>
-                                        Passer cette étape
+                                        {t('profile.skipStep')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

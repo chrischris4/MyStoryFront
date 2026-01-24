@@ -9,25 +9,21 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
-
-const loginSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Email invalide')
-    .required('L\'email est requis'),
-  password: Yup.string()
-    .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
-    .required('Le mot de passe est requis'),
-});
-
-const WELCOME_MESSAGES = [
-  "Plein d'aventures t'attendent ici !",
-  "Prêt à créer de nouvelles histoires ?",
-  "Tes histoires n'attendent que toi !",
-  "L'aventure commence maintenant !",
-  "Bienvenue dans le monde des histoires !",
-];
+import { useTranslation } from 'react-i18next';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
+
+  const loginSchema = Yup.object().shape({
+    email: Yup.string()
+      .email(t('auth.emailInvalid'))
+      .required(t('auth.emailRequired')),
+    password: Yup.string()
+      .min(6, t('auth.passwordMinLength'))
+      .required(t('auth.passwordRequired')),
+  });
+
+  const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { login } = useAuth();
@@ -51,11 +47,11 @@ export default function LoginScreen() {
       if (response.ok) {
         const userData = await response.json();
         const userName = userData?.profil?.name || 'toi';
-        const randomMessage = WELCOME_MESSAGES[Math.floor(Math.random() * WELCOME_MESSAGES.length)];
+        const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
         Toast.show({
           type: 'success',
-          text1: `Hey ${userName} !`,
+          text1: t('welcome.greeting', { name: userName }),
           text2: randomMessage,
         });
       }
@@ -71,14 +67,14 @@ export default function LoginScreen() {
       if (error instanceof ApiError) {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: error.message || 'Erreur lors de la connexion',
+          text1: t('common.error'),
+          text2: error.message || t('auth.loginError'),
         });
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: 'Une erreur est survenue',
+          text1: t('common.error'),
+          text2: t('errors.unknownError'),
         });
       }
     } finally {
@@ -91,14 +87,14 @@ export default function LoginScreen() {
       await AsyncStorage.clear();
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Le storage a été nettoyé !',
+        text1: t('common.success'),
+        text2: t('auth.storageCleared'),
       });
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Impossible de nettoyer le storage',
+        text1: t('common.error'),
+        text2: t('auth.storageClearError'),
       });
     }
   };
@@ -110,12 +106,12 @@ export default function LoginScreen() {
         onPress={handleClearStorage}
         className="absolute top-12 right-4 bg-red-500 px-4 py-2 rounded-lg z-50"
       >
-        <Text className="text-white font-baloo-bold text-xs">Clear Storage</Text>
+        <Text className="text-white font-baloo-bold text-xs">{t('auth.clearStorage')}</Text>
       </TouchableOpacity>
 
       <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[70%]'>
-          <Text className="font-baloo-bold text-2xl mb-4 text-center text-gray-800">Connexion</Text>
+          <Text className="font-baloo-bold text-2xl mb-4 text-center text-gray-800">{t('auth.login')}</Text>
 
           <Formik
             initialValues={{ email: '', password: '' }}
@@ -127,7 +123,7 @@ export default function LoginScreen() {
                 <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder="Email"
+                    placeholder={t('auth.email')}
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -140,7 +136,7 @@ export default function LoginScreen() {
                 <View className="mb-4">
                   <TextInput
                     className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder="Mot de passe"
+                    placeholder={t('auth.password')}
                     secureTextEntry
                     value={values.password}
                     onChangeText={handleChange('password')}
@@ -161,12 +157,12 @@ export default function LoginScreen() {
                   {isLoading ? (
                     <ActivityIndicator color="#fff" />
                   ) : (
-                    <Text className="text-white text-lg font-baloo-semibold text-center">Se connecter</Text>
+                    <Text className="text-white text-lg font-baloo-semibold text-center">{t('auth.loginButton')}</Text>
                   )}
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                  <Text className="text-[#38b6ff] text-center font-baloo">Pas encore de compte ? S'inscrire</Text>
+                  <Text className="text-[#38b6ff] text-center font-baloo">{t('auth.noAccount')}</Text>
                 </TouchableOpacity>
               </>
             )}

@@ -13,17 +13,13 @@ import StarryBackground from '~/components/StarryBackground';
 import { useIAP } from '~/hooks/useIAP';
 import { usePurchaseProduct } from '~/hooks/usePurchaseProduct';
 import { usePurchaseSubscription } from '~/hooks/usePurchaseSubscription';
+import { useTranslation } from 'react-i18next';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BillingScreen() {
-    const STORE_PHRASES = [
-        "Hey Jean ! Comment tu vas ?",
-        "Oh ! Il y a quelqu'un ?",
-        "Je devrais flun un peu..",
-        "J'ai les meilleurs offres sur le marché !",
-        "Hmmmm ta grosse bite Harry ",
-    ];
+    const { t } = useTranslation();
+    const storePhrases = t('billing.storePhrases', { returnObjects: true }) as string[];
 
     function StoreBubble({
         text,
@@ -68,7 +64,7 @@ export default function BillingScreen() {
     const [showBubble, setShowBubble] = useState(false);
     const showStoreBubble = () => {
         const random =
-            STORE_PHRASES[Math.floor(Math.random() * STORE_PHRASES.length)];
+            storePhrases[Math.floor(Math.random() * storePhrases.length)];
 
         setStorePhrase(random);
         setShowBubble(true);
@@ -171,14 +167,14 @@ export default function BillingScreen() {
                         onSuccess: (data) => {
                             Toast.show({
                                 type: 'success',
-                                text1: 'Jetons achetés !',
-                                text2: `+${data.coinsAdded} jetons ajoutés à ton compte`,
+                                text1: t('billing.tokensPurchased'),
+                                text2: t('billing.tokensReceived', { count: data.coinsAdded }),
                             });
                         },
                         onError: (error) => {
                             Toast.show({
                                 type: 'error',
-                                text1: 'Erreur de validation',
+                                text1: t('billing.validationError'),
                                 text2: error.message,
                             });
                         },
@@ -199,14 +195,14 @@ export default function BillingScreen() {
                         onSuccess: () => {
                             Toast.show({
                                 type: 'success',
-                                text1: 'Abonnement activé !',
-                                text2: 'Bienvenue Premium !',
+                                text1: t('billing.subscriptionActivated'),
+                                text2: t('billing.welcomePremium'),
                             });
                         },
                         onError: (error) => {
                             Toast.show({
                                 type: 'error',
-                                text1: 'Erreur de validation',
+                                text1: t('billing.validationError'),
                                 text2: error.message,
                             });
                         },
@@ -218,11 +214,11 @@ export default function BillingScreen() {
         setOnPurchaseError((error) => {
             Toast.show({
                 type: 'error',
-                text1: "Erreur d'achat",
+                text1: t('billing.purchaseError'),
                 text2: error.message,
             });
         });
-    }, []);
+    }, [t]);
 
     const buy = async (sku: string) => {
         try {
@@ -231,8 +227,8 @@ export default function BillingScreen() {
             console.warn('Erreur achat', err);
             Toast.show({
                 type: 'error',
-                text1: "Erreur d'achat",
-                text2: err.message || 'Une erreur est survenue',
+                text1: t('billing.purchaseError'),
+                text2: err.message || t('errors.unknownError'),
             });
         }
     };
@@ -240,29 +236,29 @@ export default function BillingScreen() {
     const openSubscriptionModal = (planType: 'explorer' | 'adventurer' | 'legend') => {
         const plans = {
             explorer: {
-                name: 'Explorateur',
+                name: t('plans.explorer'),
                 planId: 1,
-                features: ['Accès aux histoires partagées', 'Annuler à tout moment'],
-                monthlyPrice: '$4.99/mois',
-                yearlyPrice: '$49.99/an',
+                features: [t('billing.sharedStories'), t('billing.cancelAnytime')],
+                monthlyPrice: `$4.99/${t('billing.month')}`,
+                yearlyPrice: `$49.99/${t('billing.year')}`,
                 monthlyProductId: 'explorer_monthly',
                 yearlyProductId: 'explorer_yearly',
             },
             adventurer: {
-                name: 'Aventurier',
+                name: t('plans.adventurer'),
                 planId: 2,
-                features: ['Accès aux histoires partagées', '1 jeton par jour', 'Annuler à tout moment'],
-                monthlyPrice: '$14.99/mois',
-                yearlyPrice: '$149.99/an',
+                features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 1 }), t('billing.cancelAnytime')],
+                monthlyPrice: `$14.99/${t('billing.month')}`,
+                yearlyPrice: `$149.99/${t('billing.year')}`,
                 monthlyProductId: 'adventurer_monthly',
                 yearlyProductId: 'adventurer_yearly',
             },
             legend: {
-                name: 'Légende',
+                name: t('plans.legend'),
                 planId: 3,
-                features: ['Accès aux histoires partagées', '2 jetons par jour', 'Annuler à tout moment'],
-                monthlyPrice: '$19.99/mois',
-                yearlyPrice: '$199.99/an',
+                features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 2 }), t('billing.cancelAnytime')],
+                monthlyPrice: `$19.99/${t('billing.month')}`,
+                yearlyPrice: `$199.99/${t('billing.year')}`,
                 monthlyProductId: 'legend_monthly',
                 yearlyProductId: 'legend_yearly',
             },
@@ -451,13 +447,13 @@ export default function BillingScreen() {
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
             </View>
-            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>Boutique</Text>
+            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>{t('billing.title')}</Text>
 
             {/* Boutons de jetons*/}
             <View className='flex-col w-full mt-4'>
                 <View className='flex flex-row gap-2 items-center'>
-                    <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Paquets de Jetons</Text>
-                    <Text className={`font-baloo text-base -mb-1 ${isNight ? 'text-white' : 'text-slate-900'}`}>( 1 jeton = 1 histoire ! )</Text>
+                    <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenPacks')}</Text>
+                    <Text className={`font-baloo text-base -mb-1 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenInfo')}</Text>
                 </View>
                 <View className='flex-row w-full gap-2'>
                     <Animated.View
@@ -471,7 +467,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={5} isNight={isNight} isCoin={true} title="Jetons" price="$4.99" onPress={() => buy('tokens_pack_5')} />
+                        <ShopButton amount={5} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$4.99" onPress={() => buy('tokens_pack_5')} />
                     </Animated.View>
 
                     {/* Button 10 jetons - En bas à gauche */}
@@ -486,7 +482,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={10} isNight={isNight} isCoin={true} title="Jetons" price="$9.99" onPress={() => buy('tokens_pack_10')} />
+                        <ShopButton amount={10} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$9.99" onPress={() => buy('tokens_pack_10')} />
                     </Animated.View>
 
                     {/* Button 20 jetons - En bas à droite */}
@@ -501,14 +497,14 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={20} isNight={isNight} isCoin={true} title="Jetons" price="$18.99" onPress={() => buy('tokens_pack_20')} />
+                        <ShopButton amount={20} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$18.99" onPress={() => buy('tokens_pack_20')} />
                     </Animated.View >
                 </View>
             </View>
 
             {/* Boutons Premium*/}
             <View className='flex flex-col w-full'>
-                <Text className={`z-20 font-baloo-semibold text-2xl mt-4 -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>Abonnements</Text>
+                <Text className={`z-20 font-baloo-semibold text-2xl mt-4 -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.subscriptions')}</Text>
                 <View className='flex-row w-full gap-2'>
                     <Animated.View
                         style={{
@@ -521,7 +517,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value='Hisoire partagées' isNight={isNight} title="Explorateur" price="Dès $4.99" onPress={() => openSubscriptionModal('explorer')} />
+                        <ShopButton value={t('billing.sharedStories')} isNight={isNight} title={t('plans.explorer')} price={`${t('billing.from')} $4.99`} onPress={() => openSubscriptionModal('explorer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -534,7 +530,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value='Hisoire partagées' value2='1 Jetons par jour' isNight={isNight} title="Aventurier" price="Dès $14.99" onPress={() => openSubscriptionModal('adventurer')} />
+                        <ShopButton value={t('billing.sharedStories')} value2={t('billing.tokensPerDay', { count: 1 })} isNight={isNight} title={t('plans.adventurer')} price={`${t('billing.from')} $14.99`} onPress={() => openSubscriptionModal('adventurer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -547,7 +543,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value='Hisoire partagées' isNight={isNight} value2='2 Jetons par jour' title="Légende" price="Dès $19.99" onPress={() => openSubscriptionModal('legend')} />
+                        <ShopButton value={t('billing.sharedStories')} isNight={isNight} value2={t('billing.tokensPerDay', { count: 2 })} title={t('plans.legend')} price={`${t('billing.from')} $19.99`} onPress={() => openSubscriptionModal('legend')} />
                     </Animated.View>
                 </View>
             </View>

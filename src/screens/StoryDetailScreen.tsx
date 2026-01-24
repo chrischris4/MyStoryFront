@@ -294,7 +294,7 @@ export default function StoryDetailScreen() {
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
   return (
-    <View className="flex-1 relative h-screen pt-10 pb-4" style={{ backgroundColor: skyColor }}>
+    <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
 
       {isNight && <StarryBackground starCount={50} />}
       <ScrollView

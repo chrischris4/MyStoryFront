@@ -13,7 +13,6 @@ import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import type { Page } from '~/types';
 import { StoryBackground, type BackgroundType } from './StoryBackgrounds';
 
@@ -35,7 +34,7 @@ export default function FullScreenStoryModal({
   onClose,
 }: FullScreenStoryModalProps) {
   const [showControls, setShowControls] = useState(false);
-  const [forceLandscape, setForceLandscape] = useState(true);
+  const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
   const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
@@ -93,14 +92,8 @@ export default function FullScreenStoryModal({
     }
   };
 
-  const toggleOrientation = async () => {
-    if (forceLandscape || !isPortrait) {
-      await ScreenOrientation.unlockAsync();
-      setForceLandscape(false);
-    } else {
-      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-      setForceLandscape(true);
-    }
+  const toggleRotation = () => {
+    setIsRotated(!isRotated);
   };
 
   const goToPreviousPage = () => {
@@ -168,7 +161,14 @@ export default function FullScreenStoryModal({
               style={{ width, height }}
               className="justify-center items-center"
             >
-              <View className={`relative aspect-square ${isPortrait ? 'w-full' : ' h-full'}`}>
+              <View
+                style={isRotated ? {
+                  width: height,
+                  height: width,
+                  transform: [{ rotate: '90deg' }],
+                } : undefined}
+                className={`relative ${isRotated ? '' : `aspect-square ${isPortrait ? 'w-full' : 'h-full'}`}`}
+              >
                 <Image
                   source={{ uri: item.imageUrl }}
                   style={{
@@ -188,7 +188,7 @@ export default function FullScreenStoryModal({
                     <Text
                       style={{
                         color: 'white',
-                        fontSize: isPortrait ? 20 : 24,
+                        fontSize: isRotated ? 24 : (isPortrait ? 20 : 24),
                         textAlign: 'center',
                       }}
                       className='font-baloo-bold'
@@ -205,7 +205,7 @@ export default function FullScreenStoryModal({
                     <Text
                       style={{
                         color: 'white',
-                        fontSize: isPortrait ? 16 : 18,
+                        fontSize: isRotated ? 18 : (isPortrait ? 16 : 18),
                         textAlign: 'left',
                       }}
                       className='font-baloo-medium'
@@ -438,11 +438,11 @@ export default function FullScreenStoryModal({
               </View>
 
               <View className='flex flex-row gap-4'>
-                {/* Bouton rotation */}
+                {/* Bouton plein écran (rotation) */}
                 <TouchableOpacity
-                  onPress={toggleOrientation}
+                  onPress={toggleRotation}
                   style={{
-                    backgroundColor: (forceLandscape || !isPortrait) ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: isRotated ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
                     borderRadius: 40,
                     width: 65,
                     height: 65
@@ -450,9 +450,9 @@ export default function FullScreenStoryModal({
                   className='flex justify-center items-center'
                 >
                   <Feather
-                    name={isPortrait ? "smartphone" : "tablet"}
+                    name={isRotated ? "minimize" : "maximize"}
                     size={24}
-                    color={(forceLandscape || !isPortrait) ? "white" : "black"}
+                    color={isRotated ? "white" : "black"}
                   />
                 </TouchableOpacity>
 

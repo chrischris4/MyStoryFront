@@ -11,8 +11,10 @@ import EditProfilModal from '~/components/EditProfilModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 export default function SettingsScreen() {
+    const { t } = useTranslation();
     const navigation = useNavigation();
     const { isNight, toggleTheme } = useTheme();
     const { logout, user } = useAuth();
@@ -21,8 +23,6 @@ export default function SettingsScreen() {
 
     // Hook pour les sons
     const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
-    const skyColor = isNight ? '#020205' : '#87CEEB';
-    const cloudColor = isNight ? '#A0AEC2' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
@@ -35,9 +35,9 @@ export default function SettingsScreen() {
         if (!planType) return 'Premium';
 
         const planNames: { [key: string]: string } = {
-            'EXPLOROR': 'Explorateur',
-            'ADVENTURER': 'Aventurier',
-            'LEGEND': 'Légende',
+            'EXPLOROR': t('plans.explorer'),
+            'ADVENTURER': t('plans.adventurer'),
+            'LEGEND': t('plans.legend'),
         };
 
         return planNames[planType] || 'Premium';
@@ -58,8 +58,8 @@ export default function SettingsScreen() {
         navigation.navigate('Login' as never);
         Toast.show({
             type: 'success',
-            text1: `À bientôt ${userName} !`,
-            text2: 'On espère te revoir bientôt !',
+            text1: t('welcome.goodbye', { name: userName }),
+            text2: t('welcome.seeYouSoon'),
         });
     };
 
@@ -82,12 +82,12 @@ export default function SettingsScreen() {
                 className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
-            <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>Paramètres</Text>
+            <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
 
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={ { backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl font-baloo-semibold self-start`}>Compte</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl font-baloo-semibold self-start`}>{t('settings.account')}</Text>
                         <Feather name="user" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     {user && (
@@ -112,14 +112,14 @@ export default function SettingsScreen() {
                         playSound('pop');
                         setIsEditProfilModalVisible(true);
                     }}>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Modifier votre profil</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.editProfile')}</Text>
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
                 </BlurView>
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>Apparence</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>{t('settings.appearance')}</Text>
                         {!isNight ? (
                             <Feather name="sun" size={20} color={isNight ? "#fff" : "#000"} />
                         ) : (
@@ -136,7 +136,7 @@ export default function SettingsScreen() {
                     >
                         <View className="flex-row items-center justify-center gap-2">
                             <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>
-                                Passer en mode {isNight ? 'clair' : 'sombre'}
+                                {isNight ? t('settings.switchToLight') : t('settings.switchToDark')}
                             </Text>
                             {isNight ? (
                                 <Feather name="sun" size={20} color={isNight ? "#fff" : "#000"} />
@@ -150,11 +150,11 @@ export default function SettingsScreen() {
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Sons</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.sounds')}</Text>
                         <Feather name="volume-2" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <View className='flex flex-row justify-between items-center mb-3'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>Musique de fond</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>{t('settings.backgroundMusic')}</Text>
                         <Switch
                             value={isMusicEnabled}
                             onValueChange={toggleBackgroundMusic}
@@ -162,7 +162,7 @@ export default function SettingsScreen() {
                         />
                     </View>
                     <View className='flex flex-row justify-between items-center'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>Effets sonores</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>{t('settings.soundEffects')}</Text>
                         <Switch
                             value={areSoundEffectsEnabled}
                             onValueChange={toggleSoundEffects}
@@ -174,11 +174,11 @@ export default function SettingsScreen() {
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Notifications</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.notifications')}</Text>
                         <Feather name="bell" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <View className='flex flex-row justify-between items-center'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>Activer les notifications</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo self-start`}>{t('settings.enableNotifications')}</Text>
                         <Switch
                             value={notificationsEnabled}
                             onValueChange={setNotificationsEnabled}
@@ -189,41 +189,41 @@ export default function SettingsScreen() {
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Historique</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity style={styles.button} onPress={handleBilling}>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Consulter vos achats</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
                 </BlurView>
 
                 <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4'  tint={isNight ? 'dark' : 'light'} style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Abonnement</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.subscription')}</Text>
                         <Feather name="credit-card" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
 
                     {isPremium ? (
                         <View className="mb-4">
-                            <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-base font-baloo`}>Plan actuel</Text>
+                            <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-base font-baloo`}>{t('settings.currentPlan')}</Text>
                                 <Text className={` ${isNight ? "text-white" : "text-slate-700"} text-xl font-baloo-semibold`}>
                                     {planName}
                                 </Text>
                         </View>
                     ) : (
                         <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-lg font-baloo mb-4`}>
-                            Vous n'avez pas d'abonnement actif
+                            {t('settings.noSubscription')}
                         </Text>
                     )}
 
                     <TouchableOpacity style={styles.button} onPress={handleBilling}>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>Gérer mon abonnement</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.manageSubscription')}</Text>
                     </TouchableOpacity>
                 </BlurView>
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>Contact</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.contact')}</Text>
                         <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
@@ -253,7 +253,7 @@ export default function SettingsScreen() {
 
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
                     <TouchableOpacity style={styles.button} onPress={handleLogout}>
-                        <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>Se déconnecter</Text>
+                        <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
                     </TouchableOpacity>
                 </BlurView>
             </ScrollView>
