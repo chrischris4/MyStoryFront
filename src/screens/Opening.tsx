@@ -22,7 +22,7 @@ export default function OpeningScreen() {
     return (
         <View className="flex-1 relative justify-center items-center bg-[#38b6ff] px-6">
             <Image
-                source={{ uri: "https://res.cloudinary.com/dnotl9a0s/image/upload/v1760456926/Flun_1_nniixk.png" }}
+                source={require('../../assets/splash.png')}
                 style={{
                     width: 300,
                     height: 300,

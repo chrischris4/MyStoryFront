@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { useTranslation } from 'react-i18next';
 
 type ConfirmationModalProps = {
   visible: boolean;
@@ -27,6 +28,8 @@ export default function ConfirmationModal({
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
+  const { t } = useTranslation();
+
   return (
     <Modal
       visible={visible}
@@ -39,10 +42,10 @@ export default function ConfirmationModal({
           {/* Header */}
           <View className="bg-[#0D1821] p-6">
             <Text className="text-white text-2xl font-bold text-center">
-              Confirmer la création
+              {t('storyCreation.confirmTitle')}
             </Text>
             <Text className="text-white/70 text-sm text-center mt-2">
-              Vérifiez les informations avant de créer votre histoire
+              {t('storyCreation.confirmSubtitle')}
             </Text>
           </View>
 
@@ -52,7 +55,7 @@ export default function ConfirmationModal({
               {/* Titre */}
               <View className="mb-4">
                 <Text className="text-gray-500 text-sm font-semibold mb-1">
-                  Titre de l'histoire
+                  {t('storyCreation.storyTitle')}
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
                   <Text className="text-gray-800 text-lg font-semibold">
@@ -64,7 +67,7 @@ export default function ConfirmationModal({
               {/* Résumé */}
               <View className="mb-4">
                 <Text className="text-gray-500 text-sm font-semibold mb-1">
-                  Résumé
+                  {t('storyCreation.summary')}
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
                   <Text className="text-gray-800 text-base">
@@ -78,7 +81,7 @@ export default function ConfirmationModal({
                 {/* Style */}
                 <View className="flex-1">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
-                    Style
+                    {t('storyCreation.style')}
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
                     <Text className="text-2xl mr-2">{styleEmoji}</Text>
@@ -91,7 +94,7 @@ export default function ConfirmationModal({
                 {/* Langue */}
                 <View className="flex-1">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
-                    Langue
+                    {t('storyCreation.language')}
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
                     <Text className="text-2xl mr-2">{languageFlag}</Text>
@@ -105,7 +108,7 @@ export default function ConfirmationModal({
               {/* Nombre de pages */}
               <View className="mb-4">
                 <Text className="text-gray-500 text-sm font-semibold mb-1">
-                  Nombre de pages
+                  {t('storyCreation.numPages')}
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
                   <Text className="text-gray-800 text-2xl font-bold">
@@ -119,10 +122,10 @@ export default function ConfirmationModal({
                 <Text className="text-blue-600 text-xl mr-3">ℹ️</Text>
                 <View className="flex-1">
                   <Text className="text-blue-800 font-semibold mb-1">
-                    Information importante
+                    {t('storyCreation.importantInfo')}
                   </Text>
                   <Text className="text-blue-700 text-sm">
-                    Cette création utilisera 1 Story Coin. Une fois créée, l'histoire sera disponible dans votre bibliothèque.
+                    {t('storyCreation.costInfo')}
                   </Text>
                 </View>
               </View>
@@ -136,7 +139,7 @@ export default function ConfirmationModal({
               onPress={onConfirm}
             >
               <Text className="text-white font-bold text-lg">
-                Confirmer et créer
+                {t('storyCreation.confirmAndCreate')}
               </Text>
             </TouchableOpacity>
 
@@ -145,7 +148,7 @@ export default function ConfirmationModal({
               onPress={onCancel}
             >
               <Text className="text-gray-800 font-semibold text-lg">
-                Annuler
+                {t('common.cancel')}
               </Text>
             </TouchableOpacity>
           </View>

@@ -4,8 +4,10 @@ import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 export default function FloatingStoryCreation() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const { isCreating, isMinimized, loading, storyPages, title, maximize, close } = useStoryCreationStore();
 
@@ -119,7 +121,7 @@ export default function FloatingStoryCreation() {
           {loading ? (
             <>
               <Text className="text-white text-[10px] text-center mt-1 font-medium">
-                Création...
+                {t('storyCreation.creating')}
               </Text>
               <Text className="text-gray-400 text-[9px] text-center mt-0.5" numberOfLines={1}>
                 {title}
@@ -129,10 +131,10 @@ export default function FloatingStoryCreation() {
             <>
               <Feather name="check-circle" size={miniWidth * 0.35} color="#10B981" />
               <Text className="text-white text-[10px] text-center mt-1 font-semibold">
-                Terminée !
+                {t('storyCreation.finished')}
               </Text>
               <Text className="text-gray-400 text-[9px] text-center mt-0.5" numberOfLines={1}>
-                {storyPages.length} pages
+                {storyPages.length} {t('storyCreation.pages')}
               </Text>
             </>
           )}

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Modal,
   View,
@@ -16,6 +16,7 @@ import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
 import type { Page } from '~/types';
 import { StoryBackground, type BackgroundType } from './StoryBackgrounds';
+import { useTranslation } from 'react-i18next';
 
 interface FullScreenStoryModalProps {
   visible: boolean;
@@ -34,6 +35,7 @@ export default function FullScreenStoryModal({
   isNight,
   onClose,
 }: FullScreenStoryModalProps) {
+  const { t } = useTranslation();
   const [showControls, setShowControls] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
@@ -44,7 +46,6 @@ export default function FullScreenStoryModal({
   const [selectedBackground, setSelectedBackground] = useState<BackgroundType>('black');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
-  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
 
@@ -58,38 +59,36 @@ export default function FullScreenStoryModal({
     ? [{ id: 'cover', imageUrl: coverUrl, isCover: true }, ...sortedPages.map(p => ({ ...p, isCover: false }))]
     : sortedPages.map(p => ({ ...p, isCover: false }));
 
-  const handleUserTouch = () => {
-    // Si un menu est ouvert, le fermer au lieu de toggler les contrôles
+  const handleCloseMenus = () => {
+    // Fermer tous les sous-menus si on touche ailleurs
     if (showMusicMenu || showBrightnessMenu || showBackgroundMenu) {
       setShowMusicMenu(false);
       setShowBrightnessMenu(false);
       setShowBackgroundMenu(false);
-      return;
     }
+  };
 
-    setShowControls(true);
-
-    if (hideTimeout.current) {
-      clearTimeout(hideTimeout.current);
-    }
-
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-
-    // Ne masquer les contrôles que si aucun menu n'est ouvert
-    if (!showMusicMenu && !showBrightnessMenu && !showBackgroundMenu) {
-      hideTimeout.current = setTimeout(() => {
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }).start(() => {
-          setShowControls(false);
-        });
-      }, 3000);
+  const toggleControls = () => {
+    if (showControls) {
+      // Fermer les contrôles
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        setShowControls(false);
+        setShowMusicMenu(false);
+        setShowBrightnessMenu(false);
+        setShowBackgroundMenu(false);
+      });
+    } else {
+      // Ouvrir les contrôles
+      setShowControls(true);
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
     }
   };
 
@@ -115,30 +114,7 @@ export default function FullScreenStoryModal({
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (hideTimeout.current) {
-        clearTimeout(hideTimeout.current);
-      }
-    };
-  }, []);
 
-  // Garder les contrôles visibles quand un menu est ouvert
-  useEffect(() => {
-    if (showMusicMenu || showBrightnessMenu || showBackgroundMenu) {
-      // Annuler le timeout si un menu s'ouvre
-      if (hideTimeout.current) {
-        clearTimeout(hideTimeout.current);
-      }
-      // S'assurer que les contrôles sont visibles
-      setShowControls(true);
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [showMusicMenu, showBrightnessMenu, showBackgroundMenu]);
 
   // Dimensions pour le mode rotaté
   const rotatedWidth = isRotated ? height : width;
@@ -173,7 +149,7 @@ export default function FullScreenStoryModal({
             horizontal
             pagingEnabled
             showsHorizontalScrollIndicator={false}
-            onTouchStart={handleUserTouch}
+            onTouchStart={handleCloseMenus}
             onMomentumScrollEnd={(event) => {
               const index = Math.round(event.nativeEvent.contentOffset.x / rotatedWidth);
               setCurrentPageIndex(index);
@@ -237,6 +213,29 @@ export default function FullScreenStoryModal({
             )}
           />
 
+          {/* Bouton toggle menu - toujours visible */}
+          <TouchableOpacity
+            onPress={toggleControls}
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              right: 20,
+              backgroundColor: showControls ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+              borderRadius: 40,
+              width: 55,
+              height: 55,
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 10,
+            }}
+          >
+            <Feather
+              name={showControls ? "eye-off" : "eye"}
+              size={22}
+              color={showControls ? "white" : "black"}
+            />
+          </TouchableOpacity>
+
         {showControls && (
           <Animated.View
             style={{
@@ -294,7 +293,7 @@ export default function FullScreenStoryModal({
                   >
                     <View style={{ padding: 8 }} className='bg-white/50'>
                       <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
-                        Musiques
+                        {t('storyReader.music')}
                       </Text>
 
                       <TouchableOpacity
@@ -307,7 +306,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🔇 Aucune musique</Text>
+                        <Text style={{ fontSize: 14 }}>🔇 {t('storyReader.noMusic')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -320,7 +319,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: selectedMusic === 'ambient' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🎵 Ambiance douce</Text>
+                        <Text style={{ fontSize: 14 }}>🎵 {t('storyReader.softAmbience')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -333,7 +332,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: selectedMusic === 'adventure' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>⚔️ Aventure</Text>
+                        <Text style={{ fontSize: 14 }}>⚔️ {t('storyReader.adventure')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -346,7 +345,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: selectedMusic === 'lullaby' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🌙 Berceuse</Text>
+                        <Text style={{ fontSize: 14 }}>🌙 {t('storyReader.lullaby')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -359,7 +358,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: selectedMusic === 'magical' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>✨ Magique</Text>
+                        <Text style={{ fontSize: 14 }}>✨ {t('storyReader.magical')}</Text>
                       </TouchableOpacity>
                     </View>
                   </BlurView>
@@ -406,7 +405,7 @@ export default function FullScreenStoryModal({
                   >
                     <View style={{ padding: 16 }} className='bg-white/50'>
                       <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
-                        Luminosité
+                        {t('storyReader.brightness')}
                       </Text>
 
                       <TouchableOpacity
@@ -420,7 +419,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: brightness === 0.3 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🌑 Faible (30%)</Text>
+                        <Text style={{ fontSize: 14 }}>🌑 {t('storyReader.low')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -434,7 +433,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: brightness === 0.5 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🌓 Moyenne (50%)</Text>
+                        <Text style={{ fontSize: 14 }}>🌓 {t('storyReader.medium')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -448,7 +447,7 @@ export default function FullScreenStoryModal({
                           backgroundColor: brightness === 0.7 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🌕 Forte (70%)</Text>
+                        <Text style={{ fontSize: 14 }}>🌕 {t('storyReader.high')}</Text>
                       </TouchableOpacity>
                     </View>
                   </BlurView>
@@ -548,7 +547,7 @@ export default function FullScreenStoryModal({
                   >
                     <View style={{ padding: 12 }} className='bg-white/50'>
                       <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
-                        Arrière-plan
+                        {t('storyReader.background')}
                       </Text>
 
                       <View className='flex flex-row flex-wrap gap-3 justify-center'>
@@ -562,7 +561,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: '#000', borderWidth: 2, borderColor: '#333' }} />
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Noir</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.black')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -575,7 +574,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>🌙</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Étoilé</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.starry')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -588,7 +587,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>🌊</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Océan</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.ocean')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -601,7 +600,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>🌲</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Forêt</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.forest')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -614,7 +613,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>🌅</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Coucher</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.sunset')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -627,7 +626,7 @@ export default function FullScreenStoryModal({
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>✨</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>Aurore</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.aurora')}</Text>
                         </TouchableOpacity>
                       </View>
                     </View>

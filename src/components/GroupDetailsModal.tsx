@@ -28,6 +28,7 @@ import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
 import LottieView from 'lottie-react-native';
+import { useTranslation } from 'react-i18next';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -38,6 +39,7 @@ type GroupDetailsModalProps = {
 };
 
 export default function GroupDetailsModal({ visible, group, onClose }: GroupDetailsModalProps) {
+  const { t } = useTranslation();
   const { isNight } = useTheme();
   const { playSound } = useSound();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -82,7 +84,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const removeMemberMutation = useRemoveMember();
 
   const groupMembers = group?.members || fetchedMembers;
-  const ownerName = group?.owner?.profil?.name || group?.owner?.email || 'Créateur inconnu';
+  const ownerName = group?.owner?.profil?.name || group?.owner?.email || t('groups.unknownCreator');
 
   const memberCount = groupMembers.length;
 
@@ -90,8 +92,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
     if (!inviteUsername.trim()) {
       Toast.show({
         type: 'error',
-        text1: 'Nom requis',
-        text2: 'Veuillez entrer un nom d\'utilisateur',
+        text1: t('groups.nameRequired'),
+        text2: t('groups.enterUsername'),
       });
       return;
     }
@@ -102,16 +104,16 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
         onSuccess: () => {
           Toast.show({
             type: 'success',
-            text1: 'Invitation envoyée',
-            text2: `Une invitation a été envoyée à ${inviteUsername}`,
+            text1: t('groups.invitationSent'),
+            text2: t('groups.invitationSentTo', { name: inviteUsername }),
           });
           setInviteUsername('');
         },
         onError: (error: any) => {
           Toast.show({
             type: 'error',
-            text1: 'Erreur',
-            text2: error.message || 'Impossible d\'envoyer l\'invitation',
+            text1: t('common.error'),
+            text2: error.message || t('groups.unableToInvite'),
           });
         },
       }
@@ -125,15 +127,15 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
         onSuccess: () => {
           Toast.show({
             type: 'success',
-            text1: 'Membre retiré',
-            text2: 'Le membre a été retiré du groupe',
+            text1: t('groups.memberRemoved'),
+            text2: t('groups.memberRemovedMessage'),
           });
         },
         onError: (error: any) => {
           Toast.show({
             type: 'error',
-            text1: 'Erreur',
-            text2: error.message || 'Impossible de retirer le membre',
+            text1: t('common.error'),
+            text2: error.message || t('groups.unableToRemove'),
           });
         },
       }
@@ -195,7 +197,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 </Text>
               </View>
               <Text className={`${isNight ? 'text-white/70' : 'text-slate-600'} text-base font-baloo mt-1`}>
-                {group.description || 'Aucune description'}
+                {group.description || t('groups.noDescription')}
               </Text>
             </View>
             <TouchableOpacity onPress={onClose} className="p-2">
@@ -222,7 +224,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 />
                 <Text className={`font-baloo-semibold ${activeTab === 'members' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
                   }`}>
-                  Membres
+                  {t('groups.members')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -244,7 +246,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 />
                 <Text className={`font-baloo-semibold ${activeTab === 'stories' ? 'text-white' : (isNight ? 'text-slate-400' : 'text-slate-600')
                   }`}>
-                  Histoires
+                  {t('groups.stories')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -254,13 +256,13 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {activeTab === 'members' && (
             <View className="mb-4">
               <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
-                Inviter un membre
+                {t('groups.inviteMember')}
               </Text>
               <View className="flex-row gap-2">
                 <TextInput
                   value={inviteUsername}
                   onChangeText={setInviteUsername}
-                  placeholder="Nom d'utilisateur"
+                  placeholder={t('groups.usernamePlaceholder')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                   className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
                   autoCapitalize="none"
@@ -273,7 +275,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   {inviteToGroupMutation.isPending ? (
                     <ActivityIndicator size="small" color="#ffffff" />
                   ) : (
-                    <Text className="text-white font-baloo-semibold">Inviter</Text>
+                    <Text className="text-white font-baloo-semibold">{t('groups.invite')}</Text>
                   )}
                 </TouchableOpacity>
               </View>
@@ -285,7 +287,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             <View className="flex-1">
               <View className="flex-row items-center justify-between mb-3">
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
-                  Membres du groupe
+                  {t('groups.groupMembers')}
                 </Text>
                 <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
                   <Feather name="users" size={14} color="#3b82f6" />
@@ -314,7 +316,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 <View className="items-center py-8">
                   <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                   <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                    Aucun membre dans ce groupe
+                    {t('groups.noMembers')}
                   </Text>
                 </View>
               ) : (
@@ -339,7 +341,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                             </Text>
                             {isOwner && (
                               <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} font-baloo text-sm`}>
-                                Propriétaire
+                                {t('groups.owner')}
                               </Text>
                             )}
                           </View>
@@ -369,7 +371,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             <View className="flex-1">
               <View className="flex-row items-center justify-between mb-3">
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
-                  Histoires du groupe
+                  {t('groups.groupStories')}
                 </Text>
                 <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
                   <Feather name="book" size={14} color="#3b82f6" />
@@ -398,13 +400,13 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 <View className="items-center py-8">
                   <Feather name="book-open" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                   <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                    Aucune histoire partagée dans ce groupe
+                    {t('groups.noSharedStories')}
                   </Text>
                 </View>
               ) : (
                 <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                   {groupStories.map((story: any) => {
-                    const authorName = story.author?.profil?.name || story.author?.email || 'Auteur inconnu';
+                    const authorName = story.author?.profil?.name || story.author?.email || t('groups.unknownAuthor');
 
                     return (
                       <TouchableOpacity
@@ -429,7 +431,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                                 {story.title}
                               </Text>
                               <Text className={`${isNight ? 'text-white/60' : 'text-slate-600'} font-baloo text-sm`}>
-                                Par {authorName}
+                                {t('groups.by')} {authorName}
                               </Text>
                             </View>
                             <Feather name="chevron-right" size={20} color={isNight ? '#94a3b8' : '#64748b'} />

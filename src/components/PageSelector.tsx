@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, Animated, Easing } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 interface PageSelectorProps {
   numPages: number;
@@ -9,6 +10,7 @@ interface PageSelectorProps {
 }
 
 export default function PageSelector({ numPages, setNumPages, isNight }: PageSelectorProps) {
+  const { t } = useTranslation();
   const maxPages = 10;
 
   const [currentIndex, setCurrentIndex] = useState(numPages - 6);
@@ -52,7 +54,7 @@ export default function PageSelector({ numPages, setNumPages, isNight }: PageSel
 
   return (
     <View className="text-center mb-4">
-      <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Nombre de pages</Text>
+      <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('storyCreation.numPages')}</Text>
 
       <View className="flex-row justify-end items-center space-x-10">
         <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>

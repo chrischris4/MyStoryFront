@@ -121,9 +121,10 @@ export default function LoginScreen() {
             {({ handleChange, handleSubmit, values, errors, touched, setTouched }) => (
               <>
                 <View className="mb-4">
+                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.email')}
+                    placeholder={t('auth.emailPlaceholder')}
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -134,9 +135,10 @@ export default function LoginScreen() {
                 </View>
 
                 <View className="mb-4">
+                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
                   <TextInput
                     className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.password')}
+                    placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     value={values.password}
                     onChangeText={handleChange('password')}
@@ -147,7 +149,7 @@ export default function LoginScreen() {
                 </View>
 
                 <TouchableOpacity
-                  className="bg-[#38b6ff] rounded-xl py-4 w-full mb-4"
+                  className="bg-[#38b6ff] rounded-xl h-14 flex justify-center items-center w-full mb-4"
                   onPress={() => {
                     setTouched({ email: true, password: true });
                     handleSubmit();

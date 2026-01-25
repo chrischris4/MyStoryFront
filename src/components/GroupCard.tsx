@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useTranslation } from 'react-i18next';
 
 type GroupCardProps = {
     group: any;
@@ -10,8 +11,9 @@ type GroupCardProps = {
 };
 
 export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
+    const { t } = useTranslation();
     const memberCount = group._count?.members || 0;
-        const storiesCount = group._count?.stories || 0;
+    const storiesCount = group._count?.stories || 0;
 
 
     return (
@@ -26,19 +28,19 @@ export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
                     {group.name}
                 </Text>
                 <Text className={`${isNight ? "text-white/70" : "text-slate-600"} text-base font-baloo mt-1`}>
-                    {group.description || 'Aucune description'}
+                    {group.description || t('groups.noDescription')}
                 </Text>
                 <View className="flex-row items-center mt-2 gap-4">
                     <View className='flex flex-row items-center gap-1'>
                     <Feather name="users" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
-                        {memberCount} membres
+                        {t('groups.membersCount', { count: memberCount })}
                     </Text>
                     </View>
                     <View className='flex flex-row items-center gap-1'>
                     <Feather name="book" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
-                        {storiesCount} histoires
+                        {t('groups.storiesCount', { count: storiesCount })}
                     </Text>
                     </View>
                 </View>

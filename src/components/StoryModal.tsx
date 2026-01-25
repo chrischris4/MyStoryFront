@@ -7,6 +7,7 @@ import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { BlurView } from 'expo-blur';
 import LottieView from 'lottie-react-native';
 import StarryBackground from './StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 type StoryPage = {
     page: number;
@@ -23,6 +24,7 @@ type StoryModalProps = {
 };
 
 export default function StoryModal({ loading, title, storyPages, storyId, onClose }: StoryModalProps) {
+    const { t } = useTranslation();
     const { minimize } = useStoryCreationStore();
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
@@ -208,12 +210,12 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             />
                             <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-11/12 abolute top-4'>
                                 <Animated.Text className="text-xl font-baloo-medium text-center ">
-                                    Création en cours
+                                    {t('storyCreation.creationInProgress')}
                                 </Animated.Text>
                             </View>
                             <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
                                 <Animated.Text className="text-base font-baloo text-center">
-                                    Le temps de te chercher quelque chose à boire et ton histoire sera prète !
+                                    {t('storyCreation.creationWaitMessage')}
                                 </Animated.Text>
                             </View>
                         </View>
@@ -236,7 +238,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             <View>
                                 <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
                                     <Animated.Text className="text-xl font-baloo text-center">
-                                        Ton histoire est prête !
+                                        {t('storyCreation.storyReady')}
                                     </Animated.Text>
                                 </View>
 
@@ -268,7 +270,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                 }}
                             >
                                 <Animated.Text className="text-lg font-baloo-medium text-center">
-                                    Découvrir ton histoire
+                                    {t('storyCreation.discoverStory')}
                                 </Animated.Text>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -277,7 +279,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                 onPress={handleMinimize}
                             >
                                 <Animated.Text className="text-lg font-baloo-medium text-center">
-                                    Créer une nouvelle histoire !
+                                    {t('storyCreation.createNewStory')}
                                 </Animated.Text>
                             </TouchableOpacity>
                         </View>

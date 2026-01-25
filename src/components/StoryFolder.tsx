@@ -23,6 +23,7 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import { BlurView } from 'expo-blur';
+import { useTranslation } from 'react-i18next';
 
 type StoryFolderNavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList>,
@@ -83,6 +84,7 @@ export default function StoryFolder({
     isNight,
     isLoading = false,
 }: StoryFolderProps) {
+    const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
@@ -172,7 +174,7 @@ const handleToggle = () => {
     } else {
         const EXPANDED_TOP = 10; // top souhaité
         width.value = SCREEN_WIDTH;
-        height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT; 
+        height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
         translateY.value = EXPANDED_TOP - layoutY;
         setTimeout(() => setShowContent(true), 1000);
     }
@@ -238,17 +240,17 @@ const handleToggle = () => {
                             <View className="flex-1 items-center justify-center mt-6">
                                 <ActivityIndicator size="large" color={isNight ? "#ffffff" : "#1e293b"} />
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo mt-2`}>
-                                    Chargement...
+                                    {t('common.loading')}
                                 </Text>
                             </View>
                         ) : expanded && showContent && stories.length === 0 ? (
                             <View className="flex-1 items-center  mt-6">
-                                <Text className="text-gray-500 mb-4 font-baloo-medium">Pas d'histoires créées.</Text>
+                                <Text className="text-gray-500 mb-4 font-baloo-medium">{t('storyFolder.noStoriesCreated')}</Text>
                                 <TouchableOpacity
                                     className="bg-white px-4 py-2 rounded-lg"
                                     onPress={() => navigation.navigate('CreateStory')}
                                 >
-                                    <Text className="font-baloo-semibold">Créer une histoire</Text>
+                                    <Text className="font-baloo-semibold">{t('storyFolder.createStory')}</Text>
                                 </TouchableOpacity>
                             </View>
                         ) : expanded && showContent ? (
@@ -285,7 +287,7 @@ const handleToggle = () => {
                                             )}
                                             <View className='flex flex-row gap-1 justify-between items-center w-full'>
                                                 <Text className="text-base font-baloo-semibold text-black ml-2">
-                                                    Auteur : <Text className='font-baloo'>{item.user?.profil?.name || 'Anonyme'}</Text>
+                                                    {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
                                                 </Text>
                                                 <Text className="text-lg font-medium mr-2"><Feather name="heart" size={14} color="#334155" /></Text>
                                             </View>

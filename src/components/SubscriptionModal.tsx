@@ -3,6 +3,7 @@ import { View, Text, Modal, TouchableOpacity, Pressable } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import { useTranslation } from 'react-i18next';
 
 type SubscriptionModalProps = {
     visible: boolean;
@@ -27,6 +28,8 @@ export default function SubscriptionModal({
     onSelectYearly,
     isNight,
 }: SubscriptionModalProps) {
+    const { t } = useTranslation();
+
     return (
         <Modal
             visible={visible}
@@ -64,7 +67,7 @@ export default function SubscriptionModal({
                             {/* Features */}
                             <View className="mb-6">
                                 <Text className={`text-lg font-baloo-semibold mb-2 ${isNight ? 'text-white' : 'text-slate-700'}`}>
-                                    Ce qui est inclus :
+                                    {t('subscription.included')}
                                 </Text>
                                 {planFeatures.map((feature, index) => (
                                     <View key={index} className="flex-row items-center mb-2">
@@ -96,7 +99,7 @@ export default function SubscriptionModal({
                                         <View className="flex-row justify-between items-center pt-1">
                                             <View>
                                                 <Text className={`text-xl font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
-                                                    Paiement mensuel
+                                                    {t('subscription.monthlyPayment')}
                                                 </Text>
 
                                             </View>
@@ -120,16 +123,16 @@ export default function SubscriptionModal({
                                     >
                                         <View className="absolute top-4 right-4 flex items-center justify-center bg-green-500 h-7 px-4 rounded-lg">
                                             <Text className="text-white text-xs font-baloo-semibold pt-1">
-                                                Économisez 20%
+                                                {t('subscription.save20')}
                                             </Text>
                                         </View>
                                         <View className="flex-row justify-between items-center">
                                             <View>
                                                 <Text className={`text-xl font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
-                                                    Paiement annuel
+                                                    {t('subscription.yearlyPayment')}
                                                 </Text>
                                                 <Text className={`text-sm font-baloo mt-3 ${isNight ? 'text-white/60' : 'text-slate-500'}`}>
-                                                    Meilleure offre
+                                                    {t('subscription.bestOffer')}
                                                 </Text>
                                             </View>
                                             <Text className={`text-2xl self-end -mb-2 font-baloo-bold ${isNight ? 'text-white' : 'text-slate-800'}`}>

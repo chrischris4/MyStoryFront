@@ -83,7 +83,7 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-      <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
+      <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white p-[10%]">
         <View className='w-[70%]'>
           <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">{t('auth.register')}</Text>
 
@@ -95,9 +95,10 @@ export default function RegisterScreen() {
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <>
                 <View className="mb-4">
+                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.email')}
+                    placeholder={t('auth.emailPlaceholder')}
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -109,9 +110,10 @@ export default function RegisterScreen() {
                 </View>
 
                 <View className="mb-4">
+                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
                   <TextInput
                     className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.password')}
+                    placeholder={t('auth.passwordPlaceholder')}
                     secureTextEntry
                     value={values.password}
                     onChangeText={handleChange('password')}
@@ -123,9 +125,10 @@ export default function RegisterScreen() {
                 </View>
 
                 <View className="mb-4">
+                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.confirmPassword')}</Text>
                   <TextInput
                     className={`w-full border ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.confirmPassword')}
+                    placeholder={t('auth.confirmPasswordPlaceholder')}
                     secureTextEntry
                     value={values.confirmPassword}
                     onChangeText={handleChange('confirmPassword')}
@@ -137,7 +140,7 @@ export default function RegisterScreen() {
                 </View>
 
                 <TouchableOpacity
-                  className={`${isSubmitting ? 'bg-gray-400' : 'bg-[#38b6ff]'} rounded-xl py-4 w-full mb-4`}
+                  className={`${isSubmitting ? 'bg-gray-400' : 'bg-[#38b6ff]'} rounded-xl w-full mb-4 h-14 justify-center items-center`}
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
