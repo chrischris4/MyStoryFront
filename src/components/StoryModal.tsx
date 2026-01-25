@@ -123,159 +123,168 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
     };
 
     return (
-        <View
-            className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
-        >
-            <Animated.View
-                style={{
-                    flex: 1,
-                    backgroundColor: animatedSkyColor,
-                    overflow: 'hidden',
-                    borderRadius: 10,
-                }}
-            >
-                {/* Étoiles */}
-                <StarryBackground starCount={50} animatedStyle={{ opacity: starsOpacity }} />
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
 
-                {/* Cercle Soleil / Lune */}
+            {/* Cet overlay transparent (ou semi-noir) intercepte les clics */}
+            <TouchableOpacity
+                activeOpacity={1}
+                style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} // Optionnel: assombrit le fond
+                onPress={() => { /* Optionnel: fermer la modal au clic extérieur */ }}
+            />
+            <View
+                className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
+            >
                 <Animated.View
                     style={{
-                        position: 'absolute',
-                        width: orbitSize,
-                        height: orbitSize,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        top: 60,
-                        right: -100,
-                        transform: [{ rotate }],
+                        flex: 1,
+                        backgroundColor: animatedSkyColor,
+                        overflow: 'hidden',
+                        borderRadius: 10,
                     }}
                 >
-                    {/* Soleil */}
-                    <View style={{
-                        position: 'absolute',
-                        top: 0,
-                        width: sunSize,
-                        height: sunSize,
-                        borderRadius: 100,
-                        backgroundColor: '#FFD700',
-                    }} />
-                    {/* Lune */}
+                    {/* Étoiles */}
+                    <StarryBackground starCount={50} animatedStyle={{ opacity: starsOpacity }} />
+
+                    {/* Cercle Soleil / Lune */}
                     <Animated.View
                         style={{
                             position: 'absolute',
-                            bottom: 10,
-                            alignSelf: 'center',
+                            width: orbitSize,
+                            height: orbitSize,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            top: 60,
+                            right: -100,
+                            transform: [{ rotate }],
                         }}
                     >
-                        <LottieView
-                            source={require('../../assets/animations/moon.json')}
-                            autoPlay
-
-                            loop={true}
+                        {/* Soleil */}
+                        <View style={{
+                            position: 'absolute',
+                            top: 0,
+                            width: sunSize,
+                            height: sunSize,
+                            borderRadius: 100,
+                            backgroundColor: '#FFD700',
+                        }} />
+                        {/* Lune */}
+                        <Animated.View
                             style={{
-                                width: 150, height: 150, position: 'absolute',
-                                bottom: 0,
+                                position: 'absolute',
+                                bottom: 10,
+                                alignSelf: 'center',
                             }}
-                        />
+                        >
+                            <LottieView
+                                source={require('../../assets/animations/moon.json')}
+                                autoPlay
+
+                                loop={true}
+                                style={{
+                                    width: 150, height: 150, position: 'absolute',
+                                    bottom: 0,
+                                }}
+                            />
+                        </Animated.View>
                     </Animated.View>
-                </Animated.View>
 
 
 
-                {/* Contenu texte et boutons */}
-                {loading ? (
-                    <View className="flex h-full justify-end items-center relative mb-4">
-                        <Animated.View
-                            style={{
-                                backgroundColor: groundColor,
-                                borderWidth: 4,
-                                borderColor: groundBorderColor,
-                                width: '200%',
-                                alignSelf: 'center',
-                                aspectRatio: 1,
-                                borderRadius: 9999,
-                                position: 'absolute',
-                                bottom: '-130%',
-                            }}
-                        />
-                        <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-11/12 abolute top-4'>
-                            <Animated.Text className="text-xl font-baloo-medium text-center ">
-                                Création en cours
-                            </Animated.Text>
-                        </View>
-                        <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
-                            <Animated.Text className="text-base font-baloo text-center">
-                                Le temps de te chercher quelque chose à boire et ton histoire sera prète !
-                            </Animated.Text>
-                        </View>
-                    </View>
-                ) : (
-                    <View className="flex-1 w-full justify-between relative p-2">
-                        <Animated.View
-                            style={{
-                                backgroundColor: groundColor,
-                                borderTopWidth: 4,
-                                borderColor: groundBorderColor,
-                                width: '200%',
-                                alignSelf: 'center',
-                                aspectRatio: 1,
-                                borderRadius: 9999,
-                                position: 'absolute',
-                                bottom: '-130%',
-                            }}
-                        />
-
-                        <View>
-                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
-                                <Animated.Text className="text-xl font-baloo text-center">
-                                    Ton histoire est prête !
+                    {/* Contenu texte et boutons */}
+                    {loading ? (
+                        <View className="flex h-full justify-end items-center relative mb-4">
+                            <Animated.View
+                                style={{
+                                    backgroundColor: groundColor,
+                                    borderWidth: 4,
+                                    borderColor: groundBorderColor,
+                                    width: '200%',
+                                    alignSelf: 'center',
+                                    aspectRatio: 1,
+                                    borderRadius: 9999,
+                                    position: 'absolute',
+                                    bottom: '-130%',
+                                }}
+                            />
+                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-11/12 abolute top-4'>
+                                <Animated.Text className="text-xl font-baloo-medium text-center ">
+                                    Création en cours
                                 </Animated.Text>
                             </View>
-
-                            {storyPages.length > 0 && (
-                                <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
-                                    <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
-                                        <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
-                                            {title}
-                                        </Animated.Text>
-                                        <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
-                                            <Image
-                                                source={{ uri: storyPages[0].imageUrl }}
-                                                style={{ width: '100%', height: 200, borderRadius: 16 }}
-                                                resizeMode="cover"
-                                            />
-                                        </View>
-                                    </BlurView>
-                                </View>
-                            )}
+                            <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
+                                <Animated.Text className="text-base font-baloo text-center">
+                                    Le temps de te chercher quelque chose à boire et ton histoire sera prète !
+                                </Animated.Text>
+                            </View>
                         </View>
-                        <TouchableOpacity
-                            style={{ borderRadius: 24, overflow: 'hidden' }}
-                            className='bg-white p-4 -mb-2'
-                            onPress={() => {
-                                if (storyId) {
-                                    navigation.navigate('StoryDetail', { storyId: Number(storyId) });
-                                    onClose();
-                                }
-                            }}
-                        >
-                            <Animated.Text className="text-lg font-baloo-medium text-center">
-                                Découvrir ton histoire
-                            </Animated.Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{ borderRadius: 24, overflow: 'hidden' }}
-                            className='bg-white p-4'
-                            onPress={handleMinimize}
-                        >
-                            <Animated.Text className="text-lg font-baloo-medium text-center">
-                                Créer une nouvelle histoire !
-                            </Animated.Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-                }
-            </Animated.View >
-        </View >
+                    ) : (
+                        <View className="flex-1 w-full justify-between relative p-2">
+                            <Animated.View
+                                style={{
+                                    backgroundColor: groundColor,
+                                    borderTopWidth: 4,
+                                    borderColor: groundBorderColor,
+                                    width: '200%',
+                                    alignSelf: 'center',
+                                    aspectRatio: 1,
+                                    borderRadius: 9999,
+                                    position: 'absolute',
+                                    bottom: '-130%',
+                                }}
+                            />
+
+                            <View>
+                                <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
+                                    <Animated.Text className="text-xl font-baloo text-center">
+                                        Ton histoire est prête !
+                                    </Animated.Text>
+                                </View>
+
+                                {storyPages.length > 0 && (
+                                    <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
+                                        <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
+                                            <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
+                                                {title}
+                                            </Animated.Text>
+                                            <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
+                                                <Image
+                                                    source={{ uri: storyPages[0].imageUrl }}
+                                                    style={{ width: '100%', height: 200, borderRadius: 16 }}
+                                                    resizeMode="cover"
+                                                />
+                                            </View>
+                                        </BlurView>
+                                    </View>
+                                )}
+                            </View>
+                            <TouchableOpacity
+                                style={{ borderRadius: 24, overflow: 'hidden' }}
+                                className='bg-white p-4 -mb-2'
+                                onPress={() => {
+                                    if (storyId) {
+                                        navigation.navigate('StoryDetail', { storyId: Number(storyId) });
+                                        onClose();
+                                    }
+                                }}
+                            >
+                                <Animated.Text className="text-lg font-baloo-medium text-center">
+                                    Découvrir ton histoire
+                                </Animated.Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ borderRadius: 24, overflow: 'hidden' }}
+                                className='bg-white p-4'
+                                onPress={handleMinimize}
+                            >
+                                <Animated.Text className="text-lg font-baloo-medium text-center">
+                                    Créer une nouvelle histoire !
+                                </Animated.Text>
+                            </TouchableOpacity>
+                        </View>
+                    )
+                    }
+                </Animated.View >
+            </View >
+        </View>
     );
 }

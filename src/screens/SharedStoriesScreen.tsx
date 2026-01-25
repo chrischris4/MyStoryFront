@@ -156,6 +156,33 @@ export default function SharedStoriesScreen() {
           stories={sharedStories}
           isLoading={loading}
         />
+        {!isPremium && (
+          <View className="absolute bottom-60 right-24 z-40">
+            <View
+              className="px-4 py-3 rounded-2xl bg-white text-black"
+            >
+              <Text className="font-baloo-medium text-center">
+                Hey ! Je vends des abonnements !
+              </Text>
+            </View>
+            {/* Petite flèche de la bulle */}
+            <View
+              style={{
+                position: 'absolute',
+                bottom: -10,
+                right: 20,
+                width: 0,
+                height: 0,
+                borderLeftWidth: 10,
+                borderRightWidth: 10,
+                borderTopWidth: 12,
+                borderLeftColor: 'transparent',
+                borderRightColor: 'transparent',
+                borderTopColor: 'white',
+              }}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

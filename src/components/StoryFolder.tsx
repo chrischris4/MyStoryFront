@@ -77,8 +77,6 @@ const StorySkeleton = () => {
 export default function StoryFolder({
     isShared,
     title,
-    storyType,
-    icon,
     isPremium,
     description,
     stories,
@@ -88,12 +86,9 @@ export default function StoryFolder({
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
-    const [showMessage, setShowMessage] = useState(false);
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
-    const messageOpacity = useSharedValue(0);
-    const messageTranslateY = useSharedValue(50);
     const lockRotate = useSharedValue(0);
     const lockScale = useSharedValue(1);
     const navigation = useNavigation<StoryFolderNavigationProp>();
@@ -102,11 +97,6 @@ export default function StoryFolder({
         height: withTiming(height.value, { duration: 300 }),
         borderRadius: withTiming(expanded ? 0 : 24, { duration: 300 }),
         transform: [{ translateY: withTiming(translateY.value, { duration: 300 }) }],
-    }));
-
-    const messageStyle = useAnimatedStyle(() => ({
-        opacity: messageOpacity.value,
-        transform: [{ translateY: messageTranslateY.value }],
     }));
 
     const lockStyle = useAnimatedStyle(() => ({
@@ -121,67 +111,56 @@ export default function StoryFolder({
         setLayoutY(y);
     };
 
-    const showPremiumMessage = () => {
-        // Animation du message
-        setShowMessage(true);
-        messageOpacity.value = withTiming(1, { duration: 300 });
-        messageTranslateY.value = withTiming(0, { duration: 300 });
+const shakeLock = () => {
+    // Animation du cadenas - secousse et agrandissement
+    lockScale.value = withTiming(1.3, { duration: 100 });
+    lockRotate.value = withTiming(-15, { duration: 100 });
 
-        // Animation du cadenas - secousse et agrandissement
-        lockScale.value = withTiming(1.3, { duration: 100 });
+    setTimeout(() => {
+        lockRotate.value = withTiming(15, { duration: 100 });
+    }, 100);
+
+    setTimeout(() => {
         lockRotate.value = withTiming(-15, { duration: 100 });
+    }, 200);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(15, { duration: 100 });
-        }, 100);
+    setTimeout(() => {
+        lockRotate.value = withTiming(15, { duration: 100 });
+    }, 300);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(-15, { duration: 100 });
-        }, 200);
+    setTimeout(() => {
+        lockRotate.value = withTiming(-12, { duration: 100 });
+    }, 400);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(15, { duration: 100 });
-        }, 300);
+    setTimeout(() => {
+        lockRotate.value = withTiming(12, { duration: 100 });
+    }, 500);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(-12, { duration: 100 });
-        }, 400);
+    setTimeout(() => {
+        lockRotate.value = withTiming(-10, { duration: 100 });
+    }, 600);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(12, { duration: 100 });
-        }, 500);
+    setTimeout(() => {
+        lockRotate.value = withTiming(10, { duration: 100 });
+    }, 700);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(-10, { duration: 100 });
-        }, 600);
+    setTimeout(() => {
+        lockRotate.value = withTiming(-5, { duration: 100 });
+    }, 800);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(10, { duration: 100 });
-        }, 700);
+    setTimeout(() => {
+        lockRotate.value = withTiming(5, { duration: 100 });
+    }, 900);
 
-        setTimeout(() => {
-            lockRotate.value = withTiming(-5, { duration: 100 });
-        }, 800);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(5, { duration: 100 });
-        }, 900);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(0, { duration: 150 });
-            lockScale.value = withTiming(1, { duration: 150 });
-        }, 1000);
-
-        setTimeout(() => {
-            messageOpacity.value = withTiming(0, { duration: 300 });
-            messageTranslateY.value = withTiming(50, { duration: 300 });
-            setTimeout(() => setShowMessage(false), 300);
-        }, 3000);
-    };
+    setTimeout(() => {
+        lockRotate.value = withTiming(0, { duration: 150 });
+        lockScale.value = withTiming(1, { duration: 150 });
+    }, 1000);
+};
 
 const handleToggle = () => {
     if (!isPremium && isShared && !expanded) {
-        showPremiumMessage();
+        shakeLock();
         return;
     }
 
@@ -209,7 +188,7 @@ const handleToggle = () => {
                 if (!expanded) handleToggle();
             }}
             className="flex items-center justify-center w-full"
-            style={{ zIndex: showMessage ? 9999 : 20 }}
+            style={{ zIndex: 20 }}
             onLayout={onLayout}
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
@@ -221,7 +200,7 @@ const handleToggle = () => {
                         <Feather
                             name="lock"
                             size={20}
-                            color='black'
+                            color={isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"}
                         />
 
                     </Animated.View>
@@ -318,38 +297,6 @@ const handleToggle = () => {
                     </View>
                 </BlurView>
             </Animated.View>
-
-            {showMessage && (
-                <Animated.View
-                    style={[
-                        messageStyle,
-                        {
-                            position: 'absolute',
-                            top: 50,
-                            left: 20,
-                            right: 20,
-                            backgroundColor: isNight ? '#1e293b' : '#334155',
-                            padding: 16,
-                            borderRadius: 12,
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 4 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 8,
-                            elevation: 8,
-                            zIndex: 50,
-                        },
-                    ]}
-                >
-                    <Text className="text-white font-baloo-medium">
-                        Il te faut un plan supérieur pour voir ces histoire
-                    </Text>
-                    <Text className="text-white font-baloo-medium">
-                        Va visiter la boutique près de l'arbre !
-                    </Text>
-                </Animated.View>
-            )}
         </Pressable>
     );
 }

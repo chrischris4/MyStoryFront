@@ -9,6 +9,8 @@ type ConfirmationModalProps = {
   numPages: number;
   styleName: string;
   styleEmoji: string;
+  languageName: string;
+  languageFlag: string;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -20,6 +22,8 @@ export default function ConfirmationModal({
   numPages,
   styleName,
   styleEmoji,
+  languageName,
+  languageFlag,
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
@@ -69,7 +73,7 @@ export default function ConfirmationModal({
                 </View>
               </View>
 
-              {/* Style et Pages */}
+              {/* Style, Langue et Pages */}
               <View className="flex-row gap-3 mb-4">
                 {/* Style */}
                 <View className="flex-1">
@@ -84,16 +88,29 @@ export default function ConfirmationModal({
                   </View>
                 </View>
 
-                {/* Nombre de pages */}
+                {/* Langue */}
                 <View className="flex-1">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
-                    Nombre de pages
+                    Langue
                   </Text>
-                  <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
-                    <Text className="text-gray-800 text-2xl font-bold">
-                      {numPages}
+                  <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
+                    <Text className="text-2xl mr-2">{languageFlag}</Text>
+                    <Text className="text-gray-800 font-semibold flex-1">
+                      {languageName}
                     </Text>
                   </View>
+                </View>
+              </View>
+
+              {/* Nombre de pages */}
+              <View className="mb-4">
+                <Text className="text-gray-500 text-sm font-semibold mb-1">
+                  Nombre de pages
+                </Text>
+                <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
+                  <Text className="text-gray-800 text-2xl font-bold">
+                    {numPages}
+                  </Text>
                 </View>
               </View>
 

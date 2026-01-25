@@ -7,6 +7,7 @@ type CreateStoryInput = {
   numberOfPages: number;
   title: string;
   style: string;
+  language: string;
 };
 
 type StoryPage = {
@@ -39,7 +40,9 @@ const createStory = async (
   });
 
   if (!response.ok) {
-    throw new Error('Erreur lors de la création de l\'histoire');
+    const errorData = await response.json().catch(() => null);
+    console.error('❌ Réponse serveur:', response.status, errorData);
+    throw new Error(errorData?.message || 'Erreur lors de la création de l\'histoire');
   }
 
   const data = await response.json();

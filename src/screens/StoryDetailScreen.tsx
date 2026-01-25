@@ -302,7 +302,7 @@ export default function StoryDetailScreen() {
             overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
           }}
         >
-          <View className='flex flex-col p-4 items-center'>
+          <View className='flex flex-col items-center'>
             {/* Skeleton Title */}
             <Animated.View
               style={{
@@ -319,11 +319,9 @@ export default function StoryDetailScreen() {
             <Animated.View
               style={{
                 opacity: skeletonAnim,
-                width: 200,
-                height: 200,
                 backgroundColor: isNight ? '#475569' : '#cbd5e1',
-                borderRadius: 100,
               }}
+              className="w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden"
             />
 
             {/* Skeleton Author */}
@@ -430,7 +428,7 @@ export default function StoryDetailScreen() {
       <ScrollView
         ref={scrollViewRef}
         className="flex-grow px-4 z-20"
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: 70 }}
         scrollEventThrottle={16}
         onScroll={handleGoBackTopScroll}
       >
@@ -444,7 +442,7 @@ export default function StoryDetailScreen() {
             overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
           }}
         >
-          <View className='flex flex-col p-4'>
+          <View className='flex flex-col'>
             <Text className={`text-3xl font-baloo-bold mb-2 mt-2 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
               <View

@@ -40,6 +40,22 @@ type StoryStyle = {
   imageUrl: string;
 };
 
+type Language = {
+  id: string;
+  name: string;
+  flag: string;
+};
+
+const LANGUAGES: Language[] = [
+  { id: 'fr', name: 'Français', flag: '🇫🇷' },
+  { id: 'en', name: 'English', flag: '🇬🇧' },
+  { id: 'es', name: 'Español', flag: '🇪🇸' },
+  { id: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  // { id: 'it', name: 'Italiano', flag: '🇮🇹' },
+  // { id: 'pt', name: 'Português', flag: '🇵🇹' },
+  { id: 'da', name: 'Dansk', flag: '🇩🇰' },
+];
+
 const STORY_STYLES: StoryStyle[] = [
   {
     id: 'CLASSIQUE',
@@ -82,6 +98,8 @@ const createStorySchema = Yup.object().shape({
     .required('Le nombre de pages est requis'),
   selectedStyle: Yup.string()
     .required('Le style est requis'),
+  language: Yup.string()
+    .required('La langue est requise'),
 });
 
 type CreateStoryScreenNavigationProp = CompositeNavigationProp<
@@ -165,6 +183,7 @@ export default function CreateStoryScreen() {
       prompt: '',
       numPages: 6,
       selectedStyle: 'CLASSIQUE',
+      language: 'fr',
     },
     validationSchema: createStorySchema,
     onSubmit: async (values) => {
@@ -175,18 +194,24 @@ export default function CreateStoryScreen() {
       startCreation(values.title);
 
       try {
-        // Utiliser la mutation React Query
-        const story = await createStoryMutation.mutateAsync({
+        const payload = {
           prompt: values.prompt,
           numberOfPages: values.numPages,
           title: values.title,
-          style: values.selectedStyle
-        });
+          style: values.selectedStyle,
+          language: values.language
+        };
+        console.log('📤 Payload envoyé:', JSON.stringify(payload, null, 2));
 
+        // Utiliser la mutation React Query
+        const story = await createStoryMutation.mutateAsync(payload);
+
+        console.log('✅ Story créée:', story);
         // Mettre à jour le store avec les résultats
         updateProgress(story.pages, story.id, false);
 
       } catch (error) {
+        console.error('❌ Erreur création:', error);
         Toast.show({
           type: 'error',
           text1: 'Erreur',
@@ -208,6 +233,7 @@ export default function CreateStoryScreen() {
       prompt: true,
       numPages: true,
       selectedStyle: true,
+      language: true,
     });
 
     // Si pas d'erreurs, ouvrir la modal de confirmation
@@ -519,6 +545,43 @@ export default function CreateStoryScreen() {
               </BlurView>
             </View>
 
+            {/* 🌍 Bloc Langue */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              <BlurView
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+              >
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Langue de l'histoire</Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {LANGUAGES.map((lang) => {
+                    const isSelected = formik.values.language === lang.id;
+                    return (
+                      <TouchableOpacity
+                        key={lang.id}
+                        onPress={() => formik.setFieldValue('language', lang.id)}
+                        className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                      >
+                        <Text className="text-xl">{lang.flag}</Text>
+                        <Text className={`font-baloo-medium ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
+                          {lang.name}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                {formik.touched.language && formik.errors.language && (
+                  <Text className="text-red-500 text-sm mt-2">{formik.errors.language}</Text>
+                )}
+              </BlurView>
+            </View>
+
             {/* 🧡 Sélecteur de pages */}
             <View
               style={{
@@ -544,8 +607,8 @@ export default function CreateStoryScreen() {
             </View>
 
             {/* Messages d'erreur résumés */}
-            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle) &&
-              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle) && (
+            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language) &&
+              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language) && (
                 <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
                   <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>Informations manquantes</Text>
                   <View className="gap-1">
@@ -560,6 +623,9 @@ export default function CreateStoryScreen() {
                     )}
                     {formik.touched.selectedStyle && formik.errors.selectedStyle && (
                       <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.selectedStyle}</Text>
+                    )}
+                    {formik.touched.language && formik.errors.language && (
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.language}</Text>
                     )}
                   </View>
                 </View>
@@ -588,6 +654,8 @@ export default function CreateStoryScreen() {
         numPages={formik.values.numPages}
         styleName={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.name || ''}
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
+        languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
+        languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
         onConfirm={() => formik.handleSubmit()}
         onCancel={() => setShowConfirmationModal(false)}
       />
