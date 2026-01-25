@@ -109,6 +109,18 @@
     "privacy": "Privacy",
     "about": "About"
   },
+  "transactions": {
+    "title": "Purchase History",
+    "noTransactions": "No transactions",
+    "noTransactionsMessage": "You haven't made any purchases yet",
+    "subscription": "Subscription",
+    "tokenPack": "Token pack",
+    "tokens": "{{count}} tokens",
+    "completed": "Completed",
+    "pending": "Pending",
+    "failed": "Failed",
+    "loadError": "Error loading transactions"
+  },
   "billing": {
     "title": "Shop",
     "tokenPacks": "Token Packs",

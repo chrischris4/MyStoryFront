@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking, Modal, ActivityIndicator } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -12,6 +12,7 @@ import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
+import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
 
 export default function SettingsScreen() {
     const { t } = useTranslation();
@@ -20,6 +21,10 @@ export default function SettingsScreen() {
     const { logout, user } = useAuth();
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
+    const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
+
+    // Hook pour les transactions (enabled seulement quand la modal est visible)
+    const { data: transactions = [], isLoading: isLoadingTransactions, error: transactionsError } = useTransactionsByUser(isHistoryModalVisible);
 
     // Hook pour les sons
     const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
@@ -192,7 +197,15 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
-                    <TouchableOpacity style={styles.button} onPress={handleBilling}>
+                    <TouchableOpacity
+  style={styles.button}
+  onPress={() => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    playSound('pop');
+    setIsHistoryModalVisible(true);
+  }}
+>
+
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
                 </BlurView>
@@ -262,6 +275,117 @@ export default function SettingsScreen() {
                 visible={isEditProfilModalVisible}
                 onClose={() => setIsEditProfilModalVisible(false)}
             />
+
+            {/* Modal Historique des transactions */}
+            <Modal
+                visible={isHistoryModalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setIsHistoryModalVisible(false)}
+            >
+                <View className="flex-1 justify-center items-center bg-black/50 px-4">
+                    <BlurView
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? "dark" : "light"}
+                        className="rounded-3xl w-full max-w-lg overflow-hidden"
+                        style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', maxHeight: '80%' }}
+                    >
+                        {/* Header */}
+                        <View className={`${isNight ? 'bg-slate-900' : 'bg-[#0D1821]'} p-6`}>
+                            <Text className="text-white text-2xl font-baloo-bold text-center">
+                                {t('transactions.title')}
+                            </Text>
+                        </View>
+
+                        {/* Content */}
+                        <View className="p-4" style={{ maxHeight: 400 }}>
+                            {isLoadingTransactions ? (
+                                <View className="items-center justify-center py-8">
+                                    <ActivityIndicator size="large" color={isNight ? '#fff' : '#0D1821'} />
+                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
+                                        {t('common.loading')}
+                                    </Text>
+                                </View>
+                            ) : transactionsError ? (
+                                <View className="items-center justify-center py-8">
+                                    <Feather name="alert-circle" size={48} color={isNight ? '#ef4444' : '#dc2626'} />
+                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4 text-center`}>
+                                        {t('transactions.loadError')}
+                                    </Text>
+                                </View>
+                            ) : transactions.length === 0 ? (
+                                <View className="items-center justify-center py-8">
+                                    <Feather name="shopping-bag" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
+                                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg mt-4`}>
+                                        {t('transactions.noTransactions')}
+                                    </Text>
+                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo text-center mt-2`}>
+                                        {t('transactions.noTransactionsMessage')}
+                                    </Text>
+                                </View>
+                            ) : (
+                                <ScrollView showsVerticalScrollIndicator={false}>
+                                    {transactions.map((transaction: Transaction) => (
+                                        <View
+                                            key={transaction.id}
+                                            className={`${isNight ? 'bg-slate-700' : 'bg-gray-100'} rounded-xl p-4 mb-3`}
+                                        >
+                                            <View className="flex-row justify-between items-start">
+                                                <View className="flex-1">
+                                                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-base`}>
+                                                        {transaction.subscription
+                                                            ? `${t('transactions.subscription')} - ${transaction.subscription.plan.name}`
+                                                            : transaction.product
+                                                                ? `${t('transactions.tokenPack')} - ${t('transactions.tokens', { count: transaction.product.coins })}`
+                                                                : 'Achat'
+                                                        }
+                                                    </Text>
+                                                    <Text className={`${isNight ? 'text-white/60' : 'text-gray-500'} font-baloo text-sm mt-1`}>
+                                                        {new Date(transaction.purchaseDate).toLocaleDateString('fr-FR', {
+                                                            day: '2-digit',
+                                                            month: 'long',
+                                                            year: 'numeric'
+                                                        })}
+                                                    </Text>
+                                                </View>
+                                                <View className="items-end">
+                                                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>
+                                                        {transaction.amount.toFixed(2)} {transaction.currency}
+                                                    </Text>
+                                                    <View className={`mt-1 px-2 py-1 rounded-full ${
+                                                        transaction.status === 'COMPLETED' ? 'bg-green-500/20' :
+                                                        transaction.status === 'PENDING' ? 'bg-yellow-500/20' : 'bg-red-500/20'
+                                                    }`}>
+                                                        <Text className={`text-xs font-baloo-medium ${
+                                                            transaction.status === 'COMPLETED' ? 'text-green-600' :
+                                                            transaction.status === 'PENDING' ? 'text-yellow-600' : 'text-red-600'
+                                                        }`}>
+                                                            {transaction.status === 'COMPLETED' ? t('transactions.completed') :
+                                                             transaction.status === 'PENDING' ? t('transactions.pending') : t('transactions.failed')}
+                                                        </Text>
+                                                    </View>
+                                                </View>
+                                            </View>
+                                        </View>
+                                    ))}
+                                </ScrollView>
+                            )}
+                        </View>
+
+                        {/* Actions */}
+                        <View className="p-4 pt-0">
+                            <TouchableOpacity
+                                className={`${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
+                                onPress={() => setIsHistoryModalVisible(false)}
+                            >
+                                <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
+                                    {t('common.close')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </BlurView>
+                </View>
+            </Modal>
         </View>
     );
 }

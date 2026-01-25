@@ -9,6 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
@@ -139,85 +140,102 @@ export default function FullScreenStoryModal({
     }
   }, [showMusicMenu, showBrightnessMenu, showBackgroundMenu]);
 
+  // Dimensions pour le mode rotaté
+  const rotatedWidth = isRotated ? height : width;
+  const rotatedHeight = isRotated ? width : height;
+
   return (
     <Modal visible={visible} animationType="slide">
+      <StatusBar hidden={true} />
       <SafeAreaView style={{ backgroundColor: 'black' }}>
         {/* Background animé */}
         <StoryBackground type={selectedBackground} width={width} height={height} />
-        <FlatList
-          ref={flatListRef}
-          data={allItems}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onTouchStart={handleUserTouch}
-          onMomentumScrollEnd={(event) => {
-            const index = Math.round(event.nativeEvent.contentOffset.x / width);
-            setCurrentPageIndex(index);
+
+        {/* Container principal qui pivote */}
+        <View
+          style={isRotated ? {
+            width: height,
+            height: width,
+            transform: [
+              { rotate: '90deg' },
+              { translateX: (height - width) / 2 },
+              { translateY: (height - width) / 2 },
+            ],
+          } : {
+            width,
+            height,
           }}
-          renderItem={({ item }) => (
-            <View
-              style={{ width, height }}
-              className="justify-center items-center"
-            >
+        >
+          <FlatList
+            ref={flatListRef}
+            data={allItems}
+            keyExtractor={(item) => item.id.toString()}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onTouchStart={handleUserTouch}
+            onMomentumScrollEnd={(event) => {
+              const index = Math.round(event.nativeEvent.contentOffset.x / rotatedWidth);
+              setCurrentPageIndex(index);
+            }}
+            renderItem={({ item }) => (
               <View
-                style={isRotated ? {
-                  width: height,
-                  height: width,
-                  transform: [{ rotate: '90deg' }],
-                } : undefined}
-                className={`relative ${isRotated ? '' : `aspect-square ${isPortrait ? 'w-full' : 'h-full'}`}`}
+                style={{ width: rotatedWidth, height: rotatedHeight }}
+                className="justify-center items-center"
               >
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                  }}
-                  contentFit="contain"
-                />
-                {/* Afficher le titre si c'est la cover */}
-                {item.isCover && title && (
-                  <View
-                    className={`absolute top-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
-                  >
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: isRotated ? 24 : (isPortrait ? 20 : 24),
-                        textAlign: 'center',
-                      }}
-                      className='font-baloo-bold'
+                <View
+                  style={isRotated ? { width: '100%', height: '100%' } : undefined}
+                  className={`relative ${isRotated ? '' : `aspect-square ${isPortrait ? 'w-full' : 'h-full'}`}`}
+                >
+                  <Image
+                    source={{ uri: item.imageUrl }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                    }}
+                    contentFit="contain"
+                  />
+                  {/* Afficher le titre si c'est la cover */}
+                  {item.isCover && title && (
+                    <View
+                      className={`absolute top-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
                     >
-                      {title}
-                    </Text>
-                  </View>
-                )}
-                {/* Afficher le texte seulement si ce n'est pas la cover */}
-                {!item.isCover && (
-                  <View
-                    className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
-                  >
-                    <Text
-                      style={{
-                        color: 'white',
-                        fontSize: isRotated ? 18 : (isPortrait ? 16 : 18),
-                        textAlign: 'left',
-                      }}
-                      className='font-baloo-medium'
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: isRotated ? 24 : (isPortrait ? 20 : 24),
+                          textAlign: 'center',
+                        }}
+                        className='font-baloo-bold'
+                      >
+                        {title}
+                      </Text>
+                    </View>
+                  )}
+                  {/* Afficher le texte seulement si ce n'est pas la cover */}
+                  {!item.isCover && (
+                    <View
+                      className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
                     >
-                      {item.text}
-                    </Text>
-                  </View>
-                )}
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: isRotated ? 18 : (isPortrait ? 16 : 18),
+                          textAlign: 'left',
+                        }}
+                        className='font-baloo-medium'
+                      >
+                        {item.text}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
 
         {showControls && (
           <Animated.View
@@ -633,6 +651,7 @@ export default function FullScreenStoryModal({
             </View>
           </Animated.View>
         )}
+        </View>
       </SafeAreaView>
     </Modal>
   );

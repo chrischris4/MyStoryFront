@@ -285,6 +285,11 @@ export class ApiService {
   async removeMember(groupId: number, memberId: number) {
     return this.delete(`/group/${groupId}/members/${memberId}`);
   }
+
+  // --- Transactions ---
+  async getUserTransactions() {
+    return this.get<any[]>('/transaction');
+  }
 }
 
 // --- Instance singleton ---

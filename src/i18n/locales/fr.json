@@ -109,6 +109,18 @@
     "privacy": "Confidentialité",
     "about": "À propos"
   },
+  "transactions": {
+    "title": "Historique des achats",
+    "noTransactions": "Aucune transaction",
+    "noTransactionsMessage": "Vous n'avez pas encore effectué d'achat",
+    "subscription": "Abonnement",
+    "tokenPack": "Pack de jetons",
+    "tokens": "{{count}} jetons",
+    "completed": "Complété",
+    "pending": "En attente",
+    "failed": "Échoué",
+    "loadError": "Erreur lors du chargement des transactions"
+  },
   "billing": {
     "title": "Boutique",
     "tokenPacks": "Paquets de Jetons",

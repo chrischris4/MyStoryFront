@@ -68,15 +68,10 @@ export default function StoryDetailScreen() {
   const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
   const shareStoryMutation = useShareStoryToGroup();
   const deleteStoryMutation = useDeleteStory();
-
-  // Debug: vérifier les groupes partagés
-  // useEffect(() => {
-  //   console.log('🔍 Shared groups:', sharedGroups);
-  //   console.log('🔍 Is loading shared groups:', isLoadingSharedGroups);
-  //   if (sharedGroupsError) {
-  //     console.error('❌ Error loading shared groups:', sharedGroupsError);
-  //   }
-  // }, [sharedGroups, isLoadingSharedGroups, sharedGroupsError]);
+  const skyColor = isNight ? '#020205' : '#87CEEB';
+  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
+  const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
   const handleToggleFavorite = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -271,11 +266,150 @@ export default function StoryDetailScreen() {
     }
   }, [showShareModal, sharedGroups]);
 
+  // Animation pour le skeleton
+  const skeletonAnim = useRef(new Animated.Value(0.3)).current;
+
+  useEffect(() => {
+    if (loading) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(skeletonAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(skeletonAnim, {
+            toValue: 0.3,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    }
+  }, [loading]);
+
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#6b21a8" />
-        <Text>Chargement...</Text>
+      <View className="flex-1 pt-10 px-4" style={{ backgroundColor: skyColor }}>
+        {isNight && <StarryBackground starCount={50} />}
+
+        {/* Skeleton Cover */}
+        <BlurView
+          intensity={isNight ? 90 : 50}
+          tint={isNight ? "dark" : "light"}
+          style={{
+            padding: 16, borderRadius: 12,
+            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+          }}
+        >
+          <View className='flex flex-col p-4 items-center'>
+            {/* Skeleton Title */}
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: '60%',
+                height: 32,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 8,
+                marginBottom: 16,
+              }}
+            />
+
+            {/* Skeleton Cover Image */}
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: 200,
+                height: 200,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 100,
+              }}
+            />
+
+            {/* Skeleton Author */}
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: '40%',
+                height: 20,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 6,
+                marginTop: 16,
+              }}
+            />
+
+            {/* Skeleton Date */}
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: '25%',
+                height: 16,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 6,
+                marginTop: 12,
+              }}
+            />
+          </View>
+        </BlurView>
+
+        {/* Skeleton Share & Like buttons */}
+        <View className='flex flex-row justify-between mt-4'>
+          {/* Skeleton Share Button */}
+          <BlurView
+            intensity={isNight ? 90 : 50}
+            tint={isNight ? "dark" : "light"}
+            style={{
+              padding: 16, borderRadius: 100,
+              height: 56,
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            }}
+          >
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: 100,
+                height: 24,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 12,
+              }}
+            />
+          </BlurView>
+
+          {/* Skeleton Like Button */}
+          <BlurView
+            intensity={isNight ? 90 : 50}
+            tint={isNight ? "dark" : "light"}
+            style={{
+              padding: 16, width: 56,
+              height: 56,
+              borderRadius: 9999,
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            }}
+          >
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: 24,
+                height: 24,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 12,
+              }}
+            />
+          </BlurView>
+        </View>
+
+        {/* Ground decoration */}
+        <View
+          className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
+
+        <View
+          className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30 flex flex-row items-center justify-between px-8 p-4'
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        />
       </View>
     );
   }
@@ -288,10 +422,6 @@ export default function StoryDetailScreen() {
     );
   }
 
-  const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
-  const groundColor = isNight ? '#2E313F' : '#38A169';
-  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
   return (
     <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
