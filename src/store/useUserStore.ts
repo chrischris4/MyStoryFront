@@ -38,6 +38,7 @@ type UserStore = {
   login: (user: User, accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   loadFromStorage: () => Promise<void>;
+  updateProfile: (profile: { name?: string; imageUrl?: string | null }) => Promise<void>;
 };
 
 export const useUserStore = create<UserStore>((set) => ({

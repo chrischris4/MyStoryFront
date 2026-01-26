@@ -27,13 +27,15 @@ function NotificationHandler() {
 const toastConfig = {
   success: (props: any) => (
     <View style={{ paddingHorizontal: 20, width: '100%' }}>
-      <BlurView
-        intensity={90}
-        tint="light"
+      <View
         style={{
           borderRadius: 16,
           overflow: 'hidden',
           paddingVertical: 16,
+          paddingHorizontal: 16,
+          backgroundColor: '#ffffff',
+          borderBlockColor: '#000000',
+          borderWidth: 2,
         }}
       >
         <Text
@@ -42,7 +44,7 @@ const toastConfig = {
             fontFamily: 'Baloo2-Bold',
             textAlign: 'center',
             marginBottom: 4,
-            color: '#ffffff',
+            color: '#000000',
           }}
         >
           {props.text1}
@@ -52,24 +54,25 @@ const toastConfig = {
             fontSize: 16,
             fontFamily: 'Baloo2-Regular',
             textAlign: 'center',
-            color: '#ffffff',
+            color: '#000000',
           }}
         >
           {props.text2}
         </Text>
-      </BlurView>
+      </View>
     </View>
   ),
   error: (props: any) => (
     <View style={{ paddingHorizontal: 20, width: '100%' }}>
-      <BlurView
-        intensity={90}
-        tint="light"
+      <View
         style={{
           borderRadius: 16,
           overflow: 'hidden',
-          paddingVertical: 20,
-          paddingHorizontal: 24,
+          paddingVertical: 16,
+          paddingHorizontal: 16,
+          backgroundColor: '#ffffff',
+          borderBlockColor: '#000000',
+          borderWidth: 2,
         }}
       >
         <Text
@@ -78,7 +81,7 @@ const toastConfig = {
             fontFamily: 'Baloo2-Bold',
             textAlign: 'center',
             marginBottom: 4,
-            color: '#ffffff',
+            color: '#000000',
           }}
         >
           {props.text1}
@@ -88,12 +91,12 @@ const toastConfig = {
             fontSize: 16,
             fontFamily: 'Baloo2-Regular',
             textAlign: 'center',
-            color: '#ffffff',
+            color: '#000000',
           }}
         >
           {props.text2}
         </Text>
-      </BlurView>
+      </View>
     </View>
   ),
 };

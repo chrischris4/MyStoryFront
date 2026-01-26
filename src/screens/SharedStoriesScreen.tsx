@@ -12,6 +12,7 @@ import LottieView from 'lottie-react-native';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import StarryBackground from '~/components/StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
@@ -19,6 +20,7 @@ type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
 >;
 
 export default function SharedStoriesScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<SharedStoriesScreenNavigationProp>();
   const { isNight } = useTheme();
   const user = useUserStore((state) => state.user);
@@ -26,6 +28,8 @@ export default function SharedStoriesScreen() {
 
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showBubble, setShowBubble] = useState(false);
+  const bubbleOpacity = useRef(new Animated.Value(0)).current;
 
   const { width } = useWindowDimensions();
   const animationRef = useRef(null);
@@ -71,6 +75,22 @@ export default function SharedStoriesScreen() {
 
     fetchData();
   }, []);
+
+  // Show bubble after 2 seconds delay
+  useEffect(() => {
+    if (!isPremium) {
+      const timer = setTimeout(() => {
+        setShowBubble(true);
+        Animated.timing(bubbleOpacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isPremium]);
 
 
   return (
@@ -123,14 +143,14 @@ export default function SharedStoriesScreen() {
           </TouchableOpacity>
         </Animated.View>
       )}
-      <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl font-baloo-bold px-4 pt-4`}>Histoires partagées</Text>
+      <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl font-baloo-bold px-4 pt-4`}>{t('sharedStories.title')}</Text>
       {isPremium ? (
         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-xl font-baloo mb-4 px-4`}>
-          Découvrez les histoires partagées par la communauté !
+          {t('sharedStories.premiumDescription')}
         </Text>
       ) : (
         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
-          Vous avez besoin d'un plan supérieur pour voir les histoire partagées
+          {t('sharedStories.nonPremiumDescription')}
         </Text>
       )}
       <View className="flex-1 gap-4 pb-4">
@@ -138,10 +158,10 @@ export default function SharedStoriesScreen() {
           isNight={isNight}
           isShared={true}
           isPremium={isPremium}
-          title="Toutes les histoires"
+          title={t('sharedStories.allStories')}
           icon={<Feather name="share-2" size={24} color="#fff" />}
           storyType="ALL"
-          description="Il y en a pour tout le monde !"
+          description={t('sharedStories.allStoriesDesc')}
           stories={sharedStories}
           isLoading={loading}
         />
@@ -149,20 +169,23 @@ export default function SharedStoriesScreen() {
           isNight={isNight}
           isShared={true}
           isPremium={isPremium}
-          title="Les plus apréciées"
+          title={t('sharedStories.mostLiked')}
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"
-          description="Les 10 histoires les plus populaires"
+          description={t('sharedStories.mostLikedDesc')}
           stories={sharedStories}
           isLoading={loading}
         />
-        {!isPremium && (
-          <View className="absolute bottom-60 right-24 z-40">
+        {!isPremium && showBubble && (
+          <Animated.View
+            className="absolute bottom-60 right-24 z-40"
+            style={{ opacity: bubbleOpacity }}
+          >
             <View
               className="px-4 py-3 rounded-2xl bg-white text-black"
             >
               <Text className="font-baloo-medium text-center">
-                Hey ! Je vends des abonnements !
+                {t('sharedStories.storeBubble')}
               </Text>
             </View>
             {/* Petite flèche de la bulle */}
@@ -181,7 +204,7 @@ export default function SharedStoriesScreen() {
                 borderTopColor: 'white',
               }}
             />
-          </View>
+          </Animated.View>
         )}
       </View>
     </View>

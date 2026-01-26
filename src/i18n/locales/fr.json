@@ -1,7 +1,7 @@
 {
   "common": {
     "loading": "Chargement...",
-    "error": "Erreur",
+    "error": "Oups",
     "success": "Succès",
     "cancel": "Annuler",
     "confirm": "Confirmer",
@@ -107,6 +107,13 @@
     "manageSubscription": "Gérer mon abonnement",
     "contact": "Contact",
     "logout": "Se déconnecter",
+    "deleteAccount": "Supprimer mon compte",
+    "deleteAccountButton": "Supprimer mon compte",
+    "deleteAccountTitle": "Supprimer votre compte",
+    "deleteAccountWarning": "Cette action est irréversible. Toutes vos données, histoires et achats seront définitivement supprimés.",
+    "deleteAccountConfirm": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+    "accountDeleted": "Compte supprimé",
+    "accountDeletedMessage": "Votre compte a été supprimé avec succès",
     "language": "Langue",
     "theme": "Thème",
     "privacy": "Confidentialité",
@@ -220,6 +227,13 @@
     "low": "Faible (30%)",
     "medium": "Moyenne (50%)",
     "high": "Forte (70%)",
+    "frame": "Cadre",
+    "frameNone": "Aucun",
+    "frameStars": "Étoiles",
+    "frameGolden": "Doré",
+    "frameFairy": "Féerique",
+    "frameVintage": "Vintage",
+    "frameMagic": "Magique",
     "background": "Arrière-plan",
     "black": "Noir",
     "starry": "Étoilé",
@@ -260,5 +274,23 @@
     "yearlyPayment": "Paiement annuel",
     "save20": "Économisez 20%",
     "bestOffer": "Meilleure offre"
+  },
+  "apiErrors": {
+    "INVALID_CREDENTIALS": "Email ou mot de passe incorrect",
+    "EMAIL_ALREADY_USED": "Cet email est déjà utilisé",
+    "USER_NOT_FOUND": "Utilisateur introuvable",
+    "MISSING_PROFILE": "Profil manquant",
+    "UNAUTHORIZED": "Non autorisé",
+    "SESSION_EXPIRED": "Session expirée"
+  },
+  "sharedStories": {
+    "title": "Histoires partagées",
+    "premiumDescription": "Découvrez les histoires partagées par la communauté !",
+    "nonPremiumDescription": "Vous avez besoin d'un plan supérieur pour voir les histoires partagées",
+    "allStories": "Toutes les histoires",
+    "allStoriesDesc": "Il y en a pour tout le monde !",
+    "mostLiked": "Les plus appréciées",
+    "mostLikedDesc": "Les 10 histoires les plus populaires",
+    "storeBubble": "Hey ! Je vends des abonnements !"
   }
 }

@@ -15,7 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
 import type { Page } from '~/types';
-import { StoryBackground, type BackgroundType } from './StoryBackgrounds';
+import { StoryFrame, type FrameType } from './StoryFrames';
 import { useTranslation } from 'react-i18next';
 
 interface FullScreenStoryModalProps {
@@ -42,8 +42,8 @@ export default function FullScreenStoryModal({
   const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
   const [brightness, setBrightness] = useState(1);
-  const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
-  const [selectedBackground, setSelectedBackground] = useState<BackgroundType>('black');
+  const [showFrameMenu, setShowFrameMenu] = useState(false);
+  const [selectedFrame, setSelectedFrame] = useState<FrameType>('none');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -61,10 +61,10 @@ export default function FullScreenStoryModal({
 
   const handleCloseMenus = () => {
     // Fermer tous les sous-menus si on touche ailleurs
-    if (showMusicMenu || showBrightnessMenu || showBackgroundMenu) {
+    if (showMusicMenu || showBrightnessMenu || showFrameMenu) {
       setShowMusicMenu(false);
       setShowBrightnessMenu(false);
-      setShowBackgroundMenu(false);
+      setShowFrameMenu(false);
     }
   };
 
@@ -79,7 +79,7 @@ export default function FullScreenStoryModal({
         setShowControls(false);
         setShowMusicMenu(false);
         setShowBrightnessMenu(false);
-        setShowBackgroundMenu(false);
+        setShowFrameMenu(false);
       });
     } else {
       // Ouvrir les contrôles
@@ -124,9 +124,6 @@ export default function FullScreenStoryModal({
     <Modal visible={visible} animationType="slide">
       <StatusBar hidden={true} />
       <SafeAreaView style={{ backgroundColor: 'black' }}>
-        {/* Background animé */}
-        <StoryBackground type={selectedBackground} width={width} height={height} />
-
         {/* Container principal qui pivote */}
         <View
           style={isRotated ? {
@@ -208,6 +205,8 @@ export default function FullScreenStoryModal({
                       </Text>
                     </View>
                   )}
+                  {/* Cadre décoratif en overlay */}
+                  <StoryFrame type={selectedFrame} width={rotatedWidth} height={rotatedHeight} />
                 </View>
               </View>
             )}
@@ -258,7 +257,7 @@ export default function FullScreenStoryModal({
                     setShowMusicMenu(!showMusicMenu);
                     if (!showMusicMenu) {
                       setShowBrightnessMenu(false);
-                      setShowBackgroundMenu(false);
+                      setShowFrameMenu(false);
                     }
                   }}
                   style={{
@@ -370,7 +369,7 @@ export default function FullScreenStoryModal({
                     setShowBrightnessMenu(!showBrightnessMenu);
                     if (!showBrightnessMenu) {
                       setShowMusicMenu(false);
-                      setShowBackgroundMenu(false);
+                      setShowFrameMenu(false);
                     }
                   }}
                   style={{
@@ -508,14 +507,14 @@ export default function FullScreenStoryModal({
               <View>
                 <TouchableOpacity
                   onPress={() => {
-                    setShowBackgroundMenu(!showBackgroundMenu);
-                    if (!showBackgroundMenu) {
+                    setShowFrameMenu(!showFrameMenu);
+                    if (!showFrameMenu) {
                       setShowMusicMenu(false);
                       setShowBrightnessMenu(false);
                     }
                   }}
                   style={{
-                    backgroundColor: showBackgroundMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: showFrameMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
                     borderRadius: 40,
                     width: 65,
                     height: 65,
@@ -526,12 +525,12 @@ export default function FullScreenStoryModal({
                   <Feather
                     name="image"
                     size={24}
-                    color={showBackgroundMenu ? "white" : "black"}
+                    color={showFrameMenu ? "white" : "black"}
                   />
                 </TouchableOpacity>
 
-                {/* Menu des backgrounds */}
-                {showBackgroundMenu && (
+                {/* Menu des cadres */}
+                {showFrameMenu && (
                   <BlurView
                     intensity={isNight ? 90 : 50}
                     tint={isNight ? "dark" : "light"}
@@ -547,86 +546,86 @@ export default function FullScreenStoryModal({
                   >
                     <View style={{ padding: 12 }} className='bg-white/50'>
                       <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
-                        {t('storyReader.background')}
+                        {t('storyReader.frame')}
                       </Text>
 
                       <View className='flex flex-row flex-wrap gap-3 justify-center'>
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('black')}
+                          onPress={() => setSelectedFrame('none')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'black' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'none' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
-                          <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: '#000', borderWidth: 2, borderColor: '#333' }} />
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.black')}</Text>
+                          <Text style={{ fontSize: 36 }}>🚫</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameNone')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('starry-night')}
+                          onPress={() => setSelectedFrame('stars')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'starry-night' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'stars' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 36 }}>🌙</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.starry')}</Text>
+                          <Text style={{ fontSize: 36 }}>⭐</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameStars')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('ocean-waves')}
+                          onPress={() => setSelectedFrame('golden')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'ocean-waves' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'golden' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 36 }}>🌊</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.ocean')}</Text>
+                          <Text style={{ fontSize: 36 }}>🖼️</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameGolden')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('forest-magic')}
+                          onPress={() => setSelectedFrame('fairy')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'forest-magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'fairy' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 36 }}>🌲</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.forest')}</Text>
+                          <Text style={{ fontSize: 36 }}>🧚</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameFairy')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('sunset-dream')}
+                          onPress={() => setSelectedFrame('vintage')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'sunset-dream' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'vintage' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
-                          <Text style={{ fontSize: 36 }}>🌅</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.sunset')}</Text>
+                          <Text style={{ fontSize: 36 }}>📜</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameVintage')}</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          onPress={() => setSelectedBackground('aurora')}
+                          onPress={() => setSelectedFrame('magic')}
                           style={{
                             borderRadius: 12,
                             padding: 8,
-                            backgroundColor: selectedBackground === 'aurora' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                            backgroundColor: selectedFrame === 'magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
                             alignItems: 'center',
                           }}
                         >
                           <Text style={{ fontSize: 36 }}>✨</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.aurora')}</Text>
+                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameMagic')}</Text>
                         </TouchableOpacity>
                       </View>
                     </View>

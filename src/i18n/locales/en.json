@@ -1,7 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
-    "error": "Error",
+    "error": "Oops",
     "success": "Success",
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -107,6 +107,13 @@
     "manageSubscription": "Manage my subscription",
     "contact": "Contact",
     "logout": "Log out",
+    "deleteAccount": "Delete my account",
+    "deleteAccountButton": "Delete my account",
+    "deleteAccountTitle": "Delete your account",
+    "deleteAccountWarning": "This action is irreversible. All your data, stories and purchases will be permanently deleted.",
+    "deleteAccountConfirm": "Are you sure you want to delete your account?",
+    "accountDeleted": "Account deleted",
+    "accountDeletedMessage": "Your account has been successfully deleted",
     "language": "Language",
     "theme": "Theme",
     "privacy": "Privacy",
@@ -220,6 +227,13 @@
     "low": "Low (30%)",
     "medium": "Medium (50%)",
     "high": "High (70%)",
+    "frame": "Frame",
+    "frameNone": "None",
+    "frameStars": "Stars",
+    "frameGolden": "Golden",
+    "frameFairy": "Fairy",
+    "frameVintage": "Vintage",
+    "frameMagic": "Magic",
     "background": "Background",
     "black": "Black",
     "starry": "Starry",
@@ -260,5 +274,23 @@
     "yearlyPayment": "Yearly payment",
     "save20": "Save 20%",
     "bestOffer": "Best offer"
+  },
+  "apiErrors": {
+    "INVALID_CREDENTIALS": "Invalid email or password",
+    "EMAIL_ALREADY_USED": "This email is already in use",
+    "USER_NOT_FOUND": "User not found",
+    "MISSING_PROFILE": "Missing profile",
+    "UNAUTHORIZED": "Unauthorized",
+    "SESSION_EXPIRED": "Session expired"
+  },
+  "sharedStories": {
+    "title": "Shared stories",
+    "premiumDescription": "Discover stories shared by the community!",
+    "nonPremiumDescription": "You need a higher plan to see shared stories",
+    "allStories": "All stories",
+    "allStoriesDesc": "There's something for everyone!",
+    "mostLiked": "Most liked",
+    "mostLikedDesc": "The 10 most popular stories",
+    "storeBubble": "Hey! I sell subscriptions!"
   }
 }

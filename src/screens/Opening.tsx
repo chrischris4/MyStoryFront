@@ -20,7 +20,7 @@ export default function OpeningScreen() {
 
 
     return (
-        <View className="flex-1 relative justify-center items-center bg-[#38b6ff] px-6">
+        <View className="flex-1 relative justify-center items-center bg-[#5FD5FF] px-6">
             <Image
                 source={require('../../assets/splash.png')}
                 style={{
@@ -34,10 +34,10 @@ export default function OpeningScreen() {
                 }}
             >
                 <LottieView
-                    source={require('../../assets/animations/Loading.json')}
+                    source={require('../../assets/animations/LoadingWhite.json')}
                     autoPlay
                     loop={true}
-                    style={{ width: 200, height: 200 }}
+                    style={{ width: 150, height: 150 }}
                 />
             </Animated.View>
         </View>

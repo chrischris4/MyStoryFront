@@ -4,12 +4,13 @@ import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
-import { api, ApiError } from '~/services/api';
+import { api } from '~/services/api';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
+import { mapApiError } from '~/utils/errorMapper';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -64,19 +65,11 @@ export default function LoginScreen() {
       );
 
     } catch (error) {
-      if (error instanceof ApiError) {
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: error.message || t('auth.loginError'),
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: t('errors.unknownError'),
-        });
-      }
+      Toast.show({
+        type: 'error',
+        text1: t('common.error'),
+        text2: mapApiError(error, t),
+      });
     } finally {
       setIsLoading(false);
     }

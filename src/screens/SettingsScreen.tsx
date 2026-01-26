@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
+import { useDeleteAccount } from '~/hooks/useDeleteAccount';
 
 export default function SettingsScreen() {
     const { t } = useTranslation();
@@ -22,9 +23,13 @@ export default function SettingsScreen() {
     const [notificationsEnabled, setNotificationsEnabled] = useState(true);
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
     const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
+    const [isDeleteAccountModalVisible, setIsDeleteAccountModalVisible] = useState(false);
 
     // Hook pour les transactions (enabled seulement quand la modal est visible)
     const { data: transactions = [], isLoading: isLoadingTransactions, error: transactionsError } = useTransactionsByUser(isHistoryModalVisible);
+
+    // Hook pour la suppression de compte
+    const deleteAccountMutation = useDeleteAccount();
 
     // Hook pour les sons
     const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
@@ -264,6 +269,24 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.deleteAccount')}</Text>
+                        <Feather name="trash-2" size={20} color="#ef4444" />
+                    </View>
+                    <TouchableOpacity
+                        style={[styles.button, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
+                        onPress={() => {
+                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+                            playSound('click');
+                            setIsDeleteAccountModalVisible(true);
+                        }}
+                    >
+                        <Feather name="trash-2" size={18} color="#ef4444" />
+                        <Text className="text-red-500 text-lg font-baloo">{t('settings.deleteAccountButton')}</Text>
+                    </TouchableOpacity>
+                </BlurView>
+
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
                     <TouchableOpacity style={styles.button} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
@@ -381,6 +404,91 @@ export default function SettingsScreen() {
                                 <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
                                     {t('common.close')}
                                 </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </BlurView>
+                </View>
+            </Modal>
+
+            {/* Modal Confirmation suppression de compte */}
+            <Modal
+                visible={isDeleteAccountModalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setIsDeleteAccountModalVisible(false)}
+            >
+                <View className="flex-1 justify-center items-center bg-black/50 px-4">
+                    <BlurView
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? "dark" : "light"}
+                        className="rounded-3xl w-full max-w-lg overflow-hidden"
+                        style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
+                    >
+                        {/* Header */}
+                        <View className="bg-red-500 p-6">
+                            <Feather name="alert-triangle" size={48} color="#fff" style={{ alignSelf: 'center', marginBottom: 12 }} />
+                            <Text className="text-white text-2xl font-baloo-bold text-center">
+                                {t('settings.deleteAccountTitle')}
+                            </Text>
+                        </View>
+
+                        {/* Content */}
+                        <View className="p-6">
+                            <Text className={`${isNight ? 'text-white/80' : 'text-gray-600'} font-baloo text-base text-center mb-4`}>
+                                {t('settings.deleteAccountWarning')}
+                            </Text>
+                            <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg text-center`}>
+                                {t('settings.deleteAccountConfirm')}
+                            </Text>
+                        </View>
+
+                        {/* Actions */}
+                        <View className="p-4 pt-0 flex-row gap-3">
+                            <TouchableOpacity
+                                className={`flex-1 ${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
+                                onPress={() => {
+                                    playSound('click');
+                                    setIsDeleteAccountModalVisible(false);
+                                }}
+                            >
+                                <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
+                                    {t('common.cancel')}
+                                </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex-1 bg-red-500 px-6 py-4 rounded-xl items-center"
+                                disabled={deleteAccountMutation.isPending}
+                                onPress={async () => {
+                                    if (!user?.id) return;
+                                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                                    playSound('click');
+
+                                    try {
+                                        await deleteAccountMutation.mutateAsync(user.id);
+                                        setIsDeleteAccountModalVisible(false);
+                                        pauseBackgroundMusic();
+                                        await logout();
+                                        navigation.navigate('Login' as never);
+                                        Toast.show({
+                                            type: 'success',
+                                            text1: t('settings.accountDeleted'),
+                                            text2: t('settings.accountDeletedMessage'),
+                                        });
+                                    } catch (error) {
+                                        Toast.show({
+                                            type: 'error',
+                                            text1: t('errors.unknownError'),
+                                        });
+                                    }
+                                }}
+                            >
+                                {deleteAccountMutation.isPending ? (
+                                    <ActivityIndicator color="#fff" />
+                                ) : (
+                                    <Text className="text-white font-baloo-semibold text-lg">
+                                        {t('common.confirm')}
+                                    </Text>
+                                )}
                             </TouchableOpacity>
                         </View>
                     </BlurView>

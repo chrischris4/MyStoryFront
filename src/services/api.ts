@@ -290,6 +290,11 @@ export class ApiService {
   async getUserTransactions() {
     return this.get<any[]>('/transaction');
   }
+
+  // --- User ---
+  async deleteUser() {
+    return this.delete<{ message: string }>(`/user/me`);
+  }
 }
 
 // --- Instance singleton ---
