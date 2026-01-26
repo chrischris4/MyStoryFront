@@ -24,6 +24,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
 type StoryFolderNavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList>,
@@ -113,74 +114,74 @@ export default function StoryFolder({
         setLayoutY(y);
     };
 
-const shakeLock = () => {
-    // Animation du cadenas - secousse et agrandissement
-    lockScale.value = withTiming(1.3, { duration: 100 });
-    lockRotate.value = withTiming(-15, { duration: 100 });
-
-    setTimeout(() => {
-        lockRotate.value = withTiming(15, { duration: 100 });
-    }, 100);
-
-    setTimeout(() => {
+    const shakeLock = () => {
+        // Animation du cadenas - secousse et agrandissement
+        lockScale.value = withTiming(1.3, { duration: 100 });
         lockRotate.value = withTiming(-15, { duration: 100 });
-    }, 200);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(15, { duration: 100 });
-    }, 300);
+        setTimeout(() => {
+            lockRotate.value = withTiming(15, { duration: 100 });
+        }, 100);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(-12, { duration: 100 });
-    }, 400);
+        setTimeout(() => {
+            lockRotate.value = withTiming(-15, { duration: 100 });
+        }, 200);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(12, { duration: 100 });
-    }, 500);
+        setTimeout(() => {
+            lockRotate.value = withTiming(15, { duration: 100 });
+        }, 300);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(-10, { duration: 100 });
-    }, 600);
+        setTimeout(() => {
+            lockRotate.value = withTiming(-12, { duration: 100 });
+        }, 400);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(10, { duration: 100 });
-    }, 700);
+        setTimeout(() => {
+            lockRotate.value = withTiming(12, { duration: 100 });
+        }, 500);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(-5, { duration: 100 });
-    }, 800);
+        setTimeout(() => {
+            lockRotate.value = withTiming(-10, { duration: 100 });
+        }, 600);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(5, { duration: 100 });
-    }, 900);
+        setTimeout(() => {
+            lockRotate.value = withTiming(10, { duration: 100 });
+        }, 700);
 
-    setTimeout(() => {
-        lockRotate.value = withTiming(0, { duration: 150 });
-        lockScale.value = withTiming(1, { duration: 150 });
-    }, 1000);
-};
+        setTimeout(() => {
+            lockRotate.value = withTiming(-5, { duration: 100 });
+        }, 800);
 
-const handleToggle = () => {
-    if (!isPremium && isShared && !expanded) {
-        shakeLock();
-        return;
-    }
+        setTimeout(() => {
+            lockRotate.value = withTiming(5, { duration: 100 });
+        }, 900);
 
-    if (expanded) {
-        setShowContent(false);
-        width.value = SCREEN_WIDTH / 1.08;
-        height.value = 84;
-        translateY.value = 0;
-    } else {
-        const EXPANDED_TOP = 10; // top souhaité
-        width.value = SCREEN_WIDTH;
-        height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
-        translateY.value = EXPANDED_TOP - layoutY;
-        setTimeout(() => setShowContent(true), 1000);
-    }
+        setTimeout(() => {
+            lockRotate.value = withTiming(0, { duration: 150 });
+            lockScale.value = withTiming(1, { duration: 150 });
+        }, 1000);
+    };
 
-    setExpanded(!expanded);
-};
+    const handleToggle = () => {
+        if (!isPremium && isShared && !expanded) {
+            shakeLock();
+            return;
+        }
+
+        if (expanded) {
+            setShowContent(false);
+            width.value = SCREEN_WIDTH / 1.08;
+            height.value = 84;
+            translateY.value = 0;
+        } else {
+            const EXPANDED_TOP = 10; // top souhaité
+            width.value = SCREEN_WIDTH;
+            height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
+            translateY.value = EXPANDED_TOP - layoutY;
+            setTimeout(() => setShowContent(true), 1000);
+        }
+
+        setExpanded(!expanded);
+    };
 
 
 
@@ -238,7 +239,12 @@ const handleToggle = () => {
                             </View>
                         ) : expanded && showContent && isLoading ? (
                             <View className="flex-1 items-center justify-center mt-6">
-                                <ActivityIndicator size="large" color={isNight ? "#ffffff" : "#1e293b"} />
+                                <LottieView
+                                    source={require('../../assets/animations/LoadingWhite.json')}
+                                    autoPlay
+                                    loop={true}
+                                    style={{ width: 100, height: 100 }}
+                                />
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo mt-2`}>
                                     {t('common.loading')}
                                 </Text>

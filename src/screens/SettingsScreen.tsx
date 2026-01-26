@@ -14,6 +14,7 @@ import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
 import { useDeleteAccount } from '~/hooks/useDeleteAccount';
+import LottieView from 'lottie-react-native';
 
 export default function SettingsScreen() {
     const { t } = useTranslation();
@@ -95,7 +96,7 @@ export default function SettingsScreen() {
             <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
 
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={ { backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl font-baloo-semibold self-start`}>{t('settings.account')}</Text>
                         <Feather name="user" size={20} color={isNight ? "#fff" : "#000"} />
@@ -127,7 +128,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>{t('settings.appearance')}</Text>
                         {!isNight ? (
@@ -158,7 +159,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.sounds')}</Text>
                         <Feather name="volume-2" size={20} color={isNight ? "#fff" : "#000"} />
@@ -181,7 +182,7 @@ export default function SettingsScreen() {
                     </View>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.notifications')}</Text>
@@ -197,25 +198,25 @@ export default function SettingsScreen() {
                     </View>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
-  style={styles.button}
-  onPress={() => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    playSound('pop');
-    setIsHistoryModalVisible(true);
-  }}
->
+                        style={styles.button}
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            playSound('pop');
+                            setIsHistoryModalVisible(true);
+                        }}
+                    >
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4'  tint={isNight ? 'dark' : 'light'} style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.subscription')}</Text>
                         <Feather name="credit-card" size={20} color={isNight ? "#fff" : "#000"} />
@@ -224,9 +225,9 @@ export default function SettingsScreen() {
                     {isPremium ? (
                         <View className="mb-4">
                             <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-base font-baloo`}>{t('settings.currentPlan')}</Text>
-                                <Text className={` ${isNight ? "text-white" : "text-slate-700"} text-xl font-baloo-semibold`}>
-                                    {planName}
-                                </Text>
+                            <Text className={` ${isNight ? "text-white" : "text-slate-700"} text-xl font-baloo-semibold`}>
+                                {planName}
+                            </Text>
                         </View>
                     ) : (
                         <Text className={` ${isNight ? "text-white/70" : "text-slate-500"} text-lg font-baloo mb-4`}>
@@ -239,7 +240,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
 
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4'  style={{backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.contact')}</Text>
                         <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
@@ -324,8 +325,12 @@ export default function SettingsScreen() {
                         <View className="p-4" style={{ maxHeight: 400 }}>
                             {isLoadingTransactions ? (
                                 <View className="items-center justify-center py-8">
-                                    <ActivityIndicator size="large" color={isNight ? '#fff' : '#0D1821'} />
-                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
+                                    <LottieView
+                                        source={require('../../assets/animations/LoadingWhite.json')}
+                                        autoPlay
+                                        loop={true}
+                                        style={{ width: 100, height: 100 }}
+                                    />                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
                                         {t('common.loading')}
                                     </Text>
                                 </View>
@@ -375,16 +380,14 @@ export default function SettingsScreen() {
                                                     <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>
                                                         {transaction.amount.toFixed(2)} {transaction.currency}
                                                     </Text>
-                                                    <View className={`mt-1 px-2 py-1 rounded-full ${
-                                                        transaction.status === 'COMPLETED' ? 'bg-green-500/20' :
+                                                    <View className={`mt-1 px-2 py-1 rounded-full ${transaction.status === 'COMPLETED' ? 'bg-green-500/20' :
                                                         transaction.status === 'PENDING' ? 'bg-yellow-500/20' : 'bg-red-500/20'
-                                                    }`}>
-                                                        <Text className={`text-xs font-baloo-medium ${
-                                                            transaction.status === 'COMPLETED' ? 'text-green-600' :
-                                                            transaction.status === 'PENDING' ? 'text-yellow-600' : 'text-red-600'
                                                         }`}>
+                                                        <Text className={`text-xs font-baloo-medium ${transaction.status === 'COMPLETED' ? 'text-green-600' :
+                                                            transaction.status === 'PENDING' ? 'text-yellow-600' : 'text-red-600'
+                                                            }`}>
                                                             {transaction.status === 'COMPLETED' ? t('transactions.completed') :
-                                                             transaction.status === 'PENDING' ? t('transactions.pending') : t('transactions.failed')}
+                                                                transaction.status === 'PENDING' ? t('transactions.pending') : t('transactions.failed')}
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -483,7 +486,12 @@ export default function SettingsScreen() {
                                 }}
                             >
                                 {deleteAccountMutation.isPending ? (
-                                    <ActivityIndicator color="#fff" />
+                                    <LottieView
+                                        source={require('../../assets/animations/LoadingWhite.json')}
+                                        autoPlay
+                                        loop={true}
+                                        style={{ width: 100, height: 100 }}
+                                    />
                                 ) : (
                                     <Text className="text-white font-baloo-semibold text-lg">
                                         {t('common.confirm')}

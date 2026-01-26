@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '~/context/AuthContext';
+import LottieView from 'lottie-react-native';
 
 type ProtectedRouteProps = {
   children: React.ReactNode;
@@ -21,7 +22,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#6b21a8" />
+        <LottieView
+          source={require('../../assets/animations/LoadingWhite.json')}
+          autoPlay
+          loop={true}
+          style={{ width: 100, height: 100 }}
+        />
       </View>
     );
   }

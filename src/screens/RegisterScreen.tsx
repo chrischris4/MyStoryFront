@@ -7,6 +7,7 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
@@ -145,7 +146,14 @@ export default function RegisterScreen() {
                   disabled={isSubmitting}
                 >
                   <Text className="text-white text-lg font-baloo-semibold text-center">
-                    {isSubmitting ? t('auth.registering') : t('auth.registerButton')}
+                    {isSubmitting ?
+                      <LottieView
+                        source={require('../../assets/animations/LoadingWhite.json')}
+                        autoPlay
+                        loop={true}
+                        style={{ width: 100, height: 100 }}
+                      />
+                      : t('auth.registerButton')}
                   </Text>
                 </TouchableOpacity>
 

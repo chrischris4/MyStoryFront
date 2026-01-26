@@ -273,8 +273,12 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   disabled={inviteToGroupMutation.isPending}
                 >
                   {inviteToGroupMutation.isPending ? (
-                    <ActivityIndicator size="small" color="#ffffff" />
-                  ) : (
+                    <LottieView
+                      source={require('../../assets/animations/LoadingWhite.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 100, height: 100 }}
+                    />) : (
                     <Text className="text-white font-baloo-semibold">{t('groups.invite')}</Text>
                   )}
                 </TouchableOpacity>

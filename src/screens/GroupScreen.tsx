@@ -219,7 +219,12 @@ export default function GroupScreen() {
               style={{ backgroundColor: isNight ? '#3b82f690' : '#3b82f630' }}
             >
               {joinGroupMutation.isPending ? (
-                <ActivityIndicator size="small" color={isNight ? '#ffffff' : '#1e293b'} />
+                <LottieView
+                  source={require('../../assets/animations/LoadingWhite.json')}
+                  autoPlay
+                  loop={true}
+                  style={{ width: 100, height: 100 }}
+                />
               ) : (
                 <Text className={`${isNight ? 'text-white' : 'text-blue-700'} font-baloo-semibold`}>
                   Rejoindre
@@ -264,7 +269,12 @@ export default function GroupScreen() {
                   style={{ backgroundColor: isNight ? '#22c55e90' : '#22c55e30' }}
                 >
                   {acceptInvitationMutation.isPending ? (
-                    <ActivityIndicator size="small" color={isNight ? '#ffffff' : '#16a34a'} />
+                    <LottieView
+                      source={require('../../assets/animations/LoadingWhite.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 100, height: 100 }}
+                    />
                   ) : (
                     <Feather name="check" size={20} color={isNight ? '#ffffff' : '#16a34a'} />
                   )}
@@ -281,7 +291,12 @@ export default function GroupScreen() {
                   style={{ backgroundColor: isNight ? '#ef444490' : '#ef444430' }}
                 >
                   {declineInvitationMutation.isPending ? (
-                    <ActivityIndicator size="small" color={isNight ? '#ffffff' : '#dc2626'} />
+                    <LottieView
+                      source={require('../../assets/animations/LoadingWhite.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 100, height: 100 }}
+                    />
                   ) : (
                     <Feather name="x" size={20} color={isNight ? '#ffffff' : '#dc2626'} />
                   )}
@@ -461,8 +476,8 @@ export default function GroupScreen() {
                         loop={true}
                         style={{ width: 200, height: 200 }}
                       />
-                    </Animated.View>                  
-                    </View>
+                    </Animated.View>
+                  </View>
                 ) : invitations.length === 0 ? (
                   <BlurView
                     intensity={isNight ? 90 : 50}
@@ -537,7 +552,12 @@ export default function GroupScreen() {
                   >
                     <View className="bg-blue-500 py-3 rounded-xl items-center">
                       {createGroupMutation.isPending ? (
-                        <ActivityIndicator size="small" color="#ffffff" />
+                        <LottieView
+                          source={require('../../assets/animations/LoadingWhite.json')}
+                          autoPlay
+                          loop={true}
+                          style={{ width: 100, height: 100 }}
+                        />
                       ) : (
                         <Text className="text-white font-baloo-semibold">
                           Créer

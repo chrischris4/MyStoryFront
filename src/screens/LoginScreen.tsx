@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 import { mapApiError } from '~/utils/errorMapper';
+import LottieView from 'lottie-react-native';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -150,8 +151,12 @@ export default function LoginScreen() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
+                    <LottieView
+                      source={require('../../assets/animations/LoadingWhite.json')}
+                      autoPlay
+                      loop={true}
+                      style={{ width: 100, height: 100 }}
+                    />) : (
                     <Text className="text-white text-lg font-baloo-semibold text-center">{t('auth.loginButton')}</Text>
                   )}
                 </TouchableOpacity>
