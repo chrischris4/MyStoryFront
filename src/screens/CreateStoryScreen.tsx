@@ -286,7 +286,7 @@ export default function CreateStoryScreen() {
 
       {isNight && <StarryBackground starCount={50} />}
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%]'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <View
