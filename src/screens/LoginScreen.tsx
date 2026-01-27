@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -27,6 +28,7 @@ export default function LoginScreen() {
 
   const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { login } = useAuth();
 
@@ -119,6 +121,7 @@ export default function LoginScreen() {
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
                     placeholder={t('auth.emailPlaceholder')}
+                    placeholderTextColor="#6B7280"
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -130,13 +133,22 @@ export default function LoginScreen() {
 
                 <View className="mb-4">
                   <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
-                  <TextInput
-                    className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    secureTextEntry
-                    value={values.password}
-                    onChangeText={handleChange('password')}
-                  />
+                  <View className="relative">
+                    <TextInput
+                      className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
+                      placeholder={t('auth.passwordPlaceholder')}
+                      placeholderTextColor="#6B7280"
+                      secureTextEntry={!showPassword}
+                      value={values.password}
+                      onChangeText={handleChange('password')}
+                    />
+                    <TouchableOpacity
+                      className="absolute right-4 top-4"
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                    </TouchableOpacity>
+                  </View>
                   {touched.password && errors.password && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
                   )}

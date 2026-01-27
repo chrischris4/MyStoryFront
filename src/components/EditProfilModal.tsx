@@ -4,6 +4,7 @@ import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useEditProfil } from '~/hooks/useEditProfil';
 import { useAuth } from '~/context/AuthContext';
+import { useUserStore } from '~/store/useUserStore';
 import { useTheme } from '~/context/ThemeContext';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
   const { user } = useAuth();
   const { isNight } = useTheme();
   const { mutate: editProfil, isPending } = useEditProfil();
+  const updateProfile = useUserStore((state) => state.updateProfile);
 
   const [name, setName] = useState(user?.profil?.name || '');
   const [newImageUri, setNewImageUri] = useState<string | null>(null); // URI locale de la nouvelle image
@@ -65,7 +67,13 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     }
 
     editProfil(updates, {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        // Mettre à jour le store Zustand avec les données retournées par l'API
+        updateProfile({
+          name: data.name,
+          imageUrl: data.imageUrl,
+        });
+
         Toast.show({
           type: 'success',
           text1: t('profile.profileUpdated'),

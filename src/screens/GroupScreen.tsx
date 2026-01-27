@@ -25,10 +25,12 @@ import GroupDetailsModal from '~/components/GroupDetailsModal';
 import Toast from 'react-native-toast-message';
 import StarryBackground from '~/components/StarryBackground';
 import LottieView from 'lottie-react-native';
+import { useTranslation } from 'react-i18next';
 
 type TabType = 'myGroups' | 'search' | 'invitations';
 
 export default function GroupScreen() {
+  const { t } = useTranslation();
   const { isNight } = useTheme();
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<TabType>('myGroups');
@@ -54,8 +56,8 @@ export default function GroupScreen() {
     if (!groupName.trim()) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Le nom du groupe est requis',
+        text1: t('common.error'),
+        text2: t('groups.groupNameRequired'),
       });
       return;
     }
@@ -67,8 +69,8 @@ export default function GroupScreen() {
       });
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Groupe créé avec succès',
+        text1: t('common.success'),
+        text2: t('groups.groupCreated'),
       });
       setShowCreateModal(false);
       setGroupName('');
@@ -76,8 +78,8 @@ export default function GroupScreen() {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Impossible de créer le groupe',
+        text1: t('common.error'),
+        text2: t('groups.createGroupError'),
       });
     }
   };
@@ -87,14 +89,14 @@ export default function GroupScreen() {
       await acceptInvitationMutation.mutateAsync(invitationId);
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Invitation acceptée',
+        text1: t('common.success'),
+        text2: t('groups.invitationAccepted'),
       });
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Impossible d\'accepter l\'invitation',
+        text1: t('common.error'),
+        text2: t('groups.acceptInvitationError'),
       });
     }
   };
@@ -104,14 +106,14 @@ export default function GroupScreen() {
       await declineInvitationMutation.mutateAsync(invitationId);
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Invitation refusée',
+        text1: t('common.success'),
+        text2: t('groups.invitationDeclined'),
       });
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Impossible de refuser l\'invitation',
+        text1: t('common.error'),
+        text2: t('groups.declineInvitationError'),
       });
     }
   };
@@ -121,14 +123,14 @@ export default function GroupScreen() {
       await joinGroupMutation.mutateAsync(groupId);
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: 'Demande envoyée avec succès',
+        text1: t('common.success'),
+        text2: t('groups.joinRequestSent'),
       });
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Impossible de rejoindre le groupe',
+        text1: t('common.error'),
+        text2: t('groups.joinGroupError'),
       });
     }
   };
@@ -198,12 +200,12 @@ export default function GroupScreen() {
               {group.name}
             </Text>
             <Text className={`${isNight ? 'text-white/70' : 'text-slate-600'} text-sm font-baloo mt-1`}>
-              {group.description || 'Aucune description'}
+              {group.description || t('groups.noDescription')}
             </Text>
             <View className="flex-row items-center mt-2">
               <Feather name="users" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
               <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo ml-1`}>
-                {memberCount} membres
+                {memberCount} {t('groups.members')}
               </Text>
             </View>
           </View>
@@ -227,7 +229,7 @@ export default function GroupScreen() {
                 />
               ) : (
                 <Text className={`${isNight ? 'text-white' : 'text-blue-700'} font-baloo-semibold`}>
-                  Rejoindre
+                  {t('groups.join')}
                 </Text>
               )}
             </BlurView>
@@ -253,7 +255,7 @@ export default function GroupScreen() {
               {invitation.group.name}
             </Text>
             <Text className={`${isNight ? 'text-white/70' : 'text-slate-600'} text-sm font-baloo mt-1`}>
-              Invitation de {invitation.inviter?.profil?.name || 'Utilisateur'}
+              {t('groups.invitationFrom')} {invitation.inviter?.profil?.name || t('groups.user')}
             </Text>
           </View>
           {isPending && (
@@ -305,10 +307,10 @@ export default function GroupScreen() {
             </View>
           )}
           {invitation.status === 'ACCEPTED' && (
-            <Text className="text-green-500 font-baloo-semibold">Acceptée</Text>
+            <Text className="text-green-500 font-baloo-semibold">{t('groups.accepted')}</Text>
           )}
           {invitation.status === 'DECLINED' && (
-            <Text className="text-red-500 font-baloo-semibold">Refusée</Text>
+            <Text className="text-red-500 font-baloo-semibold">{t('groups.declined')}</Text>
           )}
         </View>
       </BlurView>
@@ -323,8 +325,7 @@ export default function GroupScreen() {
       <View
         className='absolute bottom-0 -right-32 w-72 border-4 rounded-full h-36 flex flex-row items-center justify-between p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      >
-      </View>
+      />
       <View
         className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
@@ -341,15 +342,15 @@ export default function GroupScreen() {
           {/* Header */}
           <View className="mb-4">
             <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-4xl font-baloo-semibold pt-4`}>
-              Mes groupes
+              {t('groups.myGroups')}
             </Text>
             <View style={{ width: 24 }} />
           </View>
 
           {/* Tabs */}
           <View className="flex-row gap-2 mb-4">
-            {renderTabButton('myGroups', 'Mes groupes', 'users')}
-            {renderTabButton('invitations', 'Invitations', 'mail')}
+            {renderTabButton('myGroups', t('groups.myGroups'), 'users')}
+            {renderTabButton('invitations', t('groups.invitations'), 'mail')}
           </View>
 
           {/* Content */}
@@ -370,7 +371,7 @@ export default function GroupScreen() {
                     <View className="flex-row items-center justify-center gap-2">
                       <Feather name="plus" size={20} color={isNight ? '#ffffff' : '#1e293b'} />
                       <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
-                        Créer un nouveau groupe
+                        {t('groups.createNewGroup')}
                       </Text>
                     </View>
                   </BlurView>
@@ -390,7 +391,7 @@ export default function GroupScreen() {
                         <TextInput
                           value={searchQuery}
                           onChangeText={setSearchQuery}
-                          placeholder="Rechercher un groupe..."
+                          placeholder={t('groups.searchPlaceholder')}
                           placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                           className={`flex-1 ml-3 ${isNight ? 'text-white' : 'text-slate-800'} font-baloo text-base`}
                         />
@@ -420,7 +421,7 @@ export default function GroupScreen() {
                       >
                         <Feather name="search" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                         <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                          Aucun groupe trouvé
+                          {t('groups.noGroupFound')}
                         </Text>
                       </BlurView>
                     ) : (
@@ -451,7 +452,7 @@ export default function GroupScreen() {
                   >
                     <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                      Vous n'avez pas encore de groupe
+                      {t('groups.noGroupYet')}
                     </Text>
                   </BlurView>
                 ) : (
@@ -487,7 +488,7 @@ export default function GroupScreen() {
                   >
                     <Feather name="inbox" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
-                      Aucune invitation en attente
+                      {t('groups.noInvitations')}
                     </Text>
                   </BlurView>
                 ) : (
@@ -507,13 +508,13 @@ export default function GroupScreen() {
                 style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
               >
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold mb-4`}>
-                  Créer un groupe
+                  {t('groups.createGroup')}
                 </Text>
 
                 <TextInput
                   value={groupName}
                   onChangeText={setGroupName}
-                  placeholder="Nom du groupe"
+                  placeholder={t('groups.groupName')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                   className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl mb-3`}
                 />
@@ -521,7 +522,7 @@ export default function GroupScreen() {
                 <TextInput
                   value={groupDescription}
                   onChangeText={setGroupDescription}
-                  placeholder="Description"
+                  placeholder={t('groups.description')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                   multiline
                   numberOfLines={3}
@@ -540,7 +541,7 @@ export default function GroupScreen() {
                   >
                     <View className={`${isNight ? 'bg-slate-700' : 'bg-slate-200'} py-3 rounded-xl items-center`}>
                       <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
-                        Annuler
+                        {t('common.cancel')}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -560,7 +561,7 @@ export default function GroupScreen() {
                         />
                       ) : (
                         <Text className="text-white font-baloo-semibold">
-                          Créer
+                          {t('groups.create')}
                         </Text>
                       )}
                     </View>

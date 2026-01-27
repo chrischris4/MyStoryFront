@@ -100,4 +100,26 @@ export const useUserStore = create<UserStore>((set) => ({
       console.error('Erreur lors du chargement depuis AsyncStorage:', error);
     }
   },
+
+  updateProfile: async (profile) => {
+    set((state) => {
+      if (!state.user) return state;
+
+      const updatedProfil = {
+        ...state.user.profil,
+        ...(profile.name !== undefined && { name: profile.name }),
+        ...(profile.imageUrl !== undefined && { imageUrl: profile.imageUrl ?? undefined }),
+      };
+
+      const updatedUser = {
+        ...state.user,
+        profil: updatedProfil,
+      };
+
+      // Sauvegarder dans AsyncStorage
+      AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+
+      return { user: updatedUser };
+    });
+  },
 }));

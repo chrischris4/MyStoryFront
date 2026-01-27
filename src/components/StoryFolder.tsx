@@ -227,7 +227,7 @@ export default function StoryFolder({
                                 onPress={handleToggle}
                                 className="absolute -top-2 -right-1 p-2"
                             >
-                                <Feather name="x" size={24} color="#fff" />
+                                <Feather name="x" size={24} color={isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"} />
                             </Pressable>
                         )}
 

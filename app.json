@@ -56,8 +56,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "TO_BE_GENERATED"
+        "projectId": "8d26f2b7-d22d-48a7-9636-52f155c3bd7e"
       }
-    }
+    },
+    "owner": "chris4"
   }
 }

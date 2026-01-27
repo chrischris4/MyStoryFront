@@ -25,10 +25,60 @@ type StoryModalProps = {
 
 export default function StoryModal({ loading, title, storyPages, storyId, onClose }: StoryModalProps) {
     const { t } = useTranslation();
-    const { minimize } = useStoryCreationStore();
+    const { close } = useStoryCreationStore();
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+    // Animation slide du modal (entrée)
+    const modalSlideAnim = useRef(new Animated.Value(-600)).current;
+    const modalOpacityAnim = useRef(new Animated.Value(0)).current;
+
+    // Animation slide du contenu "histoire prête"
+    const contentSlideAnim = useRef(new Animated.Value(-100)).current;
+    const contentOpacityAnim = useRef(new Animated.Value(0)).current;
+
+    // Animation d'entrée du modal
+    useEffect(() => {
+        Animated.parallel([
+            Animated.spring(modalSlideAnim, {
+                toValue: 0,
+                useNativeDriver: true,
+                tension: 50,
+                friction: 8,
+            }),
+            Animated.timing(modalOpacityAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }),
+        ]).start();
+    }, []);
+
+    // Animation du contenu quand le loading passe à false
+    useEffect(() => {
+        if (!loading) {
+            // Reset et anime le contenu
+            contentSlideAnim.setValue(-100);
+            contentOpacityAnim.setValue(0);
+
+            Animated.parallel([
+                Animated.spring(contentSlideAnim, {
+                    toValue: 0,
+                    useNativeDriver: true,
+                    tension: 50,
+                    friction: 8,
+                    delay: 200,
+                }),
+                Animated.timing(contentOpacityAnim, {
+                    toValue: 1,
+                    duration: 400,
+                    delay: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+    }, [loading]);
 
     // Rotation infinie du cercle soleil/lune
     useEffect(() => {
@@ -120,8 +170,25 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
     const sunSize = orbitSize * 0.22;
     const moonSize = orbitSize * 0.15;
 
+    // Animation de sortie du modal
+    const animateOut = (callback: () => void) => {
+        Animated.parallel([
+            Animated.timing(modalSlideAnim, {
+                toValue: -600,
+                duration: 300,
+                useNativeDriver: true,
+                easing: Easing.in(Easing.ease),
+            }),
+            Animated.timing(modalOpacityAnim, {
+                toValue: 0,
+                duration: 250,
+                useNativeDriver: true,
+            }),
+        ]).start(() => callback());
+    };
+
     const handleMinimize = () => {
-        minimize();
+        animateOut(() => close()); // Anime puis ferme tout
     };
 
     return (
@@ -133,8 +200,12 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                 style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} // Optionnel: assombrit le fond
                 onPress={() => { /* Optionnel: fermer la modal au clic extérieur */ }}
             />
-            <View
+            <Animated.View
                 className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
+                style={{
+                    transform: [{ translateY: modalSlideAnim }],
+                    opacity: modalOpacityAnim,
+                }}
             >
                 <Animated.View
                     style={{
@@ -235,7 +306,12 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                 }}
                             />
 
-                            <View>
+                            <Animated.View
+                                style={{
+                                    transform: [{ translateY: contentSlideAnim }],
+                                    opacity: contentOpacityAnim,
+                                }}
+                            >
                                 <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
                                     <Animated.Text className="text-xl font-baloo text-center">
                                         {t('storyCreation.storyReady')}
@@ -258,14 +334,16 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                         </BlurView>
                                     </View>
                                 )}
-                            </View>
+                            </Animated.View>
                             <TouchableOpacity
                                 style={{ borderRadius: 24, overflow: 'hidden' }}
                                 className='bg-white p-4 -mb-2'
                                 onPress={() => {
                                     if (storyId) {
-                                        navigation.navigate('StoryDetail', { storyId: Number(storyId) });
-                                        onClose();
+                                        animateOut(() => {
+                                            navigation.navigate('StoryDetail', { storyId: Number(storyId) });
+                                            onClose();
+                                        });
                                     }
                                 }}
                             >
@@ -286,7 +364,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                     )
                     }
                 </Animated.View >
-            </View >
+            </Animated.View >
         </View>
     );
 }

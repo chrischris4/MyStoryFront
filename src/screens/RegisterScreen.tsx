@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -12,6 +14,8 @@ import LottieView from 'lottie-react-native';
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const registerSchema = Yup.object().shape({
     email: Yup.string()
@@ -100,6 +104,7 @@ export default function RegisterScreen() {
                   <TextInput
                     className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
                     placeholder={t('auth.emailPlaceholder')}
+                    placeholderTextColor="#6B7280"
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
@@ -112,14 +117,23 @@ export default function RegisterScreen() {
 
                 <View className="mb-4">
                   <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
-                  <TextInput
-                    className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.passwordPlaceholder')}
-                    secureTextEntry
-                    value={values.password}
-                    onChangeText={handleChange('password')}
-                    onBlur={handleBlur('password')}
-                  />
+                  <View className="relative">
+                    <TextInput
+                      className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
+                      placeholder={t('auth.passwordPlaceholder')}
+                      placeholderTextColor="#6B7280"
+                      secureTextEntry={!showPassword}
+                      value={values.password}
+                      onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
+                    />
+                    <TouchableOpacity
+                      className="absolute right-4 top-4"
+                      onPress={() => setShowPassword(!showPassword)}
+                    >
+                      <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                    </TouchableOpacity>
+                  </View>
                   {touched.password && errors.password && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
                   )}
@@ -127,14 +141,23 @@ export default function RegisterScreen() {
 
                 <View className="mb-4">
                   <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.confirmPassword')}</Text>
-                  <TextInput
-                    className={`w-full border ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
-                    placeholder={t('auth.confirmPasswordPlaceholder')}
-                    secureTextEntry
-                    value={values.confirmPassword}
-                    onChangeText={handleChange('confirmPassword')}
-                    onBlur={handleBlur('confirmPassword')}
-                  />
+                  <View className="relative">
+                    <TextInput
+                      className={`w-full border ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
+                      placeholder={t('auth.confirmPasswordPlaceholder')}
+                      placeholderTextColor="#6B7280"
+                      secureTextEntry={!showConfirmPassword}
+                      value={values.confirmPassword}
+                      onChangeText={handleChange('confirmPassword')}
+                      onBlur={handleBlur('confirmPassword')}
+                    />
+                    <TouchableOpacity
+                      className="absolute right-4 top-4"
+                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    >
+                      <Feather name={showConfirmPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
+                    </TouchableOpacity>
+                  </View>
                   {touched.confirmPassword && errors.confirmPassword && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.confirmPassword}</Text>
                   )}
