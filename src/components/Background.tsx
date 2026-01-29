@@ -1,6 +1,5 @@
-import LottieView from 'lottie-react-native';
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Easing, useWindowDimensions } from 'react-native';
+import { View, Animated, Easing } from 'react-native';
 import StarryBackground from './StarryBackground';
 
 type BackgroundProps = {
@@ -8,9 +7,7 @@ type BackgroundProps = {
 };
 
 export default function Background({ isNight = false }: BackgroundProps) {
-    const { width } = useWindowDimensions();
     const cloudAnim = useRef(new Animated.Value(0)).current;
-    const translateX = useRef(new Animated.Value(width)).current;
 
     useEffect(() => {
         Animated.loop(
@@ -23,21 +20,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
         ).start();
     }, []);
 
-    const animationRef = useRef(null);
 
-    useEffect(() => {
-        animationRef.current?.play();
-    }, []);
-
-    useEffect(() => {
-        animationRef.current?.play();
-
-        Animated.timing(translateX, {
-            toValue: -300,
-            duration: 5000,
-            useNativeDriver: true,
-        }).start();
-    }, []);
 
     // 🔹 Couleurs nuit
     const skyColor = isNight ? '#020205' : '#87CEEB';
@@ -62,25 +45,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
 
-            {/* Chien */}
-            {!isNight && (
-            <Animated.View
-                style={{
-                    transform: [{ translateX }],
-                    position: 'absolute',
-                    bottom: 10,
-                    alignSelf: 'center',
-                }}
-            >
-                <LottieView
-                    ref={animationRef}
-                    source={require('../../assets/animations/dog.json')}
-                    autoPlay
-                    loop={true}
-                    style={{ width: 200, height: 200 }}
-                />
-            </Animated.View>
-            )}
+            
             {/* Nuages */}
             <Animated.View
                 style={{ transform: [{ translateX: cloudAnim }] }}

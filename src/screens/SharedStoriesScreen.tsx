@@ -13,6 +13,7 @@ import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
@@ -96,6 +97,8 @@ export default function SharedStoriesScreen() {
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>
+      {/* 🌤️ Background animé */}
+      <Background isNight={isNight} />
       <Animated.View
         style={{
           position: 'absolute',

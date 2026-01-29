@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Animated, useWindowDimensions } from 'react-native';
 import HomeButton from '~/components/HomeButton';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -11,13 +11,31 @@ import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '~/context/SoundContext';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { isNight } = useTheme();
   const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
   const { playBackgroundMusic, toggleBackgroundMusic, isMusicEnabled } = useSound();
+  const { width } = useWindowDimensions();
+
+  const translateX = useRef(new Animated.Value(width)).current;
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    animationRef.current?.play();
+  }, []);
+
+  useEffect(() => {
+    animationRef.current?.play();
+
+    Animated.timing(translateX, {
+      toValue: -300,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   // Lancer la musique au premier rendu
   useEffect(() => {
@@ -57,6 +75,25 @@ export default function HomeScreen() {
     <View className="flex-1 relative">
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
+      {/* Chien */}
+      {!isNight && (
+        <Animated.View
+          style={{
+            transform: [{ translateX }],
+            position: 'absolute',
+            bottom: 10,
+            alignSelf: 'center',
+          }}
+        >
+          <LottieView
+            ref={animationRef}
+            source={require('../../assets/animations/dog.json')}
+            autoPlay
+            loop={true}
+            style={{ width: 200, height: 200 }}
+          />
+        </Animated.View>
+      )}
       {/* 🌟 Contenu principal au-dessus */}
       <View className="flex-1 items-center w-full absolute top-0 left-0 right-0 bottom-0">
         <View className="flex flex-row mt-8 w-11/12 items-center relative">

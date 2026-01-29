@@ -21,6 +21,7 @@ import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 
 
@@ -282,6 +283,8 @@ export default function CreateStoryScreen() {
   return (
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
       {/* Bouton de test pour ouvrir/fermer la StoryModal */}
+      {/* 🌤️ Background animé */}
+      <Background isNight={isNight} />
       <TouchableOpacity
         className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
         onPress={() => {

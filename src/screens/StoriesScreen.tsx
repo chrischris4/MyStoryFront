@@ -8,6 +8,7 @@ import { useStories } from '~/hooks/useStories';
 import { useFavoriteStories } from '~/hooks/useFavoriteStories';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 export default function StoriesScreen() {
   const { t } = useTranslation();
@@ -22,6 +23,8 @@ export default function StoriesScreen() {
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>
+      {/* 🌤️ Background animé */}
+      <Background isNight={isNight} />
       <Animated.View
         style={{
           position: 'absolute',

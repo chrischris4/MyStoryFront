@@ -14,6 +14,7 @@ import { useIAP } from '~/hooks/useIAP';
 import { usePurchaseProduct } from '~/hooks/usePurchaseProduct';
 import { usePurchaseSubscription } from '~/hooks/usePurchaseSubscription';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -436,6 +437,8 @@ export default function BillingScreen() {
     return (
         <View className="flex-1 flex-col overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
             {isNight && <StarryBackground starCount={50} />}
+            {/* 🌤️ Background animé */}
+            <Background isNight={isNight} />
             <View
                 className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

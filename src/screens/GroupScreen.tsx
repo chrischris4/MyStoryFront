@@ -26,6 +26,7 @@ import Toast from 'react-native-toast-message';
 import StarryBackground from '~/components/StarryBackground';
 import LottieView from 'lottie-react-native';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 type TabType = 'myGroups' | 'search' | 'invitations';
 
@@ -322,6 +323,8 @@ export default function GroupScreen() {
   return (
     <View className="flex-1 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
       {isNight && <StarryBackground starCount={50} />}
+      {/* 🌤️ Background animé */}
+      <Background isNight={isNight} />
       <View
         className='absolute bottom-0 -right-32 w-72 border-4 rounded-full h-36 flex flex-row items-center justify-between p-4'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

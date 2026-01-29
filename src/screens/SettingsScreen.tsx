@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
 import { useDeleteAccount } from '~/hooks/useDeleteAccount';
 import LottieView from 'lottie-react-native';
+import Background from '~/components/Background';
 
 export default function SettingsScreen() {
     const { t } = useTranslation();
@@ -83,6 +84,8 @@ export default function SettingsScreen() {
     return (
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
             {isNight && <StarryBackground starCount={50} />}
+            {/* 🌤️ Background animé */}
+            <Background isNight={isNight} />
 
             {/* Sol */}
             <View

@@ -31,6 +31,7 @@ import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
+import Background from '~/components/Background';
 
 
 
@@ -426,6 +427,8 @@ export default function StoryDetailScreen() {
     <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
 
       {isNight && <StarryBackground starCount={50} />}
+      {/* 🌤️ Background animé */}
+      <Background isNight={isNight} />
       <ScrollView
         ref={scrollViewRef}
         className="flex-grow px-4 z-20"
@@ -519,7 +522,7 @@ export default function StoryDetailScreen() {
                       </Text>
                     </View>
                   )}
-                  
+
                 </>
               ) : (
                 <>
