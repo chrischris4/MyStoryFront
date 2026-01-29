@@ -7,8 +7,10 @@ import LottieView from 'lottie-react-native';
 import { useStories } from '~/hooks/useStories';
 import { useFavoriteStories } from '~/hooks/useFavoriteStories';
 import StarryBackground from '~/components/StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 export default function StoriesScreen() {
+  const { t } = useTranslation();
   const { isNight } = useTheme();
   const { data: stories = [], isLoading: isLoadingStories } = useStories();
   const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
@@ -46,35 +48,35 @@ export default function StoriesScreen() {
         className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>Mes histoires</Text>
+      <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>
       <Text className={` text-xl font-baloo mb-4 px-4 ${isNight ? "text-white" : "text-slate-600"}`}>
-        Toutes vos aventures vous attendent ici !
+        {t('stories.subtitle')}
       </Text>
       <View className="flex-1 gap-4">
         <StoryFolder
           isNight={isNight}
-          title="Tout"
+          title={t('stories.all')}
           icon={<Feather name="list" size={24} color="#fff" />}
           storyType="ALL"
-          description="Toutes vos histoires au même endroit"
+          description={t('stories.allDesc')}
           stories={stories}
           isLoading={isLoadingStories}
         />
         <StoryFolder
           isNight={isNight}
-          title="Récent"
+          title={t('stories.recent')}
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"
-          description="Vos 10 histoires les plus récentes"
+          description={t('stories.recentDesc')}
           stories={stories}
           isLoading={isLoadingStories}
         />
         <StoryFolder
           isNight={isNight}
-          title="Favorite"
+          title={t('stories.favorite')}
           icon={<Feather name="heart" size={24} color="#fff" />}
           storyType="FAVORITE"
-          description="Vos histoires préférées"
+          description={t('stories.favoriteDesc')}
           stories={favoriteStories}
           isLoading={isLoadingFavorites}
         />

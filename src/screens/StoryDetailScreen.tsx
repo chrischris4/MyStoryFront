@@ -30,6 +30,7 @@ import FullScreenStoryModal from '~/components/FullScreenStoryModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -39,7 +40,7 @@ type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function StoryDetailScreen() {
   const navigation = useNavigation<StoryDetailNavigationProp>();
-
+  const { t } = useTranslation();
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
 
@@ -87,8 +88,8 @@ export default function StoryDetailScreen() {
         onError: (error) => {
           Toast.show({
             type: 'error',
-            text1: 'Erreur',
-            text2: 'Impossible de modifier le favori',
+            text1: t('common.error'),
+            text2: t('storyDetail.favoriteError'),
           });
           console.error('Erreur toggle favori:', error);
         },
@@ -102,8 +103,8 @@ export default function StoryDetailScreen() {
       if (!token) {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: 'Utilisateur non authentifié',
+          text1: t('common.error'),
+          text2: t('storyDetail.userNotAuthenticated'),
         });
         return;
       }
@@ -120,25 +121,25 @@ export default function StoryDetailScreen() {
         setIsShared(updatedStory.isShared);
         Toast.show({
           type: 'success',
-          text1: 'Succès',
+          text1: t('common.success'),
           text2: updatedStory.isShared
-            ? 'Votre histoire est maintenant partagée avec la communauté!'
-            : 'Votre histoire n\'est plus partagée',
+            ? t('storyDetail.storySharedToCommunity')
+            : t('storyDetail.storyUnshared'),
         });
         setShowShareModal(false);
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: 'Impossible de modifier le statut de partage',
+          text1: t('common.error'),
+          text2: t('storyDetail.shareStatusError'),
         });
       }
     } catch (err) {
       console.error('Erreur lors du toggle shared:', err);
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: 'Une erreur est survenue',
+        text1: t('common.error'),
+        text2: t('errors.unknownError'),
       });
     }
   };
@@ -162,8 +163,8 @@ export default function StoryDetailScreen() {
     if (newGroupsToShare.length === 0) {
       Toast.show({
         type: 'info',
-        text1: 'Information',
-        text2: 'Aucun nouveau groupe sélectionné',
+        text1: t('common.information'),
+        text2: t('storyDetail.noNewGroupSelected'),
       });
       return;
     }
@@ -185,8 +186,8 @@ export default function StoryDetailScreen() {
       playSound('success');
       Toast.show({
         type: 'success',
-        text1: 'Succès',
-        text2: `Histoire partagée à ${newGroupsToShare.length} nouveau(x) groupe(s)`,
+        text1: t('common.success'),
+        text2: t('storyDetail.storySharedToGroups', { count: newGroupsToShare.length }),
       });
       setSelectedGroups([]); // Réinitialiser la sélection après le partage
       setShowShareModal(false);
@@ -194,8 +195,8 @@ export default function StoryDetailScreen() {
       console.error('Erreur lors du partage:', error);
       Toast.show({
         type: 'error',
-        text1: 'Erreur',
-        text2: error?.message || 'Impossible de partager l\'histoire',
+        text1: t('common.error'),
+        text2: error?.message || t('storyDetail.shareError'),
       });
     }
   };
@@ -210,8 +211,8 @@ export default function StoryDetailScreen() {
         playSound('success');
         Toast.show({
           type: 'success',
-          text1: 'Succès',
-          text2: 'Histoire supprimée avec succès',
+          text1: t('common.success'),
+          text2: t('storyDetail.storyDeleted'),
         });
         setTimeout(() => {
           navigation.navigate('MainTabs');
@@ -220,8 +221,8 @@ export default function StoryDetailScreen() {
       onError: (error: any) => {
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: error.message || 'Impossible de supprimer l\'histoire',
+          text1: t('common.error'),
+          text2: error.message || t('storyDetail.deleteError'),
         });
       },
     });
@@ -231,7 +232,7 @@ export default function StoryDetailScreen() {
   const fetchStory = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
-      if (!token) throw new Error('Utilisateur non authentifié');
+      if (!token) throw new Error(t('storyDetail.userNotAuthenticated'));
 
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/detail/${storyId}`, {
         headers: {
@@ -240,7 +241,7 @@ export default function StoryDetailScreen() {
       });
 
       if (!response.ok) {
-        throw new Error('Erreur lors de la récupération de la story');
+        throw new Error(t('storyDetail.fetchError'));
       }
 
       const data: Story = await response.json();
@@ -415,7 +416,7 @@ export default function StoryDetailScreen() {
   if (error || !story) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-red-500">{error ?? 'Story non trouvée'}</Text>
+        <Text className="text-red-500">{error ?? t('storyDetail.storyNotFound')}</Text>
       </View>
     );
   }
@@ -467,7 +468,7 @@ export default function StoryDetailScreen() {
                 borderRadius: 20,
               }}
             /> */}
-              <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>Auteur : {story.user?.profil?.name || 'Anonyme'}</Text>
+              <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>{t('storyDetail.author', { name: story.user?.profil?.name || t('storyDetail.anonymous') })}</Text>
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
             <Text className={`text-sm font-baloo text-center px-4 pt-4 ${isNight ? 'text-white/80' : 'text-black'}`}>
@@ -475,7 +476,7 @@ export default function StoryDetailScreen() {
                 day: '2-digit',
                 month: '2-digit',
                 year: '2-digit'
-              }) : 'Date inconnue'}
+              }) : t('storyDetail.unknownDate')}
             </Text>
           </View>
         </BlurView>
@@ -505,7 +506,7 @@ export default function StoryDetailScreen() {
               {(isShared || sharedGroups.length > 0) ? (
                 <>
                   <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                    Partagée
+                    {t('storyDetail.shared')}
                   </Text>
                   {isShared && (
                     <Feather name='globe' size={18} color={isNight ? '#fff' : '#000'} />
@@ -524,7 +525,7 @@ export default function StoryDetailScreen() {
                 <>
                   <Feather name='share' size={18} color={isNight ? '#fff' : '#000'} />
                   <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                    Partager
+                    {t('storyDetail.share')}
                   </Text>
                 </>
               )}
@@ -581,7 +582,7 @@ export default function StoryDetailScreen() {
             className="p-4 flex-row gap-2 items-center justify-center"
           >
             <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-              {isExpanded ? 'Masquer les pages' : 'Voir toutes les pages'}
+              {isExpanded ? t('storyDetail.hidePages') : t('storyDetail.showAllPages')}
             </Text>
             <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={isNight ? '#fff' : '#000'} />
           </TouchableOpacity>
@@ -624,10 +625,10 @@ export default function StoryDetailScreen() {
                 </Animated.View>
 
                 <Text className="text-2xl font-baloo-bold text-gray-900 mb-2">
-                  Supprimer l'histoire ?
+                  {t('storyDetail.deleteStoryTitle')}
                 </Text>
                 <Text className="text-center text-gray-600 font-baloo">
-                  Cette action est irréversible. Votre histoire "{story?.title}" sera définitivement supprimée.
+                  {t('storyDetail.deleteStoryMessage', { title: story?.title })}
                 </Text>
               </View>
 
@@ -637,7 +638,7 @@ export default function StoryDetailScreen() {
                   className="bg-red-600 p-4 rounded-xl items-center"
                 >
                   <Text className="text-white font-baloo-semibold text-lg">
-                    Oui, supprimer
+                    {t('storyDetail.yesDelete')}
                   </Text>
                 </TouchableOpacity>
 
@@ -650,7 +651,7 @@ export default function StoryDetailScreen() {
                   className="bg-gray-200 p-4 rounded-xl items-center"
                 >
                   <Text className="text-gray-800 font-baloo-semibold text-lg">
-                    Annuler
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -677,10 +678,10 @@ export default function StoryDetailScreen() {
             >
               <View className="mb-6">
                 <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
-                  Partager l'histoire
+                  {t('storyDetail.shareStoryTitle')}
                 </Text>
                 <Text className={`text-center ${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo`}>
-                  Choisissez comment partager votre histoire
+                  {t('storyDetail.shareStorySubtitle')}
                 </Text>
               </View>
 
@@ -698,10 +699,10 @@ export default function StoryDetailScreen() {
                   <View className="flex-row items-center justify-between">
                     <View className="flex-1">
                       <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                        Partager à tout le monde
+                        {t('storyDetail.shareToEveryone')}
                       </Text>
                       <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                        Visible par toute la communauté
+                        {t('storyDetail.visibleByCommunity')}
                       </Text>
                     </View>
                     {isShared && (
@@ -714,7 +715,7 @@ export default function StoryDetailScreen() {
               {/* Option: Partager à des groupes */}
               <View className="mb-4">
                 <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
-                  Partager à des groupes
+                  {t('storyDetail.shareToGroups')}
                 </Text>
                 <ScrollView className="max-h-60">
                   {myGroups.length === 0 ? (
@@ -726,7 +727,7 @@ export default function StoryDetailScreen() {
                     >
                       <Feather name="users" size={32} color={isNight ? '#64748b' : '#94a3b8'} />
                       <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
-                        Vous n'avez pas encore de groupe
+                        {t('storyDetail.noGroupYet')}
                       </Text>
                     </BlurView>
                   ) : (
@@ -752,7 +753,7 @@ export default function StoryDetailScreen() {
                                   {group.name}
                                 </Text>
                                 <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                                  {group._count?.members || 0} membres {isAlreadyShared ? '• Déjà partagé' : ''}
+                                  {t('storyDetail.members', { count: group._count?.members || 0 })} {isAlreadyShared ? `• ${t('storyDetail.alreadyShared')}` : ''}
                                 </Text>
                               </View>
                               {isSelected && (
@@ -783,7 +784,7 @@ export default function StoryDetailScreen() {
                       className="bg-blue-600 p-4 rounded-xl items-center"
                     >
                       <Text className="text-white font-baloo-semibold text-lg">
-                        Partager à {newGroupsCount} nouveau(x) groupe(s)
+                        {t('storyDetail.shareToNewGroups', { count: newGroupsCount })}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -797,7 +798,7 @@ export default function StoryDetailScreen() {
                   className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
                 >
                   <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
-                    Fermer
+                    {t('common.close')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -844,7 +845,7 @@ export default function StoryDetailScreen() {
             setIsFullScreen(true);
           }}
           className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-6 gap-2 items-center justify-center rounded-full">
-          <Text className='text-white text-lg font-baloo-medium'>Lire en plein écran </Text>
+          <Text className='text-white text-lg font-baloo-medium'>{t('storyDetail.readFullscreen')} </Text>
           <Feather name="play" size={20} color="white" />
         </TouchableOpacity>
         <TouchableOpacity

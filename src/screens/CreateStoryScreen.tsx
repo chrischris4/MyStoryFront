@@ -20,6 +20,7 @@ import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
 import StarryBackground from '~/components/StarryBackground';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -109,6 +110,7 @@ type CreateStoryScreenNavigationProp = CompositeNavigationProp<
 
 export default function CreateStoryScreen() {
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
+  const { t } = useTranslation();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const { isNight } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -214,8 +216,8 @@ export default function CreateStoryScreen() {
         console.error('❌ Erreur création:', error);
         Toast.show({
           type: 'error',
-          text1: 'Erreur',
-          text2: 'Erreur lors de la création de l\'histoire.',
+          text1: t('common.error'),
+          text2: t('createStory.creationError'),
         });
         close();
       }
@@ -266,6 +268,16 @@ export default function CreateStoryScreen() {
   const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
+  // Fonction pour obtenir les traductions des styles
+  const getStyleTranslation = (styleId: string) => {
+    const translations: Record<string, { name: string; description: string }> = {
+      CLASSIQUE: { name: t('createStory.styleClassic'), description: t('createStory.styleClassicDesc') },
+      REALIST: { name: t('createStory.styleRealist'), description: t('createStory.styleRealistDesc') },
+      MANGA: { name: t('createStory.styleManga'), description: t('createStory.styleMangaDesc') },
+    };
+    return translations[styleId] || { name: styleId, description: '' };
+  };
 
   return (
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
@@ -336,7 +348,7 @@ export default function CreateStoryScreen() {
               onPress={() => navigation.navigate('BillingScreen')}
             >
               <Text className="text-gray-800 font-baloo-semibold text-center text-base">
-                Obtenir des Story Coins
+                {t('createStory.getStoryCoins')}
               </Text>
               <Feather name="arrow-right" size={20} color="#000" />
             </TouchableOpacity>
@@ -344,8 +356,8 @@ export default function CreateStoryScreen() {
         </>
       )}
 
-      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white/80" : "text-black"}`}>Creation d'histoire</Text>
-      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>Ici, tout deviens possible !</Text>
+      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white/80" : "text-black"}`}>{t('createStory.title')}</Text>
+      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
         className="flex-1 px-4"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -366,11 +378,11 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>Titre de l'histoire</Text>
+                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
 
                 <TextInput
                   className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
-                  placeholder="Ex: Pacha et la forêt magique"
+                  placeholder={t('createStory.storyTitlePlaceholder')}
                   placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
                   value={formik.values.title}
                   onChangeText={formik.handleChange('title')}
@@ -395,11 +407,11 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>Résumé de l'histoire</Text>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apportera de détails à ton résumer et plus l'histoire correspondra à tes attentes !</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
                 <TextInput
                   className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
-                  placeholder="Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret..."
+                  placeholder={t('createStory.storySummaryPlaceholder')}
                   placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
                   value={formik.values.prompt}
                   onChangeText={formik.handleChange('prompt')}
@@ -431,7 +443,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Style de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
 
                 {/* Carrousel de styles */}
                 <Animated.ScrollView
@@ -489,12 +501,12 @@ export default function CreateStoryScreen() {
                             <Text
                               className="font-bold text-xl mb-2 text-white"
                             >
-                              {style.name}
+                              {getStyleTranslation(style.id).name}
                             </Text>
 
 
                             <Text className="text-white text-sm">
-                              {style.description}
+                              {getStyleTranslation(style.id).description}
                             </Text>
                           </View>
                         </ImageBackground>
@@ -558,7 +570,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>Langue de l'histoire</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {LANGUAGES.map((lang) => {
                     const isSelected = formik.values.language === lang.id;
@@ -610,7 +622,7 @@ export default function CreateStoryScreen() {
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language) && (
                 <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
-                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>Informations manquantes</Text>
+                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>{t('createStory.missingInfo')}</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
                       <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.title}</Text>
@@ -636,7 +648,7 @@ export default function CreateStoryScreen() {
               className={`bg-black px-4 py-3 rounded-3xl items-center`}
               onPress={handleCreateClick}
             >
-              <Text className="font-baloo-semibold text-lg text-white">Créer mon histoire !</Text>
+              <Text className="font-baloo-semibold text-lg text-white">{t('createStory.createMyStory')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -652,7 +664,7 @@ export default function CreateStoryScreen() {
         title={formik.values.title}
         prompt={formik.values.prompt}
         numPages={formik.values.numPages}
-        styleName={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.name || ''}
+        styleName={getStyleTranslation(formik.values.selectedStyle).name}
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
         languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
