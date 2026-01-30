@@ -294,7 +294,6 @@ export default function StoryDetailScreen() {
     return (
       <View className="flex-1 pt-10 px-4" style={{ backgroundColor: skyColor }}>
         {isNight && <StarryBackground starCount={50} />}
-
         {/* Skeleton Cover */}
         <BlurView
           intensity={isNight ? 90 : 50}
@@ -425,8 +424,6 @@ export default function StoryDetailScreen() {
 
   return (
     <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
-
-      {isNight && <StarryBackground starCount={50} />}
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
       <ScrollView

@@ -40,15 +40,9 @@ export default function StoriesScreen() {
           style={{ width: 200, height: 200 }}
         />
       </Animated.View>
-      {isNight && <StarryBackground starCount={50} />}
-
       {/* Sol */}
-      <View
+       <View
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
-      <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-50'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>

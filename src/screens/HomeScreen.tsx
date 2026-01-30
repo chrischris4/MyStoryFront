@@ -65,6 +65,8 @@ export default function HomeScreen() {
   };
 
   const planName = getPlanDisplayName(user?.subscriptionPlan);
+  const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
   // Debug: log subscription plan
   // console.log('🎯 User subscriptionPlan:', user?.subscriptionPlan);
@@ -73,6 +75,10 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 relative">
+      <View
+        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-30'
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+      />
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
       {/* Chien */}

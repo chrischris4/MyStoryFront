@@ -295,6 +295,27 @@ export class ApiService {
   async deleteUser() {
     return this.delete<{ message: string }>(`/user/me`);
   }
+
+  // --- Characters ---
+  async getCharacters() {
+    return this.get<any[]>('/character');
+  }
+
+  async getCharacter(id: number) {
+    return this.get<any>(`/character/${id}`);
+  }
+
+  async createCharacter(dto: any) {
+    return this.post<any>('/character', dto);
+  }
+
+  async updateCharacter(id: number, dto: any) {
+    return this.patch<any>(`/character/${id}`, dto);
+  }
+
+  async deleteCharacter(id: number) {
+    return this.delete<any>(`/character/${id}`);
+  }
 }
 
 // --- Instance singleton ---

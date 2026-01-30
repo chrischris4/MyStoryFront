@@ -22,6 +22,10 @@ import { useCreateStory } from '~/hooks/useCreateStory';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
+import CharacterSection from '~/components/CharacterSection';
+import CharacterModal from '~/components/CharacterModal';
+import type { Character } from '~/types';
+import { SKIN_COLORS, HAIR_COLORS, EYE_COLORS, ANIMAL_TYPES, FUR_COLORS, GENDERS, ANIMAL_AGE_RANGES } from '~/types';
 
 
 
@@ -113,6 +117,9 @@ export default function CreateStoryScreen() {
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
   const { t } = useTranslation();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showCharacterModal, setShowCharacterModal] = useState(false);
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const { isNight } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
@@ -202,7 +209,11 @@ export default function CreateStoryScreen() {
           numberOfPages: values.numPages,
           title: values.title,
           style: values.selectedStyle,
-          language: values.language
+          language: values.language,
+          characterId: selectedCharacter?.id,
+          characterDescription: selectedCharacter
+            ? buildCharacterDescription(selectedCharacter)
+            : undefined,
         };
         console.log('📤 Payload envoyé:', JSON.stringify(payload, null, 2));
 
@@ -224,6 +235,39 @@ export default function CreateStoryScreen() {
       }
     },
   });
+
+  // Fonction pour construire la description du personnage pour l'IA
+  const buildCharacterDescription = (character: Character): string => {
+    let description = `Personnage principal: ${character.name}`;
+
+    // Genre
+    const genderLabel = GENDERS.find((g) => g.id === character.gender)?.label;
+    if (genderLabel) description += `, ${genderLabel.toLowerCase()}`;
+
+    if (character.type === 'HUMAN') {
+      if (character.age) description += `, ${character.age} ans`;
+      const skinLabel = SKIN_COLORS.find((s) => s.id === character.skinColor)?.label || character.skinColor;
+      if (skinLabel) description += `, peau ${skinLabel.toLowerCase()}`;
+      const hairLabel = HAIR_COLORS.find((h) => h.id === character.hairColor)?.label || character.hairColor;
+      if (hairLabel) description += `, cheveux ${hairLabel.toLowerCase()}`;
+      const eyeLabel = EYE_COLORS.find((e) => e.id === character.eyeColor)?.label || character.eyeColor;
+      if (eyeLabel) description += `, yeux ${eyeLabel.toLowerCase()}`;
+      if (character.clothing) description += `. Vêtements: ${character.clothing}`;
+    } else {
+      const animalLabel = ANIMAL_TYPES.find((a) => a.id === character.animalType)?.label || character.animalType;
+      if (animalLabel) description += `, un ${animalLabel.toLowerCase()}`;
+      const ageLabel = ANIMAL_AGE_RANGES.find((a) => a.id === character.animalAge)?.label;
+      if (ageLabel) description += ` ${ageLabel.toLowerCase()}`;
+      const furLabel = FUR_COLORS.find((f) => f.id === character.furColor)?.label || character.furColor;
+      if (furLabel) description += `, pelage ${furLabel.toLowerCase()}`;
+    }
+
+    if (character.description) {
+      description += `. ${character.description}`;
+    }
+
+    return description;
+  };
 
   // Fonction pour gérer le clic sur le bouton de création
   const handleCreateClick = async () => {
@@ -282,7 +326,6 @@ export default function CreateStoryScreen() {
 
   return (
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
-      {/* Bouton de test pour ouvrir/fermer la StoryModal */}
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
       <TouchableOpacity
@@ -298,14 +341,8 @@ export default function CreateStoryScreen() {
       >
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
       </TouchableOpacity>
-
-      {isNight && <StarryBackground starCount={50} />}
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
-      <View
-        className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%]'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {storyCoin === 0 && (
@@ -396,6 +433,21 @@ export default function CreateStoryScreen() {
                 )}
               </BlurView>
             </View>
+
+            {/* 👤 Bloc Personnage */}
+            <CharacterSection
+              isNight={isNight}
+              selectedCharacter={selectedCharacter}
+              onCharacterSelect={setSelectedCharacter}
+              onCreateNew={() => {
+                setEditingCharacter(null);
+                setShowCharacterModal(true);
+              }}
+              onEditCharacter={(character) => {
+                setEditingCharacter(character);
+                setShowCharacterModal(true);
+              }}
+            />
 
             {/* 🟢 Bloc Résumé */}
             <View
@@ -671,6 +723,7 @@ export default function CreateStoryScreen() {
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
         languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
+        character={selectedCharacter}
         onConfirm={() => formik.handleSubmit()}
         onCancel={() => setShowConfirmationModal(false)}
       />
@@ -685,6 +738,19 @@ export default function CreateStoryScreen() {
           onClose={() => close()}
         />
       )}
+
+      {/* Modal de création/édition de personnage */}
+      <CharacterModal
+        visible={showCharacterModal}
+        onClose={() => {
+          setShowCharacterModal(false);
+          setEditingCharacter(null);
+        }}
+        editCharacter={editingCharacter}
+        onCharacterCreated={(character) => {
+          setSelectedCharacter(character);
+        }}
+      />
     </View>
   );
 }

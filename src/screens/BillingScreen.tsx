@@ -38,7 +38,7 @@ export default function BillingScreen() {
                         paddingHorizontal: 12,
                         paddingVertical: 8,
                         borderRadius: 16,
-                        maxWidth: 150,
+                        maxWidth: 180,
                         shadowColor: '#000',
                         shadowOpacity: 0.15,
                         shadowRadius: 4,
@@ -53,6 +53,7 @@ export default function BillingScreen() {
                         color: '#333',
                         textAlign: 'center',
                     }}
+                    className='font-baloo-semibold'
                 >
                     {text}
                 </Text>
@@ -436,11 +437,10 @@ export default function BillingScreen() {
 
     return (
         <View className="flex-1 flex-col overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
-            {isNight && <StarryBackground starCount={50} />}
             {/* 🌤️ Background animé */}
             <Background isNight={isNight} />
             <View
-                className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-10 flex flex-row items-center justify-between p-4'
+                className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-30 flex flex-row items-center justify-between p-4'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             >
                 <TouchableOpacity

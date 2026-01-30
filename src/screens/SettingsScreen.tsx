@@ -83,17 +83,12 @@ export default function SettingsScreen() {
 
     return (
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
-            {isNight && <StarryBackground starCount={50} />}
             {/* 🌤️ Background animé */}
             <Background isNight={isNight} />
 
             {/* Sol */}
             <View
-                className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-            />
-            <View
-                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+                className='absolute bottom-0 -right-52 border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
             <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>

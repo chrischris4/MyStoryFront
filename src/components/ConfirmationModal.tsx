@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
+import type { Character } from '~/types';
+import { GENDERS, ANIMAL_TYPES, ANIMAL_AGE_RANGES, SKIN_COLORS, HAIR_COLORS, EYE_COLORS, FUR_COLORS } from '~/types';
 
 type ConfirmationModalProps = {
   visible: boolean;
@@ -12,6 +14,7 @@ type ConfirmationModalProps = {
   styleEmoji: string;
   languageName: string;
   languageFlag: string;
+  character?: Character | null;
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -25,10 +28,38 @@ export default function ConfirmationModal({
   styleEmoji,
   languageName,
   languageFlag,
+  character,
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
   const { t } = useTranslation();
+
+  // Build character summary
+  const getCharacterSummary = (char: Character): string => {
+    const parts: string[] = [];
+
+    const genderLabel = GENDERS.find((g) => g.id === char.gender)?.label;
+    if (genderLabel) parts.push(genderLabel.toLowerCase());
+
+    if (char.type === 'HUMAN') {
+      if (char.age) parts.push(`${char.age} ans`);
+      const skinLabel = SKIN_COLORS.find((s) => s.id === char.skinColor)?.label || char.skinColor;
+      if (skinLabel) parts.push(`peau ${skinLabel.toLowerCase()}`);
+      const hairLabel = HAIR_COLORS.find((h) => h.id === char.hairColor)?.label || char.hairColor;
+      if (hairLabel) parts.push(`cheveux ${hairLabel.toLowerCase()}`);
+      const eyeLabel = EYE_COLORS.find((e) => e.id === char.eyeColor)?.label || char.eyeColor;
+      if (eyeLabel) parts.push(`yeux ${eyeLabel.toLowerCase()}`);
+    } else {
+      const animalLabel = ANIMAL_TYPES.find((a) => a.id === char.animalType)?.label || char.animalType;
+      if (animalLabel) parts.push(animalLabel.toLowerCase());
+      const ageLabel = ANIMAL_AGE_RANGES.find((a) => a.id === char.animalAge)?.label;
+      if (ageLabel) parts.push(ageLabel.toLowerCase());
+      const furLabel = FUR_COLORS.find((f) => f.id === char.furColor)?.label || char.furColor;
+      if (furLabel) parts.push(`pelage ${furLabel.toLowerCase()}`);
+    }
+
+    return parts.join(', ');
+  };
 
   return (
     <Modal
@@ -76,10 +107,32 @@ export default function ConfirmationModal({
                 </View>
               </View>
 
+              {/* Personnage */}
+              {character && (
+                <View className="mb-4">
+                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                    {t('storyCreation.character')}
+                  </Text>
+                  <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
+                    <Text className="text-2xl mr-3">
+                      {character.type === 'HUMAN' ? '👤' : ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji || '🐾'}
+                    </Text>
+                    <View className="flex-1">
+                      <Text className="text-gray-800 font-semibold">
+                        {character.name}
+                      </Text>
+                      <Text className="text-gray-600 text-sm">
+                        {getCharacterSummary(character)}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+
               {/* Style, Langue et Pages */}
               <View className="flex-row gap-3 mb-4">
                 {/* Style */}
-                <View className="flex-1">
+                <View className="flex-1 w-1/2">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
                     {t('storyCreation.style')}
                   </Text>

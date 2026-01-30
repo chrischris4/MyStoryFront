@@ -29,6 +29,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
     return (
+        <View className='absolute top-0 left-0 w-full h-screen'>
         <View
             className="flex-1 p-4 relative"
             style={{ backgroundColor: skyColor }}
@@ -37,11 +38,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
 
             {/* Sol */}
             <View
-                className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-            />
-            <View
-                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-10'
+                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
 
@@ -107,5 +104,6 @@ export default function Background({ isNight = false }: BackgroundProps) {
                 </View>
             </Animated.View>
         </View>
+    </View> 
     );
 }
