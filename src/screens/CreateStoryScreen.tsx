@@ -222,7 +222,7 @@ export default function CreateStoryScreen() {
 
         console.log('✅ Story créée:', story);
         // Mettre à jour le store avec les résultats
-        updateProgress(story.pages, story.id, false);
+        updateProgress(story.pages ?? [], story.id, false);
 
       } catch (error) {
         console.error('❌ Erreur création:', error);

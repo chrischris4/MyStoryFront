@@ -8,6 +8,7 @@ type CreateStoryInput = {
   title: string;
   style: string;
   language: string;
+  characterId?: string;
 };
 
 type StoryPage = {

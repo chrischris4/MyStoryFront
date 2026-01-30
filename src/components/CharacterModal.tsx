@@ -14,7 +14,9 @@ import { useTheme } from '~/context/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { useCreateCharacter } from '~/hooks/useCreateCharacter';
 import { useUpdateCharacter } from '~/hooks/useUpdateCharacter';
+import { useDeleteCharacter } from '~/hooks/useDeleteCharacter';
 import Toast from 'react-native-toast-message';
+import { Alert } from 'react-native';
 import type {
   Character,
   CharacterType,
@@ -171,9 +173,13 @@ export default function CharacterModal({
   const { isNight } = useTheme();
   const createCharacterMutation = useCreateCharacter();
   const updateCharacterMutation = useUpdateCharacter();
+  const deleteCharacterMutation = useDeleteCharacter();
 
   const isEditing = !!editCharacter;
-  const isPending = createCharacterMutation.isPending || updateCharacterMutation.isPending;
+  const isPending =
+    createCharacterMutation.isPending ||
+    updateCharacterMutation.isPending ||
+    deleteCharacterMutation.isPending;
 
   // Form state
   const [characterType, setCharacterType] = useState<CharacterType>('HUMAN');
@@ -317,6 +323,45 @@ export default function CharacterModal({
   const handleClose = () => {
     resetForm();
     onClose();
+  };
+
+  const handleDelete = () => {
+    if (!editCharacter) return;
+
+    Alert.alert(
+      t('character.deleteConfirm'),
+      t('character.deleteWarning'),
+      [
+        {
+          text: t('common.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: () => {
+            deleteCharacterMutation.mutate(editCharacter.id, {
+              onSuccess: () => {
+                Toast.show({
+                  type: 'success',
+                  text1: t('character.deleted'),
+                  text2: t('character.deletedMessage'),
+                });
+                onClose();
+                resetForm();
+              },
+              onError: (error) => {
+                Toast.show({
+                  type: 'error',
+                  text1: t('common.error'),
+                  text2: error instanceof Error ? error.message : t('errors.unknownError'),
+                });
+              },
+            });
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -590,6 +635,19 @@ export default function CharacterModal({
                   {t('common.cancel')}
                 </Text>
               </TouchableOpacity>
+
+              {isEditing && (
+                <TouchableOpacity
+                  className={`bg-red-500 px-6 py-4 rounded-xl items-center flex-row justify-center gap-2 ${isPending ? 'opacity-50' : ''}`}
+                  onPress={handleDelete}
+                  disabled={isPending}
+                >
+                  <Feather name="trash-2" size={20} color="#fff" />
+                  <Text className="text-white font-baloo-semibold text-lg">
+                    {t('common.delete')}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

@@ -449,6 +449,11 @@
       "nameMin": "Le nom doit contenir au moins 2 caractères",
       "nameMax": "Le nom ne peut pas dépasser 50 caractères",
       "typeRequired": "Veuillez sélectionner un type"
-    }
+    },
+    "limitReached": "Limite atteinte",
+    "freeLimitMessage": "Avec le plan gratuit, vous pouvez créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passez au plan Aventurier ou Légende !",
+    "premiumLimitMessage": "Vous avez atteint la limite de 5 personnages. Pour en créer un nouveau, vous devez d'abord en supprimer un.",
+    "upgradePlan": "Voir les abonnements",
+    "deleteToCreate": "Vous devez supprimer un personnage existant pour pouvoir en créer un nouveau."
   }
 }

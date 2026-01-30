@@ -1,11 +1,13 @@
-import React from 'react';
+import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useCharacters } from '~/hooks/useCharacters';
+import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
 import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS } from '~/types';
+import CharacterLimitModal from './CharacterLimitModal';
 
 type CharacterSectionProps = {
   isNight: boolean;
@@ -107,6 +109,14 @@ function CreateNewCard({
   );
 }
 
+// Character limits by subscription plan
+const CHARACTER_LIMITS = {
+  FREE: 2,
+  EXPLORER: 2,
+  ADVENTURER: 5,
+  LEGEND: 5,
+} as const;
+
 export default function CharacterSection({
   isNight,
   selectedCharacter,
@@ -116,6 +126,21 @@ export default function CharacterSection({
 }: CharacterSectionProps) {
   const { t } = useTranslation();
   const { data: characters, isLoading, error } = useCharacters();
+  const subscriptionPlan = useUserStore((state) => state.user?.subscriptionPlan ?? 'FREE');
+  const [showLimitModal, setShowLimitModal] = useState(false);
+
+  const isFreeUser = subscriptionPlan === 'FREE' || subscriptionPlan === 'EXPLORER';
+  const characterLimit = CHARACTER_LIMITS[subscriptionPlan] ?? CHARACTER_LIMITS.FREE;
+  const characterCount = characters?.length ?? 0;
+  const hasReachedLimit = characterCount >= characterLimit;
+
+  const handleCreateNew = () => {
+    if (hasReachedLimit) {
+      setShowLimitModal(true);
+    } else {
+      onCreateNew();
+    }
+  };
 
   // Build character summary for display
   const getCharacterSummary = (character: Character): string => {
@@ -186,7 +211,7 @@ export default function CharacterSection({
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingRight: 16 }}
           >
-            <CreateNewCard onPress={onCreateNew} isNight={isNight} />
+            <CreateNewCard onPress={handleCreateNew} isNight={isNight} />
             {characters?.map((character) => (
               <CharacterCard
                 key={character.id}
@@ -263,6 +288,13 @@ export default function CharacterSection({
           </View>
         )}
       </BlurView>
+
+      {/* Character Limit Modal */}
+      <CharacterLimitModal
+        visible={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        isFreeUser={isFreeUser}
+      />
     </View>
   );
 }

@@ -449,6 +449,11 @@
       "nameMin": "Name must be at least 2 characters",
       "nameMax": "Name cannot exceed 50 characters",
       "typeRequired": "Please select a type"
-    }
+    },
+    "limitReached": "Limit reached",
+    "freeLimitMessage": "With the free plan, you can create up to 2 characters. To create up to 5, upgrade to Adventurer or Legend plan!",
+    "premiumLimitMessage": "You have reached the limit of 5 characters. To create a new one, you must first delete one.",
+    "upgradePlan": "View subscriptions",
+    "deleteToCreate": "You must delete an existing character to create a new one."
   }
 }

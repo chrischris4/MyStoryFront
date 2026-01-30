@@ -318,7 +318,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                     </Animated.Text>
                                 </View>
 
-                                {storyPages.length > 0 && (
+                                {storyPages && storyPages.length > 0 && (
                                     <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
                                         <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
                                             <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
