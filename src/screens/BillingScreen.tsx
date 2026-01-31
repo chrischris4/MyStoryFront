@@ -53,7 +53,7 @@ export default function BillingScreen() {
                         color: '#333',
                         textAlign: 'center',
                     }}
-                    className='font-baloo-semibold'
+                    className='font-baloo-semibold text-xl'
                 >
                     {text}
                 </Text>

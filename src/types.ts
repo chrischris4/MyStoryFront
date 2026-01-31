@@ -49,6 +49,7 @@ export type Story = {
   createdAt?: string;
   user?: User;
   coverUrl?: string;
+  character?: Character;
 };
 
 // ==================== CHARACTER TYPES ====================

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -7,6 +7,8 @@ import {
   FlatList,
   useWindowDimensions,
   Animated,
+  ScrollView,
+  PanResponder,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -14,9 +16,12 @@ import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
+import { useAudioPlayer } from 'expo-audio';
 import type { Page } from '~/types';
 import { StoryFrame, type FrameType } from './StoryFrames';
 import { useTranslation } from 'react-i18next';
+import { STORY_MUSICS } from '../../assets/sounds/storySounds';
+import type { StoryMusic } from '../../assets/sounds/storySounds';
 
 interface FullScreenStoryModalProps {
   visible: boolean;
@@ -39,10 +44,59 @@ export default function FullScreenStoryModal({
   const [showControls, setShowControls] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
-  const [selectedMusic, setSelectedMusic] = useState<string | null>(null);
+  const [selectedMusic, setSelectedMusic] = useState<StoryMusic | null>(null);
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
-  const [brightness, setBrightness] = useState(1);
+
+  // Audio player pour la musique de story
+  const audioPlayer = useAudioPlayer(selectedMusic?.source ?? null);
+
+  // Gérer la lecture de la musique
+  useEffect(() => {
+    if (selectedMusic && audioPlayer) {
+      audioPlayer.loop = true;
+      audioPlayer.volume = 0.5;
+      audioPlayer.play();
+    }
+  }, [selectedMusic, audioPlayer]);
+
+  // Arrêter la musique quand on ferme le modal
+  useEffect(() => {
+    if (!visible && audioPlayer) {
+      audioPlayer.pause();
+    }
+  }, [visible, audioPlayer]);
+  const [brightness, setBrightness] = useState(0.7);
   const [showFrameMenu, setShowFrameMenu] = useState(false);
+
+  // Slider de luminosité - hauteur du slider et position
+  const SLIDER_HEIGHT = 150;
+  const MIN_BRIGHTNESS = 0.1;
+  const MAX_BRIGHTNESS = 0.7;
+
+  const startBrightnessRef = useRef(brightness);
+
+  const brightnessPanResponder = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: () => {
+      // Sauvegarder la luminosité au début du geste
+      startBrightnessRef.current = brightness;
+    },
+    onPanResponderMove: (_, gestureState) => {
+      // Calculer le changement de luminosité basé sur le mouvement vertical
+      // Négatif car monter = plus lumineux
+      const brightnessChange = -(gestureState.dy / SLIDER_HEIGHT) * (MAX_BRIGHTNESS - MIN_BRIGHTNESS);
+      const newBrightness = startBrightnessRef.current + brightnessChange;
+      const clampedBrightness = Math.max(MIN_BRIGHTNESS, Math.min(MAX_BRIGHTNESS, newBrightness));
+
+      setBrightness(clampedBrightness);
+      Brightness.setBrightnessAsync(clampedBrightness);
+    },
+    onPanResponderRelease: () => {
+      // Mettre à jour la référence pour le prochain geste
+      startBrightnessRef.current = brightness;
+    },
+  })).current;
   const [selectedFrame, setSelectedFrame] = useState<FrameType>('none');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
@@ -174,11 +228,11 @@ export default function FullScreenStoryModal({
                   {/* Afficher le titre si c'est la cover */}
                   {item.isCover && title && (
                     <View
-                      className={`absolute top-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
+                      className={`absolute top-2 self-center px-4 py-2 bg-white/90 rounded-xl`}
                     >
                       <Text
                         style={{
-                          color: 'white',
+                          color: 'black',
                           fontSize: isRotated ? 24 : (isPortrait ? 20 : 24),
                           textAlign: 'center',
                         }}
@@ -191,11 +245,11 @@ export default function FullScreenStoryModal({
                   {/* Afficher le texte seulement si ce n'est pas la cover */}
                   {!item.isCover && (
                     <View
-                      className={`absolute bottom-2 left-2 right-2 p-2 bg-black/70 rounded-xl`}
+                      className={`absolute bottom-3 left-4 max-w-[40%] p-2 bg-white/90 rounded-xl`}
                     >
                       <Text
                         style={{
-                          color: 'white',
+                          color: 'black',
                           fontSize: isRotated ? 18 : (isPortrait ? 16 : 18),
                           textAlign: 'left',
                         }}
@@ -217,243 +271,212 @@ export default function FullScreenStoryModal({
             onPress={toggleControls}
             style={{
               position: 'absolute',
-              bottom: 20,
-              right: 20,
+              top: 16,
+              right: 16,
               backgroundColor: showControls ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
               borderRadius: 40,
-              width: 55,
-              height: 55,
+              width: 65,
+              height: 65,
               justifyContent: 'center',
               alignItems: 'center',
-              zIndex: 10,
+              zIndex: 20,
             }}
           >
             <Feather
-              name={showControls ? "eye-off" : "eye"}
+              name="menu"
               size={22}
               color={showControls ? "white" : "black"}
             />
           </TouchableOpacity>
 
-        {showControls && (
-          <Animated.View
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 2,
-              opacity: fadeAnim,
-            }}
-            pointerEvents="box-none"
-          >
-            {/* MENU FULL SCREEN */}
-            <View className='absolute top-4 left-4 right-4 flex flex-row justify-between'>
-              {/* Bouton musique en haut à gauche */}
-              <View className='flex flex-row gap-4 relative'>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowMusicMenu(!showMusicMenu);
-                    if (!showMusicMenu) {
-                      setShowBrightnessMenu(false);
-                      setShowFrameMenu(false);
-                    }
-                  }}
-                  style={{
-                    backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
-                    borderRadius: 40,
-                    width: 65,
-                    height: 65
-                  }}
-                  className='flex items-center justify-center'
-                >
-                  <Feather
-                    name="music"
-                    size={24}
-                    color={selectedMusic ? "white" : "black"}
-                  />
-                </TouchableOpacity>
-
-                {/* Menu des musiques */}
-                {showMusicMenu && (
-                  <BlurView
-                    intensity={isNight ? 90 : 50}
-                    tint={isNight ? "dark" : "light"}
-                    style={{
-                      position: 'absolute',
-                      top: 80,
-                      left: 0,
-                      borderRadius: 16,
-                      overflow: 'hidden',
-                      minWidth: 200,
-                      zIndex: 10,
+          {showControls && (
+            <Animated.View
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 2,
+                opacity: fadeAnim,
+              }}
+              pointerEvents="box-none"
+            >
+              {/* MENU FULL SCREEN */}
+              <View className='absolute top-4 left-4 right-4 flex flex-row justify-between'>
+                {/* Bouton musique en haut à gauche */}
+                <View className='flex flex-row gap-4 relative'>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowMusicMenu(!showMusicMenu);
+                      if (!showMusicMenu) {
+                        setShowBrightnessMenu(false);
+                        setShowFrameMenu(false);
+                      }
                     }}
-                  >
-                    <View style={{ padding: 8 }} className='bg-white/50'>
-                      <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
-                        {t('storyReader.music')}
-                      </Text>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedMusic(null);
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>🔇 {t('storyReader.noMusic')}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedMusic('ambient');
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: selectedMusic === 'ambient' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>🎵 {t('storyReader.softAmbience')}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedMusic('adventure');
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: selectedMusic === 'adventure' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>⚔️ {t('storyReader.adventure')}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedMusic('lullaby');
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: selectedMusic === 'lullaby' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>🌙 {t('storyReader.lullaby')}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setSelectedMusic('magical');
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: selectedMusic === 'magical' ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>✨ {t('storyReader.magical')}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </BlurView>
-                )}
-
-                {/* Bouton luminosité */}
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowBrightnessMenu(!showBrightnessMenu);
-                    if (!showBrightnessMenu) {
-                      setShowMusicMenu(false);
-                      setShowFrameMenu(false);
-                    }
-                  }}
-                  style={{
-                    backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
-                    borderRadius: 40,
-                    width: 65,
-                    height: 65
-                  }}
-                  className='flex justify-center items-center'
-                >
-                  <Feather
-                    name="sun"
-                    size={24}
-                    color={showBrightnessMenu ? "white" : "black"}
-                  />
-                </TouchableOpacity>
-
-                {/* Menu de luminosité */}
-                {showBrightnessMenu && (
-                  <BlurView
-                    intensity={isNight ? 90 : 50}
-                    tint={isNight ? "dark" : "light"}
                     style={{
-                      position: 'absolute',
-                      top: 80,
-                      left: 0,
-                      borderRadius: 16,
-                      overflow: 'hidden',
-                      minWidth: 200,
-                      zIndex: 10,
+                      backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: 40,
+                      width: 65,
+                      height: 65
                     }}
+                    className='flex items-center justify-center'
                   >
-                    <View style={{ padding: 16 }} className='bg-white/50'>
-                      <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 12 }}>
-                        {t('storyReader.brightness')}
-                      </Text>
+                    <Feather
+                      name="music"
+                      size={24}
+                      color={selectedMusic ? "white" : "black"}
+                    />
+                  </TouchableOpacity>
 
-                      <TouchableOpacity
-                        onPress={async () => {
-                          setBrightness(0.3);
-                          await Brightness.setBrightnessAsync(0.3);
-                        }}
+                  {/* Menu des musiques */}
+                  {showMusicMenu && (
+                    <BlurView
+                      intensity={isNight ? 90 : 50}
+                      tint={isNight ? "dark" : "light"}
+                      style={{
+                        position: 'absolute',
+                        top: 80,
+                        left: 0,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                        minWidth: 200,
+                        maxHeight: 300,
+                        zIndex: 10,
+                      }}
+                    >
+                      <ScrollView style={{ padding: 8 }} className='bg-white/50'>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 12, paddingBottom: 8 }}>
+                          {t('storyReader.music')}
+                        </Text>
+
+                        {/* Option: Pas de musique */}
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedMusic(null);
+                            audioPlayer?.pause();
+                          }}
+                          style={{
+                            padding: 12,
+                            borderRadius: 8,
+                            backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                          }}
+                        >
+                          <Text style={{ fontSize: 14 }}>🔇 {t('storyReader.noMusic')}</Text>
+                        </TouchableOpacity>
+
+                        {/* Liste dynamique des musiques */}
+                        {STORY_MUSICS.map((music) => (
+                          <TouchableOpacity
+                            key={music.id}
+                            onPress={() => {
+                              setSelectedMusic(music);
+                            }}
+                            style={{
+                              padding: 12,
+                              borderRadius: 8,
+                              backgroundColor: selectedMusic?.id === music.id ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 14 }}>{music.emoji} {music.name}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </ScrollView>
+                    </BlurView>
+                  )}
+
+                  {/* Bouton luminosité + Slider */}
+                  <View style={{ position: 'relative' }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        setShowBrightnessMenu(!showBrightnessMenu);
+                        if (!showBrightnessMenu) {
+                          setShowMusicMenu(false);
+                          setShowFrameMenu(false);
+                        }
+                      }}
+                      style={{
+                        backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                        borderRadius: 40,
+                        width: 65,
+                        height: 65
+                      }}
+                      className='flex justify-center items-center'
+                    >
+                      <Feather
+                        name="sun"
+                        size={24}
+                        color={showBrightnessMenu ? "white" : "black"}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Slider de luminosité vertical */}
+                    {showBrightnessMenu && (
+                      <BlurView
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? "dark" : "light"}
                         style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: brightness === 0.3 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                          position: 'absolute',
+                          top: 75,
+                          borderRadius: 9999,
+                          overflow: 'hidden',
+                          zIndex: 10,
                         }}
                       >
-                        <Text style={{ fontSize: 14 }}>🌑 {t('storyReader.low')}</Text>
-                      </TouchableOpacity>
+                        <View style={{ padding: 16, alignItems: 'center', width: 65, }} className='bg-white/50'>
+                          {/* Slider vertical */}
+                          <View
+                            style={{
+                              width: 40,
+                              height: SLIDER_HEIGHT,
+                              backgroundColor: 'rgba(0,0,0,0.1)',
+                              borderRadius: 20,
+                              justifyContent: 'flex-end',
+                              overflow: 'hidden',
+                            }}
+                            {...brightnessPanResponder.panHandlers}
+                          >
+                            {/* Barre de remplissage */}
+                            <View
+                              style={{
+                                width: '100%',
+                                height: `${((brightness - MIN_BRIGHTNESS) / (MAX_BRIGHTNESS - MIN_BRIGHTNESS)) * 100}%`,
+                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                                borderRadius: 20,
+                              }}
+                            />
+                            {/* Curseur */}
+                            <View
+                              style={{
+                                position: 'absolute',
+                                width: 36,
+                                height: 36,
+                                borderRadius: 18,
+                                backgroundColor: 'white',
+                                borderWidth: 3,
+                                borderColor: 'rgba(16, 185, 129, 1)',
+                                left: 2,
+                                bottom: `${((brightness - MIN_BRIGHTNESS) / (MAX_BRIGHTNESS - MIN_BRIGHTNESS)) * 100}%`,
+                                marginBottom: -40,
+                                marginTop: 40,
+                                shadowColor: '#000',
+                                shadowOffset: { width: 0, height: 2 },
+                                shadowOpacity: 0.25,
+                                shadowRadius: 4,
+                                elevation: 5,
+                              }}
+                            />
+                          </View>
+                          {/* Pourcentage affiché */}
+                          <Text style={{ fontSize: 14, marginTop: 8, fontWeight: '600' }}>
+                            {Math.round(brightness * 100)}%
+                          </Text>
+                        </View>
+                      </BlurView>
+                    )}
+                  </View>
+                </View>
 
-                      <TouchableOpacity
-                        onPress={async () => {
-                          setBrightness(0.5);
-                          await Brightness.setBrightnessAsync(0.5);
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: brightness === 0.5 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>🌓 {t('storyReader.medium')}</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={async () => {
-                          setBrightness(0.7);
-                          await Brightness.setBrightnessAsync(0.7);
-                        }}
-                        style={{
-                          padding: 12,
-                          borderRadius: 8,
-                          backgroundColor: brightness === 0.7 ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                        }}
-                      >
-                        <Text style={{ fontSize: 14 }}>🌕 {t('storyReader.high')}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </BlurView>
-                )}
-              </View>
-
-              <View className='flex flex-row gap-4'>
                 {/* Bouton plein écran (rotation) */}
                 <TouchableOpacity
                   onPress={toggleRotation}
@@ -461,7 +484,10 @@ export default function FullScreenStoryModal({
                     backgroundColor: isRotated ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
                     borderRadius: 40,
                     width: 65,
-                    height: 65
+                    height: 65,
+                    position: 'absolute',
+                    top: 0,
+                    right: 80,
                   }}
                   className='flex justify-center items-center'
                 >
@@ -471,184 +497,185 @@ export default function FullScreenStoryModal({
                     color={isRotated ? "white" : "black"}
                   />
                 </TouchableOpacity>
-
-                {/* Bouton fermer */}
+                {/* Bouton fermer - positionné sous le toggle button */}
                 <TouchableOpacity
                   onPress={onClose}
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.7)',
                     borderRadius: 40,
                     width: 65,
-                    height: 65
+                    height: 65,
+                    position: 'absolute',
+                    top: 80,
+                    right: 2,
                   }}
                   className='flex justify-center items-center'
                 >
                   <Feather name="x" size={24} color="black" />
                 </TouchableOpacity>
               </View>
-            </View>
 
-            <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-              <TouchableOpacity
-                onPress={goToPreviousPage}
-                disabled={currentPageIndex === 0}
-                style={{
-                  backgroundColor: currentPageIndex === 0 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
-                  borderRadius: 40,
-                  padding: 20,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <Feather name="chevron-left" size={24} color={currentPageIndex === 0 ? '#999' : 'black'} />
-              </TouchableOpacity>
-
-              {/* Bouton Background au milieu */}
-              <View>
+              <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                 <TouchableOpacity
-                  onPress={() => {
-                    setShowFrameMenu(!showFrameMenu);
-                    if (!showFrameMenu) {
-                      setShowMusicMenu(false);
-                      setShowBrightnessMenu(false);
-                    }
-                  }}
+                  onPress={goToPreviousPage}
+                  disabled={currentPageIndex === 0}
                   style={{
-                    backgroundColor: showFrameMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                    backgroundColor: currentPageIndex === 0 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
                     borderRadius: 40,
-                    width: 65,
-                    height: 65,
+                    padding: 20,
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}
                 >
-                  <Feather
-                    name="image"
-                    size={24}
-                    color={showFrameMenu ? "white" : "black"}
-                  />
+                  <Feather name="chevron-left" size={24} color={currentPageIndex === 0 ? '#999' : 'black'} />
                 </TouchableOpacity>
 
-                {/* Menu des cadres */}
-                {showFrameMenu && (
-                  <BlurView
-                    intensity={isNight ? 90 : 50}
-                    tint={isNight ? "dark" : "light"}
-                    style={{
-                      position: 'absolute',
-                      top: -180,
-                      borderRadius: 16,
-                      overflow: 'hidden',
-                      minWidth: 280,
-                      zIndex: 10,
+                {/* Bouton Background au milieu */}
+                <View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowFrameMenu(!showFrameMenu);
+                      if (!showFrameMenu) {
+                        setShowMusicMenu(false);
+                        setShowBrightnessMenu(false);
+                      }
                     }}
-                    className='self-center'
+                    style={{
+                      backgroundColor: showFrameMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: 40,
+                      width: 65,
+                      height: 65,
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
                   >
-                    <View style={{ padding: 12 }} className='bg-white/50'>
-                      <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
-                        {t('storyReader.frame')}
-                      </Text>
+                    <Feather
+                      name="image"
+                      size={24}
+                      color={showFrameMenu ? "white" : "black"}
+                    />
+                  </TouchableOpacity>
 
-                      <View className='flex flex-row flex-wrap gap-3 justify-center'>
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('none')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'none' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>🚫</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameNone')}</Text>
-                        </TouchableOpacity>
+                  {/* Menu des cadres */}
+                  {showFrameMenu && (
+                    <BlurView
+                      intensity={isNight ? 90 : 50}
+                      tint={isNight ? "dark" : "light"}
+                      style={{
+                        position: 'absolute',
+                        top: -180,
+                        borderRadius: 16,
+                        overflow: 'hidden',
+                        minWidth: 280,
+                        zIndex: 10,
+                      }}
+                      className='self-center'
+                    >
+                      <View style={{ padding: 12 }} className='bg-white/50'>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
+                          {t('storyReader.frame')}
+                        </Text>
 
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('stars')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'stars' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>⭐</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameStars')}</Text>
-                        </TouchableOpacity>
+                        <View className='flex flex-row flex-wrap gap-3 justify-center'>
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('none')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'none' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>🚫</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameNone')}</Text>
+                          </TouchableOpacity>
 
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('golden')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'golden' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>🖼️</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameGolden')}</Text>
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('stars')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'stars' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>⭐</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameStars')}</Text>
+                          </TouchableOpacity>
 
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('fairy')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'fairy' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>🧚</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameFairy')}</Text>
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('golden')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'golden' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>🖼️</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameGolden')}</Text>
+                          </TouchableOpacity>
 
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('vintage')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'vintage' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>📜</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameVintage')}</Text>
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('fairy')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'fairy' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>🧚</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameFairy')}</Text>
+                          </TouchableOpacity>
 
-                        <TouchableOpacity
-                          onPress={() => setSelectedFrame('magic')}
-                          style={{
-                            borderRadius: 12,
-                            padding: 8,
-                            backgroundColor: selectedFrame === 'magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Text style={{ fontSize: 36 }}>✨</Text>
-                          <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameMagic')}</Text>
-                        </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('vintage')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'vintage' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>📜</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameVintage')}</Text>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            onPress={() => setSelectedFrame('magic')}
+                            style={{
+                              borderRadius: 12,
+                              padding: 8,
+                              backgroundColor: selectedFrame === 'magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text style={{ fontSize: 36 }}>✨</Text>
+                            <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameMagic')}</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  </BlurView>
-                )}
-              </View>
+                    </BlurView>
+                  )}
+                </View>
 
-              <TouchableOpacity
-                onPress={goToNextPage}
-                disabled={currentPageIndex === allItems.length - 1}
-                style={{
-                  backgroundColor: currentPageIndex === allItems.length - 1 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
-                  borderRadius: 40,
-                  padding: 20,
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                <Feather name="chevron-right" size={24} color={currentPageIndex === allItems.length - 1 ? '#999' : 'black'} />
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        )}
+                <TouchableOpacity
+                  onPress={goToNextPage}
+                  disabled={currentPageIndex === allItems.length - 1}
+                  style={{
+                    backgroundColor: currentPageIndex === allItems.length - 1 ? 'rgba(200, 200, 200, 0.5)' : 'rgba(255, 255, 255, 0.7)',
+                    borderRadius: 40,
+                    padding: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <Feather name="chevron-right" size={24} color={currentPageIndex === allItems.length - 1 ? '#999' : 'black'} />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          )}
         </View>
       </SafeAreaView>
     </Modal>

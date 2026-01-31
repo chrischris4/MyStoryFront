@@ -179,7 +179,7 @@ export default function SharedStoriesScreen() {
             style={{ opacity: bubbleOpacity }}
           >
             <View
-              className="px-4 py-3 rounded-2xl bg-white text-black"
+              className="px-4 py-3 flex w-72 rounded-2xl bg-white text-black"
             >
               <Text className="font-baloo-medium text-center">
                 {t('sharedStories.storeBubble')}

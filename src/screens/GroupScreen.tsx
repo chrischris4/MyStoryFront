@@ -413,7 +413,8 @@ export default function GroupScreen() {
                             loop={true}
                             style={{ width: 200, height: 200 }}
                           />
-                        </Animated.View>                      </View>
+                        </Animated.View>
+                      </View>
                     ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
                       <BlurView
                         intensity={isNight ? 90 : 50}
@@ -444,7 +445,8 @@ export default function GroupScreen() {
                         loop={true}
                         style={{ width: 200, height: 200 }}
                       />
-                    </Animated.View>                  </View>
+                    </Animated.View>
+                  </View>
                 ) : myGroups.length === 0 ? (
                   <BlurView
                     intensity={isNight ? 90 : 50}

@@ -24,6 +24,8 @@ interface SoundContextType {
   // Musique de fond
   playBackgroundMusic: () => void;
   pauseBackgroundMusic: () => void;
+  fadeOutBackgroundMusic: (duration?: number) => void;
+  fadeInBackgroundMusic: (duration?: number) => void;
   toggleBackgroundMusic: () => void;
   setMusicVolume: (volume: number) => void;
   musicVolume: number;
@@ -172,6 +174,53 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const fadeOutBackgroundMusic = (duration: number = 500) => {
+    if (!musicControlsRef.current || !isMusicPlaying) return;
+
+    const steps = 10;
+    const stepDuration = duration / steps;
+    const volumeStep = musicVolume / steps;
+    let currentStep = 0;
+
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      const newVolume = Math.max(0, musicVolume - volumeStep * currentStep);
+      musicControlsRef.current?.setVolume(newVolume);
+
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+        musicControlsRef.current?.pause();
+        setIsMusicPlaying(false);
+        // Restore original volume for next play
+        musicControlsRef.current?.setVolume(musicVolume);
+      }
+    }, stepDuration);
+  };
+
+  const fadeInBackgroundMusic = (duration: number = 500) => {
+    if (!musicControlsRef.current || !isMusicEnabled) return;
+
+    // Start at volume 0
+    musicControlsRef.current.setVolume(0);
+    musicControlsRef.current.play();
+    setIsMusicPlaying(true);
+
+    const steps = 10;
+    const stepDuration = duration / steps;
+    const volumeStep = musicVolume / steps;
+    let currentStep = 0;
+
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      const newVolume = Math.min(musicVolume, volumeStep * currentStep);
+      musicControlsRef.current?.setVolume(newVolume);
+
+      if (currentStep >= steps) {
+        clearInterval(fadeInterval);
+      }
+    }, stepDuration);
+  };
+
   const toggleBackgroundMusic = async () => {
     const newEnabled = !isMusicEnabled;
     setIsMusicEnabled(newEnabled);
@@ -201,6 +250,8 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         playSound,
         playBackgroundMusic,
         pauseBackgroundMusic,
+        fadeOutBackgroundMusic,
+        fadeInBackgroundMusic,
         toggleBackgroundMusic,
         setMusicVolume,
         musicVolume,

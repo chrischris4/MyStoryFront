@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUserStore } from '~/store/useUserStore';
 
 let refreshTimeout: NodeJS.Timeout | null = null;
 
@@ -54,8 +55,12 @@ const refreshTokens = async () => {
     if (response.ok) {
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } = await response.json();
 
+      // Mettre à jour AsyncStorage
       await AsyncStorage.setItem('accessToken', newAccessToken);
       await AsyncStorage.setItem('refreshToken', newRefreshToken);
+
+      // Mettre à jour le store Zustand (important pour que l'API utilise le nouveau token)
+      useUserStore.getState().setTokens(newAccessToken, newRefreshToken);
 
       // Programmer le prochain refresh
       setupTokenRefresh();

@@ -22,6 +22,7 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootStackParamList, MainTabParamList } from '~/types';
+import { ANIMAL_TYPES } from '~/types';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
@@ -291,6 +292,27 @@ export default function StoryFolder({
                                                     transition={200}
                                                 />
                                             )}
+
+                                            {/* Affichage du personnage si présent */}
+                                            {item.character && (
+                                                <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
+                                                    <View
+                                                        className={`w-8 h-8 rounded-full items-center justify-center ${
+                                                            item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+                                                        }`}
+                                                    >
+                                                        <Text className="text-base">
+                                                            {item.character.type === 'HUMAN'
+                                                                ? '👤'
+                                                                : ANIMAL_TYPES.find((a) => a.id === item.character?.animalType)?.emoji || '🐾'}
+                                                        </Text>
+                                                    </View>
+                                                    <Text className="text-sm font-baloo-semibold text-slate-700">
+                                                        {item.character.name}
+                                                    </Text>
+                                                </View>
+                                            )}
+
                                             <View className='flex flex-row gap-1 justify-between items-center w-full'>
                                                 <Text className="text-base font-baloo-semibold text-black ml-2">
                                                     {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>

@@ -59,7 +59,7 @@ export default function StoryDetailScreen() {
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
   // Hook pour les sons
-  const { playSound } = useSound();
+  const { playSound, fadeOutBackgroundMusic } = useSound();
 
   // Utiliser les hooks pour les favoris
   const { data: isFavorite = false, isLoading: isFavoriteLoading } = useCheckFavorite(Number(storyId));
@@ -842,6 +842,7 @@ export default function StoryDetailScreen() {
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             playSound('click');
+            fadeOutBackgroundMusic(800);
             setIsFullScreen(true);
           }}
           className="bg-yellow-800 self-center z-30 flex flex-row h-[50px] px-6 gap-2 items-center justify-center rounded-full">
