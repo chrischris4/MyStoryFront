@@ -28,6 +28,7 @@ interface FullScreenStoryModalProps {
   pages: Page[];
   coverUrl?: string;
   title?: string;
+  description?: string;
   isNight: boolean;
   onClose: () => void;
 }
@@ -37,6 +38,7 @@ export default function FullScreenStoryModal({
   pages,
   coverUrl,
   title,
+  description,
   isNight,
   onClose,
 }: FullScreenStoryModalProps) {
@@ -242,10 +244,30 @@ export default function FullScreenStoryModal({
                       </Text>
                     </View>
                   )}
+                  {/* Afficher la description si c'est la cover */}
+                  {item.isCover && description && (
+                    <View
+                      className="absolute bottom-2 px-4 py-2 bg-white/90 rounded-xl self-center"
+                      style={{ maxWidth: '80%', alignSelf: 'center' }}
+                    >
+                      <Text
+                        style={{
+                          color: 'black',
+                          fontSize: isRotated ? 16 : (isPortrait ? 14 : 16),
+                          textAlign: 'center',
+                        }}
+                        className='font-baloo'
+                        numberOfLines={3}
+                      >
+                        {description}
+                      </Text>
+                    </View>
+                  )}
+                  
                   {/* Afficher le texte seulement si ce n'est pas la cover */}
                   {!item.isCover && (
                     <View
-                      className={`absolute bottom-3 left-4 max-w-[40%] p-2 bg-white/90 rounded-xl`}
+                      className={`absolute bottom-3 max-w-[80%] self-center p-2 bg-white/90 rounded-xl`}
                     >
                       <Text
                         style={{

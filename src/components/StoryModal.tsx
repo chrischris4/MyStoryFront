@@ -295,7 +295,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             <Animated.View
                                 style={{
                                     backgroundColor: groundColor,
-                                    borderTopWidth: 4,
+                                    borderWidth: 4,
                                     borderColor: groundBorderColor,
                                     width: '200%',
                                     alignSelf: 'center',

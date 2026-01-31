@@ -44,6 +44,7 @@ export type User = {
 export type Story = {
   id: number;
   title: string;
+  description?: string;
   pages: Page[];
   isShared?: boolean;
   createdAt?: string;

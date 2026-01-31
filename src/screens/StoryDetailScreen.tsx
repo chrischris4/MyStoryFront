@@ -457,27 +457,17 @@ export default function StoryDetailScreen() {
               </View>
             )}
 
+            {story.description && (
+              <Text className={`text-base font-baloo text-center mt-4 px-4 ${isNight ? 'text-white/80' : 'text-slate-600'}`}>
+                {story.description}
+              </Text>
+            )}
 
             {/* Author date */}
             <View className='flex flex-row gap-2 items-center mt-4 justify-center'>
-              {/* <Image
-              source={story.user?.profil?.imageUrl ? { uri: story.user.profil.imageUrl } : require('../../assets/default-avatar.png')}
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-              }}
-            /> */}
               <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>{t('storyDetail.author', { name: story.user?.profil?.name || t('storyDetail.anonymous') })}</Text>
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
-            <Text className={`text-sm font-baloo text-center px-4 pt-4 ${isNight ? 'text-white/80' : 'text-black'}`}>
-              {story.createdAt ? new Date(story.createdAt).toLocaleDateString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: '2-digit'
-              }) : t('storyDetail.unknownDate')}
-            </Text>
           </View>
         </BlurView>
 
@@ -596,6 +586,7 @@ export default function StoryDetailScreen() {
           pages={story.pages}
           coverUrl={story.coverUrl}
           title={story.title}
+          description={story.description}
           isNight={isNight}
           onClose={() => setIsFullScreen(false)}
         />

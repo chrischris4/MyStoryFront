@@ -293,6 +293,12 @@ export default function StoryFolder({
                                                 />
                                             )}
 
+                                            {item.description && (
+                                                <Text className="text-sm text-slate-600 font-baloo mt-2" numberOfLines={2}>
+                                                    {item.description}
+                                                </Text>
+                                            )}
+
                                             {/* Affichage du personnage si présent */}
                                             {item.character && (
                                                 <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
