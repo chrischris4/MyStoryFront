@@ -134,6 +134,8 @@ export default function CreateStoryScreen() {
     isCreating,
     loading,
     title: creationTitle,
+    description: creationDescription,
+    coverUrl: creationCoverUrl,
     storyPages,
     storyId,
     isMinimized,
@@ -221,8 +223,20 @@ export default function CreateStoryScreen() {
         const story = await createStoryMutation.mutateAsync(payload);
 
         console.log('✅ Story créée:', story);
+        // Extraire la story de la réponse (nouvelle structure API)
+        const createdStory = story.story ?? story;
+        console.log('📖 Pages:', createdStory.pages);
+        console.log('🆔 Story ID:', createdStory.id);
+        console.log('🖼️ Cover URL:', createdStory.coverUrl);
+        console.log('📝 Description:', createdStory.description);
         // Mettre à jour le store avec les résultats
-        updateProgress(story.pages ?? [], story.id, false);
+        updateProgress(
+          createdStory.pages ?? [],
+          createdStory.id?.toString() ?? null,
+          createdStory.coverUrl ?? null,
+          createdStory.description ?? null,
+          false
+        );
 
       } catch (error) {
         console.error('❌ Erreur création:', error);
@@ -335,7 +349,7 @@ export default function CreateStoryScreen() {
             close();
           } else {
             startCreation('Histoire de test');
-            updateProgress(testStoryPages, 'test-story-id', false);
+            updateProgress(testStoryPages, 'test-story-id', 'https://example.com/test-cover.jpg', 'Description de test', false);
           }
         }}
       >
@@ -733,6 +747,8 @@ export default function CreateStoryScreen() {
         <StoryModal
           loading={loading}
           title={creationTitle || formik.values.title}
+          description={creationDescription}
+          coverUrl={creationCoverUrl}
           storyPages={storyPages}
           storyId={storyId}
           onClose={() => close()}

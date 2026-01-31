@@ -17,10 +17,20 @@ type StoryPage = {
   imageUrl: string;
 };
 
-type CreateStoryResponse = {
-  id: string;
+type CreatedStory = {
+  id: number;
   title: string;
+  description?: string;
   pages: StoryPage[];
+  coverUrl?: string;
+  isShared?: boolean;
+  createdAt?: string;
+};
+
+type CreateStoryResponse = {
+  story: CreatedStory;
+  challengesUnlocked: string[];
+  coinsEarned: number;
 };
 
 const createStory = async (

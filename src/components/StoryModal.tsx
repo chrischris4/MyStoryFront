@@ -18,12 +18,14 @@ type StoryPage = {
 type StoryModalProps = {
     loading: boolean;
     title: string;
+    description: string | null;
+    coverUrl: string | null;
     storyPages: StoryPage[];
     storyId: string | null;
     onClose: () => void;
 };
 
-export default function StoryModal({ loading, title, storyPages, storyId, onClose }: StoryModalProps) {
+export default function StoryModal({ loading, title, description, coverUrl, storyPages, storyId, onClose }: StoryModalProps) {
     const { t } = useTranslation();
     const { close } = useStoryCreationStore();
     const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -190,7 +192,6 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
     const handleMinimize = () => {
         animateOut(() => close()); // Anime puis ferme tout
     };
-
     return (
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
 
@@ -318,7 +319,7 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                     </Animated.Text>
                                 </View>
 
-                                {storyPages && storyPages.length > 0 && (
+                                {coverUrl && (
                                     <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
                                         <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
                                             <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
@@ -326,18 +327,26 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                                             </Animated.Text>
                                             <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
                                                 <Image
-                                                    source={{ uri: storyPages[0].imageUrl }}
-                                                    style={{ width: '100%', height: 200, borderRadius: 16 }}
+                                                    source={{ uri: coverUrl }}
+                                                    style={{ width: '100%', height: '100%' }}
                                                     resizeMode="cover"
                                                 />
                                             </View>
+                                            {description && (
+                                                <Animated.Text
+                                                    className="font-baloo text-base text-center mt-2"
+                                                    style={{ color: textColor }}
+                                                    numberOfLines={2}
+                                                >
+                                                    {description}
+                                                </Animated.Text>
+                                            )}
                                         </BlurView>
                                     </View>
                                 )}
                             </Animated.View>
                             <TouchableOpacity
-                                style={{ borderRadius: 24, overflow: 'hidden' }}
-                                className='bg-white p-4 -mb-2'
+                                className='bg-white p-4 rounded-full'
                                 onPress={() => {
                                     if (storyId) {
                                         animateOut(() => {
@@ -349,15 +358,6 @@ export default function StoryModal({ loading, title, storyPages, storyId, onClos
                             >
                                 <Animated.Text className="text-lg font-baloo-medium text-center">
                                     {t('storyCreation.discoverStory')}
-                                </Animated.Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ borderRadius: 24, overflow: 'hidden' }}
-                                className='bg-white p-4'
-                                onPress={handleMinimize}
-                            >
-                                <Animated.Text className="text-lg font-baloo-medium text-center">
-                                    {t('storyCreation.createNewStory')}
                                 </Animated.Text>
                             </TouchableOpacity>
                         </View>
