@@ -7,7 +7,6 @@ import {
     LayoutChangeEvent,
     TouchableOpacity,
     FlatList,
-    ActivityIndicator,
 } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, {
@@ -16,7 +15,7 @@ import Animated, {
     withTiming,
     withRepeat,
 } from 'react-native-reanimated';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -178,13 +177,14 @@ export default function StoryFolder({
             width.value = SCREEN_WIDTH;
             height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
             translateY.value = EXPANDED_TOP - layoutY;
-            setTimeout(() => setShowContent(true), 1000);
+            // Si les données sont déjà en cache (pas de loading), afficher rapidement
+            // Sinon, attendre un peu plus pour laisser le temps au skeleton
+            const delay = !isLoading && stories.length > 0 ? 300 : 800;
+            setTimeout(() => setShowContent(true), delay);
         }
 
         setExpanded(!expanded);
     };
-
-
 
     return (
         <Pressable
@@ -232,7 +232,7 @@ export default function StoryFolder({
                             </Pressable>
                         )}
 
-                        {expanded && !showContent ? (
+                        {expanded && !showContent && (isLoading || stories.length === 0) ? (
                             <View style={{ flex: 1, marginTop: 16 }}>
                                 <StorySkeleton />
                                 <StorySkeleton />
@@ -303,9 +303,8 @@ export default function StoryFolder({
                                             {item.character && (
                                                 <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
                                                     <View
-                                                        className={`w-8 h-8 rounded-full items-center justify-center ${
-                                                            item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
-                                                        }`}
+                                                        className={`w-8 h-8 rounded-full items-center justify-center ${item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+                                                            }`}
                                                     >
                                                         <Text className="text-base">
                                                             {item.character.type === 'HUMAN'
@@ -323,7 +322,17 @@ export default function StoryFolder({
                                                 <Text className="text-base font-baloo-semibold text-black ml-2">
                                                     {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
                                                 </Text>
-                                                <Text className="text-lg font-medium mr-2"><Feather name="heart" size={14} color="#334155" /></Text>
+                                                <View className='flex flex-row items-center'>
+                                                    {item._count?.favoriteBy > 0 && (
+                                                        <Text className="text-base font-baloo mr-0.5">{item._count?.favoriteBy || 0}</Text>
+                                                    )}
+                                                    <Text className="text-lg mr-2 -mt-0.5">
+                                                        {item._count?.favoriteBy > 0 ? (
+                                                            <Ionicons name="heart" size={14} color="#ef4444" />
+                                                        ) : (
+                                                            <Ionicons name="heart-outline" size={14} color="#94a3b8" />)}
+                                                    </Text>
+                                                </View>
                                             </View>
                                         </TouchableOpacity>
                                     );

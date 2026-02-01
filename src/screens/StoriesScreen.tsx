@@ -18,7 +18,6 @@ export default function StoriesScreen() {
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
-
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>

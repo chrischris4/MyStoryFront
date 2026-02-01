@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -190,12 +189,6 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
               <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-2xl font-baloo-semibold`}>
                 {group.name}
               </Text>
-              <View className="flex-row items-center gap-2 mt-1">
-                <Feather name="award" size={14} color={isNight ? '#fbbf24' : '#f59e0b'} />
-                <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} text-sm font-baloo`}>
-                  {ownerName}
-                </Text>
-              </View>
               <Text className={`${isNight ? 'text-white/70' : 'text-slate-600'} text-base font-baloo mt-1`}>
                 {group.description || t('groups.noDescription')}
               </Text>
@@ -255,7 +248,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {/* Section invitation */}
           {activeTab === 'members' && (
             <View className="mb-4">
-              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold mb-3`}>
+              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
                 {t('groups.inviteMember')}
               </Text>
               <View className="flex-row gap-2">
