@@ -447,7 +447,7 @@ export default function StoryDetailScreen() {
             <Text className={`text-3xl font-baloo-bold mb-2 mt-2 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
               <View
-                className='w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden'
+                className='w-2/3 relative aspect-square rounded-full self-center z-20 overflow-hidden'
               >
                 <Image
                   source={{ uri: story.coverUrl }}
