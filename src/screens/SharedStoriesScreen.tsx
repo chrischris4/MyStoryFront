@@ -11,7 +11,6 @@ import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
-import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 
@@ -26,17 +25,12 @@ export default function SharedStoriesScreen() {
   const { isNight } = useTheme();
   const user = useUserStore((state) => state.user);
   const isPremium = isPremiumUser(user?.subscriptionPlan);
-
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showBubble, setShowBubble] = useState(false);
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
-
-  const { width } = useWindowDimensions();
   const animationRef = useRef(null);
-  const translateX = useRef(new Animated.Value(width)).current;
   const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
@@ -110,7 +104,7 @@ export default function SharedStoriesScreen() {
           ref={animationRef}
           source={require('../../assets/animations/tree.json')}
           autoPlay
-          loop={false}
+          loop={false}  
           style={{ width: 200, height: 200 }}
         />
       </Animated.View>

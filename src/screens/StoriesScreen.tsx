@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import React, { useRef, useMemo } from 'react';
+import { View, Text, Animated, TouchableOpacity } from 'react-native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
@@ -8,21 +8,61 @@ import { useStories } from '~/hooks/useStories';
 import { useFavoriteStories } from '~/hooks/useFavoriteStories';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { MainTabParamList, RootStackParamList } from '~/types';
+
+type CreateStoryScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<MainTabParamList, 'CreateStory'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 
 export default function StoriesScreen() {
+  const navigation = useNavigation<CreateStoryScreenNavigationProp>();
+
   const { t } = useTranslation();
   const { isNight } = useTheme();
   const { data: stories = [], isLoading: isLoadingStories } = useStories();
   const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
   const animationRef = useRef(null);
+
+  // 10 stories les plus récentes, triées par date
+  const recentStories = useMemo(() => {
+    return [...stories]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10);
+  }, [stories]);
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
+
+
   return (
     <View className="flex-1 pt-10 relative"
       style={{ backgroundColor: skyColor }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
+      <Animated.View
+        style={{
+          position: 'absolute',
+          bottom: 65,
+          right: -15,
+          zIndex: 10,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => navigation.navigate('BillingScreen')}
+          activeOpacity={0.8}
+        >
+          <LottieView
+            source={require('../../assets/animations/Store.json')}
+            autoPlay
+            loop={false}
+            style={{ width: 200, height: 200, zIndex: 5 }}
+          />
+        </TouchableOpacity>
+      </Animated.View>
       <Animated.View
         style={{
           position: 'absolute',
@@ -39,8 +79,8 @@ export default function StoriesScreen() {
         />
       </Animated.View>
       {/* Sol */}
-       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-0'
+      <View
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>
@@ -63,7 +103,7 @@ export default function StoriesScreen() {
           icon={<Feather name="clock" size={24} color="#fff" />}
           storyType="RECENT"
           description={t('stories.recentDesc')}
-          stories={stories}
+          stories={recentStories}
           isLoading={isLoadingStories}
         />
         <StoryFolder

@@ -19,7 +19,6 @@ import type { MainTabParamList, RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
-import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import CharacterSection from '~/components/CharacterSection';
@@ -122,6 +121,7 @@ export default function CreateStoryScreen() {
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const createStoryMutation = useCreateStory();
+  const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const {
     isCreating,
     loading,
@@ -328,11 +328,40 @@ export default function CreateStoryScreen() {
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
       </TouchableOpacity>
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
+        pointerEvents="none"
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {storyCoin === 0 && (
         <>
+          <Animated.View
+            className="absolute bottom-60 right-24 z-40"
+            style={{ opacity: bubbleOpacity }}
+          >
+            <View
+              className="px-4 py-3 flex w-72 rounded-2xl bg-white text-black"
+            >
+              <Text className="font-baloo-medium text-center">
+                {t('sharedStories.storeBubble')}
+              </Text>
+            </View>
+            {/* Petite flèche de la bulle */}
+            <View
+              style={{
+                position: 'absolute',
+                bottom: -10,
+                right: 20,
+                width: 0,
+                height: 0,
+                borderLeftWidth: 10,
+                borderRightWidth: 10,
+                borderTopWidth: 12,
+                borderLeftColor: 'transparent',
+                borderRightColor: 'transparent',
+                borderTopColor: 'white',
+              }}
+            />
+          </Animated.View>
           <Animated.View
             style={{
               position: 'absolute',
@@ -354,6 +383,7 @@ export default function CreateStoryScreen() {
               position: 'absolute',
               bottom: 65,
               right: -15,
+              zIndex: 10
             }}
           >
             <TouchableOpacity
@@ -368,7 +398,7 @@ export default function CreateStoryScreen() {
               />
             </TouchableOpacity>
           </Animated.View>
-          <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 100 }}>
+          <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 10 }}>
             <TouchableOpacity
               className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
               onPress={() => navigation.navigate('BillingScreen')}

@@ -14,6 +14,7 @@ import Animated, {
     useAnimatedStyle,
     withTiming,
     withRepeat,
+    FadeInDown,
 } from 'react-native-reanimated';
 import { Feather, Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -220,7 +221,10 @@ export default function StoryFolder({
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
+                        <View className="flex flex-row items-center gap-3">
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>( {stories.length} )</Text>
+                        </View>
                         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
 
                         {expanded && (
@@ -271,16 +275,19 @@ export default function StoryFolder({
                                 maxToRenderPerBatch={3}
                                 windowSize={5}
                                 removeClippedSubviews={true}
-                                renderItem={({ item }) => {
+                                renderItem={({ item, index }) => {
                                     const cover = item.coverUrl;
 
                                     return (
-                                        <TouchableOpacity
-                                            className="mb-2 p-4 bg-gray-100 rounded-3xl"
-                                            onPress={() =>
-                                                navigation.navigate('StoryDetail', { storyId: item.id })
-                                            }
+                                        <Animated.View
+                                            entering={FadeInDown.delay(index * 100).springify().damping(50)}
                                         >
+                                            <TouchableOpacity
+                                                className="mb-2 p-4 bg-gray-100 rounded-3xl"
+                                                onPress={() =>
+                                                    navigation.navigate('StoryDetail', { storyId: item.id })
+                                                }
+                                            >
                                             <Text className="text-xl font-baloo-semibold mb-1">{item.title}</Text>
 
                                             {cover && (
@@ -335,6 +342,7 @@ export default function StoryFolder({
                                                 </View>
                                             </View>
                                         </TouchableOpacity>
+                                        </Animated.View>
                                     );
                                 }}
                             />
