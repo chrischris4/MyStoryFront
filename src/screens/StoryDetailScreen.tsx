@@ -32,6 +32,7 @@ import * as Haptics from 'expo-haptics';
 import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
+import { useUserStore } from '~/store/useUserStore';
 
 
 
@@ -44,6 +45,7 @@ export default function StoryDetailScreen() {
   const { t } = useTranslation();
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
+  const currentUser = useUserStore((state) => state.user);
 
   const { storyId } = route.params;
   const [story, setStory] = useState<Story | null>(null);
@@ -98,7 +100,10 @@ export default function StoryDetailScreen() {
     );
   };
 
-  const handleToggleShared = async () => {
+  const handleShareToCommunity = async () => {
+    // Si déjà partagé, ne rien faire
+    if (isShared) return;
+
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
@@ -123,9 +128,7 @@ export default function StoryDetailScreen() {
         Toast.show({
           type: 'success',
           text1: t('common.success'),
-          text2: updatedStory.isShared
-            ? t('storyDetail.storySharedToCommunity')
-            : t('storyDetail.storyUnshared'),
+          text2: t('storyDetail.storySharedToCommunity'),
         });
         setShowShareModal(false);
       } else {
@@ -136,7 +139,7 @@ export default function StoryDetailScreen() {
         });
       }
     } catch (err) {
-      console.error('Erreur lors du toggle shared:', err);
+      console.error('Erreur lors du partage:', err);
       Toast.show({
         type: 'error',
         text1: t('common.error'),
@@ -475,52 +478,55 @@ export default function StoryDetailScreen() {
 
         {/* //Share Like */}
         <View className='flex flex-row justify-between mt-4'>
-          <BlurView
-            intensity={isNight ? 90 : 50}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              padding: 16, borderRadius: 100,
-              height: 56,
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
-            }}
-            className='flex items-center'
-          >
-            <TouchableOpacity
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                playSound('pop');
-                setShowShareModal(true);
+          {/* Bouton de partage - visible uniquement si l'utilisateur est l'auteur */}
+          {currentUser?.id === story.user?.id && (
+            <BlurView
+              intensity={isNight ? 90 : 50}
+              tint={isNight ? "dark" : "light"}
+              style={{
+                padding: 16, borderRadius: 100,
+                height: 56,
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
               }}
-              className="flex-row gap-2 items-center px-2"
+              className='flex items-center'
             >
-              {(isShared || sharedGroups.length > 0) ? (
-                <>
-                  <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                    {t('storyDetail.shared')}
-                  </Text>
-                  {isShared && (
-                    <Feather name='globe' size={18} color={isNight ? '#fff' : '#000'} />
-                  )}
-                  {sharedGroups.length > 0 && (
-                    <View className="flex-row items-center gap-1">
-                      <Feather name='users' size={18} color={isNight ? '#fff' : '#000'} />
-                      <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>
-                        {sharedGroups.length}
-                      </Text>
-                    </View>
-                  )}
+              <TouchableOpacity
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  playSound('pop');
+                  setShowShareModal(true);
+                }}
+                className="flex-row gap-2 items-center px-2"
+              >
+                {(isShared || sharedGroups.length > 0) ? (
+                  <>
+                    <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
+                      {t('storyDetail.shared')}
+                    </Text>
+                    {isShared && (
+                      <Feather name='globe' size={18} color={isNight ? '#fff' : '#000'} />
+                    )}
+                    {sharedGroups.length > 0 && (
+                      <View className="flex-row items-center gap-1">
+                        <Feather name='users' size={18} color={isNight ? '#fff' : '#000'} />
+                        <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>
+                          {sharedGroups.length}
+                        </Text>
+                      </View>
+                    )}
 
-                </>
-              ) : (
-                <>
-                  <Feather name='share' size={18} color={isNight ? '#fff' : '#000'} />
-                  <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
-                    {t('storyDetail.share')}
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
-          </BlurView>
+                  </>
+                ) : (
+                  <>
+                    <Feather name='share' size={18} color={isNight ? '#fff' : '#000'} />
+                    <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
+                      {t('storyDetail.share')}
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </BlurView>
+          )}
 
           <BlurView
             intensity={isNight ? 90 : 50}
@@ -664,107 +670,105 @@ export default function StoryDetailScreen() {
             <BlurView
               intensity={isNight ? 90 : 50}
               tint={isNight ? "dark" : "light"}
-              className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
+              className="rounded-3xl p-6 mx-4 w-11/12 min-h-[70vh] max-w-md overflow-hidden"
+              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', maxHeight: '80%' }}
             >
-              <View className="mb-6">
+              <View className="flex-1">
                 <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
                   {t('storyDetail.shareStoryTitle')}
                 </Text>
-                <Text className={`text-center ${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo`}>
-                  {t('storyDetail.shareStorySubtitle')}
-                </Text>
-              </View>
 
-              {/* Option: Partager à tout le monde */}
-              <TouchableOpacity
-                onPress={handleToggleShared}
-                className="mb-4"
-              >
-                <BlurView
-                  intensity={isNight ? 90 : 50}
-                  tint={isNight ? "dark" : "light"}
-                  className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-blue-500' : ''}`}
-                  style={{ backgroundColor: isNight ? '#3b82f690' : '#3b82f630' }}
+                {/* Option: Partager à tout le monde */}
+                <TouchableOpacity
+                  onPress={handleShareToCommunity}
+                  disabled={isShared}
+                  className="mb-4"
                 >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-1">
-                      <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                        {t('storyDetail.shareToEveryone')}
-                      </Text>
-                      <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                        {t('storyDetail.visibleByCommunity')}
-                      </Text>
+                  <BlurView
+                    intensity={isNight ? 90 : 50}
+                    tint={isNight ? "dark" : "light"}
+                    className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-green-500' : ''}`}
+                    style={{ backgroundColor: isShared ? (isNight ? '#22c55e50' : '#22c55e30') : (isNight ? '#3b82f690' : '#3b82f630') }}
+                  >
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-1">
+                        <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
+                          {isShared ? t('storyDetail.sharedToEveryone') : t('storyDetail.shareToEveryone')}
+                        </Text>
+                        <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
+                          {isShared ? t('storyDetail.alreadySharedToCommunity') : t('storyDetail.visibleByCommunity')}
+                        </Text>
+                      </View>
+                      {isShared && (
+                        <Feather name="check-circle" size={24} color="#22c55e" />
+                      )}
                     </View>
-                    {isShared && (
-                      <Feather name="check-circle" size={24} color="#3b82f6" />
-                    )}
-                  </View>
-                </BlurView>
-              </TouchableOpacity>
+                  </BlurView>
+                </TouchableOpacity>
 
-              {/* Option: Partager à des groupes */}
-              <View className="mb-4">
-                <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
-                  {t('storyDetail.shareToGroups')}
-                </Text>
-                <ScrollView className="max-h-60">
-                  {myGroups.length === 0 ? (
-                    <BlurView
-                      intensity={isNight ? 90 : 50}
-                      tint={isNight ? "dark" : "light"}
-                      className="p-4 rounded-xl overflow-hidden items-center"
-                      style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
-                    >
-                      <Feather name="users" size={32} color={isNight ? '#64748b' : '#94a3b8'} />
-                      <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
-                        {t('storyDetail.noGroupYet')}
-                      </Text>
-                    </BlurView>
-                  ) : (
-                    myGroups.map((group: any) => {
-                      const isAlreadyShared = sharedGroups.some((g: any) => g.id === group.id);
-                      const isSelected = selectedGroups.includes(group.id);
+                {/* Option: Partager à des groupes */}
+                <View className="flex-1 mb-4">
+                  <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
+                    {t('storyDetail.shareToGroups')}
+                  </Text>
+                  <ScrollView className="flex-1" showsVerticalScrollIndicator={true}>
+                    {myGroups.length === 0 ? (
+                      <BlurView
+                        intensity={isNight ? 90 : 50}
+                        tint={isNight ? "dark" : "light"}
+                        className="p-4 rounded-xl overflow-hidden items-center"
+                        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                      >
+                        <Feather name="users" size={32} color={isNight ? '#64748b' : '#94a3b8'} />
+                        <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
+                          {t('storyDetail.noGroupYet')}
+                        </Text>
+                      </BlurView>
+                    ) : (
+                      myGroups.map((group: any) => {
+                        const isAlreadyShared = sharedGroups.some((g: any) => g.id === group.id);
+                        const isSelected = selectedGroups.includes(group.id);
 
-                      return (
-                        <TouchableOpacity
-                          key={group.id}
-                          onPress={() => handleToggleGroup(group.id)}
-                          className="mb-2"
-                        >
-                          <BlurView
-                            intensity={isNight ? 90 : 50}
-                            tint={isNight ? "dark" : "light"}
-                            className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
-                            style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                        return (
+                          <TouchableOpacity
+                            key={group.id}
+                            onPress={() => handleToggleGroup(group.id)}
+                            className="mb-2"
                           >
-                            <View className="flex-row items-center justify-between">
-                              <View className="flex-1">
-                                <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                                  {group.name}
-                                </Text>
-                                <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                                  {t('storyDetail.members', { count: group._count?.members || 0 })} {isAlreadyShared ? `• ${t('storyDetail.alreadyShared')}` : ''}
-                                </Text>
+                            <BlurView
+                              intensity={isNight ? 90 : 50}
+                              tint={isNight ? "dark" : "light"}
+                              className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
+                              style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                            >
+                              <View className="flex-row items-center justify-between">
+                                <View className="flex-1">
+                                  <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
+                                    {group.name}
+                                  </Text>
+                                  <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    {t('storyDetail.members', { count: group._count?.members || 0 })} {isAlreadyShared ? `• ${t('storyDetail.alreadyShared')}` : ''}
+                                  </Text>
+                                </View>
+                                {isSelected && (
+                                  <Feather
+                                    name="check-circle"
+                                    size={20}
+                                    color={isAlreadyShared ? "#10b981" : "#3b82f6"}
+                                  />
+                                )}
                               </View>
-                              {isSelected && (
-                                <Feather
-                                  name="check-circle"
-                                  size={20}
-                                  color={isAlreadyShared ? "#10b981" : "#3b82f6"}
-                                />
-                              )}
-                            </View>
-                          </BlurView>
-                        </TouchableOpacity>
-                      );
-                    })
-                  )}
-                </ScrollView>
+                            </BlurView>
+                          </TouchableOpacity>
+                        );
+                      })
+                    )}
+                  </ScrollView>
+                </View>
               </View>
 
-              {/* Boutons d'action */}
-              <View className="flex-col gap-3 mt-4">
+              {/* Boutons d'action - en bas */}
+              <View className="flex-col gap-3 pt-4">
                 {selectedGroups.length > 0 && (() => {
                   const sharedGroupIds = sharedGroups.map((g: any) => g.id);
                   const newGroupsCount = selectedGroups.filter(id => !sharedGroupIds.includes(id)).length;
