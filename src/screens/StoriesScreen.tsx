@@ -6,7 +6,6 @@ import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useStories } from '~/hooks/useStories';
 import { useFavoriteStories } from '~/hooks/useFavoriteStories';
-import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 

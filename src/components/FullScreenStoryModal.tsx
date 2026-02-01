@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
   Animated,
   ScrollView,
-  PanResponder,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -68,37 +67,26 @@ export default function FullScreenStoryModal({
     }
   }, [visible, audioPlayer]);
   const [brightness, setBrightness] = useState(0.7);
+  const [isNightMode, setIsNightMode] = useState(false);
   const [showFrameMenu, setShowFrameMenu] = useState(false);
 
-  // Slider de luminosité - hauteur du slider et position
-  const SLIDER_HEIGHT = 150;
-  const MIN_BRIGHTNESS = 0.1;
-  const MAX_BRIGHTNESS = 0.7;
+  // Options de luminosité
+  const brightnessOptions = [
+    { value: 0.3, label: '30%' },
+    { value: 0.5, label: '50%' },
+    { value: 0.7, label: '70%' },
+  ];
 
-  const startBrightnessRef = useRef(brightness);
+  const handleBrightnessChange = (value: number) => {
+    setIsNightMode(false);
+    setBrightness(value);
+    Brightness.setBrightnessAsync(value);
+  };
 
-  const brightnessPanResponder = useRef(PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: () => {
-      // Sauvegarder la luminosité au début du geste
-      startBrightnessRef.current = brightness;
-    },
-    onPanResponderMove: (_, gestureState) => {
-      // Calculer le changement de luminosité basé sur le mouvement vertical
-      // Négatif car monter = plus lumineux
-      const brightnessChange = -(gestureState.dy / SLIDER_HEIGHT) * (MAX_BRIGHTNESS - MIN_BRIGHTNESS);
-      const newBrightness = startBrightnessRef.current + brightnessChange;
-      const clampedBrightness = Math.max(MIN_BRIGHTNESS, Math.min(MAX_BRIGHTNESS, newBrightness));
-
-      setBrightness(clampedBrightness);
-      Brightness.setBrightnessAsync(clampedBrightness);
-    },
-    onPanResponderRelease: () => {
-      // Mettre à jour la référence pour le prochain geste
-      startBrightnessRef.current = brightness;
-    },
-  })).current;
+  const handleNightMode = () => {
+    setIsNightMode(!isNightMode);
+    // On garde la luminosité actuelle, le filtre fait le reste
+  };
   const [selectedFrame, setSelectedFrame] = useState<FrameType>('none');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
@@ -196,8 +184,10 @@ export default function FullScreenStoryModal({
           }}
         >
           <FlatList
+            key={isRotated ? 'rotated' : 'normal'}
             ref={flatListRef}
             data={allItems}
+            extraData={isRotated}
             keyExtractor={(item) => item.id.toString()}
             horizontal
             pagingEnabled
@@ -432,7 +422,7 @@ export default function FullScreenStoryModal({
                       />
                     </TouchableOpacity>
 
-                    {/* Slider de luminosité vertical */}
+                    {/* Menu de luminosité avec boutons */}
                     {showBrightnessMenu && (
                       <BlurView
                         intensity={isNight ? 90 : 50}
@@ -440,59 +430,66 @@ export default function FullScreenStoryModal({
                         style={{
                           position: 'absolute',
                           top: 75,
-                          borderRadius: 9999,
+                          borderRadius: 16,
                           overflow: 'hidden',
                           zIndex: 10,
                         }}
                       >
-                        <View style={{ padding: 16, alignItems: 'center', width: 65, }} className='bg-white/50'>
-                          {/* Slider vertical */}
-                          <View
+                        <View style={{ padding: 12, alignItems: 'center', gap: 8 }} className='bg-white/50'>
+                          {/* Boutons de luminosité */}
+                          {brightnessOptions.map((option) => (
+                            <TouchableOpacity
+                              key={option.value}
+                              onPress={() => handleBrightnessChange(option.value)}
+                              style={{
+                                width: 44,
+                                height: 44,
+                                borderRadius: 22,
+                                backgroundColor: brightness === option.value && !isNightMode
+                                  ? 'rgba(16, 185, 129, 0.9)'
+                                  : 'rgba(255, 255, 255, 0.9)',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderWidth: 2,
+                                borderColor: brightness === option.value && !isNightMode
+                                  ? 'rgba(16, 185, 129, 1)'
+                                  : 'rgba(0, 0, 0, 0.1)',
+                              }}
+                            >
+                              <Text style={{
+                                fontSize: 12,
+                                fontWeight: '600',
+                                color: brightness === option.value && !isNightMode ? 'white' : 'black',
+                              }}>
+                                {option.label}
+                              </Text>
+                            </TouchableOpacity>
+                          ))}
+
+                          {/* Bouton mode nocturne */}
+                          <TouchableOpacity
+                            onPress={handleNightMode}
                             style={{
-                              width: 40,
-                              height: SLIDER_HEIGHT,
-                              backgroundColor: 'rgba(0,0,0,0.1)',
-                              borderRadius: 20,
-                              justifyContent: 'flex-end',
-                              overflow: 'hidden',
+                              width: 44,
+                              height: 44,
+                              borderRadius: 22,
+                              backgroundColor: isNightMode
+                                ? 'rgba(99, 102, 241, 0.9)'
+                                : 'rgba(255, 255, 255, 0.9)',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              borderWidth: 2,
+                              borderColor: isNightMode
+                                ? 'rgba(99, 102, 241, 1)'
+                                : 'rgba(0, 0, 0, 0.1)',
                             }}
-                            {...brightnessPanResponder.panHandlers}
                           >
-                            {/* Barre de remplissage */}
-                            <View
-                              style={{
-                                width: '100%',
-                                height: `${((brightness - MIN_BRIGHTNESS) / (MAX_BRIGHTNESS - MIN_BRIGHTNESS)) * 100}%`,
-                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                                borderRadius: 20,
-                              }}
+                            <Feather
+                              name="moon"
+                              size={18}
+                              color={isNightMode ? 'white' : 'black'}
                             />
-                            {/* Curseur */}
-                            <View
-                              style={{
-                                position: 'absolute',
-                                width: 36,
-                                height: 36,
-                                borderRadius: 18,
-                                backgroundColor: 'white',
-                                borderWidth: 3,
-                                borderColor: 'rgba(16, 185, 129, 1)',
-                                left: 2,
-                                bottom: `${((brightness - MIN_BRIGHTNESS) / (MAX_BRIGHTNESS - MIN_BRIGHTNESS)) * 100}%`,
-                                marginBottom: -40,
-                                marginTop: 40,
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 2 },
-                                shadowOpacity: 0.25,
-                                shadowRadius: 4,
-                                elevation: 5,
-                              }}
-                            />
-                          </View>
-                          {/* Pourcentage affiché */}
-                          <Text style={{ fontSize: 14, marginTop: 8, fontWeight: '600' }}>
-                            {Math.round(brightness * 100)}%
-                          </Text>
+                          </TouchableOpacity>
                         </View>
                       </BlurView>
                     )}
@@ -697,6 +694,22 @@ export default function FullScreenStoryModal({
                 </TouchableOpacity>
               </View>
             </Animated.View>
+          )}
+
+          {/* Filtre lumière bleue (overlay jaune/ambre) */}
+          {isNightMode && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 180, 50, 0.15)',
+                zIndex: 100,
+              }}
+            />
           )}
         </View>
       </SafeAreaView>

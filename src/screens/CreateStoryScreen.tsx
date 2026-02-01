@@ -27,10 +27,6 @@ import CharacterModal from '~/components/CharacterModal';
 import type { Character } from '~/types';
 import { SKIN_COLORS, HAIR_COLORS, EYE_COLORS, ANIMAL_TYPES, FUR_COLORS, GENDERS, ANIMAL_AGE_RANGES } from '~/types';
 
-
-
-
-
 type StoryPage = {
   page: number;
   text: string;
@@ -125,11 +121,7 @@ export default function CreateStoryScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
   const scrollX = useRef(new Animated.Value(0)).current;
-
-  // Hook pour la création d'histoire avec React Query
   const createStoryMutation = useCreateStory();
-
-  // Utiliser le store global pour la création d'histoire
   const {
     isCreating,
     loading,
@@ -146,10 +138,8 @@ export default function CreateStoryScreen() {
     maximize
   } = useStoryCreationStore();
 
-  // Détecter quand l'utilisateur quitte la page et minimiser automatiquement
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => {
-      // Quand on quitte la page CreateStory
       if (isCreating && !isMinimized) {
         minimize();
       }
@@ -158,10 +148,8 @@ export default function CreateStoryScreen() {
     return unsubscribe;
   }, [navigation, isCreating, isMinimized, minimize]);
 
-  // Restaurer la modal en plein écran quand on revient sur la page
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      // Quand on revient sur la page CreateStory
       if (isCreating && isMinimized) {
         maximize();
       }
@@ -199,10 +187,7 @@ export default function CreateStoryScreen() {
     },
     validationSchema: createStorySchema,
     onSubmit: async (values) => {
-      // Fermer la modal de confirmation
       setShowConfirmationModal(false);
-
-      // Démarrer la création dans le store global
       startCreation(values.title);
 
       try {
@@ -217,18 +202,12 @@ export default function CreateStoryScreen() {
             ? buildCharacterDescription(selectedCharacter)
             : undefined,
         };
-        console.log('📤 Payload envoyé:', JSON.stringify(payload, null, 2));
-
-        // Utiliser la mutation React Query
         const story = await createStoryMutation.mutateAsync(payload);
-
-        console.log('✅ Story créée:', story);
-        // Extraire la story de la réponse (nouvelle structure API)
         const createdStory = story.story ?? story;
-        console.log('📖 Pages:', createdStory.pages);
-        console.log('🆔 Story ID:', createdStory.id);
-        console.log('🖼️ Cover URL:', createdStory.coverUrl);
-        console.log('📝 Description:', createdStory.description);
+        // console.log('📖 Pages:', createdStory.pages);
+        // console.log('🆔 Story ID:', createdStory.id);
+        // console.log('🖼️ Cover URL:', createdStory.coverUrl);
+        // console.log('📝 Description:', createdStory.description);
         // Mettre à jour le store avec les résultats
         updateProgress(
           createdStory.pages ?? [],
@@ -254,7 +233,6 @@ export default function CreateStoryScreen() {
   const buildCharacterDescription = (character: Character): string => {
     let description = `Personnage principal: ${character.name}`;
 
-    // Genre
     const genderLabel = GENDERS.find((g) => g.id === character.gender)?.label;
     if (genderLabel) description += `, ${genderLabel.toLowerCase()}`;
 
@@ -283,12 +261,9 @@ export default function CreateStoryScreen() {
     return description;
   };
 
-  // Fonction pour gérer le clic sur le bouton de création
   const handleCreateClick = async () => {
-    // Valider tous les champs
     const errors = await formik.validateForm();
 
-    // Marquer tous les champs comme touchés pour afficher les erreurs
     formik.setTouched({
       title: true,
       prompt: true,
@@ -297,7 +272,6 @@ export default function CreateStoryScreen() {
       language: true,
     });
 
-    // Si pas d'erreurs, ouvrir la modal de confirmation
     if (Object.keys(errors).length === 0) {
       setShowConfirmationModal(true);
     }
@@ -324,11 +298,9 @@ export default function CreateStoryScreen() {
   }, []);
 
   const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
-  // Fonction pour obtenir les traductions des styles
   const getStyleTranslation = (styleId: string) => {
     const translations: Record<string, { name: string; description: string }> = {
       CLASSIQUE: { name: t('createStory.styleClassic'), description: t('createStory.styleClassicDesc') },
@@ -356,7 +328,7 @@ export default function CreateStoryScreen() {
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
       </TouchableOpacity>
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%]'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {storyCoin === 0 && (
@@ -392,7 +364,7 @@ export default function CreateStoryScreen() {
                 source={require('../../assets/animations/Store.json')}
                 autoPlay
                 loop={false}
-                style={{ width: 200, height: 200, zIndex: 5 }}
+                style={{ width: 200, height: 200 }}
               />
             </TouchableOpacity>
           </Animated.View>
@@ -433,7 +405,6 @@ export default function CreateStoryScreen() {
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
                 <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
-
                 <TextInput
                   className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder={t('createStory.storyTitlePlaceholder')}
@@ -557,7 +528,7 @@ export default function CreateStoryScreen() {
                             style={{
                               padding: 20,
                               borderRadius: 16,
-                              backgroundColor: 'rgba(0, 0, 0, 0.4)', // Overlay sombre pour rendre le texte lisible
+                              backgroundColor: 'rgba(0, 0, 0, 0.4)',
                             }}
                             className='justify-between flex flex-col relative h-full w-full'
                           >
@@ -711,8 +682,6 @@ export default function CreateStoryScreen() {
                   </View>
                 </View>
               )}
-
-            {/* 🖋️ Bouton */}
             <TouchableOpacity
               className={`bg-black px-4 py-3 rounded-3xl items-center`}
               onPress={handleCreateClick}

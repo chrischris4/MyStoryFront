@@ -57,11 +57,6 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     }
 
     if (Object.keys(updates).length === 0) {
-      Toast.show({
-        type: 'info',
-        text1: t('profile.noChanges'),
-        text2: t('profile.noChangesMessage'),
-      });
       onClose();
       return;
     }

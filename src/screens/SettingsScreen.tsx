@@ -10,7 +10,6 @@ import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import EditProfilModal from '~/components/EditProfilModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
-import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
 import { useDeleteAccount } from '~/hooks/useDeleteAccount';
@@ -26,23 +25,13 @@ export default function SettingsScreen() {
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
     const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
     const [isDeleteAccountModalVisible, setIsDeleteAccountModalVisible] = useState(false);
-
-    // Hook pour les transactions (enabled seulement quand la modal est visible)
     const { data: transactions = [], isLoading: isLoadingTransactions, error: transactionsError } = useTransactionsByUser(isHistoryModalVisible);
-
-    // Hook pour la suppression de compte
     const deleteAccountMutation = useDeleteAccount();
-
-    // Hook pour les sons
     const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
-
-    // Récupérer les données du store
     const userStore = useUserStore((state) => state.user);
     const isPremium = isPremiumUser(userStore?.subscriptionPlan);
-
-    // Fonction pour obtenir le nom d'affichage du plan
     const getPlanDisplayName = (planType?: string): string => {
         if (!planType) return 'Premium';
 
@@ -54,13 +43,8 @@ export default function SettingsScreen() {
 
         return planNames[planType] || 'Premium';
     };
-
     const planName = getPlanDisplayName(userStore?.subscriptionPlan);
-
-
-
     const handleLogout = async () => {
-        // Utiliser un modal de confirmation personnalisé ou directement logout
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
         playSound('click');
         pauseBackgroundMusic();
@@ -74,7 +58,6 @@ export default function SettingsScreen() {
             text2: t('welcome.seeYouSoon'),
         });
     };
-
     const handleBilling = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         playSound('click');
@@ -83,16 +66,12 @@ export default function SettingsScreen() {
 
     return (
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
-            {/* 🌤️ Background animé */}
             <Background isNight={isNight} />
-
-            {/* Sol */}
             <View
                 className='absolute bottom-0 -right-52 border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
             <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
-
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between'>
@@ -112,7 +91,6 @@ export default function SettingsScreen() {
                                     </Text>
                                 )}
                                 <Text className={`${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{user.email}</Text>
-
                             </View>
                         </View>
                     )}
@@ -125,7 +103,6 @@ export default function SettingsScreen() {
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>{t('settings.appearance')}</Text>
@@ -156,7 +133,6 @@ export default function SettingsScreen() {
                         </View>
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.sounds')}</Text>
@@ -179,7 +155,6 @@ export default function SettingsScreen() {
                         />
                     </View>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
@@ -195,7 +170,6 @@ export default function SettingsScreen() {
                         />
                     </View>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
@@ -209,11 +183,9 @@ export default function SettingsScreen() {
                             setIsHistoryModalVisible(true);
                         }}
                     >
-
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.subscription')}</Text>
@@ -232,12 +204,10 @@ export default function SettingsScreen() {
                             {t('settings.noSubscription')}
                         </Text>
                     )}
-
                     <TouchableOpacity style={styles.button} onPress={handleBilling}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.manageSubscription')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.contact')}</Text>
@@ -267,7 +237,6 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>flun.app</Text>
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.deleteAccount')}</Text>
@@ -285,7 +254,6 @@ export default function SettingsScreen() {
                         <Text className="text-red-500 text-lg font-baloo">{t('settings.deleteAccountButton')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
                     <TouchableOpacity style={styles.button} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
@@ -293,6 +261,7 @@ export default function SettingsScreen() {
                 </BlurView>
             </ScrollView>
 
+            {/* Modal Edit Profile */}
             <EditProfilModal
                 visible={isEditProfilModalVisible}
                 onClose={() => setIsEditProfilModalVisible(false)}
