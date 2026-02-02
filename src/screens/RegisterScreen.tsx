@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,12 +10,16 @@ import * as Yup from 'yup';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
+import { useOAuth } from '~/hooks/useOAuth';
+import { api } from '~/services/api';
 
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { signInWithGoogle, signInWithFacebook, isLoading: isOAuthLoading, loadingProvider } = useOAuth();
+  const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
 
   const registerSchema = Yup.object().shape({
     email: Yup.string()
@@ -86,10 +90,47 @@ export default function RegisterScreen() {
     }
   };
 
+  const handleOAuthSuccess = async () => {
+    try {
+      const userData = await api.getProfile();
+      const userName = userData?.profil?.name || 'toi';
+      const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+
+      Toast.show({
+        type: 'success',
+        text1: t('welcome.greeting', { name: userName }),
+        text2: randomMessage,
+      });
+    } catch {
+      // Ignore si on ne peut pas récupérer le profil
+    }
+
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'MainTabs' }],
+      })
+    );
+  };
+
+  const handleGoogleLogin = async () => {
+    const success = await signInWithGoogle();
+    if (success) {
+      await handleOAuthSuccess();
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    const success = await signInWithFacebook();
+    if (success) {
+      await handleOAuthSuccess();
+    }
+  };
+
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-      <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white p-[10%]">
-        <View className='w-[70%]'>
+      <View className="w-[180%] flex flex-col justify-center items-center aspect-square rounded-full bg-white p-[10%]">
+        <View className='w-[60%]'>
           <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">{t('auth.register')}</Text>
 
           <Formik
@@ -183,6 +224,46 @@ export default function RegisterScreen() {
                 <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                   <Text className="text-[#38b6ff] text-center font-baloo">{t('auth.hasAccount')}</Text>
                 </TouchableOpacity>
+
+                {/* Séparateur */}
+                <View className="flex-row items-center my-4">
+                  <View className="flex-1 h-[1px] bg-gray-300" />
+                  <Text className="mx-4 text-gray-500 font-baloo">{t('auth.or')}</Text>
+                  <View className="flex-1 h-[1px] bg-gray-300" />
+                </View>
+
+                {/* Boutons OAuth */}
+                <View className="flex-row gap-3 justify-center">
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center justify-center bg-white border border-gray-300 rounded-xl h-12 gap-2"
+                    onPress={handleGoogleLogin}
+                    disabled={isOAuthLoading}
+                  >
+                    {loadingProvider === 'google' ? (
+                      <ActivityIndicator size="small" color="#4285F4" />
+                    ) : (
+                      <>
+                        <FontAwesome name="google" size={20} color="#4285F4" />
+                        <Text className="font-baloo-medium text-gray-700">Google</Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center justify-center bg-[#1877F2] rounded-xl h-12 gap-2"
+                    onPress={handleFacebookLogin}
+                    disabled={isOAuthLoading}
+                  >
+                    {loadingProvider === 'facebook' ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <>
+                        <FontAwesome name="facebook" size={20} color="#fff" />
+                        <Text className="font-baloo-medium text-white">Facebook</Text>
+                      </>
+                    )}
+                  </TouchableOpacity>
+                </View>
               </>
             )}
           </Formik>

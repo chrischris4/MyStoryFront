@@ -19,7 +19,8 @@
           "icon": "./assets/notification-icon.png",
           "color": "#38b6ff"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",

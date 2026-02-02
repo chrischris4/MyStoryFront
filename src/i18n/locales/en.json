@@ -46,7 +46,12 @@
     "registerError": "Registration error",
     "networkError": "A network error occurred",
     "accountCreated": "Account created successfully!",
-    "emailAlreadyUsed": "This email is already in use"
+    "emailAlreadyUsed": "This email is already in use",
+    "or": "or",
+    "googleNotConfigured": "Google sign-in not configured",
+    "facebookNotConfigured": "Facebook sign-in not configured",
+    "googleAuthFailed": "Google authentication failed",
+    "facebookAuthFailed": "Facebook authentication failed"
   },
   "welcome": {
     "messages": [

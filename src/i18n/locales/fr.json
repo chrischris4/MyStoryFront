@@ -46,7 +46,12 @@
     "registerError": "Erreur lors de l'inscription",
     "networkError": "Une erreur réseau est survenue",
     "accountCreated": "Compte créé avec succès !",
-    "emailAlreadyUsed": "Cet email est déjà utilisé"
+    "emailAlreadyUsed": "Cet email est déjà utilisé",
+    "or": "ou",
+    "googleNotConfigured": "Connexion Google non configurée",
+    "facebookNotConfigured": "Connexion Facebook non configurée",
+    "googleAuthFailed": "Échec de l'authentification Google",
+    "facebookAuthFailed": "Échec de l'authentification Facebook"
   },
   "welcome": {
     "messages": [
