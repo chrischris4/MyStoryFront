@@ -408,7 +408,7 @@ export default function GroupScreen() {
                           }}
                         >
                           <LottieView
-                            source={require('../../assets/animations/Loading.json')}
+                            source={require('../../assets/animations/LoadingWhite.json')}
                             autoPlay
                             loop={true}
                             style={{ width: 200, height: 200 }}
@@ -440,7 +440,7 @@ export default function GroupScreen() {
                       }}
                     >
                       <LottieView
-                        source={require('../../assets/animations/Loading.json')}
+                        source={require('../../assets/animations/LoadingWhite.json')}
                         autoPlay
                         loop={true}
                         style={{ width: 200, height: 200 }}
@@ -476,7 +476,7 @@ export default function GroupScreen() {
                       }}
                     >
                       <LottieView
-                        source={require('../../assets/animations/Loading.json')}
+                        source={require('../../assets/animations/LoadingWhite.json')}
                         autoPlay
                         loop={true}
                         style={{ width: 200, height: 200 }}

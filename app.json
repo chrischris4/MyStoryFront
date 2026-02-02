@@ -2,6 +2,7 @@
   "expo": {
     "name": "Flun",
     "slug": "flun",
+    "scheme": "flun",
     "version": "1.0.0",
     "description": "Créez des histoires magiques et personnalisées avec des illustrations uniques générées par IA. Parfait pour les enfants... et les grands enfants !",
     "web": {
