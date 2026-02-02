@@ -53,6 +53,31 @@
     "googleAuthFailed": "Google authentication failed",
     "facebookAuthFailed": "Facebook authentication failed"
   },
+  "forgotPassword": {
+    "title": "Forgot password?",
+    "emailDescription": "Enter your email and we'll send you a code to reset your password.",
+    "sendCode": "Send code",
+    "codeSent": "Code sent!",
+    "checkEmail": "Check your inbox",
+    "enterCode": "Enter the code",
+    "codeDescription": "A 6-digit code was sent to {{email}}",
+    "codeRequired": "Please enter the 6-digit code",
+    "codeValid": "Code verified!",
+    "codeInvalid": "Invalid code",
+    "codeExpired": "The code has expired. Please request a new one.",
+    "enterNewPassword": "You can now create a new password",
+    "verify": "Verify",
+    "resendCode": "Resend code",
+    "resendIn": "Resend in {{seconds}}s",
+    "newPassword": "New password",
+    "passwordDescription": "Choose a secure password with at least 6 characters.",
+    "newPasswordPlaceholder": "Your new password",
+    "resetPassword": "Reset password",
+    "success": "Success!",
+    "passwordChanged": "Your password has been changed",
+    "backToLogin": "Back to login",
+    "oauthUser": "This account uses Google or Facebook. Please sign in with your provider."
+  },
   "welcome": {
     "messages": [
       "Lots of adventures await you here!",
