@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigation } from '@react-navigation/native';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '~/screens/RegisterScreen';
+import ForgotPasswordScreen from '~/screens/ForgotPasswordScreen';
 import HomeScreen from '~/screens/HomeScreen';
 import StoriesScreen from '~/screens/StoriesScreen';
 import SharedStoriesScreen from '~/screens/SharedStoriesScreen';
@@ -60,6 +61,7 @@ function AppNavigatorContent() {
             <Stack.Screen name="Opening" component={OpeningScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
 
             {/* Routes protégées avec Tab Navigator */}
             <Stack.Screen name="MainTabs">

@@ -218,6 +218,18 @@ export class ApiService {
     return this.post<{ accessToken: string; refreshToken: string }>('/auth/oauth', { provider, accessToken, name }, false);
   }
 
+  async forgotPassword(email: string) {
+    return this.post<{ message: string }>('/auth/forgot-password', { email }, false);
+  }
+
+  async verifyResetCode(email: string, code: string) {
+    return this.post<{ valid: boolean; message: string }>('/auth/verify-reset-code', { email, code }, false);
+  }
+
+  async resetPassword(email: string, code: string, newPassword: string) {
+    return this.post<{ message: string; accessToken?: string; refreshToken?: string }>('/auth/reset-password', { email, code, newPassword }, false);
+  }
+
   async getProfile() {
     return this.get<any>('/profile/me');
   }

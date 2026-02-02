@@ -3,6 +3,7 @@ export type RootStackParamList = {
   Opening: undefined;
   Login: undefined;
   Register: undefined;
+  ForgotPassword: undefined;
   MainTabs: undefined;
   StoryDetail: { storyId: number };
   BillingScreen: undefined;

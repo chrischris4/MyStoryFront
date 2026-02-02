@@ -53,6 +53,31 @@
     "googleAuthFailed": "Échec de l'authentification Google",
     "facebookAuthFailed": "Échec de l'authentification Facebook"
   },
+  "forgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "emailDescription": "Entrez votre email et nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "sendCode": "Envoyer le code",
+    "codeSent": "Code envoyé !",
+    "checkEmail": "Vérifiez votre boîte mail",
+    "enterCode": "Entrez le code",
+    "codeDescription": "Un code à 6 chiffres a été envoyé à {{email}}",
+    "codeRequired": "Veuillez entrer le code à 6 chiffres",
+    "codeValid": "Code vérifié !",
+    "codeInvalid": "Code invalide",
+    "codeExpired": "Le code a expiré. Veuillez en demander un nouveau.",
+    "enterNewPassword": "Vous pouvez maintenant créer un nouveau mot de passe",
+    "verify": "Vérifier",
+    "resendCode": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {{seconds}}s",
+    "newPassword": "Nouveau mot de passe",
+    "passwordDescription": "Choisissez un mot de passe sécurisé d'au moins 6 caractères.",
+    "newPasswordPlaceholder": "Votre nouveau mot de passe",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "success": "Succès !",
+    "passwordChanged": "Votre mot de passe a été modifié",
+    "backToLogin": "Retour à la connexion",
+    "oauthUser": "Ce compte utilise Google ou Facebook. Connectez-vous via votre provider."
+  },
   "welcome": {
     "messages": [
       "Plein d'aventures t'attendent ici !",
