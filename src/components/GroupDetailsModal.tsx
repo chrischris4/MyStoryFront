@@ -19,6 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import { useTheme } from '~/context/ThemeContext';
+import { useAuth } from '~/context/AuthContext';
 import { useGroupMembers } from '~/hooks/useGroupMembers';
 import { useInviteToGroup } from '~/hooks/useInviteToGroup';
 import { useRemoveMember } from '~/hooks/useRemoveMember';
@@ -41,6 +42,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const { t } = useTranslation();
   const { isNight } = useTheme();
   const { playSound } = useSound();
+  const { user: currentUser } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalMounted, setIsModalMounted] = useState(false);
   const [inviteUsername, setInviteUsername] = useState('');
@@ -84,6 +86,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
 
   const groupMembers = group?.members || fetchedMembers;
   const ownerName = group?.owner?.profil?.name || group?.owner?.email || t('groups.unknownCreator');
+  const isCurrentUserOwner = currentUser?.id === group?.ownerId;
 
   const memberCount = groupMembers.length;
 
@@ -193,7 +196,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 {group.description || t('groups.noDescription')}
               </Text>
             </View>
-            <TouchableOpacity onPress={onClose} className="p-2">
+            <TouchableOpacity onPress={onClose} className="p-2 -mt-3 -mr-2">
               <Feather name="x" size={24} color={isNight ? '#ffffff' : '#1e293b'} />
             </TouchableOpacity>
           </View>
@@ -245,18 +248,24 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             </TouchableOpacity>
           </View>
 
-          {/* Section invitation */}
-          {activeTab === 'members' && (
+          {/* Section invitation - visible uniquement pour le owner */}
+          {activeTab === 'members' && isCurrentUserOwner && (
             <View className="mb-4">
-              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
-                {t('groups.inviteMember')}
-              </Text>
+              <View className="flex-row justify-between items-center">
+                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
+                  {t('groups.inviteMember')}
+                </Text>
+                <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
+                  {inviteUsername.length}/25
+                </Text>
+              </View>
               <View className="flex-row gap-2">
                 <TextInput
                   value={inviteUsername}
                   onChangeText={setInviteUsername}
                   placeholder={t('groups.usernamePlaceholder')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                  maxLength={25}
                   className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
                   autoCapitalize="none"
                 />

@@ -67,12 +67,12 @@ const STORY_STYLES: StoryStyle[] = [
     imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop', // Livre ancien
   },
   {
-    id: 'REALIST',
-    name: 'Réaliste',
-    description: 'Style photo réaliste',
-    emoji: '📷',
-    gradient: ['#4A90E2', '#357ABD'],
-    imageUrl: 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=400&h=300&fit=crop', // Photo réaliste
+    id: 'WATERCOLOR',
+    name: 'Aquarelle',
+    description: 'Style aquarelle doux et poétique',
+    emoji: '🖌️',
+    gradient: ['#7DD3FC', '#A78BFA'],
+    imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=300&fit=crop', // Aquarelle
   },
   {
     id: 'MANGA',
@@ -304,7 +304,7 @@ export default function CreateStoryScreen() {
   const getStyleTranslation = (styleId: string) => {
     const translations: Record<string, { name: string; description: string }> = {
       CLASSIQUE: { name: t('createStory.styleClassic'), description: t('createStory.styleClassicDesc') },
-      REALIST: { name: t('createStory.styleRealist'), description: t('createStory.styleRealistDesc') },
+      WATERCOLOR: { name: t('createStory.styleWatercolor'), description: t('createStory.styleWatercolorDesc') },
       MANGA: { name: t('createStory.styleManga'), description: t('createStory.styleMangaDesc') },
     };
     return translations[styleId] || { name: styleId, description: '' };
@@ -415,7 +415,7 @@ export default function CreateStoryScreen() {
       <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white/80" : "text-black"}`}>{t('createStory.title')}</Text>
       <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
-        className="flex-1 px-4"
+        className="flex-1 px-4 z-20"
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >

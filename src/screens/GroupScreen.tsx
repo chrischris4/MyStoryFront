@@ -13,6 +13,8 @@ import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 import { useGroups } from '~/hooks/useGroups';
 import { useCreateGroup } from '~/hooks/useCreateGroup';
 import { useGroupInvitations } from '~/hooks/useGroupInvitations';
@@ -36,9 +38,15 @@ export default function GroupScreen() {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<TabType>('myGroups');
   const [searchQuery, setSearchQuery] = useState('');
-  const [groupName, setGroupName] = useState('');
-  const [groupDescription, setGroupDescription] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const createGroupSchema = Yup.object().shape({
+    name: Yup.string()
+      .required(t('groups.groupNameRequired'))
+      .max(25, t('groups.groupNameMaxLength', { max: 25 })),
+    description: Yup.string()
+      .max(100, t('groups.descriptionMaxLength', { max: 100 })),
+  });
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
 
@@ -53,20 +61,14 @@ export default function GroupScreen() {
   const declineInvitationMutation = useDeclineInvitation();
   const joinGroupMutation = useJoinGroup();
 
-  const handleCreateGroup = async () => {
-    if (!groupName.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('groups.groupNameRequired'),
-      });
-      return;
-    }
-
+  const handleCreateGroup = async (
+    values: { name: string; description: string },
+    { resetForm }: { resetForm: () => void }
+  ) => {
     try {
       await createGroupMutation.mutateAsync({
-        name: groupName,
-        description: groupDescription,
+        name: values.name,
+        description: values.description,
       });
       Toast.show({
         type: 'success',
@@ -74,8 +76,7 @@ export default function GroupScreen() {
         text2: t('groups.groupCreated'),
       });
       setShowCreateModal(false);
-      setGroupName('');
-      setGroupDescription('');
+      resetForm();
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -515,62 +516,94 @@ export default function GroupScreen() {
                   {t('groups.createGroup')}
                 </Text>
 
-                <TextInput
-                  value={groupName}
-                  onChangeText={setGroupName}
-                  placeholder={t('groups.groupName')}
-                  placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                  className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl mb-3`}
-                />
-
-                <TextInput
-                  value={groupDescription}
-                  onChangeText={setGroupDescription}
-                  placeholder={t('groups.description')}
-                  placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                  multiline
-                  numberOfLines={3}
-                  className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl mb-4`}
-                  style={{ textAlignVertical: 'top' }}
-                />
-
-                <View className="flex-row gap-3">
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowCreateModal(false);
-                      setGroupName('');
-                      setGroupDescription('');
-                    }}
-                    className="flex-1"
-                  >
-                    <View className={`${isNight ? 'bg-slate-700' : 'bg-slate-200'} py-3 rounded-xl items-center`}>
-                      <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
-                        {t('common.cancel')}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    onPress={handleCreateGroup}
-                    className="flex-1"
-                    disabled={createGroupMutation.isPending}
-                  >
-                    <View className="bg-blue-500 py-3 rounded-xl items-center">
-                      {createGroupMutation.isPending ? (
-                        <LottieView
-                          source={require('../../assets/animations/LoadingWhite.json')}
-                          autoPlay
-                          loop={true}
-                          style={{ width: 100, height: 100 }}
+                <Formik
+                  initialValues={{ name: '', description: '' }}
+                  validationSchema={createGroupSchema}
+                  onSubmit={handleCreateGroup}
+                >
+                  {({ handleChange, handleSubmit, values, errors, touched }) => (
+                    <>
+                      <View className="mb-3">
+                        <TextInput
+                          value={values.name}
+                          onChangeText={handleChange('name')}
+                          placeholder={t('groups.groupName')}
+                          placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                          maxLength={25}
+                          className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.name && errors.name ? 'border border-red-500' : ''}`}
                         />
-                      ) : (
-                        <Text className="text-white font-baloo-semibold">
-                          {t('groups.create')}
-                        </Text>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                </View>
+                        <View className="flex-row justify-between mt-1 px-1">
+                          {touched.name && errors.name ? (
+                            <Text className="text-red-500 text-xs font-baloo">{errors.name}</Text>
+                          ) : (
+                            <View />
+                          )}
+                          <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
+                            {values.name.length}/25
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View className="mb-4">
+                        <TextInput
+                          value={values.description}
+                          onChangeText={handleChange('description')}
+                          placeholder={t('groups.description')}
+                          placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                          multiline
+                          numberOfLines={3}
+                          maxLength={100}
+                          className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.description && errors.description ? 'border border-red-500' : ''}`}
+                          style={{ textAlignVertical: 'top' }}
+                        />
+                        <View className="flex-row justify-between mt-1 px-1">
+                          {touched.description && errors.description ? (
+                            <Text className="text-red-500 text-xs font-baloo">{errors.description}</Text>
+                          ) : (
+                            <View />
+                          )}
+                          <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
+                            {values.description.length}/100
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View className="flex-row gap-3">
+                        <TouchableOpacity
+                          onPress={() => setShowCreateModal(false)}
+                          className="flex-1"
+                        >
+                          <View className={`${isNight ? 'bg-slate-700' : 'bg-slate-200'} py-3 h-12 rounded-xl items-center`}>
+                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
+                              {t('common.cancel')}
+                            </Text>
+                          </View>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          onPress={() => handleSubmit()}
+                          className="flex-1"
+                          disabled={createGroupMutation.isPending}
+                        >
+                          <View className="bg-blue-500 py-3 h-12 rounded-xl items-center">
+                            {createGroupMutation.isPending ? (
+                              <LottieView
+                                source={require('../../assets/animations/LoadingWhite.json')}
+                                autoPlay
+                                loop={true}
+                                style={{ width: 80, height: 80 }}
+                              />
+                            ) : (
+                              <Text className="text-white font-baloo-semibold">
+                                {t('groups.create')}
+                              </Text>
+                            )}
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                    </>
+                  )}
+                </Formik>
               </BlurView>
             </View>
           )}

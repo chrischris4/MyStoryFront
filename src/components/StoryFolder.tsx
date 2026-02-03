@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
     View,
     Text,
@@ -7,6 +7,7 @@ import {
     LayoutChangeEvent,
     TouchableOpacity,
     FlatList,
+    ScrollView,
 } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, {
@@ -26,6 +27,7 @@ import { ANIMAL_TYPES } from '~/types';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
+import Slider from '@react-native-community/slider';
 
 type StoryFolderNavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList>,
@@ -45,7 +47,7 @@ type StoryFolderProps = {
 };
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-const NAVBAR_HEIGHT = 80; // Hauteur de la navbar + marges
+const NAVBAR_HEIGHT = 80;
 
 // Composant Skeleton pour les stories
 const StorySkeleton = () => {
@@ -84,18 +86,26 @@ export default function StoryFolder({
     description,
     stories,
     isNight,
+    storyType,
     isLoading = false,
 }: StoryFolderProps) {
     const { t } = useTranslation();
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
+
+    // États des filtres
+    const [showFilters, setShowFilters] = useState(false);
+    const [maxPages, setMaxPages] = useState(20);
+    const [selectedCharacterType, setSelectedCharacterType] = useState<'ALL' | 'HUMAN' | 'ANIMAL'>('ALL');
+
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
     const lockRotate = useSharedValue(0);
     const lockScale = useSharedValue(1);
     const navigation = useNavigation<StoryFolderNavigationProp>();
+
     const animatedStyle = useAnimatedStyle(() => ({
         width: withTiming(width.value, { duration: 300 }),
         height: withTiming(height.value, { duration: 300 }),
@@ -110,13 +120,43 @@ export default function StoryFolder({
         ],
     }));
 
+    // Détermine si les filtres doivent être affichés
+    const shouldShowFilters = storyType === 'ALL' || storyType === 'FAVORITE';
+
+    // Calcul du nombre max de pages dans les stories
+    const maxPagesInStories = useMemo(() => {
+        if (!stories || stories.length === 0) return 20;
+        return Math.max(...stories.map(story => story.numberOfPages || 0));
+    }, [stories]);
+
+    // Filtrage des stories
+    const filteredStories = useMemo(() => {
+        if (!shouldShowFilters) return stories;
+
+        return stories.filter(story => {
+            // Filtre par nombre de pages
+            const pagesMatch = (story.numberOfPages || 0) <= maxPages;
+
+            // Filtre par type de personnage
+            let characterMatch = true;
+            if (selectedCharacterType !== 'ALL') {
+                if (selectedCharacterType === 'HUMAN') {
+                    characterMatch = story.character?.type === 'HUMAN';
+                } else if (selectedCharacterType === 'ANIMAL') {
+                    characterMatch = story.character?.type === 'ANIMAL';
+                }
+            }
+
+            return pagesMatch && characterMatch;
+        });
+    }, [stories, maxPages, selectedCharacterType, shouldShowFilters]);
+
     const onLayout = (event: LayoutChangeEvent) => {
         const { y } = event.nativeEvent.layout;
         setLayoutY(y);
     };
 
     const shakeLock = () => {
-        // Animation du cadenas - secousse et agrandissement
         lockScale.value = withTiming(1.3, { duration: 100 });
         lockRotate.value = withTiming(-15, { duration: 100 });
 
@@ -174,19 +214,16 @@ export default function StoryFolder({
             height.value = 84;
             translateY.value = 0;
         } else {
-            const EXPANDED_TOP = 10; // top souhaité
+            const EXPANDED_TOP = 10;
             width.value = SCREEN_WIDTH;
             height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
             translateY.value = EXPANDED_TOP - layoutY;
-            // Si les données sont déjà en cache (pas de loading), afficher rapidement
-            // Sinon, attendre un peu plus pour laisser le temps au skeleton
             const delay = !isLoading && stories.length > 0 ? 300 : 800;
             setTimeout(() => setShowContent(true), delay);
         }
 
         setExpanded(!expanded);
     };
-
     return (
         <Pressable
             onPress={() => {
@@ -207,7 +244,6 @@ export default function StoryFolder({
                             size={20}
                             color={isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"}
                         />
-
                     </Animated.View>
                 )}
                 <BlurView
@@ -222,8 +258,10 @@ export default function StoryFolder({
                         style={{ flex: expanded ? 1 : undefined }}
                     >
                         <View className="flex flex-row items-center gap-3">
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
-                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>( {stories.length} )</Text>
+                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
+                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>
+                                ( {shouldShowFilters ? filteredStories.length : stories.length} )
+                            </Text>
                         </View>
                         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
 
@@ -234,6 +272,117 @@ export default function StoryFolder({
                             >
                                 <Feather name="x" size={24} color={isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"} />
                             </Pressable>
+                        )}
+
+                        {/* Bouton toggle filtres - uniquement pour ALL et FAVORITE */}
+                        {expanded && showContent && shouldShowFilters && !isLoading && (
+                            <TouchableOpacity
+                                onPress={() => setShowFilters(!showFilters)}
+                                className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start ${showFilters
+                                    ? 'bg-blue-500'
+                                    : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                    }`}
+                            >
+                                <Feather
+                                    name={showFilters ? "filter" : "filter"}
+                                    size={16}
+                                    color={showFilters ? "#fff" : isNight ? "#fff" : "#475569"}
+                                />
+                                <Text className={`ml-2 font-baloo ${showFilters ? 'text-white' : isNight ? 'text-white' : 'text-slate-700'
+                                    }`}>
+                                    {showFilters ? 'Masquer les filtres' : 'Afficher les filtres'}
+                                </Text>
+                                <Feather
+                                    name={showFilters ? "chevron-up" : "chevron-down"}
+                                    size={16}
+                                    color={showFilters ? "#fff" : isNight ? "#fff" : "#475569"}
+                                    style={{ marginLeft: 4 }}
+                                />
+                            </TouchableOpacity>
+                        )}
+
+                        {/* Filtres - uniquement pour ALL et FAVORITE */}
+                        {expanded && showContent && shouldShowFilters && !isLoading && showFilters && (
+                            <View className="mt-2 mb-4 bg-white/10 rounded-2xl p-4">
+                                {/* Filtre type de personnage */}
+                                <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
+                                    Type de personnage
+                                </Text>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    className="mb-4"
+                                >
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedCharacterType('ALL')}
+                                        className={`mr-2 px-4 py-2 rounded-full ${selectedCharacterType === 'ALL'
+                                            ? 'bg-blue-500'
+                                            : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                            }`}
+                                    >
+                                        <Text className={`font-baloo ${selectedCharacterType === 'ALL'
+                                            ? 'text-white'
+                                            : isNight ? 'text-white' : 'text-slate-700'
+                                            }`}>
+                                            🌟 Tous
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedCharacterType('HUMAN')}
+                                        className={`mr-2 px-4 py-2 rounded-full ${selectedCharacterType === 'HUMAN'
+                                            ? 'bg-blue-500'
+                                            : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                            }`}
+                                    >
+                                        <Text className={`font-baloo ${selectedCharacterType === 'HUMAN'
+                                            ? 'text-white'
+                                            : isNight ? 'text-white' : 'text-slate-700'
+                                            }`}>
+                                            👤 Humain
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedCharacterType('ANIMAL')}
+                                        className={`px-4 py-2 rounded-full ${selectedCharacterType === 'ANIMAL'
+                                            ? 'bg-orange-500'
+                                            : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                            }`}
+                                    >
+                                        <Text className={`font-baloo ${selectedCharacterType === 'ANIMAL'
+                                            ? 'text-white'
+                                            : isNight ? 'text-white' : 'text-slate-700'
+                                            }`}>
+                                            🐾 Animal
+                                        </Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
+
+                                {/* Filtre nombre de pages */}
+                                <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
+                                    Nombre de pages max : {maxPages}
+                                </Text>
+                                <Slider
+                                    style={{ width: '100%', height: 40 }}
+                                    minimumValue={1}
+                                    maximumValue={maxPagesInStories}
+                                    step={1}
+                                    value={maxPages}
+                                    onValueChange={setMaxPages}
+                                    minimumTrackTintColor={isNight ? "#3b82f6" : "#2563eb"}
+                                    maximumTrackTintColor={isNight ? "rgba(255,255,255,0.3)" : "#cbd5e1"}
+                                    thumbTintColor="#3b82f6"
+                                />
+                                <View className="flex flex-row justify-between">
+                                    <Text className={`${isNight ? "text-white/60" : "text-slate-500"} text-sm font-baloo`}>
+                                        1 page
+                                    </Text>
+                                    <Text className={`${isNight ? "text-white/60" : "text-slate-500"} text-sm font-baloo`}>
+                                        {maxPagesInStories} pages
+                                    </Text>
+                                </View>
+                            </View>
                         )}
 
                         {expanded && !showContent && (isLoading || stories.length === 0) ? (
@@ -254,19 +403,26 @@ export default function StoryFolder({
                                     {t('common.loading')}
                                 </Text>
                             </View>
-                        ) : expanded && showContent && stories.length === 0 ? (
-                            <View className="flex-1 items-center  mt-6">
-                                <Text className="text-gray-500 mb-4 font-baloo-medium">{t('storyFolder.noStoriesCreated')}</Text>
-                                <TouchableOpacity
-                                    className="bg-white px-4 py-2 rounded-lg"
-                                    onPress={() => navigation.navigate('CreateStory')}
-                                >
-                                    <Text className="font-baloo-semibold">{t('storyFolder.createStory')}</Text>
-                                </TouchableOpacity>
+                        ) : expanded && showContent && filteredStories.length === 0 ? (
+                            <View className="flex-1 items-center mt-6">
+                                <Text className="text-gray-500 mb-4 font-baloo-medium">
+                                    {shouldShowFilters
+                                        ? "Aucune histoire ne correspond aux filtres"
+                                        : t('storyFolder.noStoriesCreated')
+                                    }
+                                </Text>
+                                {!shouldShowFilters && (
+                                    <TouchableOpacity
+                                        className="bg-white px-4 py-2 rounded-lg"
+                                        onPress={() => navigation.navigate('CreateStory')}
+                                    >
+                                        <Text className="font-baloo-semibold">{t('storyFolder.createStory')}</Text>
+                                    </TouchableOpacity>
+                                )}
                             </View>
                         ) : expanded && showContent ? (
                             <FlatList
-                                data={stories}
+                                data={filteredStories}
                                 keyExtractor={(item) => item.id.toString()}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
@@ -288,60 +444,65 @@ export default function StoryFolder({
                                                     navigation.navigate('StoryDetail', { storyId: item.id })
                                                 }
                                             >
-                                            <Text className="text-xl font-baloo-semibold mb-1">{item.title}</Text>
+                                                <View className="flex flex-row justify-between items-center mb-1">
+                                                    <Text className="text-xl font-baloo-semibold">{item.title}</Text>
+                                                    <View className="flex-row items-center gap-1">
+                                                        <Text className="text-base font-baloo text-black">{item.numberOfPages}</Text>
+                                                        <Feather name="book-open" size={14} className='text-slate-600' />
+                                                    </View>
 
-                                            {cover && (
-                                                <Image
-                                                    source={{ uri: cover }}
-                                                    style={{ width: '100%', height: 150, borderRadius: 8 }}
-                                                    contentFit="cover"
-                                                    cachePolicy="memory-disk"
-                                                    transition={200}
-                                                />
-                                            )}
+                                                </View>
+                                                {cover && (
+                                                    <Image
+                                                        source={{ uri: cover }}
+                                                        style={{ width: '100%', height: 150, borderRadius: 8 }}
+                                                        contentFit="cover"
+                                                        cachePolicy="memory-disk"
+                                                        transition={200}
+                                                    />
+                                                )}
 
-                                            {item.description && (
-                                                <Text className="text-sm text-slate-600 font-baloo mt-2" numberOfLines={2}>
-                                                    {item.description}
-                                                </Text>
-                                            )}
+                                                {item.description && (
+                                                    <Text className="text-sm text-slate-600 font-baloo mt-2" numberOfLines={2}>
+                                                        {item.description}
+                                                    </Text>
+                                                )}
 
-                                            {/* Affichage du personnage si présent */}
-                                            {item.character && (
-                                                <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
-                                                    <View
-                                                        className={`w-8 h-8 rounded-full items-center justify-center ${item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
-                                                            }`}
-                                                    >
-                                                        <Text className="text-base">
-                                                            {item.character.type === 'HUMAN'
-                                                                ? '👤'
-                                                                : ANIMAL_TYPES.find((a) => a.id === item.character?.animalType)?.emoji || '🐾'}
+                                                {item.character && (
+                                                    <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
+                                                        <View
+                                                            className={`w-8 h-8 rounded-full items-center justify-center ${item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+                                                                }`}
+                                                        >
+                                                            <Text className="text-base">
+                                                                {item.character.type === 'HUMAN'
+                                                                    ? '👤'
+                                                                    : ANIMAL_TYPES.find((a) => a.id === item.character?.animalType)?.emoji || '🐾'}
+                                                            </Text>
+                                                        </View>
+                                                        <Text className="text-sm font-baloo-semibold text-slate-700">
+                                                            {item.character.name}
                                                         </Text>
                                                     </View>
-                                                    <Text className="text-sm font-baloo-semibold text-slate-700">
-                                                        {item.character.name}
-                                                    </Text>
-                                                </View>
-                                            )}
+                                                )}
 
-                                            <View className='flex flex-row gap-1 justify-between items-center w-full'>
-                                                <Text className="text-base font-baloo-semibold text-black ml-2">
-                                                    {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
-                                                </Text>
-                                                <View className='flex flex-row items-center'>
-                                                    {item._count?.favoriteBy > 0 && (
-                                                        <Text className="text-base font-baloo mr-0.5">{item._count?.favoriteBy || 0}</Text>
-                                                    )}
-                                                    <Text className="text-lg mr-2 -mt-0.5">
-                                                        {item._count?.favoriteBy > 0 ? (
-                                                            <Ionicons name="heart" size={14} color="#ef4444" />
-                                                        ) : (
-                                                            <Ionicons name="heart-outline" size={14} color="#94a3b8" />)}
+                                                <View className='flex flex-row gap-1 justify-between items-center w-full'>
+                                                    <Text className="text-base font-baloo-semibold text-black ml-2">
+                                                        {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
                                                     </Text>
+                                                    <View className='flex flex-row items-center'>
+                                                        {item._count?.favoriteBy > 0 && (
+                                                            <Text className="text-base font-baloo mr-0.5">{item._count?.favoriteBy || 0}</Text>
+                                                        )}
+                                                        <Text className="text-lg mr-2 -mt-0.5">
+                                                            {item._count?.favoriteBy > 0 ? (
+                                                                <Ionicons name="heart" size={14} color="#ef4444" />
+                                                            ) : (
+                                                                <Ionicons name="heart-outline" size={14} color="#94a3b8" />)}
+                                                        </Text>
+                                                    </View>
                                                 </View>
-                                            </View>
-                                        </TouchableOpacity>
+                                            </TouchableOpacity>
                                         </Animated.View>
                                     );
                                 }}
