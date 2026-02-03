@@ -41,7 +41,7 @@ export default function RegisterScreen() {
       const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+        body: JSON.stringify({ email: values.email.toLowerCase(), password: values.password }),
       });
 
       const data = await res.json();

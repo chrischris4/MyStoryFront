@@ -38,7 +38,7 @@ export default function LoginScreen() {
     setIsLoading(true);
 
     try {
-      const data = await api.login(values.email, values.password);
+      const data = await api.login(values.email.toLowerCase(), values.password);
 
       // Connexion via le contexte d'authentification
       await login(data.accessToken, data.refreshToken);
