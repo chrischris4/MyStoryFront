@@ -113,7 +113,7 @@ export default function CreateStoryScreen() {
   const { t } = useTranslation();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showCharacterModal, setShowCharacterModal] = useState(false);
-  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
+  const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const { isNight } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -197,9 +197,9 @@ export default function CreateStoryScreen() {
           title: values.title,
           style: values.selectedStyle,
           language: values.language,
-          characterId: selectedCharacter?.id,
-          characterDescription: selectedCharacter
-            ? buildCharacterDescription(selectedCharacter)
+          characterIds: selectedCharacters.map((c) => c.id),
+          characterDescriptions: selectedCharacters.length > 0
+            ? selectedCharacters.map((c) => buildCharacterDescription(c))
             : undefined,
         };
         const story = await createStoryMutation.mutateAsync(payload);
@@ -452,8 +452,8 @@ export default function CreateStoryScreen() {
             {/* 👤 Bloc Personnage */}
             <CharacterSection
               isNight={isNight}
-              selectedCharacter={selectedCharacter}
-              onCharacterSelect={setSelectedCharacter}
+              selectedCharacters={selectedCharacters}
+              onCharactersChange={setSelectedCharacters}
               onCreateNew={() => {
                 setEditingCharacter(null);
                 setShowCharacterModal(true);
@@ -736,7 +736,7 @@ export default function CreateStoryScreen() {
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
         languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
-        character={selectedCharacter}
+        characters={selectedCharacters}
         onConfirm={() => formik.handleSubmit()}
         onCancel={() => setShowConfirmationModal(false)}
       />
@@ -763,7 +763,10 @@ export default function CreateStoryScreen() {
         }}
         editCharacter={editingCharacter}
         onCharacterCreated={(character) => {
-          setSelectedCharacter(character);
+          // Ajouter le personnage créé s'il y a de la place
+          if (selectedCharacters.length < 2) {
+            setSelectedCharacters([...selectedCharacters, character]);
+          }
         }}
       />
     </View>

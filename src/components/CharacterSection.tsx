@@ -9,10 +9,12 @@ import type { Character } from '~/types';
 import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS } from '~/types';
 import CharacterLimitModal from './CharacterLimitModal';
 
+const MAX_CHARACTERS_PER_STORY = 2;
+
 type CharacterSectionProps = {
   isNight: boolean;
-  selectedCharacter: Character | null;
-  onCharacterSelect: (character: Character | null) => void;
+  selectedCharacters: Character[];
+  onCharactersChange: (characters: Character[]) => void;
   onCreateNew: () => void;
   onEditCharacter: (character: Character) => void;
 };
@@ -119,8 +121,8 @@ const CHARACTER_LIMITS = {
 
 export default function CharacterSection({
   isNight,
-  selectedCharacter,
-  onCharacterSelect,
+  selectedCharacters,
+  onCharactersChange,
   onCreateNew,
   onEditCharacter,
 }: CharacterSectionProps) {
@@ -212,66 +214,88 @@ export default function CharacterSection({
             contentContainerStyle={{ paddingRight: 16 }}
           >
             <CreateNewCard onPress={handleCreateNew} isNight={isNight} />
-            {characters?.map((character) => (
-              <CharacterCard
-                key={character.id}
-                character={character}
-                isSelected={selectedCharacter?.id === character.id}
-                onPress={() =>
-                  onCharacterSelect(
-                    selectedCharacter?.id === character.id ? null : character
-                  )
-                }
-                isNight={isNight}
-              />
-            ))}
+            {characters?.map((character) => {
+              const isSelected = selectedCharacters.some((c) => c.id === character.id);
+              return (
+                <CharacterCard
+                  key={character.id}
+                  character={character}
+                  isSelected={isSelected}
+                  onPress={() => {
+                    if (isSelected) {
+                      // Désélectionner le personnage
+                      onCharactersChange(selectedCharacters.filter((c) => c.id !== character.id));
+                    } else if (selectedCharacters.length < MAX_CHARACTERS_PER_STORY) {
+                      // Ajouter le personnage si on n'a pas atteint la limite
+                      onCharactersChange([...selectedCharacters, character]);
+                    }
+                    // Si la limite est atteinte, on ne fait rien (le personnage ne peut pas être ajouté)
+                  }}
+                  isNight={isNight}
+                />
+              );
+            })}
           </ScrollView>
         )}
 
-        {/* Selected character info */}
-        {selectedCharacter && (
-          <View
-            className={`mt-4 p-4 rounded-xl ${
-              isNight ? 'bg-slate-700/50' : 'bg-gray-100'
-            }`}
-          >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-1 mr-4">
-                <Text
-                  className={`font-baloo-semibold text-lg ${
-                    isNight ? 'text-white' : 'text-gray-800'
-                  }`}
-                >
-                  {selectedCharacter.name}
-                </Text>
-                <Text
-                  className={`font-baloo text-sm ${
-                    isNight ? 'text-white/60' : 'text-gray-500'
-                  }`}
-                  numberOfLines={2}
-                >
-                  {getCharacterSummary(selectedCharacter)}
-                </Text>
+        {/* Selected characters info */}
+        {selectedCharacters.length > 0 && (
+          <View className="mt-4 gap-2">
+            {/* Counter */}
+            <Text
+              className={`font-baloo-medium text-sm ${
+                isNight ? 'text-white/60' : 'text-gray-500'
+              }`}
+            >
+              {t('character.selected', { count: selectedCharacters.length, max: MAX_CHARACTERS_PER_STORY })}
+            </Text>
+
+            {selectedCharacters.map((character) => (
+              <View
+                key={character.id}
+                className={`p-4 rounded-xl ${
+                  isNight ? 'bg-slate-700/50' : 'bg-gray-100'
+                }`}
+              >
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-1 mr-4">
+                    <Text
+                      className={`font-baloo-semibold text-lg ${
+                        isNight ? 'text-white' : 'text-gray-800'
+                      }`}
+                    >
+                      {character.name}
+                    </Text>
+                    <Text
+                      className={`font-baloo text-sm ${
+                        isNight ? 'text-white/60' : 'text-gray-500'
+                      }`}
+                      numberOfLines={2}
+                    >
+                      {getCharacterSummary(character)}
+                    </Text>
+                  </View>
+                  <View className="flex-row gap-2">
+                    <TouchableOpacity
+                      onPress={() => onEditCharacter(character)}
+                      className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
+                    >
+                      <Feather
+                        name="edit-2"
+                        size={18}
+                        color={isNight ? '#fff' : '#374151'}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => onCharactersChange(selectedCharacters.filter((c) => c.id !== character.id))}
+                      className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
+                    >
+                      <Feather name="x" size={18} color={isNight ? '#fff' : '#374151'} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-              <View className="flex-row gap-2">
-                <TouchableOpacity
-                  onPress={() => onEditCharacter(selectedCharacter)}
-                  className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
-                >
-                  <Feather
-                    name="edit-2"
-                    size={18}
-                    color={isNight ? '#fff' : '#374151'}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => onCharacterSelect(null)}
-                  className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
-                >
-                  <Feather name="x" size={18} color={isNight ? '#fff' : '#374151'} />
-                </TouchableOpacity>
-              </View>
-            </View>
+            ))}
           </View>
         )}
 

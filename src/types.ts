@@ -51,7 +51,7 @@ export type Story = {
   createdAt?: string;
   user?: User;
   coverUrl?: string;
-  character?: Character;
+  characters?: Character[]; // Relation many-to-many (max 2 personnages)
 };
 
 // ==================== CHARACTER TYPES ====================

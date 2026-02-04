@@ -137,14 +137,16 @@ export default function StoryFolder({
             // Filtre par nombre de pages
             const pagesMatch = (story.numberOfPages || 0) <= maxPages;
 
-            // Filtre par type de personnage
+            // Filtre par type de personnage (vérifie si au moins un personnage correspond)
             let characterMatch = true;
-            if (selectedCharacterType !== 'ALL') {
+            if (selectedCharacterType !== 'ALL' && story.characters?.length > 0) {
                 if (selectedCharacterType === 'HUMAN') {
-                    characterMatch = story.character?.type === 'HUMAN';
+                    characterMatch = story.characters.some((c: any) => c.type === 'HUMAN');
                 } else if (selectedCharacterType === 'ANIMAL') {
-                    characterMatch = story.character?.type === 'ANIMAL';
+                    characterMatch = story.characters.some((c: any) => c.type === 'ANIMAL');
                 }
+            } else if (selectedCharacterType !== 'ALL') {
+                characterMatch = false;
             }
 
             return pagesMatch && characterMatch;
@@ -468,21 +470,25 @@ export default function StoryFolder({
                                                     </Text>
                                                 )}
 
-                                                {item.character && (
-                                                    <View className='flex flex-row items-center gap-2 mt-2 mb-1 bg-white/90 rounded-xl px-3 py-2 self-start'>
-                                                        <View
-                                                            className={`w-8 h-8 rounded-full items-center justify-center ${item.character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
-                                                                }`}
-                                                        >
-                                                            <Text className="text-base">
-                                                                {item.character.type === 'HUMAN'
-                                                                    ? '👤'
-                                                                    : ANIMAL_TYPES.find((a) => a.id === item.character?.animalType)?.emoji || '🐾'}
-                                                            </Text>
-                                                        </View>
-                                                        <Text className="text-sm font-baloo-semibold text-slate-700">
-                                                            {item.character.name}
-                                                        </Text>
+                                                {item.characters && item.characters.length > 0 && (
+                                                    <View className='flex flex-row flex-wrap gap-2 mt-2 mb-1'>
+                                                        {item.characters.map((character: any) => (
+                                                            <View key={character.id} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
+                                                                <View
+                                                                    className={`w-8 h-8 rounded-full items-center justify-center ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+                                                                        }`}
+                                                                >
+                                                                    <Text className="text-base">
+                                                                        {character.type === 'HUMAN'
+                                                                            ? '👤'
+                                                                            : ANIMAL_TYPES.find((a: any) => a.id === character.animalType)?.emoji || '🐾'}
+                                                                    </Text>
+                                                                </View>
+                                                                <Text className="text-sm font-baloo-semibold text-slate-700">
+                                                                    {character.name}
+                                                                </Text>
+                                                            </View>
+                                                        ))}
                                                     </View>
                                                 )}
 

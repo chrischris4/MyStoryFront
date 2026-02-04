@@ -14,7 +14,7 @@ type ConfirmationModalProps = {
   styleEmoji: string;
   languageName: string;
   languageFlag: string;
-  character?: Character | null;
+  characters?: Character[];
   onConfirm: () => void;
   onCancel: () => void;
 };
@@ -28,7 +28,7 @@ export default function ConfirmationModal({
   styleEmoji,
   languageName,
   languageFlag,
-  character,
+  characters = [],
   onConfirm,
   onCancel,
 }: ConfirmationModalProps) {
@@ -107,24 +107,28 @@ export default function ConfirmationModal({
                 </View>
               </View>
 
-              {/* Personnage */}
-              {character && (
+              {/* Personnages */}
+              {characters.length > 0 && (
                 <View className="mb-4">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
-                    {t('storyCreation.character')}
+                    {t('storyCreation.characters', { count: characters.length })}
                   </Text>
-                  <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
-                    <Text className="text-2xl mr-3">
-                      {character.type === 'HUMAN' ? '👤' : ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji || '🐾'}
-                    </Text>
-                    <View className="flex-1">
-                      <Text className="text-gray-800 font-semibold">
-                        {character.name}
-                      </Text>
-                      <Text className="text-gray-600 text-sm">
-                        {getCharacterSummary(character)}
-                      </Text>
-                    </View>
+                  <View className="gap-2">
+                    {characters.map((character) => (
+                      <View key={character.id} className="bg-gray-100 rounded-xl p-4 flex-row items-center">
+                        <Text className="text-2xl mr-3">
+                          {character.type === 'HUMAN' ? '👤' : ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji || '🐾'}
+                        </Text>
+                        <View className="flex-1">
+                          <Text className="text-gray-800 font-semibold">
+                            {character.name}
+                          </Text>
+                          <Text className="text-gray-600 text-sm">
+                            {getCharacterSummary(character)}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
                   </View>
                 </View>
               )}
