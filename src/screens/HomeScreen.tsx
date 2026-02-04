@@ -205,7 +205,7 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate('GroupScreen')}
               title={t('home.myGroups')}
               description={t('home.myGroupsDesc')}
-              icon={<Feather name="plus" size={24} color="#334155" />}
+              icon={<Feather name="users" size={24} color="#334155" />}
             />
           </View>
           <View className='flex-row gap-4'>
@@ -216,7 +216,7 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate('SharedStories')}
               title={t('home.discover')}
               description={t('home.discoverDesc')}
-              icon={<Feather name="users" size={24} color="#334155" />}
+              icon={<Feather name="globe" size={24} color="#334155" />}
             />
             <HomeButton
               style="half"

@@ -181,14 +181,14 @@ export default function CharacterSection({
       >
         <Text
           className={`text-2xl font-baloo-semibold mb-1 ${
-            isNight ? 'text-white/80' : 'text-slate-900'
+            isNight ? 'text-white' : 'text-slate-900'
           }`}
         >
           {t('character.title')}
         </Text>
         <Text
           className={`text-sm font-baloo mb-4 ${
-            isNight ? 'text-white/60' : 'text-slate-600'
+            isNight ? 'text-white/80' : 'text-slate-600'
           }`}
         >
           {t('character.subtitle')}

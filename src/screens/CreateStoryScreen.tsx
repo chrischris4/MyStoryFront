@@ -412,8 +412,8 @@ export default function CreateStoryScreen() {
         </>
       )}
 
-      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white/80" : "text-black"}`}>{t('createStory.title')}</Text>
-      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white/80" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
+      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
+      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
         className="flex-1 px-4 z-20"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -434,7 +434,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white/80" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
+                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
                 <TextInput
                   className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder={t('createStory.storyTitlePlaceholder')}
@@ -477,7 +477,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
                 <TextInput
                   className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
@@ -513,7 +513,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
 
                 {/* Carrousel de styles */}
                 <Animated.ScrollView
@@ -640,7 +640,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {LANGUAGES.map((lang) => {
                     const isSelected = formik.values.language === lang.id;

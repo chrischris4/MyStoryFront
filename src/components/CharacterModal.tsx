@@ -601,13 +601,22 @@ export default function CharacterModal({
                   style={{ minHeight: 80 }}
                 />
               </View>
-
-              {/* Spacer for actions */}
-              <View className="h-4" />
+              {isEditing && (
+                <TouchableOpacity
+                  className={`bg-red-500 px-6 py-4 rounded-xl items-center flex-row justify-center gap-2 ${isPending ? 'opacity-50' : ''}`}
+                  onPress={handleDelete}
+                  disabled={isPending}
+                >
+                  <Feather name="trash-2" size={20} color="#fff" />
+                  <Text className="text-white font-baloo-semibold text-lg">
+                    {t('common.delete')}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
 
             {/* Actions */}
-            <View className="p-6 pt-0 gap-3">
+            <View className="p-6 pt-0 gap-3 mt-4">
               <TouchableOpacity
                 className={`${
                   isNight ? 'bg-blue-600' : 'bg-[#0D1821]'
@@ -635,19 +644,6 @@ export default function CharacterModal({
                   {t('common.cancel')}
                 </Text>
               </TouchableOpacity>
-
-              {isEditing && (
-                <TouchableOpacity
-                  className={`bg-red-500 px-6 py-4 rounded-xl items-center flex-row justify-center gap-2 ${isPending ? 'opacity-50' : ''}`}
-                  onPress={handleDelete}
-                  disabled={isPending}
-                >
-                  <Feather name="trash-2" size={20} color="#fff" />
-                  <Text className="text-white font-baloo-semibold text-lg">
-                    {t('common.delete')}
-                  </Text>
-                </TouchableOpacity>
-              )}
             </View>
           </View>
         </View>

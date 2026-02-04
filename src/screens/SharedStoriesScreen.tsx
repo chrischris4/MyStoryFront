@@ -136,11 +136,11 @@ export default function SharedStoriesScreen() {
       )}
       <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl font-baloo-bold px-4 pt-4`}>{t('sharedStories.title')}</Text>
       {isPremium ? (
-        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-xl font-baloo mb-4 px-4`}>
+        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-xl font-baloo mb-4 px-4`}>
           {t('sharedStories.premiumDescription')}
         </Text>
       ) : (
-        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
+        <Text className={` ${isNight ? "text-white" : "text-slate-600"}  text-xl font-baloo mb-4 px-4`}>
           {t('sharedStories.nonPremiumDescription')}
         </Text>
       )}
