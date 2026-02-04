@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { BlurView } from 'expo-blur';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useGroups } from '~/hooks/useGroups';
@@ -68,6 +69,7 @@ export default function StoryDetailScreen() {
   const toggleFavoriteMutation = useToggleFavorite();
 
   // Hooks pour les groupes
+  const queryClient = useQueryClient();
   const { data: myGroups = [] } = useGroups();
   const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
   const shareStoryMutation = useShareStoryToGroup();
@@ -125,6 +127,9 @@ export default function StoryDetailScreen() {
       if (response.ok) {
         const updatedStory = await response.json();
         setIsShared(updatedStory.isShared);
+        // Invalider les queries pour mettre à jour les autres écrans
+        queryClient.invalidateQueries({ queryKey: ['stories'] });
+        queryClient.invalidateQueries({ queryKey: ['communityStories'] });
         Toast.show({
           type: 'success',
           text1: t('common.success'),

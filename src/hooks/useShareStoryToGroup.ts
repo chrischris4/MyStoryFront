@@ -13,7 +13,10 @@ export const useShareStoryToGroup = () => {
     mutationFn: (input: ShareStoryInput) => api.shareStoryWithGroup(input.groupId, input.storyId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['groupStories', variables.groupId] });
-      queryClient.invalidateQueries({ queryKey: ['storyGroups', variables.storyId] });
+      queryClient.invalidateQueries({
+        queryKey: ['storyGroups', variables.storyId],
+        refetchType: 'all',
+      });
     },
   });
 };

@@ -1,13 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, Easing, StyleSheet } from 'react-native';
 
-// Types pour les cadres
+// Types pour les cadres de couleur
 export type FrameType =
   | 'none'
+  | 'blue'
+  | 'pink'
+  | 'red'
+  | 'black';
+
+// Types pour les effets animés
+export type EffectType =
+  | 'none'
   | 'stars'
-  | 'golden'
   | 'fairy'
-  | 'vintage'
   | 'magic';
 
 interface FrameProps {
@@ -400,17 +406,50 @@ export const MagicFrame = ({ width, height }: FrameProps) => {
   );
 };
 
-// Composant principal qui sélectionne le bon cadre
+// Cadre de couleur simple
+export const ColorFrame = ({ width, height, color }: FrameProps & { color: string }) => {
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderWidth: 12,
+          borderColor: color,
+          borderRadius: 0,
+        }}
+      />
+    </View>
+  );
+};
+
+// Composant pour les cadres de couleur
 export const StoryFrame = ({ type, width, height }: { type: FrameType; width: number; height: number }) => {
+  switch (type) {
+    case 'blue':
+      return <ColorFrame width={width} height={height} color="#3B82F6" />;
+    case 'pink':
+      return <ColorFrame width={width} height={height} color="#EC4899" />;
+    case 'red':
+      return <ColorFrame width={width} height={height} color="#EF4444" />;
+    case 'black':
+      return <ColorFrame width={width} height={height} color="#000000" />;
+    case 'none':
+    default:
+      return null;
+  }
+};
+
+// Composant pour les effets animés
+export const StoryEffect = ({ type, width, height }: { type: EffectType; width: number; height: number }) => {
   switch (type) {
     case 'stars':
       return <StarsFrame width={width} height={height} />;
-    case 'golden':
-      return <GoldenFrame width={width} height={height} />;
     case 'fairy':
       return <FairyFrame width={width} height={height} />;
-    case 'vintage':
-      return <VintageFrame width={width} height={height} />;
     case 'magic':
       return <MagicFrame width={width} height={height} />;
     case 'none':

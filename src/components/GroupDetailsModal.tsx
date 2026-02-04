@@ -338,7 +338,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                         intensity={isNight ? 90 : 50}
                         tint={isNight ? 'dark' : 'light'}
                         className="p-3 rounded-xl mb-2 overflow-hidden"
-                        style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                        style={{ backgroundColor: isNight ? '#1e293b60' : '#87CEEB30' }}
                       >
                         <View className="flex-row justify-between items-center">
                           <View className="flex-1">
@@ -346,7 +346,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                               {memberName}
                             </Text>
                             {isOwner && (
-                              <Text className={`${isNight ? 'text-yellow-400' : 'text-yellow-600'} font-baloo text-sm`}>
+                              <Text className={`${isNight ? 'text-blue-400' : 'text-blue-600'} font-baloo text-sm`}>
                                 {t('groups.owner')}
                               </Text>
                             )}
@@ -429,7 +429,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                           intensity={isNight ? 90 : 50}
                           tint={isNight ? 'dark' : 'light'}
                           className="p-3 rounded-xl mb-2 overflow-hidden"
-                          style={{ backgroundColor: isNight ? '#1e293b70' : '#ffffff30' }}
+                          style={{ backgroundColor: isNight ? '#1e293b60' : '#87CEEB30' }}
                         >
                           <View className="flex-row justify-between items-center">
                             <View className="flex-1">

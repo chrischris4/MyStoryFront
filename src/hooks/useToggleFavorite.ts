@@ -65,6 +65,7 @@ export const useToggleFavorite = () => {
       );
 
       // Invalider et refetch les queries liées aux favoris
+      queryClient.invalidateQueries({ queryKey: ['checkFavorite', variables.storyId] });
       queryClient.invalidateQueries({ queryKey: ['favoriteStories'] });
       queryClient.invalidateQueries({ queryKey: ['stories'] });
     },
