@@ -1,10 +1,15 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Easing } from 'react-native';
+import { View, Animated, Easing, Dimensions } from 'react-native';
 import StarryBackground from './StarryBackground';
 
 type BackgroundProps = {
     isNight?: boolean;
 };
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CLOUD_WIDTH = 250; // Largeur approximative d'un nuage
+// Distance totale: du nuage le plus à gauche (-CLOUD_WIDTH - SCREEN_WIDTH * 1.5) jusqu'à sortie droite
+const TOTAL_TRAVEL = SCREEN_WIDTH * 2.5 + CLOUD_WIDTH * 2;
 
 export default function Background({ isNight = false }: BackgroundProps) {
     const cloudAnim = useRef(new Animated.Value(0)).current;
@@ -12,8 +17,8 @@ export default function Background({ isNight = false }: BackgroundProps) {
     useEffect(() => {
         Animated.loop(
             Animated.timing(cloudAnim, {
-                toValue: 1000,
-                duration: 100000,
+                toValue: TOTAL_TRAVEL,
+                duration: 60000, // 60 secondes pour traverser l'écran
                 easing: Easing.linear,
                 useNativeDriver: true,
             })
@@ -43,10 +48,17 @@ export default function Background({ isNight = false }: BackgroundProps) {
             />
 
             
-            {/* Nuages */}
+            {/* Nuages - répartis pour une boucle fluide
+                Position initiale: certains visibles, d'autres hors écran à gauche
+                Tous sortent à droite, puis reset et recommencent */}
+
+            {/* Nuage 1 - visible au démarrage, côté gauche */}
             <Animated.View
-                style={{ transform: [{ translateX: cloudAnim }] }}
-                className='absolute top-40 -left-4'
+                style={{
+                    transform: [{ translateX: cloudAnim }],
+                    left: -CLOUD_WIDTH * 0.5,
+                }}
+                className='absolute top-40'
             >
                 <View className='w-60 h-44 relative'>
                     <View
@@ -64,9 +76,13 @@ export default function Background({ isNight = false }: BackgroundProps) {
                 </View>
             </Animated.View>
 
+            {/* Nuage 2 - hors écran gauche, entre plus tard */}
             <Animated.View
-                style={{ transform: [{ translateX: cloudAnim }] }}
-                className='absolute top-96 -left-96'
+                style={{
+                    transform: [{ translateX: cloudAnim }],
+                    left: -CLOUD_WIDTH - SCREEN_WIDTH * 0.5,
+                }}
+                className='absolute top-96'
             >
                 <View className='w-52 h-44 relative'>
                     <View
@@ -84,9 +100,13 @@ export default function Background({ isNight = false }: BackgroundProps) {
                 </View>
             </Animated.View>
 
+            {/* Nuage 3 - plus loin hors écran gauche */}
             <Animated.View
-                style={{ transform: [{ translateX: cloudAnim }] }}
-                className='absolute top-72 right-10'
+                style={{
+                    transform: [{ translateX: cloudAnim }],
+                    left: -CLOUD_WIDTH - SCREEN_WIDTH,
+                }}
+                className='absolute top-72'
             >
                 <View className='w-52 h-44 relative'>
                     <View
@@ -99,6 +119,30 @@ export default function Background({ isNight = false }: BackgroundProps) {
                     />
                     <View
                         className='h-16 w-16 rounded-full absolute top-4 right-28'
+                        style={{ backgroundColor: cloudColor }}
+                    />
+                </View>
+            </Animated.View>
+
+            {/* Nuage 4 - petit nuage très décalé */}
+            <Animated.View
+                style={{
+                    transform: [{ translateX: cloudAnim }],
+                    left: -CLOUD_WIDTH - SCREEN_WIDTH * 1.5,
+                }}
+                className='absolute top-56'
+            >
+                <View className='w-40 h-32 relative'>
+                    <View
+                        className='h-12 rounded-full absolute top-8 left-0 w-full'
+                        style={{ backgroundColor: cloudColor }}
+                    />
+                    <View
+                        className='h-16 w-16 rounded-full absolute top-0 left-6'
+                        style={{ backgroundColor: cloudColor }}
+                    />
+                    <View
+                        className='h-14 w-14 rounded-full absolute top-2 left-16'
                         style={{ backgroundColor: cloudColor }}
                     />
                 </View>

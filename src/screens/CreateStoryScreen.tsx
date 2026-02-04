@@ -64,7 +64,7 @@ const STORY_STYLES: StoryStyle[] = [
     description: 'Style conte de fées traditionnel',
     emoji: '📚',
     gradient: ['#FFD700', '#FFA500'],
-    imageUrl: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop', // Livre ancien
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_23/page_1.webp', // Livre ancien
   },
   {
     id: 'WATERCOLOR',
@@ -72,7 +72,7 @@ const STORY_STYLES: StoryStyle[] = [
     description: 'Style aquarelle doux et poétique',
     emoji: '🖌️',
     gradient: ['#7DD3FC', '#A78BFA'],
-    imageUrl: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&h=300&fit=crop', // Aquarelle
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_22/cover.webp', // Aquarelle
   },
   {
     id: 'MANGA',
@@ -80,27 +80,27 @@ const STORY_STYLES: StoryStyle[] = [
     description: 'Style manga japonais',
     emoji: '🎨',
     gradient: ['#FF6B9D', '#C06C84'],
-    imageUrl: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=300&fit=crop', // Art manga
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_19/cover.webp', // Art manga
   },
 ];
 
-const createStorySchema = Yup.object().shape({
+const createStorySchema = (t: (key: string) => string) => Yup.object().shape({
   title: Yup.string()
-    .min(3, 'Le titre doit contenir au moins 3 caractères')
-    .max(100, 'Le titre ne peut pas dépasser 100 caractères')
-    .required('Le titre est requis'),
+    .min(3, t('createStory.validation.titleMin'))
+    .max(100, t('createStory.validation.titleMax'))
+    .required(t('createStory.validation.titleRequired')),
   prompt: Yup.string()
-    .min(10, 'Le résumé doit contenir au moins 10 caractères')
-    .max(500, 'Le résumé ne peut pas dépasser 500 caractères')
-    .required('Le résumé est requis'),
+    .min(10, t('createStory.validation.promptMin'))
+    .max(500, t('createStory.validation.promptMax'))
+    .required(t('createStory.validation.promptRequired')),
   numPages: Yup.number()
-    .min(1, 'Au moins 1 page')
-    .max(10, 'Maximum 10 pages')
-    .required('Le nombre de pages est requis'),
+    .min(1, t('createStory.validation.pagesMin'))
+    .max(16, t('createStory.validation.pagesMax'))
+    .required(t('createStory.validation.pagesRequired')),
   selectedStyle: Yup.string()
-    .required('Le style est requis'),
+    .required(t('createStory.validation.styleRequired')),
   language: Yup.string()
-    .required('La langue est requise'),
+    .required(t('createStory.validation.languageRequired')),
 });
 
 type CreateStoryScreenNavigationProp = CompositeNavigationProp<
@@ -185,7 +185,7 @@ export default function CreateStoryScreen() {
       selectedStyle: 'CLASSIQUE',
       language: 'fr',
     },
-    validationSchema: createStorySchema,
+    validationSchema: createStorySchema(t),
     onSubmit: async (values) => {
       setShowConfirmationModal(false);
       startCreation(values.title);

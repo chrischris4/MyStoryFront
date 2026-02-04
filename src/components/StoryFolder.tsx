@@ -442,6 +442,7 @@ export default function StoryFolder({
                                             entering={FadeInDown.delay(index * 100).springify().damping(50)}
                                         >
                                             <TouchableOpacity
+                                            activeOpacity={0.5}
                                                 className="mb-2 p-4 bg-gray-100 rounded-3xl"
                                                 onPress={() =>
                                                     navigation.navigate('StoryDetail', { storyId: item.id })

@@ -376,6 +376,8 @@
     "creationError": "Error creating the story.",
     "styleClassic": "Classic",
     "styleClassicDesc": "Traditional fairy tale style",
+    "styleWatercolor": "Watercolor",
+    "styleWatercolorDesc": "Soft watercolor style",
     "styleRealist": "Realistic",
     "styleRealistDesc": "Realistic photo style",
     "styleManga": "Manga",
@@ -388,7 +390,7 @@
       "promptMax": "Summary cannot exceed 500 characters",
       "promptRequired": "Summary is required",
       "pagesMin": "At least 1 page",
-      "pagesMax": "Maximum 10 pages",
+      "pagesMax": "Maximum 16 pages",
       "pagesRequired": "Number of pages is required",
       "styleRequired": "Style is required",
       "languageRequired": "Language is required"
