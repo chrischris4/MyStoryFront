@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useCharacters } from '~/hooks/useCharacters';
 import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
-import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS } from '~/types';
+import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS, getHumanEmoji } from '~/types';
 import CharacterLimitModal from './CharacterLimitModal';
 
 const MAX_CHARACTERS_PER_STORY = 2;
@@ -30,8 +30,6 @@ function CharacterCard({
   onPress: () => void;
   isNight: boolean;
 }) {
-  const animalEmoji = ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji;
-
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -50,7 +48,7 @@ function CharacterCard({
           }`}
         >
           <Text className="text-2xl">
-            {character.type === 'HUMAN' ? '👤' : animalEmoji || '🐾'}
+            {getHumanEmoji(character)}
           </Text>
         </View>
 

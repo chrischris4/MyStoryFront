@@ -167,3 +167,62 @@ export const ANIMAL_AGE_RANGES: CharacterOption[] = [
   { id: 'ADULT', label: 'Adulte'},
   { id: 'OLD', label: 'Vieux'},
 ];
+
+// ==================== HELPER FUNCTIONS ====================
+
+// Modificateurs de teint de peau pour les emojis
+const SKIN_TONE_MODIFIERS: Record<string, string> = {
+  'light': '🏻',
+  'medium-light': '🏼',
+  'medium': '🏽',
+  'medium-dark': '🏾',
+  'dark': '🏿',
+};
+
+// Emojis de base par genre et tranche d'âge
+const HUMAN_EMOJIS = {
+  // Enfants (0-12 ans)
+  child: { MALE: '👦', FEMALE: '👧', default: '🧒' },
+  // Adolescents/Jeunes adultes (13-25 ans)
+  teen: { MALE: '👦', FEMALE: '👧', default: '🧒' },
+  // Adultes (26-59 ans)
+  adult: { MALE: '👨', FEMALE: '👩', default: '🧑' },
+  // Seniors (60+ ans)
+  senior: { MALE: '👴', FEMALE: '👵', default: '🧓' },
+};
+
+/**
+ * Génère un emoji approprié pour un personnage humain
+ * basé sur son âge, genre et couleur de peau
+ */
+export const getHumanEmoji = (character: Character): string => {
+  if (character.type !== 'HUMAN') {
+    return ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji || '🐾';
+  }
+
+  // Déterminer la tranche d'âge
+  const age = character.age || 25; // Par défaut adulte
+  let ageGroup: 'child' | 'teen' | 'adult' | 'senior';
+
+  if (age <= 12) {
+    ageGroup = 'child';
+  } else if (age <= 25) {
+    ageGroup = 'teen';
+  } else if (age <= 59) {
+    ageGroup = 'adult';
+  } else {
+    ageGroup = 'senior';
+  }
+
+  // Obtenir l'emoji de base selon le genre
+  const gender = character.gender || 'default';
+  const baseEmoji = HUMAN_EMOJIS[ageGroup][gender as keyof typeof HUMAN_EMOJIS.child]
+    || HUMAN_EMOJIS[ageGroup].default;
+
+  // Ajouter le modificateur de teint de peau si disponible
+  const skinModifier = character.skinColor
+    ? SKIN_TONE_MODIFIERS[character.skinColor] || ''
+    : '';
+
+  return baseEmoji + skinModifier;
+};

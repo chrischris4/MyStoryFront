@@ -23,7 +23,7 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootStackParamList, MainTabParamList } from '~/types';
-import { ANIMAL_TYPES } from '~/types';
+import { getHumanEmoji } from '~/types';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
@@ -138,12 +138,13 @@ export default function StoryFolder({
             const pagesMatch = (story.numberOfPages || 0) <= maxPages;
 
             // Filtre par type de personnage (vérifie si au moins un personnage correspond)
+            // Note: story.characters contient des StoryCharacter avec une propriété character imbriquée
             let characterMatch = true;
             if (selectedCharacterType !== 'ALL' && story.characters?.length > 0) {
                 if (selectedCharacterType === 'HUMAN') {
-                    characterMatch = story.characters.some((c: any) => c.type === 'HUMAN');
+                    characterMatch = story.characters.some((sc: any) => sc.character?.type === 'HUMAN');
                 } else if (selectedCharacterType === 'ANIMAL') {
-                    characterMatch = story.characters.some((c: any) => c.type === 'ANIMAL');
+                    characterMatch = story.characters.some((sc: any) => sc.character?.type === 'ANIMAL');
                 }
             } else if (selectedCharacterType !== 'ALL') {
                 characterMatch = false;
@@ -326,7 +327,7 @@ export default function StoryFolder({
                                             ? 'text-white'
                                             : isNight ? 'text-white' : 'text-slate-700'
                                             }`}>
-                                            🌟 Tous
+                                            Tous
                                         </Text>
                                     </TouchableOpacity>
 
@@ -472,23 +473,25 @@ export default function StoryFolder({
 
                                                 {item.characters && item.characters.length > 0 && (
                                                     <View className='flex flex-row flex-wrap gap-2 mt-2 mb-1'>
-                                                        {item.characters.map((character: any) => (
-                                                            <View key={character.id} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
-                                                                <View
-                                                                    className={`w-8 h-8 rounded-full items-center justify-center ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
-                                                                        }`}
-                                                                >
-                                                                    <Text className="text-base">
-                                                                        {character.type === 'HUMAN'
-                                                                            ? '👤'
-                                                                            : ANIMAL_TYPES.find((a: any) => a.id === character.animalType)?.emoji || '🐾'}
+                                                        {item.characters.map((storyCharacter: any) => {
+                                                            const character = storyCharacter.character;
+                                                            if (!character) return null;
+                                                            return (
+                                                                <View key={storyCharacter.id} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
+                                                                    <View
+                                                                        className={`w-8 h-8 rounded-full items-center justify-center ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+                                                                            }`}
+                                                                    >
+                                                                        <Text className="text-base">
+                                                                            {getHumanEmoji(character)}
+                                                                        </Text>
+                                                                    </View>
+                                                                    <Text className="text-sm font-baloo-semibold text-slate-700">
+                                                                        {character.name}
                                                                     </Text>
                                                                 </View>
-                                                                <Text className="text-sm font-baloo-semibold text-slate-700">
-                                                                    {character.name}
-                                                                </Text>
-                                                            </View>
-                                                        ))}
+                                                            );
+                                                        })}
                                                     </View>
                                                 )}
 

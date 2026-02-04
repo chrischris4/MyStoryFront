@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import type { Character } from '~/types';
-import { GENDERS, ANIMAL_TYPES, ANIMAL_AGE_RANGES, SKIN_COLORS, HAIR_COLORS, EYE_COLORS, FUR_COLORS } from '~/types';
+import { GENDERS, ANIMAL_TYPES, ANIMAL_AGE_RANGES, SKIN_COLORS, HAIR_COLORS, EYE_COLORS, FUR_COLORS, getHumanEmoji } from '~/types';
 
 type ConfirmationModalProps = {
   visible: boolean;
@@ -117,7 +117,7 @@ export default function ConfirmationModal({
                     {characters.map((character) => (
                       <View key={character.id} className="bg-gray-100 rounded-xl p-4 flex-row items-center">
                         <Text className="text-2xl mr-3">
-                          {character.type === 'HUMAN' ? '👤' : ANIMAL_TYPES.find((a) => a.id === character.animalType)?.emoji || '🐾'}
+                          {getHumanEmoji(character)}
                         </Text>
                         <View className="flex-1">
                           <Text className="text-gray-800 font-semibold">
