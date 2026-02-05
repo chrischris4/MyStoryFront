@@ -7,56 +7,49 @@ export type FrameType =
   | 'blue'
   | 'pink'
   | 'red'
-  | 'black';
+  | 'black'
+  | 'white'
+  | 'yellow'
+  | 'green'
+  | 'purple'
+  | 'gold'
+  ;
 
 // Types pour les effets animés
 export type EffectType =
   | 'none'
   | 'stars'
   | 'fairy'
-  | 'magic';
+  | 'magic'
+  | 'snow'
+  | 'hearts'
+  | 'bubbles'
+  | 'fireflies'
+  | 'confetti';
 
 interface FrameProps {
   width: number;
   height: number;
 }
 
-// Étoile scintillante pour le cadre
+// Étoile scintillante pour le cadre - version optimisée
 const FrameStar = ({ delay, size, left, top }: { delay: number; size: number; left: number; top: number }) => {
-  const opacity = useRef(new Animated.Value(0.2)).current;
-  const scale = useRef(new Animated.Value(0.8)).current;
+  const opacity = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
+    const duration = 1200 + delay * 0.5;
     const animation = Animated.loop(
       Animated.sequence([
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: 800 + Math.random() * 800,
-            delay,
-            useNativeDriver: true,
-            easing: Easing.inOut(Easing.ease),
-          }),
-          Animated.timing(scale, {
-            toValue: 1.2,
-            duration: 800 + Math.random() * 800,
-            delay,
-            useNativeDriver: true,
-          }),
-        ]),
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 0.2,
-            duration: 800 + Math.random() * 800,
-            useNativeDriver: true,
-            easing: Easing.inOut(Easing.ease),
-          }),
-          Animated.timing(scale, {
-            toValue: 0.8,
-            duration: 800 + Math.random() * 800,
-            useNativeDriver: true,
-          }),
-        ]),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0.3,
+          duration,
+          useNativeDriver: true,
+        }),
       ])
     );
     animation.start();
@@ -69,69 +62,46 @@ const FrameStar = ({ delay, size, left, top }: { delay: number; size: number; le
         position: 'absolute',
         left: `${left}%`,
         top: `${top}%`,
-        opacity,
-        transform: [{ scale }],
-      }}
-    >
-      <View style={{
         width: size,
         height: size,
+        borderRadius: size / 2,
         backgroundColor: '#FFD700',
-        shadowColor: '#FFD700',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 1,
-        shadowRadius: size * 2,
-      }}>
-        {/* Forme d'étoile avec rotation */}
-        <View style={{
-          position: 'absolute',
-          width: size,
-          height: size * 0.3,
-          backgroundColor: '#FFD700',
-          top: size * 0.35,
-        }} />
-        <View style={{
-          position: 'absolute',
-          width: size * 0.3,
-          height: size,
-          backgroundColor: '#FFD700',
-          left: size * 0.35,
-        }} />
-      </View>
-    </Animated.View>
+        opacity,
+      }}
+    />
   );
 };
 
-// Cadre étoiles - étoiles scintillantes autour des bords
+// Cadre étoiles - étoiles scintillantes autour des bords (optimisé)
 export const StarsFrame = ({ width, height }: FrameProps) => {
-  // Générer des étoiles uniquement sur les bords (marge de 15%)
+  // Moins d'étoiles pour de meilleures performances
   const stars = useRef(
-    Array.from({ length: 30 }, (_, i) => {
-      const edge = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+    Array.from({ length: 12 }, (_, i) => {
+      const edge = i % 4;
       let left, top;
 
       switch (edge) {
         case 0: // top
-          left = Math.random() * 100;
-          top = Math.random() * 12;
+          left = 10 + (i * 25) % 80;
+          top = 2 + (i % 3) * 4;
           break;
         case 1: // right
-          left = 88 + Math.random() * 12;
-          top = Math.random() * 100;
+          left = 92 + (i % 2) * 4;
+          top = 10 + (i * 25) % 80;
           break;
         case 2: // bottom
-          left = Math.random() * 100;
-          top = 88 + Math.random() * 12;
+          left = 10 + (i * 25) % 80;
+          top = 92 + (i % 2) * 4;
           break;
         default: // left
-          left = Math.random() * 12;
-          top = Math.random() * 100;
+          left = 2 + (i % 3) * 4;
+          top = 10 + (i * 25) % 80;
       }
 
       return {
         id: i,
-        delay: Math.random() * 2000,
-        size: Math.random() * 6 + 4,
+        delay: i * 200,
+        size: 4 + (i % 3) * 2,
         left,
         top,
       };
@@ -147,55 +117,17 @@ export const StarsFrame = ({ width, height }: FrameProps) => {
   );
 };
 
-// Cadre doré - bordure élégante
-export const GoldenFrame = ({ width, height }: FrameProps) => {
-  const shimmer = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmer, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        Animated.timing(shimmer, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-      ])
-    );
-    animation.start();
-    return () => animation.stop();
-  }, []);
-
-  const borderOpacity = shimmer.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0.6, 1],
-  });
-
-  return (
-    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
-      {/* Bordure dorée avec effet shimmer */}
-      <Animated.View style={[styles.goldenBorder, { opacity: borderOpacity }]}>
-        {/* Coins décoratifs */}
-        <View style={[styles.goldenCorner, styles.topLeft]} />
-        <View style={[styles.goldenCorner, styles.topRight]} />
-        <View style={[styles.goldenCorner, styles.bottomLeft]} />
-        <View style={[styles.goldenCorner, styles.bottomRight]} />
-      </Animated.View>
-    </View>
-  );
-};
-
-// Particule féerique
-const FairyParticle = ({ delay, startLeft, startTop }: { delay: number; startLeft: number; startTop: number }) => {
+// Particule féerique dorée - version optimisée avec mouvement aléatoire
+const FairyParticle = ({ delay, startLeft, startTop, moveY, duration }: {
+  delay: number;
+  startLeft: number;
+  startTop: number;
+  moveY: number;
+  duration: number;
+}) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
@@ -203,42 +135,28 @@ const FairyParticle = ({ delay, startLeft, startTop }: { delay: number; startLef
         Animated.parallel([
           Animated.timing(opacity, {
             toValue: 1,
-            duration: 1000,
+            duration: 600,
             delay,
             useNativeDriver: true,
           }),
           Animated.timing(translateY, {
-            toValue: -30 - Math.random() * 20,
-            duration: 2500,
+            toValue: moveY,
+            duration,
             delay,
             useNativeDriver: true,
             easing: Easing.out(Easing.ease),
           }),
-          Animated.timing(translateX, {
-            toValue: (Math.random() - 0.5) * 40,
-            duration: 2500,
-            delay,
-            useNativeDriver: true,
-            easing: Easing.inOut(Easing.ease),
-          }),
         ]),
         Animated.timing(opacity, {
           toValue: 0,
-          duration: 1000,
+          duration: 600,
           useNativeDriver: true,
         }),
-        Animated.parallel([
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: 0,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateX, {
-            toValue: 0,
-            duration: 0,
-            useNativeDriver: true,
-          }),
-        ]),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
       ])
     );
     animation.start();
@@ -251,51 +169,49 @@ const FairyParticle = ({ delay, startLeft, startTop }: { delay: number; startLef
         position: 'absolute',
         left: `${startLeft}%`,
         top: `${startTop}%`,
-        width: 4,
-        height: 4,
-        borderRadius: 2,
-        backgroundColor: '#FF69B4',
+        width: 5,
+        height: 5,
+        borderRadius: 2.5,
+        backgroundColor: '#FFD700',
         opacity,
-        transform: [{ translateY }, { translateX }],
-        shadowColor: '#FF69B4',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 1,
-        shadowRadius: 6,
+        transform: [{ translateY }],
       }}
     />
   );
 };
 
-// Cadre féerique - particules magiques
+// Cadre féerique - particules magiques dorées (optimisé avec positions aléatoires)
 export const FairyFrame = ({ width, height }: FrameProps) => {
   const particles = useRef(
-    Array.from({ length: 40 }, (_, i) => {
+    Array.from({ length: 16 }, (_, i) => {
       const edge = Math.floor(Math.random() * 4);
       let left, top;
 
       switch (edge) {
-        case 0:
-          left = Math.random() * 100;
-          top = 85 + Math.random() * 15;
+        case 0: // bottom - particules montent
+          left = 5 + Math.random() * 90;
+          top = 85 + Math.random() * 12;
           break;
-        case 1:
-          left = 85 + Math.random() * 15;
-          top = Math.random() * 100;
+        case 1: // right
+          left = 85 + Math.random() * 12;
+          top = 5 + Math.random() * 90;
           break;
-        case 2:
-          left = Math.random() * 100;
-          top = Math.random() * 15;
+        case 2: // top
+          left = 5 + Math.random() * 90;
+          top = 3 + Math.random() * 12;
           break;
-        default:
-          left = Math.random() * 15;
-          top = Math.random() * 100;
+        default: // left
+          left = 3 + Math.random() * 12;
+          top = 5 + Math.random() * 90;
       }
 
       return {
         id: i,
-        delay: Math.random() * 3000,
+        delay: Math.random() * 2500,
         startLeft: left,
         startTop: top,
+        moveY: -15 - Math.random() * 20,
+        duration: 1500 + Math.random() * 1000,
       };
     })
   ).current;
@@ -309,23 +225,6 @@ export const FairyFrame = ({ width, height }: FrameProps) => {
   );
 };
 
-// Cadre vintage - effet photo ancienne
-export const VintageFrame = ({ width, height }: FrameProps) => {
-  return (
-    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
-      {/* Vignette effect - coins assombris */}
-      <View style={styles.vintageVignette} />
-
-      {/* Bordure vintage */}
-      <View style={styles.vintageBorder}>
-        <View style={[styles.vintageCornerDecor, styles.topLeft]} />
-        <View style={[styles.vintageCornerDecor, styles.topRight]} />
-        <View style={[styles.vintageCornerDecor, styles.bottomLeft]} />
-        <View style={[styles.vintageCornerDecor, styles.bottomRight]} />
-      </View>
-    </View>
-  );
-};
 
 // Lueur magique animée
 const MagicGlow = ({ position, color, delay }: { position: 'top' | 'bottom' | 'left' | 'right'; color: string; delay: number }) => {
@@ -377,17 +276,17 @@ const MagicGlow = ({ position, color, delay }: { position: 'top' | 'bottom' | 'l
           opacity: 0.4,
           ...(position === 'top' || position === 'bottom'
             ? {
-                shadowColor: color,
-                shadowOffset: { width: 0, height: position === 'top' ? 20 : -20 },
-                shadowOpacity: 1,
-                shadowRadius: 30,
-              }
+              shadowColor: color,
+              shadowOffset: { width: 0, height: position === 'top' ? 20 : -20 },
+              shadowOpacity: 1,
+              shadowRadius: 30,
+            }
             : {
-                shadowColor: color,
-                shadowOffset: { width: position === 'left' ? 20 : -20, height: 0 },
-                shadowOpacity: 1,
-                shadowRadius: 30,
-              }),
+              shadowColor: color,
+              shadowOffset: { width: position === 'left' ? 20 : -20, height: 0 },
+              shadowOpacity: 1,
+              shadowRadius: 30,
+            }),
         }}
       />
     </Animated.View>
@@ -402,6 +301,498 @@ export const MagicFrame = ({ width, height }: FrameProps) => {
       <MagicGlow position="right" color="#3498DB" delay={500} />
       <MagicGlow position="bottom" color="#9B59B6" delay={1000} />
       <MagicGlow position="left" color="#3498DB" delay={1500} />
+    </View>
+  );
+};
+
+// ===== NOUVEAUX EFFETS =====
+
+// Flocon de neige
+const Snowflake = ({ delay, startLeft, duration, size }: {
+  delay: number;
+  startLeft: number;
+  duration: number;
+  size: number;
+}) => {
+  const translateY = useRef(new Animated.Value(-20)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 0.8,
+            duration: 300,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 120,
+            duration,
+            delay,
+            useNativeDriver: true,
+            easing: Easing.linear,
+          }),
+        ]),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: -20,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, []);
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: `${startLeft}%`,
+        top: 0,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        backgroundColor: '#FFFFFF',
+        opacity,
+        transform: [{ translateY }],
+      }}
+    />
+  );
+};
+
+// Cadre neige
+export const SnowFrame = ({ width, height }: FrameProps) => {
+  const snowflakes = useRef(
+    Array.from({ length: 14 }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 3000,
+      startLeft: 5 + Math.random() * 90,
+      duration: 2500 + Math.random() * 1500,
+      size: 3 + Math.random() * 4,
+    }))
+  ).current;
+
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      {snowflakes.map((flake) => (
+        <Snowflake key={flake.id} {...flake} />
+      ))}
+    </View>
+  );
+};
+
+// Coeur flottant
+const FloatingHeart = ({ delay, startLeft, startTop, moveY, duration }: {
+  delay: number;
+  startLeft: number;
+  startTop: number;
+  moveY: number;
+  duration: number;
+}) => {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scale = useRef(new Animated.Value(0.5)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 0.9,
+            duration: 400,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 1,
+            duration: 400,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: moveY,
+            duration,
+            delay,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.ease),
+          }),
+        ]),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+          Animated.timing(scale, {
+            toValue: 0.5,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, []);
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: `${startLeft}%`,
+        top: `${startTop}%`,
+        opacity,
+        transform: [{ translateY }, { scale }],
+      }}
+    >
+      <View style={{ width: 10, height: 10 }}>
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 2.5,
+          width: 5,
+          height: 8,
+          backgroundColor: '#FF6B8A',
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+          transform: [{ rotate: '-45deg' }],
+        }} />
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          left: 2.5,
+          width: 5,
+          height: 8,
+          backgroundColor: '#FF6B8A',
+          borderTopLeftRadius: 5,
+          borderTopRightRadius: 5,
+          transform: [{ rotate: '45deg' }],
+        }} />
+      </View>
+    </Animated.View>
+  );
+};
+
+// Cadre coeurs
+export const HeartsFrame = ({ width, height }: FrameProps) => {
+  const hearts = useRef(
+    Array.from({ length: 12 }, (_, i) => {
+      const edge = Math.floor(Math.random() * 4);
+      let left, top;
+      switch (edge) {
+        case 0:
+          left = 5 + Math.random() * 90;
+          top = 88 + Math.random() * 10;
+          break;
+        case 1:
+          left = 88 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+          break;
+        case 2:
+          left = 5 + Math.random() * 90;
+          top = 2 + Math.random() * 10;
+          break;
+        default:
+          left = 2 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+      }
+      return {
+        id: i,
+        delay: Math.random() * 2500,
+        startLeft: left,
+        startTop: top,
+        moveY: -20 - Math.random() * 15,
+        duration: 1800 + Math.random() * 1000,
+      };
+    })
+  ).current;
+
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      {hearts.map((heart) => (
+        <FloatingHeart key={heart.id} {...heart} />
+      ))}
+    </View>
+  );
+};
+
+// Bulle
+const Bubble = ({ delay, startLeft, startTop, size, duration }: {
+  delay: number;
+  startLeft: number;
+  startTop: number;
+  size: number;
+  duration: number;
+}) => {
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 0.6,
+            duration: 400,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: -40 - Math.random() * 20,
+            duration,
+            delay,
+            useNativeDriver: true,
+            easing: Easing.out(Easing.ease),
+          }),
+        ]),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, []);
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: `${startLeft}%`,
+        top: `${startTop}%`,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        borderWidth: 1.5,
+        borderColor: 'rgba(135, 206, 250, 0.8)',
+        backgroundColor: 'rgba(135, 206, 250, 0.2)',
+        opacity,
+        transform: [{ translateY }],
+      }}
+    />
+  );
+};
+
+// Cadre bulles
+export const BubblesFrame = ({ width, height }: FrameProps) => {
+  const bubbles = useRef(
+    Array.from({ length: 14 }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 3000,
+      startLeft: 5 + Math.random() * 90,
+      startTop: 85 + Math.random() * 12,
+      size: 8 + Math.random() * 10,
+      duration: 2000 + Math.random() * 1500,
+    }))
+  ).current;
+
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      {bubbles.map((bubble) => (
+        <Bubble key={bubble.id} {...bubble} />
+      ))}
+    </View>
+  );
+};
+
+// Luciole
+const Firefly = ({ delay, left, top }: {
+  delay: number;
+  left: number;
+  top: number;
+}) => {
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 400,
+          delay,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.delay(Math.random() * 1500),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, []);
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: `${left}%`,
+        top: `${top}%`,
+        width: 6,
+        height: 6,
+        borderRadius: 3,
+        backgroundColor: '#FFEB3B',
+        opacity,
+      }}
+    />
+  );
+};
+
+// Cadre lucioles
+export const FirefliesFrame = ({ width, height }: FrameProps) => {
+  const fireflies = useRef(
+    Array.from({ length: 16 }, (_, i) => {
+      const edge = Math.floor(Math.random() * 4);
+      let left, top;
+      switch (edge) {
+        case 0:
+          left = 5 + Math.random() * 90;
+          top = 2 + Math.random() * 12;
+          break;
+        case 1:
+          left = 88 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+          break;
+        case 2:
+          left = 5 + Math.random() * 90;
+          top = 88 + Math.random() * 10;
+          break;
+        default:
+          left = 2 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+      }
+      return { id: i, delay: Math.random() * 2000, left, top };
+    })
+  ).current;
+
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      {fireflies.map((firefly) => (
+        <Firefly key={firefly.id} {...firefly} />
+      ))}
+    </View>
+  );
+};
+
+// Confetti
+const ConfettiPiece = ({ delay, startLeft, color, duration }: {
+  delay: number;
+  startLeft: number;
+  color: string;
+  duration: number;
+}) => {
+  const translateY = useRef(new Animated.Value(-10)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+  const rotate = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 200,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 100,
+            duration,
+            delay,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotate, {
+            toValue: 1,
+            duration,
+            delay,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.parallel([
+          Animated.timing(translateY, {
+            toValue: -10,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rotate, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true,
+          }),
+        ]),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, []);
+
+  const spin = rotate.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: `${startLeft}%`,
+        top: 0,
+        width: 6,
+        height: 10,
+        backgroundColor: color,
+        borderRadius: 1,
+        opacity,
+        transform: [{ translateY }, { rotate: spin }],
+      }}
+    />
+  );
+};
+
+// Cadre confetti
+export const ConfettiFrame = ({ width, height }: FrameProps) => {
+  const colors = ['#FF6B6B', '#4ECDC4', '#FFE66D', '#95E1D3', '#F38181', '#AA96DA'];
+  const confetti = useRef(
+    Array.from({ length: 16 }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 2500,
+      startLeft: 5 + Math.random() * 90,
+      color: colors[i % colors.length],
+      duration: 2000 + Math.random() * 1500,
+    }))
+  ).current;
+
+  return (
+    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+      {confetti.map((piece) => (
+        <ConfettiPiece key={piece.id} {...piece} />
+      ))}
     </View>
   );
 };
@@ -437,6 +828,16 @@ export const StoryFrame = ({ type, width, height }: { type: FrameType; width: nu
       return <ColorFrame width={width} height={height} color="#EF4444" />;
     case 'black':
       return <ColorFrame width={width} height={height} color="#000000" />;
+    case 'white':
+      return <ColorFrame width={width} height={height} color="#FFFFFF" />;
+    case 'yellow':
+      return <ColorFrame width={width} height={height} color="#F59E0B" />;
+    case 'green':
+      return <ColorFrame width={width} height={height} color="#10B981" />;
+    case 'purple':
+      return <ColorFrame width={width} height={height} color="#8B5CF6" />;
+    case 'gold':
+      return <ColorFrame width={width} height={height} color="#FFD700" />;
     case 'none':
     default:
       return null;
@@ -452,6 +853,16 @@ export const StoryEffect = ({ type, width, height }: { type: EffectType; width: 
       return <FairyFrame width={width} height={height} />;
     case 'magic':
       return <MagicFrame width={width} height={height} />;
+    case 'snow':
+      return <SnowFrame width={width} height={height} />;
+    case 'hearts':
+      return <HeartsFrame width={width} height={height} />;
+    case 'bubbles':
+      return <BubblesFrame width={width} height={height} />;
+    case 'fireflies':
+      return <FirefliesFrame width={width} height={height} />;
+    case 'confetti':
+      return <ConfettiFrame width={width} height={height} />;
     case 'none':
     default:
       return null;
@@ -511,33 +922,6 @@ const styles = StyleSheet.create({
     right: -3,
     borderLeftWidth: 0,
     borderTopWidth: 0,
-  },
-  // Vintage frame styles
-  vintageVignette: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderWidth: 40,
-    borderColor: 'rgba(0, 0, 0, 0.4)',
-    borderRadius: 0,
-  },
-  vintageBorder: {
-    position: 'absolute',
-    top: 12,
-    left: 12,
-    right: 12,
-    bottom: 12,
-    borderWidth: 2,
-    borderColor: 'rgba(139, 90, 43, 0.6)',
-  },
-  vintageCornerDecor: {
-    position: 'absolute',
-    width: 15,
-    height: 15,
-    borderColor: 'rgba(139, 90, 43, 0.8)',
-    borderWidth: 2,
   },
 });
 

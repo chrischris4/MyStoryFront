@@ -507,7 +507,7 @@ export default function StoryDetailScreen() {
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
-                 borderRadius: 100,
+                borderRadius: 100,
                 height: 56,
                 paddingHorizontal: 12,
                 overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
@@ -552,67 +552,67 @@ export default function StoryDetailScreen() {
             </BlurView>
           )}
           <View className='flex flex-row gap-2'>
-          <BlurView
-            intensity={90}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 9999,
-              flexDirection: 'row',
-              gap: 2,
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
-            }}
-          >
-            <Text className={`text-base font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
-              {story?.numberOfPages ?? story?.pages?.length ?? '-'}
-            </Text>
-            <Feather name="book-open" size={14} className={isNight ? 'text-white' : 'text-slate-600'} />
-          </BlurView>
-          <BlurView
-            intensity={90}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 9999,
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
-            }}
-          >
-            <Text style={{ fontSize: 22 }}>
-              {getLanguageFlag(story?.language || '')}
-            </Text>
-          </BlurView>
-          <BlurView
-            intensity={90}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              padding: 16, width: 56,
-              height: 56,
-              borderRadius: 9999,
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
-            }}
-
-          >
-            <TouchableOpacity
-              onPress={handleToggleFavorite}
-              disabled={toggleFavoriteMutation.isPending}
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
               style={{
-                width: '100%',
-                height: '100%',
+                width: 56,
+                height: 56,
+                borderRadius: 9999,
+                flexDirection: 'row',
+                gap: 3,
                 justifyContent: 'center',
                 alignItems: 'center',
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
               }}
             >
-              <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
-            </TouchableOpacity>
-          </BlurView>
+              <Feather name="book-open" size={18} color={isNight ? '#fff' : '#64748b'} />
+              <Text className={`text-base font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
+                {story?.numberOfPages ?? story?.pages?.length ?? '-'}
+              </Text>
+            </BlurView>
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 9999,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+              }}
+            >
+              <Text style={{ fontSize: 22 }}>
+                {getLanguageFlag(story?.language || '')}
+              </Text>
+            </BlurView>
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{
+                padding: 16, width: 56,
+                height: 56,
+                borderRadius: 9999,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+              }}
+
+            >
+              <TouchableOpacity
+                onPress={handleToggleFavorite}
+                disabled={toggleFavoriteMutation.isPending}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
+              </TouchableOpacity>
+            </BlurView>
           </View>
         </View>
 

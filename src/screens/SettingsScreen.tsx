@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking, Modal, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
@@ -86,7 +86,7 @@ export default function SettingsScreen() {
                                 style={styles.profileImage}
                             />
                             <View className="flex-1">
-                                {user.profil.name && (
+                                {user?.profil?.name && (
                                     <Text className={`${isNight ? "text-white" : "text-slate-800"} text-xl font-baloo-semibold`}>
                                         {user.profil.name}
                                     </Text>

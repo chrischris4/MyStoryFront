@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, useWindowDimensions, View, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { Animated, Easing, useWindowDimensions, View, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';

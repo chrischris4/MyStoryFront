@@ -87,7 +87,7 @@ export default function FullScreenStoryModal({
     setIsNightMode(!isNightMode);
     // On garde la luminosité actuelle, le filtre fait le reste
   };
-  const [selectedFrame, setSelectedFrame] = useState<FrameType>('none');
+  const [selectedFrame, setSelectedFrame] = useState<FrameType>('black');
   const [selectedEffect, setSelectedEffect] = useState<EffectType>('none');
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
@@ -577,6 +577,7 @@ export default function FullScreenStoryModal({
                       top: 80,
                       left: 0,
                       zIndex: 10,
+                      maxWidth: width - 30,
                       opacity: frameMenuAnim,
                       transform: [{
                         translateY: frameMenuAnim.interpolate({
@@ -594,24 +595,75 @@ export default function FullScreenStoryModal({
                         overflow: 'hidden',
                       }}
                     >
-                      <View style={{ padding: 12 }} className='bg-white/50'>
+                      <View style={{ padding: 12}} className='bg-white/50 '>
                         <View className='flex flex-col'>
                           <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
                             {t('storyReader.frame')}
                           </Text>
 
-                          <View className='flex flex-row flex-wrap gap-3'>
+                          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -12 }} contentContainerStyle={{ paddingHorizontal: 12, gap: 8 }}>
                             <TouchableOpacity
-                              onPress={() => setSelectedFrame('none')}
+                              onPress={() => setSelectedFrame('black')}
                               style={{
                                 borderRadius: 12,
                                 padding: 8,
-                                backgroundColor: selectedFrame === 'none' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                                backgroundColor: selectedFrame === 'black' ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
                                 alignItems: 'center',
                               }}
                             >
-                              <Feather name="x-circle" size={36} color="#999" />
-                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameNone')}</Text>
+                              <View
+                                style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#000000',
+                                  borderWidth: 1,
+                                  borderColor: '#666',
+                                }}
+                              />
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameBlack')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => setSelectedFrame('white')}
+                              style={{
+                                borderRadius: 12,
+                                padding: 8,
+                                backgroundColor: selectedFrame === 'white' ? 'rgba(200, 200, 200, 0.5)' : 'transparent',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#FFFFFF',
+                                  borderWidth: 1,
+                                  borderColor: '#DDD',
+                                }}
+                              />
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameWhite')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => setSelectedFrame('gold')}
+                              style={{
+                                borderRadius: 12,
+                                padding: 8,
+                                backgroundColor: selectedFrame === 'gold' ? 'rgba(255, 215, 0, 0.3)' : 'transparent',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#FFD700',
+                                }}
+                              />
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameGold')}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
@@ -675,11 +727,11 @@ export default function FullScreenStoryModal({
                             </TouchableOpacity>
 
                             <TouchableOpacity
-                              onPress={() => setSelectedFrame('black')}
+                              onPress={() => setSelectedFrame('yellow')}
                               style={{
                                 borderRadius: 12,
                                 padding: 8,
-                                backgroundColor: selectedFrame === 'black' ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
+                                backgroundColor: selectedFrame === 'yellow' ? 'rgba(245, 158, 11, 0.3)' : 'transparent',
                                 alignItems: 'center',
                               }}
                             >
@@ -688,19 +740,57 @@ export default function FullScreenStoryModal({
                                   width: 36,
                                   height: 36,
                                   borderRadius: 18,
-                                  backgroundColor: '#000000',
-                                  borderWidth: 1,
-                                  borderColor: '#666',
+                                  backgroundColor: '#F59E0B',
                                 }}
                               />
-                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameBlack')}</Text>
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameYellow')}</Text>
                             </TouchableOpacity>
-                          </View>
+
+                            <TouchableOpacity
+                              onPress={() => setSelectedFrame('green')}
+                              style={{
+                                borderRadius: 12,
+                                padding: 8,
+                                backgroundColor: selectedFrame === 'green' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#10B981',
+                                }}
+                              />
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameGreen')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                              onPress={() => setSelectedFrame('purple')}
+                              style={{
+                                borderRadius: 12,
+                                padding: 8,
+                                backgroundColor: selectedFrame === 'purple' ? 'rgba(139, 92, 246, 0.3)' : 'transparent',
+                                alignItems: 'center',
+                              }}
+                            >
+                              <View
+                                style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#8B5CF6',
+                                }}
+                              />
+                              <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.framePurple')}</Text>
+                            </TouchableOpacity>
+                          </ScrollView>
                           <View className='flex flex-col' style={{ marginTop: 16 }}>
                             <Text style={{ fontSize: 16, fontWeight: 'bold', paddingBottom: 12 }}>
                               {t('storyReader.effect')}
                             </Text>
-                            <View className='flex flex-row flex-wrap gap-3'>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -12 }} contentContainerStyle={{ paddingHorizontal: 12, gap: 8 }}>
                               <TouchableOpacity
                                 onPress={() => setSelectedEffect('none')}
                                 style={{
@@ -713,87 +803,143 @@ export default function FullScreenStoryModal({
                                 <Feather name="x-circle" size={36} color="#999" />
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectNone')}</Text>
                               </TouchableOpacity>
+
                               <TouchableOpacity
                                 onPress={() => setSelectedEffect('stars')}
                                 style={{
                                   borderRadius: 12,
                                   padding: 8,
-                                  backgroundColor: selectedEffect === 'stars' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                                  backgroundColor: selectedEffect === 'stars' ? 'rgba(255, 215, 0, 0.3)' : 'transparent',
                                   alignItems: 'center',
                                 }}
                               >
-                                <View style={{
-                                  width: 36,
-                                  height: 36,
-                                  borderRadius: 18,
-                                  backgroundColor: '#1a1a2e',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  overflow: 'hidden',
-                                }}>
-                                  {/* Mini gold stars */}
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                                   <View style={{ position: 'absolute', top: 6, left: 8, width: 4, height: 4, backgroundColor: '#FFD700', borderRadius: 2 }} />
                                   <View style={{ position: 'absolute', top: 14, right: 7, width: 5, height: 5, backgroundColor: '#FFD700', borderRadius: 2.5 }} />
                                   <View style={{ position: 'absolute', bottom: 6, left: 14, width: 3, height: 3, backgroundColor: '#FFD700', borderRadius: 1.5 }} />
-                                  <View style={{ position: 'absolute', top: 10, left: 16, width: 4, height: 4, backgroundColor: '#FFC107', borderRadius: 2 }} />
-                                  <View style={{ position: 'absolute', bottom: 10, right: 10, width: 3, height: 3, backgroundColor: '#FFD700', borderRadius: 1.5 }} />
                                 </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectStars')}</Text>
                               </TouchableOpacity>
+
                               <TouchableOpacity
                                 onPress={() => setSelectedEffect('fairy')}
                                 style={{
                                   borderRadius: 12,
                                   padding: 8,
-                                  backgroundColor: selectedEffect === 'fairy' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                                  backgroundColor: selectedEffect === 'fairy' ? 'rgba(255, 215, 0, 0.3)' : 'transparent',
                                   alignItems: 'center',
                                 }}
                               >
-                                <View style={{
-                                  width: 36,
-                                  height: 36,
-                                  borderRadius: 18,
-                                  backgroundColor: '#1a1a2e',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  overflow: 'hidden',
-                                }}>
-                                  {/* Mini pink fairy particles */}
-                                  <View style={{ position: 'absolute', top: 5, left: 10, width: 4, height: 4, backgroundColor: '#FF69B4', borderRadius: 2, opacity: 0.9 }} />
-                                  <View style={{ position: 'absolute', top: 12, right: 8, width: 3, height: 3, backgroundColor: '#FF69B4', borderRadius: 1.5 }} />
-                                  <View style={{ position: 'absolute', bottom: 8, left: 7, width: 3, height: 3, backgroundColor: '#FFB6C1', borderRadius: 1.5 }} />
-                                  <View style={{ position: 'absolute', bottom: 5, right: 10, width: 4, height: 4, backgroundColor: '#FF69B4', borderRadius: 2 }} />
-                                  <View style={{ position: 'absolute', top: 16, left: 16, width: 3, height: 3, backgroundColor: '#FFB6C1', borderRadius: 1.5, opacity: 0.7 }} />
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 5, left: 10, width: 4, height: 4, backgroundColor: '#FFD700', borderRadius: 2 }} />
+                                  <View style={{ position: 'absolute', top: 12, right: 8, width: 3, height: 3, backgroundColor: '#FFD700', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 8, left: 7, width: 3, height: 3, backgroundColor: '#FFC107', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 5, right: 10, width: 4, height: 4, backgroundColor: '#FFD700', borderRadius: 2 }} />
                                 </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectFairy')}</Text>
                               </TouchableOpacity>
+
                               <TouchableOpacity
                                 onPress={() => setSelectedEffect('magic')}
                                 style={{
                                   borderRadius: 12,
                                   padding: 8,
-                                  backgroundColor: selectedEffect === 'magic' ? 'rgba(16, 185, 129, 0.3)' : 'transparent',
+                                  backgroundColor: selectedEffect === 'magic' ? 'rgba(155, 89, 182, 0.3)' : 'transparent',
                                   alignItems: 'center',
                                 }}
                               >
-                                <View style={{
-                                  width: 36,
-                                  height: 36,
-                                  borderRadius: 18,
-                                  backgroundColor: '#1a1a2e',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  overflow: 'hidden',
-                                }}>
-                                  {/* Mini magic purple/blue glow */}
-                                  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 12, backgroundColor: '#9B59B6', opacity: 0.5, borderRadius: 18 }} />
-                                  <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 12, backgroundColor: '#9B59B6', opacity: 0.4, borderRadius: 18 }} />
-                                  <View style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 12, backgroundColor: '#3498DB', opacity: 0.4, borderRadius: 18 }} />
-                                  <View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 12, backgroundColor: '#3498DB', opacity: 0.4, borderRadius: 18 }} />
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 10, backgroundColor: '#9B59B6', opacity: 0.6, borderRadius: 18 }} />
+                                  <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 10, backgroundColor: '#3498DB', opacity: 0.5, borderRadius: 18 }} />
                                 </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectMagic')}</Text>
                               </TouchableOpacity>
-                            </View>
+
+                              <TouchableOpacity
+                                onPress={() => setSelectedEffect('snow')}
+                                style={{
+                                  borderRadius: 12,
+                                  padding: 8,
+                                  backgroundColor: selectedEffect === 'snow' ? 'rgba(255, 255, 255, 0.4)' : 'transparent',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#4A90A4', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 4, left: 8, width: 4, height: 4, backgroundColor: '#FFF', borderRadius: 2 }} />
+                                  <View style={{ position: 'absolute', top: 12, right: 6, width: 3, height: 3, backgroundColor: '#FFF', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 8, left: 14, width: 5, height: 5, backgroundColor: '#FFF', borderRadius: 2.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 4, right: 12, width: 3, height: 3, backgroundColor: '#FFF', borderRadius: 1.5 }} />
+                                </View>
+                                <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectSnow')}</Text>
+                              </TouchableOpacity>
+
+                              <TouchableOpacity
+                                onPress={() => setSelectedEffect('hearts')}
+                                style={{
+                                  borderRadius: 12,
+                                  padding: 8,
+                                  backgroundColor: selectedEffect === 'hearts' ? 'rgba(255, 107, 138, 0.3)' : 'transparent',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <Text style={{ fontSize: 18 }}>💕</Text>
+                                </View>
+                                <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectHearts')}</Text>
+                              </TouchableOpacity>
+
+                              <TouchableOpacity
+                                onPress={() => setSelectedEffect('bubbles')}
+                                style={{
+                                  borderRadius: 12,
+                                  padding: 8,
+                                  backgroundColor: selectedEffect === 'bubbles' ? 'rgba(135, 206, 250, 0.3)' : 'transparent',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 5, left: 8, width: 8, height: 8, borderWidth: 1.5, borderColor: '#87CEEB', borderRadius: 4, backgroundColor: 'rgba(135, 206, 250, 0.2)' }} />
+                                  <View style={{ position: 'absolute', bottom: 6, right: 6, width: 10, height: 10, borderWidth: 1.5, borderColor: '#87CEEB', borderRadius: 5, backgroundColor: 'rgba(135, 206, 250, 0.2)' }} />
+                                  <View style={{ position: 'absolute', top: 14, right: 10, width: 6, height: 6, borderWidth: 1, borderColor: '#87CEEB', borderRadius: 3, backgroundColor: 'rgba(135, 206, 250, 0.2)' }} />
+                                </View>
+                                <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectBubbles')}</Text>
+                              </TouchableOpacity>
+
+                              <TouchableOpacity
+                                onPress={() => setSelectedEffect('fireflies')}
+                                style={{
+                                  borderRadius: 12,
+                                  padding: 8,
+                                  backgroundColor: selectedEffect === 'fireflies' ? 'rgba(255, 235, 59, 0.3)' : 'transparent',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a3a1a', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 6, left: 8, width: 5, height: 5, backgroundColor: '#FFEB3B', borderRadius: 2.5 }} />
+                                  <View style={{ position: 'absolute', top: 16, right: 8, width: 4, height: 4, backgroundColor: '#FFEB3B', borderRadius: 2, opacity: 0.7 }} />
+                                  <View style={{ position: 'absolute', bottom: 6, left: 14, width: 4, height: 4, backgroundColor: '#FFEB3B', borderRadius: 2, opacity: 0.8 }} />
+                                </View>
+                                <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectFireflies')}</Text>
+                              </TouchableOpacity>
+
+                              <TouchableOpacity
+                                onPress={() => setSelectedEffect('confetti')}
+                                style={{
+                                  borderRadius: 12,
+                                  padding: 8,
+                                  backgroundColor: selectedEffect === 'confetti' ? 'rgba(255, 107, 107, 0.3)' : 'transparent',
+                                  alignItems: 'center',
+                                }}
+                              >
+                                <View style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#1a1a2e', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                  <View style={{ position: 'absolute', top: 4, left: 8, width: 4, height: 6, backgroundColor: '#FF6B6B', borderRadius: 1, transform: [{ rotate: '15deg' }] }} />
+                                  <View style={{ position: 'absolute', top: 8, right: 8, width: 4, height: 6, backgroundColor: '#4ECDC4', borderRadius: 1, transform: [{ rotate: '-20deg' }] }} />
+                                  <View style={{ position: 'absolute', bottom: 6, left: 12, width: 4, height: 6, backgroundColor: '#FFE66D', borderRadius: 1, transform: [{ rotate: '30deg' }] }} />
+                                  <View style={{ position: 'absolute', bottom: 10, right: 10, width: 4, height: 6, backgroundColor: '#AA96DA', borderRadius: 1, transform: [{ rotate: '-10deg' }] }} />
+                                </View>
+                                <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectConfetti')}</Text>
+                              </TouchableOpacity>
+                            </ScrollView>
                           </View>
                         </View>
                       </View>

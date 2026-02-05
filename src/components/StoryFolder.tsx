@@ -395,7 +395,7 @@ export default function StoryFolder({
                                         >
                                             <TouchableOpacity
                                                 activeOpacity={isLockedPreview ? 1 : 0.5}
-                                                className="mb-2 p-4 bg-gray-100 rounded-3xl relative"
+                                                className={`mb-2 p-4 rounded-3xl relative ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
                                                 onPress={() => {
                                                     if (isLockedPreview) {
                                                         return;
@@ -422,20 +422,33 @@ export default function StoryFolder({
                                                     </TouchableOpacity>
                                                 )}
                                                 <View className="flex flex-row justify-between items-center mb-1">
-                                                    <Text className="text-xl font-baloo-semibold">{item.title}</Text>
+                                                    <Text className={` ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
                                                 </View>
                                                 {cover && (
-                                                    <Image
-                                                        source={{ uri: cover }}
-                                                        style={{ width: '100%', height: 150, borderRadius: 8 }}
-                                                        contentFit="cover"
-                                                        cachePolicy="memory-disk"
-                                                        transition={200}
-                                                    />
+                                                    <View style={{ position: 'relative' }}>
+                                                        <Image
+                                                            source={{ uri: cover }}
+                                                            style={{ width: '100%', height: 150, borderRadius: 8 }}
+                                                            contentFit="cover"
+                                                            cachePolicy="memory-disk"
+                                                            transition={200}
+                                                        />
+                                                        {isNight && (
+                                                            <View style={{
+                                                                position: 'absolute',
+                                                                top: 0,
+                                                                left: 0,
+                                                                right: 0,
+                                                                bottom: 0,
+                                                                backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                                                borderRadius: 8,
+                                                            }} />
+                                                        )}
+                                                    </View>
                                                 )}
 
                                                 {item.description && (
-                                                    <Text className="text-sm text-slate-600 font-baloo mt-2" numberOfLines={2}>
+                                                    <Text className={`text-sm ${isNight ? 'text-slate-300' : 'text-slate-600'} font-baloo mt-2`} numberOfLines={2}>
                                                         {item.description}
                                                     </Text>
                                                 )}
@@ -465,7 +478,7 @@ export default function StoryFolder({
                                                 )}
 
                                                 <View className='flex flex-row gap-1 justify-between items-center w-full mt-2'>
-                                                    <Text className="text-base font-baloo-semibold text-black ml-2">
+                                                    <Text className={`${isNight ? 'text-white' : 'text-black'} text-base font-baloo-semibold ml-2`}>
                                                         {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
                                                     </Text>
                                                     <View className='flex flex-row items-center gap-2'>
@@ -474,12 +487,12 @@ export default function StoryFolder({
                                                         )}
                                                         <View className="flex-row items-center gap-1 bg-slate-200 rounded-full px-2 py-0.5">
                                                             <Feather name="book-open" size={12} color="#64748b" />
-                                                            <Text className="text-sm font-baloo-semibold text-slate-600">{item.numberOfPages}</Text>
+                                                            <Text className="text-sm font-baloo-semibold text-slate-600 -mb-[2px]">{item.numberOfPages}</Text>
                                                         </View>
                                                         {item._count?.favoriteBy > 0 && (
                                                             <View className="flex-row items-center gap-1 bg-red-50 rounded-full px-2 py-0.5">
                                                                 <Ionicons name="heart" size={12} color="#ef4444" />
-                                                                <Text className="text-sm font-baloo-semibold text-red-500">{item._count.favoriteBy}</Text>
+                                                                <Text className="text-sm font-baloo-semibold text-red-500 -mb-[2px]">{item._count.favoriteBy}</Text>
                                                             </View>
                                                         )}
                                                     </View>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
 import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS, getHumanEmoji } from '~/types';
 import CharacterLimitModal from './CharacterLimitModal';
+import LottieView from 'lottie-react-native';
 
 const MAX_CHARACTERS_PER_STORY = 2;
 
@@ -190,7 +191,12 @@ export default function CharacterSection({
         {/* Character list */}
         {isLoading ? (
           <View className="h-32 items-center justify-center">
-            <ActivityIndicator size="small" color={isNight ? '#fff' : '#0D1821'} />
+            <LottieView
+              source={require('../../assets/animations/LoadingWhite.json')}
+              autoPlay
+              loop={true}
+              style={{ width: 100, height: 100 }}
+            />
           </View>
         ) : error ? (
           <View className="h-32 items-center justify-center">

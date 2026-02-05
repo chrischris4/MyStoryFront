@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -212,7 +212,12 @@ export default function RegisterScreen() {
                     disabled={isOAuthLoading}
                   >
                     {loadingProvider === 'google' ? (
-                      <ActivityIndicator size="small" color="#4285F4" />
+                      <LottieView
+                        source={require('../../assets/animations/LoadingWhite.json')}
+                        autoPlay
+                        loop={true}
+                        style={{ width: 100, height: 100 }}
+                      />
                     ) : (
                       <>
                         <FontAwesome name="google" size={20} color="#4285F4" />
@@ -227,7 +232,12 @@ export default function RegisterScreen() {
                     disabled={isOAuthLoading}
                   >
                     {loadingProvider === 'facebook' ? (
-                      <ActivityIndicator size="small" color="#fff" />
+                      <LottieView
+                        source={require('../../assets/animations/LoadingWhite.json')}
+                        autoPlay
+                        loop={true}
+                        style={{ width: 100, height: 100 }}
+                      />
                     ) : (
                       <>
                         <FontAwesome name="facebook" size={20} color="#fff" />

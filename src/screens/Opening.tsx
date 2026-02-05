@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, Image, Animated } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Image, Animated } from 'react-native';
 import { RootStackParamList } from '~/navigation/AppNavigator';
 
 export default function OpeningScreen() {
