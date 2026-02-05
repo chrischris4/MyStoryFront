@@ -4,7 +4,6 @@ import {
   Text,
   Image,
   ScrollView,
-  ActivityIndicator,
   TouchableOpacity,
   Modal,
   Animated,
@@ -66,7 +65,7 @@ export default function StoryDetailScreen() {
   const { playSound, fadeOutBackgroundMusic } = useSound();
 
   // Utiliser les hooks pour les favoris
-  const { data: isFavorite = false, isLoading: isFavoriteLoading } = useCheckFavorite(Number(storyId));
+  const { data: isFavorite = false } = useCheckFavorite(Number(storyId));
   const toggleFavoriteMutation = useToggleFavorite();
 
   // Hooks pour les groupes
@@ -133,12 +132,6 @@ export default function StoryDetailScreen() {
         }
         queryClient.invalidateQueries({ queryKey: ['stories'] });
         queryClient.invalidateQueries({ queryKey: ['communityStories'] });
-        Toast.show({
-          type: 'success',
-          text1: t('common.success'),
-          text2: t('storyDetail.storySharedToCommunity'),
-        });
-        setShowShareModal(false);
       } else {
         Toast.show({
           type: 'error',
@@ -559,7 +552,7 @@ export default function StoryDetailScreen() {
           >
             <TouchableOpacity
               onPress={handleToggleFavorite}
-              disabled={toggleFavoriteMutation.isPending || isFavoriteLoading}
+              disabled={toggleFavoriteMutation.isPending}
               style={{
                 width: '100%',
                 height: '100%',
@@ -567,11 +560,7 @@ export default function StoryDetailScreen() {
                 alignItems: 'center',
               }}
             >
-              {toggleFavoriteMutation.isPending || isFavoriteLoading ? (
-                <ActivityIndicator size="small" color="red" />
-              ) : (
-                <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
-              )}
+              <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
             </TouchableOpacity>
           </BlurView>
         </View>

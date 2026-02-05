@@ -36,6 +36,7 @@ const toastConfig = {
           backgroundColor: '#ffffff',
           borderBlockColor: '#000000',
           borderWidth: 2,
+          zIndex: 9999,
         }}
       >
         <Text
@@ -73,6 +74,7 @@ const toastConfig = {
           backgroundColor: '#ffffff',
           borderBlockColor: '#000000',
           borderWidth: 2,
+          zIndex: 9999,
         }}
       >
         <Text

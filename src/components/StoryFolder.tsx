@@ -46,6 +46,20 @@ type StoryFolderProps = {
     isLoading?: boolean;
 };
 
+const LANGUAGE_FLAGS: Record<string, string> = {
+    french: '🇫🇷',
+    english: '🇬🇧',
+    spanish: '🇪🇸',
+    german: '🇩🇪',
+    italian: '🇮🇹',
+    portuguese: '🇵🇹',
+    danish: '🇩🇰',
+};
+
+const getLanguageFlag = (language: string): string => {
+    return LANGUAGE_FLAGS[language.toLowerCase()] || '🌍';
+};
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const NAVBAR_HEIGHT = 80;
 
@@ -364,7 +378,7 @@ export default function StoryFolder({
                         ) : expanded && showContent ? (
                             <FlatList
                                 data={displayedStories}
-                                keyExtractor={(item) => item.id.toString()}
+                                keyExtractor={(item, index) => `${item.id}-${index}`}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
                                 showsVerticalScrollIndicator={false}
@@ -408,11 +422,6 @@ export default function StoryFolder({
                                                 )}
                                                 <View className="flex flex-row justify-between items-center mb-1">
                                                     <Text className="text-xl font-baloo-semibold">{item.title}</Text>
-                                                    <View className="flex-row items-center gap-1">
-                                                        <Text className="text-base font-baloo text-black">{item.numberOfPages}</Text>
-                                                        <Feather name="book-open" size={14} className='text-slate-600' />
-                                                    </View>
-
                                                 </View>
                                                 {cover && (
                                                     <Image
@@ -454,20 +463,24 @@ export default function StoryFolder({
                                                     </View>
                                                 )}
 
-                                                <View className='flex flex-row gap-1 justify-between items-center w-full'>
+                                                <View className='flex flex-row gap-1 justify-between items-center w-full mt-2'>
                                                     <Text className="text-base font-baloo-semibold text-black ml-2">
                                                         {t('storyFolder.author')} : <Text className='font-baloo'>{item.user?.profil?.name || t('storyFolder.anonymous')}</Text>
                                                     </Text>
-                                                    <View className='flex flex-row items-center'>
-                                                        {item._count?.favoriteBy > 0 && (
-                                                            <Text className="text-base font-baloo mr-0.5">{item._count?.favoriteBy || 0}</Text>
+                                                    <View className='flex flex-row items-center gap-2'>
+                                                        {item.language && (
+                                                            <Text style={{ fontSize: 16 }}>{getLanguageFlag(item.language)}</Text>
                                                         )}
-                                                        <Text className="text-lg mr-2 -mt-0.5">
-                                                            {item._count?.favoriteBy > 0 ? (
-                                                                <Ionicons name="heart" size={14} color="#ef4444" />
-                                                            ) : (
-                                                                <Ionicons name="heart-outline" size={14} color="#94a3b8" />)}
-                                                        </Text>
+                                                        <View className="flex-row items-center gap-1 bg-slate-200 rounded-full px-2 py-0.5">
+                                                            <Feather name="book-open" size={12} color="#64748b" />
+                                                            <Text className="text-sm font-baloo-semibold text-slate-600">{item.numberOfPages}</Text>
+                                                        </View>
+                                                        {item._count?.favoriteBy > 0 && (
+                                                            <View className="flex-row items-center gap-1 bg-red-50 rounded-full px-2 py-0.5">
+                                                                <Ionicons name="heart" size={12} color="#ef4444" />
+                                                                <Text className="text-sm font-baloo-semibold text-red-500">{item._count.favoriteBy}</Text>
+                                                            </View>
+                                                        )}
                                                     </View>
                                                 </View>
                                             </TouchableOpacity>
