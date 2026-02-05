@@ -33,9 +33,8 @@ function CharacterCard({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`w-28 h-32 rounded-2xl mr-3 overflow-hidden ${
-        isSelected ? 'border-4 border-green-500' : ''
-      }`}
+      className={`w-28 h-32 rounded-2xl mr-3 overflow-hidden ${isSelected ? 'border-4 border-green-500' : ''
+        }`}
       style={{
         backgroundColor: isNight ? '#334155' : '#f3f4f6',
       }}
@@ -43,9 +42,8 @@ function CharacterCard({
       <View className="flex-1 items-center justify-center p-2">
         {/* Avatar/Icon */}
         <View
-          className={`w-12 h-12 rounded-full items-center justify-center mb-2 ${
-            character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
-          }`}
+          className={`w-12 h-12 rounded-full items-center justify-center mb-2 ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
+            }`}
         >
           <Text className="text-2xl">
             {getHumanEmoji(character)}
@@ -54,9 +52,8 @@ function CharacterCard({
 
         {/* Name */}
         <Text
-          className={`font-baloo-semibold text-center text-sm ${
-            isNight ? 'text-white' : 'text-gray-800'
-          }`}
+          className={`font-baloo-semibold text-center text-sm ${isNight ? 'text-white' : 'text-gray-800'
+            }`}
           numberOfLines={1}
         >
           {character.name}
@@ -92,16 +89,14 @@ function CreateNewCard({
       }}
     >
       <View
-        className={`w-12 h-12 rounded-full items-center justify-center mb-2 ${
-          isNight ? 'bg-slate-600' : 'bg-gray-300'
-        }`}
+        className={`w-12 h-12 rounded-full items-center justify-center mb-2 ${isNight ? 'bg-slate-600' : 'bg-gray-300'
+          }`}
       >
         <Feather name="plus" size={24} color={isNight ? '#fff' : '#374151'} />
       </View>
       <Text
-        className={`font-baloo-medium text-sm text-center ${
-          isNight ? 'text-white/70' : 'text-gray-600'
-        }`}
+        className={`font-baloo-medium text-sm text-center ${isNight ? 'text-white/70' : 'text-gray-600'
+          }`}
       >
         {t('character.createNew')}
       </Text>
@@ -175,21 +170,19 @@ export default function CharacterSection({
       }}
     >
       <BlurView
-        intensity={isNight ? 90 : 50}
+        intensity={90}
         tint={isNight ? 'dark' : 'light'}
         style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
       >
         <Text
-          className={`text-2xl font-baloo-semibold mb-1 ${
-            isNight ? 'text-white' : 'text-slate-900'
-          }`}
+          className={`text-2xl font-baloo-semibold mb-1 ${isNight ? 'text-white' : 'text-slate-900'
+            }`}
         >
           {t('character.title')}
         </Text>
         <Text
-          className={`text-sm font-baloo mb-4 ${
-            isNight ? 'text-white/80' : 'text-slate-600'
-          }`}
+          className={`text-sm font-baloo mb-4 ${isNight ? 'text-white/80' : 'text-slate-600'
+            }`}
         >
           {t('character.subtitle')}
         </Text>
@@ -241,9 +234,8 @@ export default function CharacterSection({
           <View className="mt-4 gap-2">
             {/* Counter */}
             <Text
-              className={`font-baloo-medium text-sm ${
-                isNight ? 'text-white/60' : 'text-gray-500'
-              }`}
+              className={`font-baloo-medium text-sm ${isNight ? 'text-white/60' : 'text-gray-500'
+                }`}
             >
               {t('character.selected', { count: selectedCharacters.length, max: MAX_CHARACTERS_PER_STORY })}
             </Text>
@@ -251,23 +243,20 @@ export default function CharacterSection({
             {selectedCharacters.map((character) => (
               <View
                 key={character.id}
-                className={`p-4 rounded-xl ${
-                  isNight ? 'bg-slate-700/50' : 'bg-gray-100'
-                }`}
+                className={`p-4 rounded-xl ${isNight ? 'bg-slate-700/50' : 'bg-gray-100'
+                  }`}
               >
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1 mr-4">
                     <Text
-                      className={`font-baloo-semibold text-lg ${
-                        isNight ? 'text-white' : 'text-gray-800'
-                      }`}
+                      className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-800'
+                        }`}
                     >
                       {character.name}
                     </Text>
                     <Text
-                      className={`font-baloo text-sm ${
-                        isNight ? 'text-white/60' : 'text-gray-500'
-                      }`}
+                      className={`font-baloo text-sm ${isNight ? 'text-white/60' : 'text-gray-500'
+                        }`}
                       numberOfLines={2}
                     >
                       {getCharacterSummary(character)}
@@ -301,9 +290,8 @@ export default function CharacterSection({
         {!isLoading && !error && (!characters || characters.length === 0) && (
           <View className="items-center py-2">
             <Text
-              className={`font-baloo text-sm ${
-                isNight ? 'text-white/60' : 'text-gray-500'
-              }`}
+              className={`font-baloo text-sm ${isNight ? 'text-white/60' : 'text-gray-500'
+                }`}
             >
               {t('character.noCharacters')}
             </Text>

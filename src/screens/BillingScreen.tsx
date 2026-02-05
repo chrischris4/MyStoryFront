@@ -38,7 +38,7 @@ export default function BillingScreen() {
                         paddingHorizontal: 12,
                         paddingVertical: 8,
                         borderRadius: 16,
-                        maxWidth: 180,
+                        width: 'auto',
                         shadowColor: '#000',
                         shadowOpacity: 0.15,
                         shadowRadius: 4,
@@ -57,6 +57,21 @@ export default function BillingScreen() {
                 >
                     {text}
                 </Text>
+                <View
+                    style={{
+                        position: 'absolute',
+                        bottom: -8,
+                        right: 20,
+                        width: 0,
+                        height: 0,
+                        borderLeftWidth: 8,
+                        borderRightWidth: 8,
+                        borderTopWidth: 8,
+                        borderLeftColor: 'transparent',
+                        borderRightColor: 'transparent',
+                        borderTopColor: 'white',
+                    }}
+                />
             </Animated.View>
         );
     }
@@ -102,12 +117,12 @@ export default function BillingScreen() {
         // Première apparition après 4s
         const firstTimeout = setTimeout(() => {
             showStoreBubble();
-        }, 4000);
+        }, 2000);
 
         // Puis toutes les 30s
         const interval = setInterval(() => {
             showStoreBubble();
-        }, 30000);
+        }, 20000);
 
         return () => {
             clearTimeout(firstTimeout);
@@ -585,8 +600,8 @@ export default function BillingScreen() {
                             text={storePhrase}
                             style={{
                                 position: 'absolute',
-                                top: 230,
-                                left: 40,
+                                top: 200,
+                                left: 60,
                                 zIndex: 10,
                                 opacity: bubbleOpacity,
                                 transform: [{ scale: bubbleScale }],

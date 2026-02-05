@@ -24,7 +24,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, descr
       style={{ overflow: 'hidden' }}
     >
       <BlurView
-        intensity={50}
+        intensity={90}
         tint={isNight ? "dark" : "light"}
         className="flex flex-col w-full p-2 h-full relative"
         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}

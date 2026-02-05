@@ -143,7 +143,7 @@ export default function GroupScreen() {
       className="flex-1"
     >
       <BlurView
-        intensity={isNight ? 90 : 50}
+        intensity={90}
         tint={isNight ? "dark" : "light"}
         className={`py-3 px-4 rounded-2xl overflow-hidden ${activeTab === tab ? 'opacity-100' : 'opacity-60'}`}
         style={{
@@ -190,7 +190,7 @@ export default function GroupScreen() {
     return (
       <BlurView
         key={group.id}
-        intensity={isNight ? 90 : 50}
+        intensity={90}
         tint={isNight ? "dark" : "light"}
         className="p-4 rounded-2xl mb-3 overflow-hidden"
         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -217,7 +217,7 @@ export default function GroupScreen() {
             disabled={joinGroupMutation.isPending}
           >
             <BlurView
-              intensity={isNight ? 90 : 50}
+              intensity={90}
               tint={isNight ? "dark" : "light"}
               className="px-4 py-2 rounded-xl overflow-hidden"
               style={{ backgroundColor: isNight ? '#3b82f690' : '#3b82f630' }}
@@ -246,7 +246,7 @@ export default function GroupScreen() {
     return (
       <BlurView
         key={invitation.id}
-        intensity={isNight ? 90 : 50}
+        intensity={90}
         tint={isNight ? "dark" : "light"}
         className="p-4 rounded-2xl mb-3 overflow-hidden"
         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -268,7 +268,7 @@ export default function GroupScreen() {
                 disabled={acceptInvitationMutation.isPending}
               >
                 <BlurView
-                  intensity={isNight ? 90 : 50}
+                  intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="p-2 rounded-xl overflow-hidden"
                   style={{ backgroundColor: isNight ? '#22c55e90' : '#22c55e30' }}
@@ -291,7 +291,7 @@ export default function GroupScreen() {
                 disabled={declineInvitationMutation.isPending}
               >
                 <BlurView
-                  intensity={isNight ? 90 : 50}
+                  intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="p-2 rounded-xl overflow-hidden"
                   style={{ backgroundColor: isNight ? '#ef444490' : '#ef444430' }}
@@ -370,7 +370,7 @@ export default function GroupScreen() {
                   className="mb-4"
                 >
                   <BlurView
-                    intensity={isNight ? 90 : 50}
+                    intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-4 rounded-2xl overflow-hidden"
                     style={{ backgroundColor: isNight ? '#3b82f690' : '#3b82f630' }}
@@ -388,7 +388,7 @@ export default function GroupScreen() {
                 {myGroups.length >= 10 && (
                   <View>
                     <BlurView
-                      intensity={isNight ? 90 : 50}
+                      intensity={90}
                       tint={isNight ? "dark" : "light"}
                       className="mb-4 rounded-2xl overflow-hidden"
                       style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -422,7 +422,7 @@ export default function GroupScreen() {
                       </View>
                     ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
                       <BlurView
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="p-8 rounded-2xl overflow-hidden items-center"
                         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -454,7 +454,7 @@ export default function GroupScreen() {
                   </View>
                 ) : myGroups.length === 0 ? (
                   <BlurView
-                    intensity={isNight ? 90 : 50}
+                    intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
                     style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -490,7 +490,7 @@ export default function GroupScreen() {
                   </View>
                 ) : invitations.length === 0 ? (
                   <BlurView
-                    intensity={isNight ? 90 : 50}
+                    intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
                     style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -511,7 +511,7 @@ export default function GroupScreen() {
           {showCreateModal && (
             <View className="absolute inset-0 bg-black/50 items-center justify-center px-4">
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="w-full p-6 rounded-3xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}

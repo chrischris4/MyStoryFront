@@ -19,7 +19,7 @@ export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
     return (
         <TouchableOpacity onPress={onPress} className="mb-3">
             <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="p-4 rounded-2xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -32,16 +32,16 @@ export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
                 </Text>
                 <View className="flex-row items-center mt-2 gap-4">
                     <View className='flex flex-row items-center gap-1'>
-                    <Feather name="users" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
-                    <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
-                        {t('groups.membersCount', { count: memberCount })}
-                    </Text>
+                        <Feather name="users" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
+                        <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
+                            {t('groups.membersCount', { count: memberCount })}
+                        </Text>
                     </View>
                     <View className='flex flex-row items-center gap-1'>
-                    <Feather name="book" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
-                    <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
-                        {t('groups.storiesCount', { count: storiesCount })}
-                    </Text>
+                        <Feather name="book" size={14} color={isNight ? '#94a3b8' : '#64748b'} />
+                        <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-sm font-baloo ml-1`}>
+                            {t('groups.storiesCount', { count: storiesCount })}
+                        </Text>
                     </View>
                 </View>
             </BlurView>

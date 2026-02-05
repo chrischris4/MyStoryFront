@@ -17,7 +17,6 @@ export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signInWithGoogle, signInWithFacebook, isLoading: isOAuthLoading, loadingProvider } = useOAuth();
   const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
 
@@ -28,9 +27,6 @@ export default function RegisterScreen() {
     password: Yup.string()
       .min(6, t('auth.passwordMinLength'))
       .required(t('auth.passwordRequired')),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], t('auth.passwordMismatch'))
-      .required(t('auth.confirmPasswordRequired')),
   });
 
   const handleRegister = async (
@@ -129,12 +125,12 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-      <View className="w-[180%] flex flex-col justify-center items-center aspect-square rounded-full bg-white p-[10%]">
-        <View className='w-[60%]'>
+      <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white p-[10%]">
+        <View className='w-[70%]'>
           <Text className="text-2xl font-baloo-bold mb-4 text-gray-800 text-center">{t('auth.register')}</Text>
 
           <Formik
-            initialValues={{ email: '', password: '', confirmPassword: '' }}
+            initialValues={{ email: '', password: '' }}
             validationSchema={registerSchema}
             onSubmit={handleRegister}
           >
@@ -177,30 +173,6 @@ export default function RegisterScreen() {
                   </View>
                   {touched.password && errors.password && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
-                  )}
-                </View>
-
-                <View className="mb-4">
-                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.confirmPassword')}</Text>
-                  <View className="relative">
-                    <TextInput
-                      className={`w-full border ${touched.confirmPassword && errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
-                      placeholder={t('auth.confirmPasswordPlaceholder')}
-                      placeholderTextColor="#6B7280"
-                      secureTextEntry={!showConfirmPassword}
-                      value={values.confirmPassword}
-                      onChangeText={handleChange('confirmPassword')}
-                      onBlur={handleBlur('confirmPassword')}
-                    />
-                    <TouchableOpacity
-                      className="absolute right-4 top-4"
-                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      <Feather name={showConfirmPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
-                    </TouchableOpacity>
-                  </View>
-                  {touched.confirmPassword && errors.confirmPassword && (
-                    <Text className="text-red-500 text-sm mt-1 ml-2">{errors.confirmPassword}</Text>
                   )}
                 </View>
 

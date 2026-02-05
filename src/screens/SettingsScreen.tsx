@@ -4,7 +4,7 @@ import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import EditProfilModal from '~/components/EditProfilModal';
@@ -73,7 +73,8 @@ export default function SettingsScreen() {
             />
             <Text className={`font-baloo-bold text-4xl pt-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
             <ScrollView className='pb-72' showsVerticalScrollIndicator={false}>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl font-baloo-semibold self-start`}>{t('settings.account')}</Text>
                         <Feather name="user" size={20} color={isNight ? "#fff" : "#000"} />
@@ -94,7 +95,7 @@ export default function SettingsScreen() {
                             </View>
                         </View>
                     )}
-                    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={() => {
+                    <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]} onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         playSound('pop');
                         setIsEditProfilModalVisible(true);
@@ -103,7 +104,8 @@ export default function SettingsScreen() {
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start mb-2`}>{t('settings.appearance')}</Text>
                         {!isNight ? (
@@ -119,7 +121,7 @@ export default function SettingsScreen() {
                             playSound('toggle');
                             toggleTheme();
                         }}
-                        style={styles.button}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
                     >
                         <View className="flex-row items-center justify-center gap-2">
                             <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>
@@ -134,7 +136,8 @@ export default function SettingsScreen() {
                         </View>
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.sounds')}</Text>
                         <Feather name="volume-2" size={20} color={isNight ? "#fff" : "#000"} />
@@ -156,7 +159,8 @@ export default function SettingsScreen() {
                         />
                     </View>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.notifications')}</Text>
@@ -171,14 +175,15 @@ export default function SettingsScreen() {
                         />
                     </View>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        style={styles.button}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             playSound('pop');
@@ -188,7 +193,8 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} className='p-4 rounded-xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    className='p-4 rounded-xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.subscription')}</Text>
                         <Feather name="credit-card" size={20} color={isNight ? "#fff" : "#000"} />
@@ -207,18 +213,19 @@ export default function SettingsScreen() {
                         </Text>
                     )}
                     <TouchableOpacity activeOpacity={0.8}
-                        style={styles.button} onPress={handleBilling}>
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]} onPress={handleBilling}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.manageSubscription')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.contact')}</Text>
                         <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        style={styles.button}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
                         className='mb-3'
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -231,7 +238,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        style={styles.button}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             playSound('click');
@@ -242,14 +249,60 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>flun.app</Text>
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.followUs')}</Text>
+                        <Feather name="heart" size={20} color={isNight ? "#fff" : "#000"} />
+                    </View>
+                    <View className='flex flex-row justify-center gap-4'>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            className='items-center justify-center rounded-2xl'
+                            style={{ width: 56, height: 56, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                playSound('click');
+                                Linking.openURL('https://instagram.com/flun.app');
+                            }}
+                        >
+                            <FontAwesome name="instagram" size={28} color={isNight ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            className='items-center justify-center rounded-2xl'
+                            style={{ width: 56, height: 56, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                playSound('click');
+                                Linking.openURL('https://x.com/flunapp');
+                            }}
+                        >
+                            <FontAwesome name="twitter" size={28} color={isNight ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            className='items-center justify-center rounded-2xl'
+                            style={{ width: 56, height: 56, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                playSound('click');
+                                Linking.openURL('https://facebook.com/flunapp');
+                            }}
+                        >
+                            <FontAwesome name="facebook" size={28} color={isNight ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                    </View>
+                </BlurView>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{t('settings.deleteAccount')}</Text>
                         <Feather name="trash-2" size={20} color="#ef4444" />
                     </View>
                     <TouchableOpacity
                         activeOpacity={0.8}
-                        style={[styles.button, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(239, 68, 68, 0.15)' : 'rgba(239, 68, 68, 0.2)' }]}
                         onPress={() => {
                             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
                             playSound('click');
@@ -260,8 +313,9 @@ export default function SettingsScreen() {
                         <Text className="text-red-500 text-lg font-baloo">{t('settings.deleteAccountButton')}</Text>
                     </TouchableOpacity>
                 </BlurView>
-                <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
-                    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleLogout}>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
+                    <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
                     </TouchableOpacity>
                 </BlurView>
@@ -282,7 +336,7 @@ export default function SettingsScreen() {
             >
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
                     <BlurView
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl w-full max-w-lg overflow-hidden"
                         style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', maxHeight: '80%' }}
@@ -396,7 +450,7 @@ export default function SettingsScreen() {
             >
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
                     <BlurView
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl w-full max-w-lg overflow-hidden"
                         style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}

@@ -52,6 +52,8 @@ export type Story = {
   user?: User;
   coverUrl?: string;
   characters?: Character[]; // Relation many-to-many (max 2 personnages)
+  numberOfPages?: number;
+  language?: string;
 };
 
 // ==================== CHARACTER TYPES ====================

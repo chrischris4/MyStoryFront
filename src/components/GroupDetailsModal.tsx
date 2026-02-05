@@ -181,7 +181,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
         ]}
       >
         <BlurView
-          intensity={isNight ? 90 : 50}
+          intensity={90}
           tint={isNight ? 'dark' : 'light'}
           className="w-full p-6 rounded-3xl self-start overflow-hidden h-full z-50"
           style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
@@ -338,7 +338,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                     return (
                       <BlurView
                         key={member.id}
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? 'dark' : 'light'}
                         className="p-3 rounded-xl mb-2 overflow-hidden"
                         style={{ backgroundColor: isNight ? '#1e293b60' : '#87CEEB30' }}
@@ -430,7 +430,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                         activeOpacity={0.8}
                       >
                         <BlurView
-                          intensity={isNight ? 90 : 50}
+                          intensity={90}
                           tint={isNight ? 'dark' : 'light'}
                           className="p-3 rounded-xl mb-2 overflow-hidden"
                           style={{ backgroundColor: isNight ? '#1e293b60' : '#87CEEB30' }}

@@ -48,7 +48,7 @@ export default function SubscriptionModal({
                     onStartShouldSetResponder={() => true}
                 >
                     <BlurView
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl overflow-hidden"
                         style={{ backgroundColor: isNight ? '#1e293b90' : '#ffffff90' }}
@@ -91,7 +91,7 @@ export default function SubscriptionModal({
                                     className="rounded-2xl overflow-hidden"
                                 >
                                     <BlurView
-                                        intensity={30}
+                                        intensity={90}
                                         tint={isNight ? "dark" : "light"}
                                         className="p-4"
                                         style={{ backgroundColor: isNight ? '#334155' : '#e2e8f0' }}
@@ -116,7 +116,7 @@ export default function SubscriptionModal({
                                     className="rounded-2xl overflow-hidden"
                                 >
                                     <BlurView
-                                        intensity={30}
+                                        intensity={90}
                                         tint={isNight ? "dark" : "light"}
                                         className="p-4 relative"
                                         style={{ backgroundColor: isNight ? '#334155' : '#e2e8f0' }}

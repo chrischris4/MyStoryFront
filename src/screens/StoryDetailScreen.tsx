@@ -38,6 +38,20 @@ import { useUserStore } from '~/store/useUserStore';
 
 
 
+const LANGUAGE_FLAGS: Record<string, string> = {
+  french: '\u{1F1EB}\u{1F1F7}',
+  english: '\u{1F1EC}\u{1F1E7}',
+  spanish: '\u{1F1EA}\u{1F1F8}',
+  german: '\u{1F1E9}\u{1F1EA}',
+  italian: '\u{1F1EE}\u{1F1F9}',
+  portuguese: '\u{1F1F5}\u{1F1F9}',
+  danish: '\u{1F1E9}\u{1F1F0}',
+};
+
+const getLanguageFlag = (language: string): string => {
+  return LANGUAGE_FLAGS[language.toLowerCase()] || '\u{1F30D}';
+};
+
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -308,7 +322,7 @@ export default function StoryDetailScreen() {
         {isNight && <StarryBackground starCount={50} />}
         {/* Skeleton Cover */}
         <BlurView
-          intensity={isNight ? 90 : 50}
+          intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
             padding: 16, borderRadius: 12,
@@ -367,7 +381,7 @@ export default function StoryDetailScreen() {
         <View className='flex flex-row justify-between mt-4'>
           {/* Skeleton Share Button */}
           <BlurView
-            intensity={isNight ? 90 : 50}
+            intensity={90}
             tint={isNight ? "dark" : "light"}
             style={{
               padding: 16, borderRadius: 100,
@@ -388,7 +402,7 @@ export default function StoryDetailScreen() {
 
           {/* Skeleton Like Button */}
           <BlurView
-            intensity={isNight ? 90 : 50}
+            intensity={90}
             tint={isNight ? "dark" : "light"}
             style={{
               padding: 16, width: 56,
@@ -448,7 +462,7 @@ export default function StoryDetailScreen() {
 
         {/* Couverture */}
         <BlurView
-          intensity={isNight ? 90 : 50}
+          intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
             padding: 16, borderRadius: 12,
@@ -490,14 +504,15 @@ export default function StoryDetailScreen() {
           {/* Bouton de partage - visible uniquement si l'utilisateur est l'auteur */}
           {currentUser?.id === story.user?.id && (
             <BlurView
-              intensity={isNight ? 90 : 50}
+              intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
-                padding: 16, borderRadius: 100,
+                 borderRadius: 100,
                 height: 56,
+                paddingHorizontal: 12,
                 overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
               }}
-              className='flex items-center'
+              className='flex items-center justify-center'
             >
               <TouchableOpacity
                 onPress={() => {
@@ -536,9 +551,44 @@ export default function StoryDetailScreen() {
               </TouchableOpacity>
             </BlurView>
           )}
-
+          <View className='flex flex-row gap-2'>
           <BlurView
-            intensity={isNight ? 90 : 50}
+            intensity={90}
+            tint={isNight ? "dark" : "light"}
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 9999,
+              flexDirection: 'row',
+              gap: 2,
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            }}
+          >
+            <Text className={`text-base font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
+              {story?.numberOfPages ?? story?.pages?.length ?? '-'}
+            </Text>
+            <Feather name="book-open" size={14} className={isNight ? 'text-white' : 'text-slate-600'} />
+          </BlurView>
+          <BlurView
+            intensity={90}
+            tint={isNight ? "dark" : "light"}
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 9999,
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            }}
+          >
+            <Text style={{ fontSize: 22 }}>
+              {getLanguageFlag(story?.language || '')}
+            </Text>
+          </BlurView>
+          <BlurView
+            intensity={90}
             tint={isNight ? "dark" : "light"}
             style={{
               padding: 16, width: 56,
@@ -563,12 +613,13 @@ export default function StoryDetailScreen() {
               <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
             </TouchableOpacity>
           </BlurView>
+          </View>
         </View>
 
 
         {/* Button Story details  */}
         <BlurView
-          intensity={isNight ? 90 : 50}
+          intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
             borderRadius: 9999,
@@ -673,7 +724,7 @@ export default function StoryDetailScreen() {
         >
           <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
             <BlurView
-              intensity={isNight ? 90 : 50}
+              intensity={90}
               tint={isNight ? "dark" : "light"}
               className="rounded-3xl p-6 mx-4 w-11/12 min-h-[70vh] max-w-md overflow-hidden"
               style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', maxHeight: '80%' }}
@@ -690,7 +741,7 @@ export default function StoryDetailScreen() {
                   className="mb-4"
                 >
                   <BlurView
-                    intensity={isNight ? 90 : 50}
+                    intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-green-500' : ''}`}
                     style={{ backgroundColor: isShared ? (isNight ? '#22c55e50' : '#22c55e30') : (isNight ? '#3b82f690' : '#3b82f630') }}
@@ -719,7 +770,7 @@ export default function StoryDetailScreen() {
                   <ScrollView className="flex-1" showsVerticalScrollIndicator={true}>
                     {myGroups.length === 0 ? (
                       <BlurView
-                        intensity={isNight ? 90 : 50}
+                        intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="p-4 rounded-xl overflow-hidden items-center"
                         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -741,7 +792,7 @@ export default function StoryDetailScreen() {
                             className="mb-2"
                           >
                             <BlurView
-                              intensity={isNight ? 90 : 50}
+                              intensity={90}
                               tint={isNight ? "dark" : "light"}
                               className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
                               style={{ backgroundColor: isNight ? '#1e293b90' : '' }}

@@ -110,7 +110,7 @@ export default function HomeScreen() {
             className="absolute right-0 top-0 z-10"
           >
             <BlurView
-              intensity={isNight ? 90 : 50}
+              intensity={90}
               tint={isNight ? 'dark' : 'light'}
               className="p-3 rounded-full overflow-hidden"
               style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -163,7 +163,7 @@ export default function HomeScreen() {
           {profile.isPremium && (
             <View>
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="py-2 px-4 rounded-2xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
@@ -176,7 +176,7 @@ export default function HomeScreen() {
           )}
           <View>
             <BlurView
-              intensity={isNight ? 90 : 50}
+              intensity={90}
               tint={isNight ? "dark" : "light"}
               className="py-2 px-4 rounded-2xl overflow-hidden"
               style={{ backgroundColor: isNight ? '#1e293b90' : '' }}

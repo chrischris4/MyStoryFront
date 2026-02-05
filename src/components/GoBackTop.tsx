@@ -48,7 +48,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
         activeOpacity={0.8}
       >
         <BlurView
-          intensity={80}
+          intensity={90}
           tint="light"
           style={{
             width: '100%',

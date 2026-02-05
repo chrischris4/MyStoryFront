@@ -10,7 +10,8 @@ type StyledButtonProps = {
 
 const StyledButton = ({ title, icon, onPress }: StyledButtonProps) => (
   <TouchableOpacity onPress={onPress} className="w-1/2 flex-1 rounded-3xl overflow-hidden">
-    <BlurView intensity={30} tint="light" className="p-4 flex-col">
+    <BlurView intensity={90}
+      tint="light" className="p-4 flex-col">
       <Text className="text-slate-800 font-bold text-start mb-4">{title}</Text>
       {icon && <View className="self-end ">{icon}</View>}
     </BlurView>

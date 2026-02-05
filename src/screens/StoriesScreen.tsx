@@ -99,15 +99,6 @@ export default function StoriesScreen() {
         />
         <StoryFolder
           isNight={isNight}
-          title={t('stories.recent')}
-          icon={<Feather name="clock" size={24} color="#fff" />}
-          storyType="RECENT"
-          description={t('stories.recentDesc')}
-          stories={recentStories}
-          isLoading={isLoadingStories}
-        />
-        <StoryFolder
-          isNight={isNight}
           title={t('stories.favorite')}
           icon={<Feather name="heart" size={24} color="#fff" />}
           storyType="FAVORITE"

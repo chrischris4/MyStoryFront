@@ -30,7 +30,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10`}
     >
       <BlurView
-        intensity={isNight ? 90 : 50}
+        intensity={90}
         tint={isNight ? "dark" : "light"}
         style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
         className="p-4 flex-col justify-between items-center"

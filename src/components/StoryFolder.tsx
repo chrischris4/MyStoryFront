@@ -202,7 +202,7 @@ export default function StoryFolder({
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
                 <BlurView
-                    intensity={isNight ? 90 : 50}
+                    intensity={90}
                     tint={isNight ? "dark" : "light"}
                     style={{
                         flex: 1, padding: 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : ''
@@ -410,6 +410,7 @@ export default function StoryFolder({
                                                         activeOpacity={0.8}
                                                     >
                                                         <BlurView
+                                                            intensity={90}
                                                             tint="light"
                                                             className='flex px-4 flex-row gap-3 p-2'
                                                         >

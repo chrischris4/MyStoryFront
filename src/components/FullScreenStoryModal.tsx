@@ -392,7 +392,7 @@ export default function FullScreenStoryModal({
                     }}
                   >
                     <BlurView
-                      intensity={isNight ? 90 : 50}
+                      intensity={90}
                       tint={isNight ? "dark" : "light"}
                       style={{
                         borderRadius: 16,
@@ -497,7 +497,7 @@ export default function FullScreenStoryModal({
                     }}
                   >
                     <BlurView
-                      intensity={isNight ? 90 : 50}
+                      intensity={90}
                       tint={isNight ? "dark" : "light"}
                       style={{
                         borderRadius: 16,
@@ -587,7 +587,7 @@ export default function FullScreenStoryModal({
                     }}
                   >
                     <BlurView
-                      intensity={isNight ? 90 : 50}
+                      intensity={90}
                       tint={isNight ? "dark" : "light"}
                       style={{
                         borderRadius: 16,

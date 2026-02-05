@@ -98,7 +98,7 @@ const STORY_STYLES: StoryStyle[] = [
 const createStorySchema = (t: (key: string) => string) => Yup.object().shape({
   title: Yup.string()
     .min(3, t('createStory.validation.titleMin'))
-    .max(100, t('createStory.validation.titleMax'))
+    .max(40, t('createStory.validation.titleMax'))
     .required(t('createStory.validation.titleRequired')),
   prompt: Yup.string()
     .min(10, t('createStory.validation.promptMin'))
@@ -446,7 +446,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -458,10 +458,14 @@ export default function CreateStoryScreen() {
                   value={formik.values.title}
                   onChangeText={formik.handleChange('title')}
                   onBlur={formik.handleBlur('title')}
+                  maxLength={40}
                 />
-                {formik.touched.title && formik.errors.title && (
-                  <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
-                )}
+                <View className='flex flex-row gap-2'>
+                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm mt-1`}>{formik.values.title.length}/40</Text>
+                  {formik.touched.title && formik.errors.title && (
+                    <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
+                  )}
+                </View>
               </BlurView>
             </View>
 
@@ -489,7 +493,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -525,7 +529,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -654,7 +658,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -691,7 +695,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -734,7 +738,7 @@ export default function CreateStoryScreen() {
               }}
             >
               <BlurView
-                intensity={isNight ? 90 : 50}
+                intensity={90}
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
               >
@@ -756,22 +760,22 @@ export default function CreateStoryScreen() {
                   <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>{t('createStory.missingInfo')}</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.title}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.title}</Text>
                     )}
                     {formik.touched.prompt && formik.errors.prompt && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.prompt}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.prompt}</Text>
                     )}
                     {formik.touched.numPages && formik.errors.numPages && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.numPages}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.numPages}</Text>
                     )}
                     {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.selectedStyle}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.selectedStyle}</Text>
                     )}
                     {formik.touched.language && formik.errors.language && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.language}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.language}</Text>
                     )}
                     {formik.touched.ageGroup && formik.errors.ageGroup && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.ageGroup}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.ageGroup}</Text>
                     )}
                   </View>
                 </View>
