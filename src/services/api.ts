@@ -289,6 +289,9 @@ export class ApiService {
   async shareStoryWithGroup(groupId: number, storyId: number) {
     return this.post(`/group/${groupId}/share`, { storyId });
   }
+  async unshareStoryFromGroup(groupId: number, storyId: number) {
+    return this.delete(`/group/${groupId}/share`, { storyId });
+  }
   async acceptInvitation(invitationId: number) {
     return this.post(`/group/invitations/${invitationId}/accept`);
   }

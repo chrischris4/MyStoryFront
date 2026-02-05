@@ -610,7 +610,7 @@ export default function FullScreenStoryModal({
                                 alignItems: 'center',
                               }}
                             >
-                              <Text style={{ fontSize: 36 }}>🚫</Text>
+                              <Feather name="x-circle" size={36} color="#999" />
                               <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.frameNone')}</Text>
                             </TouchableOpacity>
 
@@ -710,7 +710,7 @@ export default function FullScreenStoryModal({
                                   alignItems: 'center',
                                 }}
                               >
-                                <Text style={{ fontSize: 36 }}>🚫</Text>
+                                <Feather name="x-circle" size={36} color="#999" />
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectNone')}</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
@@ -722,7 +722,22 @@ export default function FullScreenStoryModal({
                                   alignItems: 'center',
                                 }}
                               >
-                                <Text style={{ fontSize: 36 }}>⭐</Text>
+                                <View style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#1a1a2e',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  overflow: 'hidden',
+                                }}>
+                                  {/* Mini gold stars */}
+                                  <View style={{ position: 'absolute', top: 6, left: 8, width: 4, height: 4, backgroundColor: '#FFD700', borderRadius: 2 }} />
+                                  <View style={{ position: 'absolute', top: 14, right: 7, width: 5, height: 5, backgroundColor: '#FFD700', borderRadius: 2.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 6, left: 14, width: 3, height: 3, backgroundColor: '#FFD700', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', top: 10, left: 16, width: 4, height: 4, backgroundColor: '#FFC107', borderRadius: 2 }} />
+                                  <View style={{ position: 'absolute', bottom: 10, right: 10, width: 3, height: 3, backgroundColor: '#FFD700', borderRadius: 1.5 }} />
+                                </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectStars')}</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
@@ -734,7 +749,22 @@ export default function FullScreenStoryModal({
                                   alignItems: 'center',
                                 }}
                               >
-                                <Text style={{ fontSize: 36 }}>🧚</Text>
+                                <View style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#1a1a2e',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  overflow: 'hidden',
+                                }}>
+                                  {/* Mini pink fairy particles */}
+                                  <View style={{ position: 'absolute', top: 5, left: 10, width: 4, height: 4, backgroundColor: '#FF69B4', borderRadius: 2, opacity: 0.9 }} />
+                                  <View style={{ position: 'absolute', top: 12, right: 8, width: 3, height: 3, backgroundColor: '#FF69B4', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 8, left: 7, width: 3, height: 3, backgroundColor: '#FFB6C1', borderRadius: 1.5 }} />
+                                  <View style={{ position: 'absolute', bottom: 5, right: 10, width: 4, height: 4, backgroundColor: '#FF69B4', borderRadius: 2 }} />
+                                  <View style={{ position: 'absolute', top: 16, left: 16, width: 3, height: 3, backgroundColor: '#FFB6C1', borderRadius: 1.5, opacity: 0.7 }} />
+                                </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectFairy')}</Text>
                               </TouchableOpacity>
                               <TouchableOpacity
@@ -746,7 +776,21 @@ export default function FullScreenStoryModal({
                                   alignItems: 'center',
                                 }}
                               >
-                                <Text style={{ fontSize: 36 }}>✨</Text>
+                                <View style={{
+                                  width: 36,
+                                  height: 36,
+                                  borderRadius: 18,
+                                  backgroundColor: '#1a1a2e',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  overflow: 'hidden',
+                                }}>
+                                  {/* Mini magic purple/blue glow */}
+                                  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 12, backgroundColor: '#9B59B6', opacity: 0.5, borderRadius: 18 }} />
+                                  <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 12, backgroundColor: '#9B59B6', opacity: 0.4, borderRadius: 18 }} />
+                                  <View style={{ position: 'absolute', top: 0, left: 0, bottom: 0, width: 12, backgroundColor: '#3498DB', opacity: 0.4, borderRadius: 18 }} />
+                                  <View style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 12, backgroundColor: '#3498DB', opacity: 0.4, borderRadius: 18 }} />
+                                </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectMagic')}</Text>
                               </TouchableOpacity>
                             </View>

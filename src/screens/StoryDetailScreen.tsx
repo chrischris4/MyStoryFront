@@ -23,6 +23,7 @@ import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useGroups } from '~/hooks/useGroups';
 import { useShareStoryToGroup } from '~/hooks/useShareStoryToGroup';
+import { useUnshareStoryFromGroup } from '~/hooks/useUnshareStoryFromGroup';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
 import { useDeleteStory } from '~/hooks/useDeleteStory';
 import Toast from 'react-native-toast-message';
@@ -73,6 +74,7 @@ export default function StoryDetailScreen() {
   const { data: myGroups = [] } = useGroups();
   const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
   const shareStoryMutation = useShareStoryToGroup();
+  const unshareStoryMutation = useUnshareStoryFromGroup();
   const deleteStoryMutation = useDeleteStory();
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
@@ -125,9 +127,10 @@ export default function StoryDetailScreen() {
       });
 
       if (response.ok) {
-        const updatedStory = await response.json();
-        setIsShared(updatedStory.isShared);
-        // Invalider les queries pour mettre à jour les autres écrans
+        setIsShared(true);
+        if (story) {
+          setStory({ ...story, isShared: true });
+        }
         queryClient.invalidateQueries({ queryKey: ['stories'] });
         queryClient.invalidateQueries({ queryKey: ['communityStories'] });
         Toast.show({
@@ -165,11 +168,11 @@ export default function StoryDetailScreen() {
   };
 
   const handleShareToGroups = async () => {
-    // Filtrer pour ne partager qu'aux nouveaux groupes (pas déjà partagés)
     const sharedGroupIds = sharedGroups.map((g: any) => g.id);
     const newGroupsToShare = selectedGroups.filter(id => !sharedGroupIds.includes(id));
+    const groupsToUnshare = sharedGroupIds.filter((id: number) => !selectedGroups.includes(id));
 
-    if (newGroupsToShare.length === 0) {
+    if (newGroupsToShare.length === 0 && groupsToUnshare.length === 0) {
       Toast.show({
         type: 'info',
         text1: t('common.information'),
@@ -182,21 +185,29 @@ export default function StoryDetailScreen() {
     playSound('click');
 
     try {
-      // Partager l'histoire uniquement aux nouveaux groupes
-      await Promise.all(
-        newGroupsToShare.map(groupId =>
+      await Promise.all([
+        ...newGroupsToShare.map(groupId =>
           shareStoryMutation.mutateAsync({
             groupId,
             storyId: Number(storyId),
           })
-        )
-      );
+        ),
+        ...groupsToUnshare.map((groupId: number) =>
+          unshareStoryMutation.mutateAsync({
+            groupId,
+            storyId: Number(storyId),
+          })
+        ),
+      ]);
 
       playSound('success');
+      const parts = [];
+      if (newGroupsToShare.length > 0) parts.push(t('storyDetail.storySharedToGroups', { count: newGroupsToShare.length }));
+      if (groupsToUnshare.length > 0) parts.push(t('storyDetail.storyUnsharedFromGroups', { count: groupsToUnshare.length }));
       Toast.show({
         type: 'success',
         text1: t('common.success'),
-        text2: t('storyDetail.storySharedToGroups', { count: newGroupsToShare.length }),
+        text2: parts.join(' '),
       });
       setSelectedGroups([]); // Réinitialiser la sélection après le partage
       setShowShareModal(false);
@@ -774,17 +785,24 @@ export default function StoryDetailScreen() {
 
               {/* Boutons d'action - en bas */}
               <View className="flex-col gap-3 pt-4">
-                {selectedGroups.length > 0 && (() => {
+                {(() => {
                   const sharedGroupIds = sharedGroups.map((g: any) => g.id);
                   const newGroupsCount = selectedGroups.filter(id => !sharedGroupIds.includes(id)).length;
+                  const removedGroupsCount = sharedGroupIds.filter((id: number) => !selectedGroups.includes(id)).length;
+                  const hasChanges = newGroupsCount > 0 || removedGroupsCount > 0;
 
-                  return newGroupsCount > 0 && (
+                  return hasChanges && (
                     <TouchableOpacity
                       onPress={handleShareToGroups}
-                      className="bg-blue-600 p-4 rounded-xl items-center"
+                      className={`${removedGroupsCount > 0 && newGroupsCount === 0 ? 'bg-red-500' : 'bg-blue-600'} p-4 rounded-xl items-center`}
                     >
                       <Text className="text-white font-baloo-semibold text-lg">
-                        {t('storyDetail.shareToNewGroups', { count: newGroupsCount })}
+                        {newGroupsCount > 0 && removedGroupsCount > 0
+                          ? t('storyDetail.updateGroupSharing')
+                          : newGroupsCount > 0
+                            ? t('storyDetail.shareToNewGroups', { count: newGroupsCount })
+                            : t('storyDetail.removeFromGroups', { count: removedGroupsCount })
+                        }
                       </Text>
                     </TouchableOpacity>
                   );
