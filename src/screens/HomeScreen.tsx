@@ -76,7 +76,7 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 relative">
       <View
-        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-30'
+        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {/* 🌤️ Background animé */}
@@ -89,6 +89,7 @@ export default function HomeScreen() {
             position: 'absolute',
             bottom: 10,
             alignSelf: 'center',
+            zIndex: 20,
           }}
         >
           <LottieView

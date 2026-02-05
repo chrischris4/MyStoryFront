@@ -14,6 +14,8 @@ type ConfirmationModalProps = {
   styleEmoji: string;
   languageName: string;
   languageFlag: string;
+  ageGroupName?: string;
+  ageGroupEmoji?: string;
   characters?: Character[];
   onConfirm: () => void;
   onCancel: () => void;
@@ -28,6 +30,8 @@ export default function ConfirmationModal({
   styleEmoji,
   languageName,
   languageFlag,
+  ageGroupName,
+  ageGroupEmoji,
   characters = [],
   onConfirm,
   onCancel,
@@ -133,16 +137,16 @@ export default function ConfirmationModal({
                 </View>
               )}
 
-              {/* Style, Langue et Pages */}
+              {/* Style et Langue */}
               <View className="flex-row gap-3 mb-4">
                 {/* Style */}
                 <View className="flex-1 w-1/2">
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
                     {t('storyCreation.style')}
                   </Text>
-                  <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
-                    <Text className="text-2xl mr-2">{styleEmoji}</Text>
-                    <Text className="text-gray-800 font-semibold flex-1">
+                  <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
+                    <Text className="text-2xl h-9"></Text>
+                    <Text className="text-gray-800 font-semibold">
                       {styleName}
                     </Text>
                   </View>
@@ -153,27 +157,43 @@ export default function ConfirmationModal({
                   <Text className="text-gray-500 text-sm font-semibold mb-1">
                     {t('storyCreation.language')}
                   </Text>
-                  <View className="bg-gray-100 rounded-xl p-4 flex-row items-center">
+                  <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
                     <Text className="text-2xl mr-2">{languageFlag}</Text>
-                    <Text className="text-gray-800 font-semibold flex-1">
+                    <Text className="text-gray-800 font-semibold">
                       {languageName}
                     </Text>
                   </View>
                 </View>
               </View>
+              <View className="flex-row gap-3 mb-4">
 
-              {/* Nombre de pages */}
-              <View className="mb-4">
-                <Text className="text-gray-500 text-sm font-semibold mb-1">
-                  {t('storyCreation.numPages')}
-                </Text>
-                <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
-                  <Text className="text-gray-800 text-2xl font-bold">
-                    {numPages}
+                {/* Tranche d'âge */}
+                {ageGroupName && (
+                <View className="flex-1 w-1/2">
+                    <Text className="text-gray-500 text-sm font-semibold mb-1">
+                      {t('storyCreation.ageGroup')}
+                    </Text>
+                    <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
+                      <Text className="text-2xl h-9"></Text>
+                      <Text className="text-gray-800 font-semibold">
+                        {ageGroupName}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* Nombre de pages */}
+                <View className="flex-1">
+                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                    {t('storyCreation.numPages')}
                   </Text>
+                  <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
+                    <Text className="text-gray-800 text-2xl font-bold">
+                      {numPages}
+                    </Text>
+                  </View>
                 </View>
               </View>
-
               {/* Info coût */}
               <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex-row items-start">
                 <Text className="text-blue-600 text-xl mr-3">ℹ️</Text>

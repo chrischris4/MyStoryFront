@@ -94,7 +94,7 @@ export default function SettingsScreen() {
                             </View>
                         </View>
                     )}
-                    <TouchableOpacity style={styles.button} onPress={() => {
+                    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         playSound('pop');
                         setIsEditProfilModalVisible(true);
@@ -113,6 +113,7 @@ export default function SettingsScreen() {
                         )}
                     </View>
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                             playSound('toggle');
@@ -176,6 +177,7 @@ export default function SettingsScreen() {
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={styles.button}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -204,7 +206,8 @@ export default function SettingsScreen() {
                             {t('settings.noSubscription')}
                         </Text>
                     )}
-                    <TouchableOpacity style={styles.button} onPress={handleBilling}>
+                    <TouchableOpacity activeOpacity={0.8}
+                        style={styles.button} onPress={handleBilling}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.manageSubscription')}</Text>
                     </TouchableOpacity>
                 </BlurView>
@@ -214,6 +217,7 @@ export default function SettingsScreen() {
                         <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
                     </View>
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={styles.button}
                         className='mb-3'
                         onPress={() => {
@@ -226,6 +230,7 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>support@flun.app</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={styles.button}
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -243,6 +248,7 @@ export default function SettingsScreen() {
                         <Feather name="trash-2" size={20} color="#ef4444" />
                     </View>
                     <TouchableOpacity
+                        activeOpacity={0.8}
                         style={[styles.button, { backgroundColor: 'rgba(239, 68, 68, 0.2)' }]}
                         onPress={() => {
                             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -255,7 +261,7 @@ export default function SettingsScreen() {
                     </TouchableOpacity>
                 </BlurView>
                 <BlurView intensity={isNight ? 90 : 50} tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
-                    <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                    <TouchableOpacity activeOpacity={0.8} style={styles.button} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
                     </TouchableOpacity>
                 </BlurView>
@@ -368,6 +374,7 @@ export default function SettingsScreen() {
                         {/* Actions */}
                         <View className="p-4 pt-0">
                             <TouchableOpacity
+                                activeOpacity={0.8}
                                 className={`${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
                                 onPress={() => setIsHistoryModalVisible(false)}
                             >
@@ -415,6 +422,7 @@ export default function SettingsScreen() {
                         {/* Actions */}
                         <View className="p-4 pt-0 flex-row gap-3">
                             <TouchableOpacity
+                                activeOpacity={0.8}
                                 className={`flex-1 ${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
                                 onPress={() => {
                                     playSound('click');
@@ -426,6 +434,7 @@ export default function SettingsScreen() {
                                 </Text>
                             </TouchableOpacity>
                             <TouchableOpacity
+                                activeOpacity={0.8}
                                 className="flex-1 bg-red-500 px-6 py-4 rounded-xl items-center"
                                 disabled={deleteAccountMutation.isPending}
                                 onPress={async () => {

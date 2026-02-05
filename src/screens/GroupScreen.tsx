@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator,
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,7 +24,6 @@ import { useJoinGroup } from '~/hooks/useJoinGroup';
 import GroupCard from '~/components/GroupCard';
 import GroupDetailsModal from '~/components/GroupDetailsModal';
 import Toast from 'react-native-toast-message';
-import StarryBackground from '~/components/StarryBackground';
 import LottieView from 'lottie-react-native';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
@@ -140,6 +138,7 @@ export default function GroupScreen() {
 
   const renderTabButton = (tab: TabType, label: string, icon: string) => (
     <TouchableOpacity
+      activeOpacity={0.8}
       onPress={() => setActiveTab(tab)}
       className="flex-1"
     >
@@ -212,6 +211,7 @@ export default function GroupScreen() {
             </View>
           </View>
           <TouchableOpacity
+            activeOpacity={0.8}
             onPress={() => handleJoinGroup(group.id)}
             className="ml-3"
             disabled={joinGroupMutation.isPending}
@@ -263,6 +263,7 @@ export default function GroupScreen() {
           {isPending && (
             <View className="flex-row gap-2 ml-3">
               <TouchableOpacity
+                activeOpacity={0.8}
                 onPress={() => handleAcceptInvitation(invitation.id)}
                 disabled={acceptInvitationMutation.isPending}
               >
@@ -285,6 +286,7 @@ export default function GroupScreen() {
                 </BlurView>
               </TouchableOpacity>
               <TouchableOpacity
+                activeOpacity={0.8}
                 onPress={() => handleRejectInvitation(invitation.id)}
                 disabled={declineInvitationMutation.isPending}
               >
@@ -334,6 +336,7 @@ export default function GroupScreen() {
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       >
         <TouchableOpacity
+          activeOpacity={0.8}
           onPress={() => navigation.goBack()}
           className=""
         >
@@ -362,6 +365,7 @@ export default function GroupScreen() {
             {activeTab === 'myGroups' && (
               <View className='mb-24'>
                 <TouchableOpacity
+                  activeOpacity={0.8}
                   onPress={() => setShowCreateModal(true)}
                   className="mb-4"
                 >
@@ -570,6 +574,7 @@ export default function GroupScreen() {
 
                       <View className="flex-row gap-3">
                         <TouchableOpacity
+                          activeOpacity={0.8}
                           onPress={() => setShowCreateModal(false)}
                           className="flex-1"
                         >
@@ -581,6 +586,7 @@ export default function GroupScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
+                          activeOpacity={0.8}
                           onPress={() => handleSubmit()}
                           className="flex-1"
                           disabled={createGroupMutation.isPending}

@@ -169,11 +169,11 @@ export default function SharedStoriesScreen() {
         />
         {!isPremium && showBubble && (
           <Animated.View
-            className="absolute bottom-60 right-24 z-40"
+            className="absolute bottom-60 right-20 z-10"
             style={{ opacity: bubbleOpacity }}
           >
             <View
-              className="px-4 py-3 flex w-72 rounded-2xl bg-white text-black"
+              className="px-4 py-3 flex w-80 rounded-2xl bg-white text-black"
             >
               <Text className="font-baloo-medium text-center">
                 {t('sharedStories.storeBubble')}

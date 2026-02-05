@@ -257,7 +257,7 @@ export default function FullScreenStoryModal({
                       className={` ${isRotated ? 'top-10 px-4 py-2' : 'top-4 px-2 py-1'} absolute self-center bg-white/90 rounded-xl`}
                     >
                       <Text
-                        className={` ${isRotated ? 'text-3xl' : 'text-lg'} font-baloo-bold`}
+                        className={` ${isRotated ? 'text-3xl mt-3' : 'text-lg'} font-baloo-bold`}
                       >
                         {title}
                       </Text>

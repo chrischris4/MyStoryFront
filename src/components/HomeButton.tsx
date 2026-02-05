@@ -25,6 +25,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
 
   return (
     <TouchableOpacity
+      activeOpacity={0.8}
       onPress={handlePress}
       className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10`}
     >

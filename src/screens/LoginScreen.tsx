@@ -80,23 +80,6 @@ export default function LoginScreen() {
     }
   };
 
-  const handleClearStorage = async () => {
-    try {
-      await AsyncStorage.clear();
-      Toast.show({
-        type: 'success',
-        text1: t('common.success'),
-        text2: t('auth.storageCleared'),
-      });
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.storageClearError'),
-      });
-    }
-  };
-
   const handleOAuthSuccess = async () => {
     // Récupérer les infos utilisateur pour le toast
     try {
@@ -137,14 +120,6 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-      {/* Bouton Debug - Clear Storage */}
-      <TouchableOpacity
-        onPress={handleClearStorage}
-        className="absolute top-12 right-4 bg-red-500 px-4 py-2 rounded-lg z-50"
-      >
-        <Text className="text-white font-baloo-bold text-xs">{t('auth.clearStorage')}</Text>
-      </TouchableOpacity>
-
       <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[60%]'>
           <Text className="font-baloo-bold text-2xl mb-4 text-center text-gray-800">{t('auth.login')}</Text>
@@ -183,6 +158,7 @@ export default function LoginScreen() {
                       onChangeText={handleChange('password')}
                     />
                     <TouchableOpacity
+                      activeOpacity={0.8}
                       className="absolute right-4 top-4"
                       onPress={() => setShowPassword(!showPassword)}
                     >
@@ -194,11 +170,12 @@ export default function LoginScreen() {
                   )}
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')} className="self-end mb-4">
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('ForgotPassword')} className="self-end mb-4">
                   <Text className="text-[#38b6ff] font-baloo text-sm">{t('auth.forgotPassword')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
+                  activeOpacity={0.8}
                   className="bg-[#38b6ff] rounded-xl h-14 flex justify-center items-center w-full mb-4"
                   onPress={() => {
                     setTouched({ email: true, password: true });
@@ -217,7 +194,7 @@ export default function LoginScreen() {
                   )}
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Register')}>
                   <Text className="text-[#38b6ff] text-center font-baloo">{t('auth.noAccount')}</Text>
                 </TouchableOpacity>
 
@@ -231,6 +208,7 @@ export default function LoginScreen() {
                 {/* Boutons OAuth */}
                 <View className="flex-row gap-3 justify-center">
                   <TouchableOpacity
+                    activeOpacity={0.8}
                     className="flex-1 flex-row items-center justify-center bg-white border border-gray-300 rounded-xl h-12 gap-2"
                     onPress={handleGoogleLogin}
                     disabled={isOAuthLoading}
@@ -246,6 +224,7 @@ export default function LoginScreen() {
                   </TouchableOpacity>
 
                   <TouchableOpacity
+                    activeOpacity={0.8}
                     className="flex-1 flex-row items-center justify-center bg-[#1877F2] rounded-xl h-12 gap-2"
                     onPress={handleFacebookLogin}
                     disabled={isOAuthLoading}

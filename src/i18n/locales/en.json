@@ -174,7 +174,11 @@
     "sharedStories": "Shared stories",
     "tokensPerDay": "{{count}} Token per day",
     "tokensPerDay_plural": "{{count}} Tokens per day",
+    "charactersAllowed": "Create up to 5 characters",
     "cancelAnytime": "Cancel anytime",
+    "explorerCatchphrase": "Perfect for discovering community stories",
+    "adventurerCatchphrase": "Perfect for those who create stories regularly",
+    "legendCatchphrase": "Perfect for enthusiasts who want to unlock everything",
     "tokensPurchased": "Tokens purchased!",
     "tokensReceived": "+{{count}} tokens added to your account",
     "subscriptionActivated": "Subscription activated!",
@@ -230,6 +234,7 @@
     "character": "Character",
     "style": "Style",
     "language": "Language",
+    "ageGroup": "Age group",
     "numPages": "Number of pages",
     "importantInfo": "Important information",
     "costInfo": "This creation will use 1 Story Coin. Once created, the story will be available in your library.",
@@ -365,12 +370,32 @@
     "subtitle": "Here, everything becomes possible!",
     "getStoryCoins": "Get Story Coins",
     "storyTitle": "Story title",
-    "storyTitlePlaceholder": "Ex: Pacha and the magic forest",
+    "storyTitlePlaceholder": "Ex: Mimi and the magic forest",
     "storySummary": "Story summary",
     "storySummaryDesc": "Describe your story as best you can - the characters, the setting. The more details you provide, the more the story will match your expectations!",
     "storySummaryPlaceholder": "Ex: A magical adventure in the mountains where a young boy discovers a secret world...",
     "storyStyle": "Story style",
     "storyLanguage": "Story language",
+    "ageGroup": "Age group",
+    "ageGroupDesc": "Choose the child's age to adapt the vocabulary and sentence length of the story.",
+    "ageGroups": {
+      "TODDLER": {
+        "name": "2-3 years",
+        "desc": "Simple words, very short sentences"
+      },
+      "PRESCHOOL": {
+        "name": "4-5 years",
+        "desc": "Basic vocabulary, short sentences"
+      },
+      "EARLY_SCHOOL": {
+        "name": "6-7 years",
+        "desc": "Enriched vocabulary, medium sentences"
+      },
+      "SCHOOL": {
+        "name": "8+ years",
+        "desc": "Varied vocabulary, elaborate sentences"
+      }
+    },
     "missingInfo": "Missing information",
     "createMyStory": "Create my story!",
     "creationError": "Error creating the story.",
@@ -393,7 +418,8 @@
       "pagesMax": "Maximum 16 pages",
       "pagesRequired": "Number of pages is required",
       "styleRequired": "Style is required",
-      "languageRequired": "Language is required"
+      "languageRequired": "Language is required",
+      "ageGroupRequired": "Age group is required"
     }
   },
   "stories": {

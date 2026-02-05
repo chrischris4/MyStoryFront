@@ -17,10 +17,10 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
 
   // Tableau des boutons avec leur écran et icône
   const navItems = [
-    { screen: 'Home', icon: 'home' },
     { screen: 'Stories', icon: 'book' },
-    { screen: 'CreateStory', icon: 'plus-circle' },
     { screen: 'SharedStories', icon: 'globe' },
+    { screen: 'Home', icon: 'home' },
+    { screen: 'CreateStory', icon: 'plus-circle' },
     { screen: 'SettingsScreen', icon: 'settings' },
   ];
 

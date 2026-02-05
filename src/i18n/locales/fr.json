@@ -174,7 +174,11 @@
     "sharedStories": "Histoires partagées",
     "tokensPerDay": "{{count}} Jeton par jour",
     "tokensPerDay_plural": "{{count}} Jetons par jour",
+    "charactersAllowed": "Créer jusqu'à 5 personnages",
     "cancelAnytime": "Annuler à tout moment",
+    "explorerCatchphrase": "Idéal pour découvrir les histoires de la communauté",
+    "adventurerCatchphrase": "Idéal pour ceux qui créent des histoires régulièrement",
+    "legendCatchphrase": "Idéal pour les passionnés qui veulent tout débloquer",
     "tokensPurchased": "Jetons achetés !",
     "tokensReceived": "+{{count}} jetons ajoutés à ton compte",
     "subscriptionActivated": "Abonnement activé !",
@@ -230,6 +234,7 @@
     "character": "Personnage",
     "style": "Style",
     "language": "Langue",
+    "ageGroup": "Tranche d'âge",
     "numPages": "Nombre de pages",
     "importantInfo": "Information importante",
     "costInfo": "Cette création utilisera 1 Story Coin. Une fois créée, l'histoire sera disponible dans votre bibliothèque.",
@@ -352,25 +357,45 @@
   },
   "sharedStories": {
     "title": "Histoires partagées",
-    "premiumDescription": "Découvrez les histoires partagées par la communauté !",
-    "nonPremiumDescription": "Vous avez besoin d'un plan supérieur pour voir les histoires partagées",
+    "premiumDescription": "Découvre les histoires partagées par la communauté !",
+    "nonPremiumDescription": "Tu as besoin d'un abonnement pour voir les histoires partagées",
     "allStories": "Toutes les histoires",
     "allStoriesDesc": "Il y en a pour tout le monde !",
     "mostLiked": "Les plus appréciées",
     "mostLikedDesc": "Les 10 histoires les plus populaires",
-    "storeBubble": "Hey ! Viens faire un tour à la boutique, j'ai des abonnements !"
+    "storeBubble": "Hey ! Viens faire un tour à la boutique si tu as besoin d'un abonnement !"
   },
   "createStory": {
     "title": "Création d'histoire",
     "subtitle": "Ici, tout devient possible !",
     "getStoryCoins": "Obtenir des Story Coins",
     "storyTitle": "Titre de l'histoire",
-    "storyTitlePlaceholder": "Ex: Pacha et la forêt magique",
+    "storyTitlePlaceholder": "Ex: Mimi et la forêt magique",
     "storySummary": "Résumé de l'histoire",
     "storySummaryDesc": "Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apporteras de détails à ton résumé et plus l'histoire correspondra à tes attentes !",
     "storySummaryPlaceholder": "Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret...",
     "storyStyle": "Style de l'histoire",
     "storyLanguage": "Langue de l'histoire",
+    "ageGroup": "Tranche d'âge",
+    "ageGroupDesc": "Choisissez l'âge de l'enfant pour adapter le vocabulaire et la longueur des phrases de l'histoire.",
+    "ageGroups": {
+      "TODDLER": {
+        "name": "2-3 ans",
+        "desc": "Mots simples, phrases très courtes"
+      },
+      "PRESCHOOL": {
+        "name": "4-5 ans",
+        "desc": "Vocabulaire basique, phrases courtes"
+      },
+      "EARLY_SCHOOL": {
+        "name": "6-7 ans",
+        "desc": "Vocabulaire enrichi, phrases moyennes"
+      },
+      "SCHOOL": {
+        "name": "8+ ans",
+        "desc": "Vocabulaire varié, phrases élaborées"
+      }
+    },
     "missingInfo": "Informations manquantes",
     "createMyStory": "Créer mon histoire !",
     "creationError": "Erreur lors de la création de l'histoire.",
@@ -393,7 +418,8 @@
       "pagesMax": "Maximum 16 pages",
       "pagesRequired": "Le nombre de pages est requis",
       "styleRequired": "Le style est requis",
-      "languageRequired": "La langue est requise"
+      "languageRequired": "La langue est requise",
+      "ageGroupRequired": "La tranche d'âge est requise"
     }
   },
   "stories": {

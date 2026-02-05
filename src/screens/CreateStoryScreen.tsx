@@ -4,6 +4,7 @@ import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
 import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import StoryModal from '~/components/StoryModal';
 import ConfirmationModal from '~/components/ConfirmationModal';
 import { Feather } from '@expo/vector-icons';
@@ -36,7 +37,6 @@ type StoryStyle = {
   id: string;
   name: string;
   description: string;
-  emoji: string;
   gradient: string[];
   imageUrl: string;
 };
@@ -57,12 +57,25 @@ const LANGUAGES: Language[] = [
   { id: 'da', name: 'Dansk', flag: '🇩🇰' },
 ];
 
+type AgeGroup = {
+  id: string;
+  emoji: string;
+  ageRange: string;
+  maxChars: number;
+};
+
+const AGE_GROUPS: AgeGroup[] = [
+  { id: 'TODDLER', emoji: '👶', ageRange: '2-3', maxChars: 50 },
+  { id: 'PRESCHOOL', emoji: '🧒', ageRange: '4-5', maxChars: 80 },
+  { id: 'EARLY_SCHOOL', emoji: '📚', ageRange: '6-7', maxChars: 100 },
+  { id: 'SCHOOL', emoji: '🎓', ageRange: '8+', maxChars: 120 },
+];
+
 const STORY_STYLES: StoryStyle[] = [
   {
     id: 'CLASSIQUE',
     name: 'Classique',
     description: 'Style conte de fées traditionnel',
-    emoji: '📚',
     gradient: ['#FFD700', '#FFA500'],
     imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_23/page_1.webp', // Livre ancien
   },
@@ -70,7 +83,6 @@ const STORY_STYLES: StoryStyle[] = [
     id: 'WATERCOLOR',
     name: 'Aquarelle',
     description: 'Style aquarelle doux et poétique',
-    emoji: '🖌️',
     gradient: ['#7DD3FC', '#A78BFA'],
     imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_22/cover.webp', // Aquarelle
   },
@@ -78,7 +90,6 @@ const STORY_STYLES: StoryStyle[] = [
     id: 'MANGA',
     name: 'Manga',
     description: 'Style manga japonais',
-    emoji: '🎨',
     gradient: ['#FF6B9D', '#C06C84'],
     imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_19/cover.webp', // Art manga
   },
@@ -101,6 +112,8 @@ const createStorySchema = (t: (key: string) => string) => Yup.object().shape({
     .required(t('createStory.validation.styleRequired')),
   language: Yup.string()
     .required(t('createStory.validation.languageRequired')),
+  ageGroup: Yup.string()
+    .required(t('createStory.validation.ageGroupRequired')),
 });
 
 type CreateStoryScreenNavigationProp = CompositeNavigationProp<
@@ -184,6 +197,7 @@ export default function CreateStoryScreen() {
       numPages: 6,
       selectedStyle: 'CLASSIQUE',
       language: 'fr',
+      ageGroup: 'PRESCHOOL',
     },
     validationSchema: createStorySchema(t),
     onSubmit: async (values) => {
@@ -197,6 +211,7 @@ export default function CreateStoryScreen() {
           title: values.title,
           style: values.selectedStyle,
           language: values.language,
+          ageGroup: values.ageGroup,
           characterIds: selectedCharacters.map((c) => c.id),
           characterDescriptions: selectedCharacters.length > 0
             ? selectedCharacters.map((c) => buildCharacterDescription(c))
@@ -270,6 +285,7 @@ export default function CreateStoryScreen() {
       numPages: true,
       selectedStyle: true,
       language: true,
+      ageGroup: true,
     });
 
     if (Object.keys(errors).length === 0) {
@@ -533,6 +549,7 @@ export default function CreateStoryScreen() {
                     const isSelected = formik.values.selectedStyle === style.id;
                     return (
                       <TouchableOpacity
+                        activeOpacity={1}
                         key={style.id}
                         onPress={() => formik.setFieldValue('selectedStyle', style.id)}
                         style={{
@@ -554,13 +571,14 @@ export default function CreateStoryScreen() {
                           imageStyle={{ borderRadius: 16 }}
                           className='h-full w-full'
                         >
-                          <View
+                          <LinearGradient
+                            colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
                             style={{
-                              padding: 20,
+                              padding: 16,
                               borderRadius: 16,
-                              backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                              flex: 1,
+                              justifyContent: 'flex-end',
                             }}
-                            className='justify-between flex flex-col relative h-full w-full'
                           >
 
                             {isSelected && (
@@ -569,7 +587,7 @@ export default function CreateStoryScreen() {
                               </View>
                             )}
                             <Text
-                              className="font-bold text-xl mb-2 text-white"
+                              className="font-bold text-xl mb-1 text-white"
                             >
                               {getStyleTranslation(style.id).name}
                             </Text>
@@ -578,7 +596,7 @@ export default function CreateStoryScreen() {
                             <Text className="text-white text-sm">
                               {getStyleTranslation(style.id).description}
                             </Text>
-                          </View>
+                          </LinearGradient>
                         </ImageBackground>
                       </TouchableOpacity>
                     );
@@ -664,6 +682,49 @@ export default function CreateStoryScreen() {
               </BlurView>
             </View>
 
+            {/* 👶 Bloc Tranche d'âge */}
+            <View
+              style={{
+                borderRadius: 24,
+                overflow: 'hidden',
+                marginBottom: 16,
+              }}
+            >
+              <BlurView
+                intensity={isNight ? 90 : 50}
+                tint={isNight ? "dark" : "light"}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+              >
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
+                <View className="flex-row flex-wrap gap-2">
+                  {AGE_GROUPS.map((age) => {
+                    const isSelected = formik.values.ageGroup === age.id;
+                    return (
+                      <TouchableOpacity
+                        key={age.id}
+                        onPress={() => formik.setFieldValue('ageGroup', age.id)}
+                        className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                      >
+                        <View className="flex-row items-center gap-2 mb-1">
+                          <Text className="text-xl">{age.emoji}</Text>
+                          <Text className={`font-baloo-semibold ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-800'}`}>
+                            {t(`createStory.ageGroups.${age.id}.name`)}
+                          </Text>
+                        </View>
+                        <Text className={`text-xs ${isSelected ? 'text-white/90' : isNight ? 'text-white/60' : 'text-slate-600'}`}>
+                          {t(`createStory.ageGroups.${age.id}.desc`)}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+                {formik.touched.ageGroup && formik.errors.ageGroup && (
+                  <Text className="text-red-500 text-sm mt-2">{formik.errors.ageGroup}</Text>
+                )}
+              </BlurView>
+            </View>
+
             {/* 🧡 Sélecteur de pages */}
             <View
               style={{
@@ -689,8 +750,8 @@ export default function CreateStoryScreen() {
             </View>
 
             {/* Messages d'erreur résumés */}
-            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language) &&
-              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language) && (
+            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
+              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
                 <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
                   <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>{t('createStory.missingInfo')}</Text>
                   <View className="gap-1">
@@ -708,6 +769,9 @@ export default function CreateStoryScreen() {
                     )}
                     {formik.touched.language && formik.errors.language && (
                       <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.language}</Text>
+                    )}
+                    {formik.touched.ageGroup && formik.errors.ageGroup && (
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-red-600'} text-sm`}>• {formik.errors.ageGroup}</Text>
                     )}
                   </View>
                 </View>
@@ -736,6 +800,8 @@ export default function CreateStoryScreen() {
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
         languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
+        ageGroupName={t(`createStory.ageGroups.${formik.values.ageGroup}.name`)}
+        ageGroupEmoji={AGE_GROUPS.find(a => a.id === formik.values.ageGroup)?.emoji || ''}
         characters={selectedCharacters}
         onConfirm={() => formik.handleSubmit()}
         onCancel={() => setShowConfirmationModal(false)}

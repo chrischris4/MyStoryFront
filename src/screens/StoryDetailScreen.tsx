@@ -809,8 +809,9 @@ export default function StoryDetailScreen() {
         {isExpanded && story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
           .map((page) => (
-            <View key={page.id} className=" bg-gray-100 p-4 rounded-lg relative shadow mb-4">
-              <Text className="mb-2 text-sm absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
+            <View key={page.id} className=" bg-gray-100 p-4 rounded-lg relative shadow mb-4 w-full">
+              <Text style={{ maxWidth: '90%' }}
+                className=" mb-2 text-sm absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
               <Image
                 source={{ uri: page.imageUrl }}
                 style={{ width: '100%', height: 200, borderRadius: 10 }}

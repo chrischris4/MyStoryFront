@@ -102,8 +102,6 @@ export default function StoryFolder({
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
     const translateY = useSharedValue(0);
-    const lockRotate = useSharedValue(0);
-    const lockScale = useSharedValue(1);
     const navigation = useNavigation<StoryFolderNavigationProp>();
 
     const animatedStyle = useAnimatedStyle(() => ({
@@ -113,12 +111,6 @@ export default function StoryFolder({
         transform: [{ translateY: withTiming(translateY.value, { duration: 300 }) }],
     }));
 
-    const lockStyle = useAnimatedStyle(() => ({
-        transform: [
-            { rotate: `${lockRotate.value}deg` },
-            { scale: lockScale.value }
-        ],
-    }));
 
     // Détermine si les filtres doivent être affichés
     const shouldShowFilters = storyType === 'ALL' || storyType === 'FAVORITE';
@@ -154,63 +146,21 @@ export default function StoryFolder({
         });
     }, [stories, maxPages, selectedCharacterType, shouldShowFilters]);
 
+    // Pour les non-premium sur les folders partagés, limiter à 5 histoires
+    const isLockedPreview = !isPremium && isShared;
+    const displayedStories = useMemo(() => {
+        if (isLockedPreview) {
+            return filteredStories.slice(0, 5);
+        }
+        return filteredStories;
+    }, [filteredStories, isLockedPreview]);
+
     const onLayout = (event: LayoutChangeEvent) => {
         const { y } = event.nativeEvent.layout;
         setLayoutY(y);
     };
 
-    const shakeLock = () => {
-        lockScale.value = withTiming(1.3, { duration: 100 });
-        lockRotate.value = withTiming(-15, { duration: 100 });
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(15, { duration: 100 });
-        }, 100);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(-15, { duration: 100 });
-        }, 200);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(15, { duration: 100 });
-        }, 300);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(-12, { duration: 100 });
-        }, 400);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(12, { duration: 100 });
-        }, 500);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(-10, { duration: 100 });
-        }, 600);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(10, { duration: 100 });
-        }, 700);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(-5, { duration: 100 });
-        }, 800);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(5, { duration: 100 });
-        }, 900);
-
-        setTimeout(() => {
-            lockRotate.value = withTiming(0, { duration: 150 });
-            lockScale.value = withTiming(1, { duration: 150 });
-        }, 1000);
-    };
-
     const handleToggle = () => {
-        if (!isPremium && isShared && !expanded) {
-            shakeLock();
-            return;
-        }
-
         if (expanded) {
             setShowContent(false);
             width.value = SCREEN_WIDTH / 1.08;
@@ -237,18 +187,6 @@ export default function StoryFolder({
             onLayout={onLayout}
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
-                {!isPremium && isShared && (
-                    <Animated.View
-                        style={[lockStyle]}
-                        className='absolute top-3 z-30 right-4 h-10 w-10 flex justify-center items-center rounded-full'
-                    >
-                        <Feather
-                            name="lock"
-                            size={20}
-                            color={isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)"}
-                        />
-                    </Animated.View>
-                )}
                 <BlurView
                     intensity={isNight ? 90 : 50}
                     tint={isNight ? "dark" : "light"}
@@ -278,7 +216,7 @@ export default function StoryFolder({
                         )}
 
                         {/* Bouton toggle filtres - uniquement pour ALL et FAVORITE */}
-                        {expanded && showContent && shouldShowFilters && !isLoading && (
+                        {expanded && isPremium && showContent && shouldShowFilters && !isLoading && (
                             <TouchableOpacity
                                 onPress={() => setShowFilters(!showFilters)}
                                 className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start ${showFilters
@@ -425,7 +363,7 @@ export default function StoryFolder({
                             </View>
                         ) : expanded && showContent ? (
                             <FlatList
-                                data={filteredStories}
+                                data={displayedStories}
                                 keyExtractor={(item) => item.id.toString()}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
@@ -442,12 +380,32 @@ export default function StoryFolder({
                                             entering={FadeInDown.delay(index * 100).springify().damping(50)}
                                         >
                                             <TouchableOpacity
-                                            activeOpacity={0.5}
-                                                className="mb-2 p-4 bg-gray-100 rounded-3xl"
-                                                onPress={() =>
-                                                    navigation.navigate('StoryDetail', { storyId: item.id })
-                                                }
+                                                activeOpacity={isLockedPreview ? 1 : 0.5}
+                                                className="mb-2 p-4 bg-gray-100 rounded-3xl relative"
+                                                onPress={() => {
+                                                    if (isLockedPreview) {
+                                                        return;
+                                                    }
+                                                    navigation.navigate('StoryDetail', { storyId: item.id });
+                                                }}
                                             >
+                                                {isLockedPreview && (
+                                                    <TouchableOpacity
+                                                        onPress={() => navigation.navigate('BillingScreen')}
+                                                        className='absolute top-14 right-6 z-10 rounded-full overflow-hidden'
+                                                        activeOpacity={0.8}
+                                                    >
+                                                        <BlurView
+                                                            tint="light"
+                                                            className='flex px-4 flex-row gap-3 p-2'
+                                                        >
+                                                            <Text className="text-slate-800 font-baloo text-sm">
+                                                                Deviens explorateur pour tout débloquer
+                                                            </Text>
+                                                            <Feather name="arrow-right" size={16} color="#1e293b" />
+                                                        </BlurView>
+                                                    </TouchableOpacity>
+                                                )}
                                                 <View className="flex flex-row justify-between items-center mb-1">
                                                     <Text className="text-xl font-baloo-semibold">{item.title}</Text>
                                                     <View className="flex-row items-center gap-1">

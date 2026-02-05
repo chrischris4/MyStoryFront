@@ -258,7 +258,7 @@ export default function BillingScreen() {
             legend: {
                 name: t('plans.legend'),
                 planId: 3,
-                features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 2 }), t('billing.cancelAnytime')],
+                features: [t('billing.sharedStories'), t('billing.tokensPerDay_plural', { count: 2 }), t('billing.charactersAllowed'), t('billing.cancelAnytime')],
                 monthlyPrice: `$19.99/${t('billing.month')}`,
                 yearlyPrice: `$199.99/${t('billing.year')}`,
                 monthlyProductId: 'legend_monthly',
@@ -270,8 +270,6 @@ export default function BillingScreen() {
         setModalVisible(true);
     };
 
-    const skyColor = isNight ? '#020205' : '#87CEEB';
-    const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
     const groundColor = isNight ? '#2E313F' : '#38A169';
     const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
@@ -520,7 +518,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value={t('billing.sharedStories')} isNight={isNight} title={t('plans.explorer')} price={`${t('billing.from')} $4.99`} onPress={() => openSubscriptionModal('explorer')} />
+                        <ShopButton description={t('billing.explorerCatchphrase')} isNight={isNight} title={t('plans.explorer')} price={`${t('billing.from')} $4.99`} onPress={() => openSubscriptionModal('explorer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -533,7 +531,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value={t('billing.sharedStories')} value2={t('billing.tokensPerDay', { count: 1 })} isNight={isNight} title={t('plans.adventurer')} price={`${t('billing.from')} $14.99`} onPress={() => openSubscriptionModal('adventurer')} />
+                        <ShopButton description={t('billing.adventurerCatchphrase')} isNight={isNight} title={t('plans.adventurer')} price={`${t('billing.from')} $14.99`} onPress={() => openSubscriptionModal('adventurer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -546,7 +544,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton value={t('billing.sharedStories')} isNight={isNight} value2={t('billing.tokensPerDay', { count: 2 })} title={t('plans.legend')} price={`${t('billing.from')} $19.99`} onPress={() => openSubscriptionModal('legend')} />
+                        <ShopButton description={t('billing.legendCatchphrase')} isNight={isNight} title={t('plans.legend')} price={`${t('billing.from')} $19.99`} onPress={() => openSubscriptionModal('legend')} />
                     </Animated.View>
                 </View>
             </View>

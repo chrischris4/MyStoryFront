@@ -196,7 +196,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 {group.description || t('groups.noDescription')}
               </Text>
             </View>
-            <TouchableOpacity onPress={onClose} className="p-2 -mt-3 -mr-2">
+            <TouchableOpacity activeOpacity={0.8} onPress={onClose} className="p-2 -mt-3 -mr-2">
               <Feather name="x" size={24} color={isNight ? '#ffffff' : '#1e293b'} />
             </TouchableOpacity>
           </View>
@@ -204,6 +204,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {/* Tab Buttons */}
           <View className="flex-row mb-4 gap-2">
             <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 playSound('click');
@@ -226,6 +227,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             </TouchableOpacity>
 
             <TouchableOpacity
+              activeOpacity={0.8}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 playSound('click');
@@ -270,6 +272,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   autoCapitalize="none"
                 />
                 <TouchableOpacity
+                  activeOpacity={0.8}
                   onPress={handleInvite}
                   className="bg-blue-500 px-4 py-2 rounded-xl justify-center"
                   disabled={inviteToGroupMutation.isPending}
@@ -354,6 +357,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
 
                           {!isOwner && (
                             <TouchableOpacity
+                              activeOpacity={0.8}
                               onPress={() => {
                                 console.log('🔵 Remove member:', { groupId: group.id, memberId: member.id, userId: user.id });
                                 handleRemoveMember(group.id, user.id);
@@ -423,7 +427,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                           onClose();
                           navigation.navigate('StoryDetail', { storyId: story.id });
                         }}
-                        activeOpacity={0.7}
+                        activeOpacity={0.8}
                       >
                         <BlurView
                           intensity={isNight ? 90 : 50}
