@@ -48,12 +48,19 @@ type StoryFolderProps = {
 
 const LANGUAGE_FLAGS: Record<string, string> = {
     french: '🇫🇷',
+    fr: '🇫🇷',
+    english: '🇬🇧',
     en: '🇬🇧',
     spanish: '🇪🇸',
+    es: '🇪🇸',
     german: '🇩🇪',
+    de: '🇩🇪',
     italian: '🇮🇹',
+    it: '🇮🇹',
     portuguese: '🇵🇹',
+    pt: '🇵🇹',
     danish: '🇩🇰',
+    da: '🇩🇰',
 };
 
 const getLanguageFlag = (language: string): string => {
