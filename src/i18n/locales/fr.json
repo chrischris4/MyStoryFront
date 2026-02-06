@@ -283,7 +283,9 @@
       "portuguese": "Portugais",
       "da": "Danois",
       "danish": "Danois"
-    }
+    },
+    "generating": "Histoire en cours de création...",
+    "generationFailed": "La création de l'histoire a échoué."
   },
   "storyReader": {
     "music": "Musiques",

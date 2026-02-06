@@ -259,6 +259,10 @@ export class ApiService {
     return this.delete<any>(`/story/${id}`);
   }
 
+  async getStoryStatus(id: number) {
+    return this.get<{ status: string; progress?: number; failureReason?: string }>(`/story/${id}/status`);
+  }
+
   // --- Favoris ---
   async getFavoriteStories() {
     return this.get<any[]>('/favorite-story/me');

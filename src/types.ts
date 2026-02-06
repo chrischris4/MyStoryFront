@@ -42,6 +42,8 @@ export type User = {
   profil?: Profil;
 };
 
+export type StoryStatus = 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
+
 export type Story = {
   id: number;
   title: string;
@@ -54,6 +56,8 @@ export type Story = {
   characters?: Character[]; // Relation many-to-many (max 2 personnages)
   numberOfPages?: number;
   language?: string;
+  status?: StoryStatus;
+  failureReason?: string;
 };
 
 // ==================== CHARACTER TYPES ====================

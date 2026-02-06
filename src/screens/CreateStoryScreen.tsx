@@ -20,6 +20,8 @@ import type { MainTabParamList, RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
+import { useQueryClient } from '@tanstack/react-query';
+import { api } from '~/services/api';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import CharacterSection from '~/components/CharacterSection';
@@ -134,6 +136,7 @@ export default function CreateStoryScreen() {
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
   const scrollX = useRef(new Animated.Value(0)).current;
   const createStoryMutation = useCreateStory();
+  const queryClient = useQueryClient();
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const {
     isCreating,
@@ -217,20 +220,49 @@ export default function CreateStoryScreen() {
             ? selectedCharacters.map((c) => buildCharacterDescription(c))
             : undefined,
         };
-        const story = await createStoryMutation.mutateAsync(payload);
-        const createdStory = story.story ?? story;
-        // console.log('📖 Pages:', createdStory.pages);
-        // console.log('🆔 Story ID:', createdStory.id);
-        // console.log('🖼️ Cover URL:', createdStory.coverUrl);
-        // console.log('📝 Description:', createdStory.description);
-        // Mettre à jour le store avec les résultats
-        updateProgress(
-          createdStory.pages ?? [],
-          createdStory.id?.toString() ?? null,
-          createdStory.coverUrl ?? null,
-          createdStory.description ?? null,
-          false
-        );
+        const result = await createStoryMutation.mutateAsync(payload);
+        const { storyId: newStoryId } = result;
+
+        // Polling du status toutes les 3 secondes
+        const pollInterval = setInterval(async () => {
+          try {
+            const statusRes = await api.getStoryStatus(newStoryId);
+
+            if (statusRes.status === 'COMPLETED') {
+              clearInterval(pollInterval);
+              // Charger la story complète
+              const fullStory = await api.getStoryDetail(newStoryId);
+              updateProgress(
+                fullStory.pages ?? [],
+                fullStory.id?.toString() ?? null,
+                fullStory.coverUrl ?? null,
+                fullStory.description ?? null,
+                false
+              );
+              // Rafraîchir la liste des stories
+              queryClient.invalidateQueries({ queryKey: ['stories'] });
+            }
+
+            if (statusRes.status === 'FAILED') {
+              clearInterval(pollInterval);
+              Toast.show({
+                type: 'error',
+                text1: t('common.error'),
+                text2: statusRes.failureReason || t('createStory.creationError'),
+              });
+              close();
+            }
+          } catch (pollError) {
+            console.error('❌ Erreur polling:', pollError);
+            clearInterval(pollInterval);
+            Toast.show({
+              type: 'error',
+              text1: t('common.error'),
+              text2: t('createStory.creationError'),
+            });
+            close();
+          }
+        }, 3000);
 
       } catch (error) {
         console.error('❌ Erreur création:', error);

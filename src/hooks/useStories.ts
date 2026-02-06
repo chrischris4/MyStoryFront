@@ -9,6 +9,8 @@ type Story = {
   style: string;
   numberOfPages: number;
   createdAt: string;
+  status?: 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
+  failureReason?: string;
   pages: {
     page: number;
     text: string;
@@ -41,8 +43,16 @@ export const useStories = () => {
   return useQuery({
     queryKey: ['stories'],
     queryFn: () => fetchStories(accessToken),
-    staleTime: 1000 * 60 * 5, // Les données sont considérées comme fraîches pendant 5 minutes
-    retry: 2, // Réessayer 2 fois en cas d'erreur
-    enabled: !!accessToken, // Ne lance la requête que si on a un token
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+    enabled: !!accessToken,
+    // Auto-refetch toutes les 5s si des stories sont en cours de génération
+    refetchInterval: (query) => {
+      const stories = query.state.data;
+      const hasPending = stories?.some(
+        (s) => s.status === 'PENDING' || s.status === 'GENERATING'
+      );
+      return hasPending ? 5000 : false;
+    },
   });
 };

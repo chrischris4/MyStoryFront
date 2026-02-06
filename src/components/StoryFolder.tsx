@@ -443,16 +443,18 @@ export default function StoryFolder({
                                 removeClippedSubviews={true}
                                 renderItem={({ item, index }) => {
                                     const cover = item.coverUrl;
+                                    const isGenerating = item.status === 'PENDING' || item.status === 'GENERATING';
+                                    const isFailed = item.status === 'FAILED';
 
                                     return (
                                         <Animated.View
                                             entering={FadeInDown.delay(index * 100).springify().damping(50)}
                                         >
                                             <TouchableOpacity
-                                                activeOpacity={isLockedPreview ? 1 : 0.5}
+                                                activeOpacity={isLockedPreview || isGenerating || isFailed ? 1 : 0.5}
                                                 className={`mb-2 p-4 rounded-3xl relative ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
                                                 onPress={() => {
-                                                    if (isLockedPreview) {
+                                                    if (isLockedPreview || isGenerating || isFailed) {
                                                         return;
                                                     }
                                                     navigation.navigate('StoryDetail', { storyId: item.id });
@@ -479,7 +481,28 @@ export default function StoryFolder({
                                                 <View className="flex flex-row justify-between items-center mb-1">
                                                     <Text className={` ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
                                                 </View>
-                                                {cover && (
+                                                {isGenerating && (
+                                                    <View className="flex-row items-center gap-2 bg-amber-100 rounded-xl p-3 mb-2">
+                                                        <LottieView
+                                                            source={require('../../assets/animations/LoadingWhite.json')}
+                                                            autoPlay
+                                                            loop={true}
+                                                            style={{ width: 30, height: 30 }}
+                                                        />
+                                                        <Text className="text-amber-800 font-baloo-medium text-sm flex-1">
+                                                            {t('storyFolder.generating')}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                                {isFailed && (
+                                                    <View className="flex-row items-center gap-2 bg-red-100 rounded-xl p-3 mb-2">
+                                                        <Feather name="alert-circle" size={20} color="#dc2626" />
+                                                        <Text className="text-red-700 font-baloo-medium text-sm flex-1">
+                                                            {t('storyFolder.generationFailed')}
+                                                        </Text>
+                                                    </View>
+                                                )}
+                                                {cover && !isGenerating && !isFailed && (
                                                     <View style={{ position: 'relative' }}>
                                                         <Image
                                                             source={{ uri: cover }}

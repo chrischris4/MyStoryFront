@@ -12,26 +12,9 @@ type CreateStoryInput = {
   characterDescriptions?: string[];
 };
 
-type StoryPage = {
-  page: number;
-  text: string;
-  imageUrl: string;
-};
-
-type CreatedStory = {
-  id: number;
-  title: string;
-  description?: string;
-  pages: StoryPage[];
-  coverUrl?: string;
-  isShared?: boolean;
-  createdAt?: string;
-};
-
 type CreateStoryResponse = {
-  story: CreatedStory;
-  challengesUnlocked: string[];
-  coinsEarned: number;
+  storyId: number;
+  status: string;
 };
 
 const createStory = async (
@@ -68,7 +51,6 @@ export const useCreateStory = () => {
   return useMutation({
     mutationFn: (input: CreateStoryInput) => createStory(input, accessToken),
     onSuccess: () => {
-      // Invalider et refetch automatiquement la liste des stories
       queryClient.invalidateQueries({ queryKey: ['stories'] });
     },
   });
