@@ -15,7 +15,8 @@
     "no": "Non",
     "ok": "OK",
     "close": "Fermer",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "and": "et"
   },
   "auth": {
     "login": "Connexion",
@@ -253,7 +254,36 @@
     "noStoriesCreated": "Pas d'histoires créées.",
     "createStory": "Créer une histoire",
     "author": "Auteur",
-    "anonymous": "Anonyme"
+    "anonymous": "Anonyme",
+    "showFilters": "Afficher les filtres",
+    "hideFilters": "Masquer les filtres",
+    "characterType": "Type de personnage",
+    "all": "Tous",
+    "human": "👤 Humain",
+    "animal": "🐾 Animal",
+    "maxPages": "Nombre de pages max : {{count}}",
+    "onePage": "1 page",
+    "nPages": "{{count}} pages",
+    "noMatchingStories": "Aucune histoire ne correspond aux filtres",
+    "unlockPremium": "Deviens explorateur pour tout débloquer",
+    "language": "Langue",
+    "allLanguages": "🌍 Toutes",
+    "languages": {
+      "french": "Français",
+      "fr": "Français",
+      "en": "Anglais",
+      "english": "Anglais",
+      "es": "Espagnol",
+      "spanish": "Espagnol",
+      "de": "Allemand",
+      "german": "Allemand",
+      "it": "Italien",
+      "italian": "Italien",
+      "pt": "Portugais",
+      "portuguese": "Portugais",
+      "da": "Danois",
+      "danish": "Danois"
+    }
   },
   "storyReader": {
     "music": "Musiques",
@@ -383,8 +413,10 @@
     "storyTitle": "Titre",
     "storyTitlePlaceholder": "Ex: Mimi et la forêt magique",
     "storySummary": "Résumé",
-    "storySummaryDesc": "Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, plus tu apporteras de détails à ton résumé et plus l'histoire correspondra à tes attentes !",
-    "storySummaryPlaceholder": "Ex: Une aventure magique dans les montagnes où un jeune garçon découvre un monde secret...",
+    "storySummaryDesc": "Résume au mieux ton histoire, les personnages, l'endroit où se passe l'histoire, ce qu'ils font.. Plus tu apporteras de détails à ton résumé et plus l'histoire correspondra à tes attentes !",
+    "storySummaryPlaceholderMale": "Ex : Aujourd'hui, {{name}} part à l'aventure dans une belle forêt enchantée. Il rencontre un gentil animal magique qui a besoin de son aide pour retrouver sa famille...",
+    "storySummaryPlaceholderFemale": "Ex : Aujourd'hui, {{name}} part à l'aventure dans une belle forêt enchantée. Elle rencontre un gentil animal magique qui a besoin de son aide pour retrouver sa famille...",
+    "storySummaryPlaceholderPlural": "Ex : Aujourd'hui, {{name}} partent à l'aventure dans une belle forêt enchantée. Ils rencontrent un gentil animal magique qui a besoin de leur aide pour retrouver sa famille...",
     "storyStyle": "Style",
     "storyLanguage": "Langue",
     "ageGroup": "Tranche d'âge",
@@ -535,6 +567,59 @@
     "freeLimitMessage": "Avec le plan gratuit, vous pouvez créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passez au plan Aventurier ou Légende !",
     "premiumLimitMessage": "Vous avez atteint la limite de 5 personnages. Pour en créer un nouveau, vous devez d'abord en supprimer un.",
     "upgradePlan": "Voir les abonnements",
-    "deleteToCreate": "Vous devez supprimer un personnage existant pour pouvoir en créer un nouveau."
+    "deleteToCreate": "Vous devez supprimer un personnage existant pour pouvoir en créer un nouveau.",
+    "maleAnimal": "Mâle",
+    "femaleAnimal": "Femelle",
+    "skinColors": {
+      "light": "Claire",
+      "medium-light": "Mate claire",
+      "medium": "Mate",
+      "medium-dark": "Mate foncée",
+      "dark": "Foncée"
+    },
+    "hairColors": {
+      "blond": "Blond",
+      "brown": "Brun",
+      "black": "Noir",
+      "red": "Roux",
+      "gray": "Gris",
+      "white": "Blanc"
+    },
+    "eyeColors": {
+      "brown": "Marron",
+      "blue": "Bleu",
+      "green": "Vert",
+      "hazel": "Noisette",
+      "gray": "Gris"
+    },
+    "furColors": {
+      "white": "Blanc",
+      "black": "Noir",
+      "brown": "Brun",
+      "golden": "Doré",
+      "gray": "Gris",
+      "spotted": "Tacheté",
+      "rainbow": "Arc-en-ciel"
+    },
+    "animalTypes": {
+      "dog": "Chien",
+      "cat": "Chat",
+      "rabbit": "Lapin",
+      "bird": "Oiseau",
+      "horse": "Cheval",
+      "dragon": "Dragon",
+      "unicorn": "Licorne",
+      "bear": "Ours"
+    },
+    "animalAges": {
+      "YOUNG": "Jeune",
+      "ADULT": "Adulte",
+      "OLD": "Vieux"
+    },
+    "summaryAge": "{{age}} ans",
+    "summarySkin": "peau {{color}}",
+    "summaryHair": "cheveux {{color}}",
+    "summaryEyes": "yeux {{color}}",
+    "summaryFur": "pelage {{color}}"
   }
 }

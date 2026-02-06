@@ -10,7 +10,7 @@ import Toast from 'react-native-toast-message';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Platform } from 'react-native';
 import { initI18n } from '~/i18n';
 import { useNotifications } from '~/hooks/useNotifications';
 
@@ -22,81 +22,149 @@ function NotificationHandler() {
   return null;
 }
 
-// Configuration personnalisée des toasts
+// Configuration personnalisée des toasts - Style Bubbly / Playful
 const toastConfig = {
   success: (props: any) => (
-    <View style={{ paddingHorizontal: 20, width: '100%' }}>
+    <View style={{ paddingHorizontal: 16, width: '100%' }}>
       <View
         style={{
-          borderRadius: 16,
-          overflow: 'hidden',
-          paddingVertical: 16,
-          paddingHorizontal: 16,
-          backgroundColor: '#ffffff',
-          borderBlockColor: '#000000',
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 24,
+          paddingVertical: 14,
+          paddingHorizontal: 20,
+          backgroundColor: '#ECFDF5',
           borderWidth: 2,
+          borderColor: '#6EE7B7',
           zIndex: 9999,
+          ...Platform.select({
+            ios: { shadowColor: '#10B981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12 },
+            android: { elevation: 8 },
+          }),
         }}
       >
-        <Text
-          style={{
-            fontSize: 20,
-            fontFamily: 'Baloo2-Bold',
-            textAlign: 'center',
-            marginBottom: 4,
-            color: '#000000',
-          }}
-        >
-          {props.text1}
+        <Text style={{ fontSize: 28, marginRight: 12 }}>
+          {props.props?.emoji || '\u2728'}
         </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: 'Baloo2-Regular',
-            textAlign: 'center',
-            color: '#000000',
-          }}
-        >
-          {props.text2}
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Baloo2-Bold',
+              color: '#065F46',
+              marginBottom: 2,
+            }}
+          >
+            {props.text1}
+          </Text>
+          {props.text2 ? (
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'Baloo2-Medium',
+                color: '#047857',
+              }}
+            >
+              {props.text2}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </View>
   ),
   error: (props: any) => (
-    <View style={{ paddingHorizontal: 20, width: '100%' }}>
+    <View style={{ paddingHorizontal: 16, width: '100%' }}>
       <View
         style={{
-          borderRadius: 16,
-          overflow: 'hidden',
-          paddingVertical: 16,
-          paddingHorizontal: 16,
-          backgroundColor: '#ffffff',
-          borderBlockColor: '#000000',
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 24,
+          paddingVertical: 14,
+          paddingHorizontal: 20,
+          backgroundColor: '#FEF2F2',
           borderWidth: 2,
+          borderColor: '#FCA5A5',
           zIndex: 9999,
+          ...Platform.select({
+            ios: { shadowColor: '#EF4444', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12 },
+            android: { elevation: 8 },
+          }),
         }}
       >
-        <Text
-          style={{
-            fontSize: 20,
-            fontFamily: 'Baloo2-Bold',
-            textAlign: 'center',
-            marginBottom: 4,
-            color: '#000000',
-          }}
-        >
-          {props.text1}
+        <Text style={{ fontSize: 28, marginRight: 12 }}>
+          {props.props?.emoji || '\uD83D\uDE25'}
         </Text>
-        <Text
-          style={{
-            fontSize: 16,
-            fontFamily: 'Baloo2-Regular',
-            textAlign: 'center',
-            color: '#000000',
-          }}
-        >
-          {props.text2}
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Baloo2-Bold',
+              color: '#991B1B',
+              marginBottom: 2,
+            }}
+          >
+            {props.text1}
+          </Text>
+          {props.text2 ? (
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'Baloo2-Medium',
+                color: '#B91C1C',
+              }}
+            >
+              {props.text2}
+            </Text>
+          ) : null}
+        </View>
+      </View>
+    </View>
+  ),
+  info: (props: any) => (
+    <View style={{ paddingHorizontal: 16, width: '100%' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          borderRadius: 24,
+          paddingVertical: 14,
+          paddingHorizontal: 20,
+          backgroundColor: '#EFF6FF',
+          borderWidth: 2,
+          borderColor: '#93C5FD',
+          zIndex: 9999,
+          ...Platform.select({
+            ios: { shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 12 },
+            android: { elevation: 8 },
+          }),
+        }}
+      >
+        <Text style={{ fontSize: 28, marginRight: 12 }}>
+          {props.props?.emoji || '\uD83D\uDCD6'}
         </Text>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontFamily: 'Baloo2-Bold',
+              color: '#1E3A5F',
+              marginBottom: 2,
+            }}
+          >
+            {props.text1}
+          </Text>
+          {props.text2 ? (
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'Baloo2-Medium',
+                color: '#1D4ED8',
+              }}
+            >
+              {props.text2}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </View>
   ),

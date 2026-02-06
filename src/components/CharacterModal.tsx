@@ -48,6 +48,7 @@ type OptionSelectorProps = {
   onSelect: (value: string) => void;
   isNight: boolean;
   showCustomInput?: boolean;
+  translationKey?: string;
 };
 
 function OptionSelector({
@@ -57,6 +58,7 @@ function OptionSelector({
   onSelect,
   isNight,
   showCustomInput = true,
+  translationKey,
 }: OptionSelectorProps) {
   const { t } = useTranslation();
   const [showCustom, setShowCustom] = useState(false);
@@ -94,21 +96,19 @@ function OptionSelector({
                 onSelect(option.id);
                 setShowCustom(false);
               }}
-              className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${
-                isSelected
+              className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isSelected
                   ? 'bg-green-500'
                   : isNight
                     ? 'bg-slate-700'
                     : 'bg-gray-200'
-              }`}
+                }`}
             >
               {option.emoji && <Text className="text-base">{option.emoji}</Text>}
               <Text
-                className={`font-baloo-medium ${
-                  isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-gray-700'
-                }`}
+                className={`font-baloo-medium ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-gray-700'
+                  }`}
               >
-                {option.label}
+                {translationKey ? t(`${translationKey}.${option.id}`, option.label) : option.label}
               </Text>
             </TouchableOpacity>
           );
@@ -116,13 +116,12 @@ function OptionSelector({
         {showCustomInput && (
           <TouchableOpacity
             onPress={() => setShowCustom(!showCustom)}
-            className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${
-              isCustomSelected
+            className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isCustomSelected
                 ? 'bg-green-500'
                 : isNight
                   ? 'bg-slate-700'
                   : 'bg-gray-200'
-            }`}
+              }`}
           >
             <Feather
               name="plus"
@@ -130,9 +129,8 @@ function OptionSelector({
               color={isCustomSelected ? '#fff' : isNight ? '#fff' : '#374151'}
             />
             <Text
-              className={`font-baloo-medium ${
-                isCustomSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-gray-700'
-              }`}
+              className={`font-baloo-medium ${isCustomSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-gray-700'
+                }`}
             >
               {t('character.other')}
             </Text>
@@ -142,9 +140,8 @@ function OptionSelector({
       {showCustom && showCustomInput && (
         <View className="mt-2 flex-row gap-2">
           <TextInput
-            className={`flex-1 ${
-              isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-            } rounded-xl p-3 font-baloo`}
+            className={`flex-1 ${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
+              } rounded-xl p-3 font-baloo`}
             value={customValue}
             onChangeText={setCustomValue}
             placeholder={t('character.enterCustomValue')}
@@ -261,17 +258,17 @@ export default function CharacterModal({
       description: description.trim() || undefined,
       ...(characterType === 'HUMAN'
         ? {
-            age: age ? parseInt(age, 10) : undefined,
-            skinColor: skinColor || undefined,
-            hairColor: hairColor || undefined,
-            eyeColor: eyeColor || undefined,
-            clothing: clothing.trim() || undefined,
-          }
+          age: age ? parseInt(age, 10) : undefined,
+          skinColor: skinColor || undefined,
+          hairColor: hairColor || undefined,
+          eyeColor: eyeColor || undefined,
+          clothing: clothing.trim() || undefined,
+        }
         : {
-            animalAge: animalAge || undefined,
-            animalType: animalType || undefined,
-            furColor: furColor || undefined,
-          }),
+          animalAge: animalAge || undefined,
+          animalType: animalType || undefined,
+          furColor: furColor || undefined,
+        }),
     };
 
     if (isEditing && editCharacter) {
@@ -379,9 +376,11 @@ export default function CharacterModal({
               <Text className="text-white text-2xl font-baloo-bold text-center">
                 {isEditing ? t('character.modalEditTitle') : t('character.modalTitle')}
               </Text>
-              <Text className="text-white/70 text-sm font-baloo text-center mt-2">
-                {t('character.modalSubtitle')}
-              </Text>
+              {!isEditing && (
+                <Text className="text-white/70 text-sm font-baloo text-center mt-2">
+                  {t('character.modalSubtitle')}
+                </Text>
+              )}
             </View>
 
             {/* Content */}
@@ -396,44 +395,40 @@ export default function CharacterModal({
                 <View className="flex-row gap-3">
                   <TouchableOpacity
                     onPress={() => setCharacterType('HUMAN')}
-                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${
-                      characterType === 'HUMAN'
+                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${characterType === 'HUMAN'
                         ? 'bg-blue-500'
                         : isNight
                           ? 'bg-slate-700'
                           : 'bg-gray-200'
-                    }`}
+                      }`}
                   >
                     <Text
-                      className={`font-baloo-semibold ${
-                        characterType === 'HUMAN'
+                      className={`font-baloo-semibold ${characterType === 'HUMAN'
                           ? 'text-white'
                           : isNight
                             ? 'text-white/80'
                             : 'text-gray-700'
-                      }`}
+                        }`}
                     >
                       {t('character.human')}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => setCharacterType('ANIMAL')}
-                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${
-                      characterType === 'ANIMAL'
+                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${characterType === 'ANIMAL'
                         ? 'bg-blue-500'
                         : isNight
                           ? 'bg-slate-700'
                           : 'bg-gray-200'
-                    }`}
+                      }`}
                   >
                     <Text
-                      className={`font-baloo-semibold ${
-                        characterType === 'ANIMAL'
+                      className={`font-baloo-semibold ${characterType === 'ANIMAL'
                           ? 'text-white'
                           : isNight
                             ? 'text-white/80'
                             : 'text-gray-700'
-                      }`}
+                        }`}
                     >
                       {t('character.animal')}
                     </Text>
@@ -449,9 +444,8 @@ export default function CharacterModal({
                   {t('character.name')}
                 </Text>
                 <TextInput
-                  className={`${
-                    isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                  } rounded-xl p-4 font-baloo ${errors.name ? 'border-2 border-red-500' : ''}`}
+                  className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
+                    } rounded-xl p-4 font-baloo ${errors.name ? 'border-2 border-red-500' : ''}`}
                   value={name}
                   onChangeText={setName}
                   placeholder={t('character.namePlaceholder')}
@@ -465,7 +459,12 @@ export default function CharacterModal({
               {/* Gender */}
               <OptionSelector
                 label={t('character.gender')}
-                options={GENDERS}
+                options={GENDERS.map(g => ({
+                  ...g,
+                  label: characterType === 'ANIMAL'
+                    ? (g.id === 'MALE' ? t('character.maleAnimal') : t('character.femaleAnimal'))
+                    : (g.id === 'MALE' ? t('character.male') : t('character.female'))
+                }))}
                 selectedValue={gender}
                 onSelect={(value) => setGender(value as Gender)}
                 isNight={isNight}
@@ -482,9 +481,8 @@ export default function CharacterModal({
                   </Text>
                   <View className="flex-row items-center gap-2">
                     <TextInput
-                      className={`${
-                        isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                      } rounded-xl p-4 font-baloo w-24 text-center`}
+                      className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
+                        } rounded-xl p-4 font-baloo w-24 text-center`}
                       value={age}
                       onChangeText={(text) => setAge(text.replace(/[^0-9]/g, ''))}
                       placeholder="8"
@@ -507,6 +505,7 @@ export default function CharacterModal({
                   onSelect={(value) => setAnimalAge(value as AnimalAge)}
                   isNight={isNight}
                   showCustomInput={false}
+                  translationKey="character.animalAges"
                 />
               )}
 
@@ -519,6 +518,7 @@ export default function CharacterModal({
                     selectedValue={skinColor}
                     onSelect={setSkinColor}
                     isNight={isNight}
+                    translationKey="character.skinColors"
                   />
 
                   <OptionSelector
@@ -527,6 +527,7 @@ export default function CharacterModal({
                     selectedValue={hairColor}
                     onSelect={setHairColor}
                     isNight={isNight}
+                    translationKey="character.hairColors"
                   />
 
                   <OptionSelector
@@ -535,6 +536,7 @@ export default function CharacterModal({
                     selectedValue={eyeColor}
                     onSelect={setEyeColor}
                     isNight={isNight}
+                    translationKey="character.eyeColors"
                   />
 
                   <View className="mb-4">
@@ -544,9 +546,8 @@ export default function CharacterModal({
                       {t('character.clothing')}
                     </Text>
                     <TextInput
-                      className={`${
-                        isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                      } rounded-xl p-4 font-baloo`}
+                      className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
+                        } rounded-xl p-4 font-baloo`}
                       value={clothing}
                       onChangeText={setClothing}
                       placeholder={t('character.clothingPlaceholder')}
@@ -568,6 +569,7 @@ export default function CharacterModal({
                     selectedValue={animalType}
                     onSelect={setAnimalType}
                     isNight={isNight}
+                    translationKey="character.animalTypes"
                   />
 
                   <OptionSelector
@@ -576,6 +578,7 @@ export default function CharacterModal({
                     selectedValue={furColor}
                     onSelect={setFurColor}
                     isNight={isNight}
+                    translationKey="character.furColors"
                   />
                 </>
               )}
@@ -588,9 +591,8 @@ export default function CharacterModal({
                   {t('character.description')}
                 </Text>
                 <TextInput
-                  className={`${
-                    isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                  } rounded-xl p-4 font-baloo`}
+                  className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
+                    } rounded-xl p-4 font-baloo`}
                   value={description}
                   onChangeText={setDescription}
                   placeholder={t('character.descriptionPlaceholder')}
@@ -616,11 +618,10 @@ export default function CharacterModal({
             </ScrollView>
 
             {/* Actions */}
-            <View className="p-6 pt-0 gap-3 mt-4">
+            <View className="p-6 pt-0 gap-3 mt-3">
               <TouchableOpacity
-                className={`${
-                  isNight ? 'bg-blue-600' : 'bg-[#0D1821]'
-                } px-6 py-4 rounded-xl items-center ${isPending ? 'opacity-50' : ''}`}
+                className={`${isNight ? 'bg-blue-600' : 'bg-[#0D1821]'
+                  } px-6 py-4 rounded-xl items-center ${isPending ? 'opacity-50' : ''}`}
                 onPress={handleSave}
                 disabled={isPending}
               >

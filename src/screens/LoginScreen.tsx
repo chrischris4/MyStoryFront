@@ -8,7 +8,6 @@ import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 import { mapApiError } from '~/utils/errorMapper';

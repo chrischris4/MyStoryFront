@@ -3,20 +3,41 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import React, { useEffect } from 'react';
 import { View, Image, Animated } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 import { RootStackParamList } from '~/navigation/AppNavigator';
+import { useAuth } from '~/context/AuthContext';
 
 export default function OpeningScreen() {
     type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
     const navigation = useNavigation<NavigationProp>();
+    const { isAuthenticated, isLoading, user } = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            navigation.replace('Login'); // redirige après 3 secondes
-        }, 3000);
+        if (isLoading) return;
 
-        return () => clearTimeout(timer); // cleanup si le composant se démonte
-    }, []);
+        const timer = setTimeout(() => {
+            if (isAuthenticated) {
+                const userName = user?.profil?.name || 'toi';
+                const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
+                const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+
+                Toast.show({
+                    type: 'success',
+                    text1: t('welcome.greeting', { name: userName }),
+                    text2: randomMessage,
+                });
+
+                navigation.replace('MainTabs');
+            } else {
+                navigation.replace('Login');
+            }
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, [isLoading, isAuthenticated]);
 
 
     return (

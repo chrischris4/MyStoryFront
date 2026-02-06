@@ -48,13 +48,13 @@ type Language = {
 };
 
 const LANGUAGES: Language[] = [
-  { id: 'fr', name: 'Français', flag: '🇫🇷' },
-  { id: 'en', name: 'English', flag: '🇬🇧' },
-  { id: 'es', name: 'Español', flag: '🇪🇸' },
-  { id: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  // { id: 'it', name: 'Italiano', flag: '🇮🇹' },
-  // { id: 'pt', name: 'Português', flag: '🇵🇹' },
-  { id: 'da', name: 'Dansk', flag: '🇩🇰' },
+  { id: 'fr', name: 'fr', flag: '🇫🇷' },
+  { id: 'en', name: 'en', flag: '🇬🇧' },
+  { id: 'es', name: 'es', flag: '🇪🇸' },
+  { id: 'de', name: 'de', flag: '🇩🇪' },
+  // { id: 'it', name: 'it', flag: '🇮🇹' },
+  // { id: 'pt', name: 'pt', flag: '🇵🇹' },
+  { id: 'da', name: 'da', flag: '🇩🇰' },
 ];
 
 type AgeGroup = {
@@ -501,15 +501,24 @@ export default function CreateStoryScreen() {
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
                 <TextInput
                   className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
-                  placeholder={t('createStory.storySummaryPlaceholder')}
+                  placeholder={(() => {
+                    if (selectedCharacters.length === 2) {
+                      return t('createStory.storySummaryPlaceholderPlural', {
+                        name: `${selectedCharacters[0].name} ${t('common.and')} ${selectedCharacters[1].name}`,
+                      });
+                    }
+                    const char = selectedCharacters[0];
+                    const isMale = char ? char.gender === 'MALE' : false;
+                    const key = isMale ? 'storySummaryPlaceholderMale' : 'storySummaryPlaceholderFemale';
+                    return t(`createStory.${key}`, { name: char?.name || 'Mimi' });
+                  })()}
                   placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
                   value={formik.values.prompt}
                   onChangeText={formik.handleChange('prompt')}
                   onBlur={formik.handleBlur('prompt')}
                   multiline
-                  numberOfLines={6}
                   textAlignVertical="top"
-                  style={{ minHeight: 120 }}
+                  style={{ minHeight: 160 }}
                 />
                 <View className='flex flex-row gap-2'>
                   <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm mt-1`}>{formik.values.prompt.length}/500</Text>
@@ -674,7 +683,7 @@ export default function CreateStoryScreen() {
                       >
                         <Text className="text-xl">{lang.flag}</Text>
                         <Text className={`font-baloo-medium ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
-                          {lang.name}
+                          {t(`storyFolder.languages.${lang.id}`, lang.name)}
                         </Text>
                       </TouchableOpacity>
                     );
@@ -802,7 +811,7 @@ export default function CreateStoryScreen() {
         numPages={formik.values.numPages}
         styleName={getStyleTranslation(formik.values.selectedStyle).name}
         styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
-        languageName={LANGUAGES.find(l => l.id === formik.values.language)?.name || ''}
+        languageName={t(`storyFolder.languages.${formik.values.language}`, LANGUAGES.find(l => l.id === formik.values.language)?.name || '')}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
         ageGroupName={t(`createStory.ageGroups.${formik.values.ageGroup}.name`)}
         ageGroupEmoji={AGE_GROUPS.find(a => a.id === formik.values.ageGroup)?.emoji || ''}

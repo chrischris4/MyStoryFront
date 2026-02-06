@@ -48,7 +48,7 @@ type StoryFolderProps = {
 
 const LANGUAGE_FLAGS: Record<string, string> = {
     french: '🇫🇷',
-    english: '🇬🇧',
+    en: '🇬🇧',
     spanish: '🇪🇸',
     german: '🇩🇪',
     italian: '🇮🇹',
@@ -112,6 +112,7 @@ export default function StoryFolder({
     const [showFilters, setShowFilters] = useState(false);
     const [maxPages, setMaxPages] = useState(20);
     const [selectedCharacterType, setSelectedCharacterType] = useState<'ALL' | 'HUMAN' | 'ANIMAL'>('ALL');
+    const [selectedLanguage, setSelectedLanguage] = useState<string>('ALL');
 
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
     const height = useSharedValue(84);
@@ -125,26 +126,28 @@ export default function StoryFolder({
         transform: [{ translateY: withTiming(translateY.value, { duration: 300 }) }],
     }));
 
-
-    // Détermine si les filtres doivent être affichés
-    const shouldShowFilters = storyType === 'ALL' || storyType === 'FAVORITE';
-
     // Calcul du nombre max de pages dans les stories
     const maxPagesInStories = useMemo(() => {
-        if (!stories || stories.length === 0) return 20;
+        if (!stories || stories.length === 0) return 16;
         return Math.max(...stories.map(story => story.numberOfPages || 0));
+    }, [stories]);
+
+    // Langues disponibles dans les stories
+    const availableLanguages = useMemo(() => {
+        const langs = new Set<string>();
+        stories.forEach(story => {
+            if (story.language) langs.add(story.language.toLowerCase());
+        });
+        return Array.from(langs);
     }, [stories]);
 
     // Filtrage des stories
     const filteredStories = useMemo(() => {
-        if (!shouldShowFilters) return stories;
-
         return stories.filter(story => {
             // Filtre par nombre de pages
             const pagesMatch = (story.numberOfPages || 0) <= maxPages;
 
-            // Filtre par type de personnage (vérifie si au moins un personnage correspond)
-            // Note: story.characters contient des StoryCharacter avec une propriété character imbriquée
+            // Filtre par type de personnage
             let characterMatch = true;
             if (selectedCharacterType !== 'ALL' && story.characters?.length > 0) {
                 if (selectedCharacterType === 'HUMAN') {
@@ -156,9 +159,12 @@ export default function StoryFolder({
                 characterMatch = false;
             }
 
-            return pagesMatch && characterMatch;
+            // Filtre par langue
+            const languageMatch = selectedLanguage === 'ALL' || story.language?.toLowerCase() === selectedLanguage;
+
+            return pagesMatch && characterMatch && languageMatch;
         });
-    }, [stories, maxPages, selectedCharacterType, shouldShowFilters]);
+    }, [stories, maxPages, selectedCharacterType, selectedLanguage]);
 
     // Pour les non-premium sur les folders partagés, limiter à 5 histoires
     const isLockedPreview = !isPremium && isShared;
@@ -215,7 +221,7 @@ export default function StoryFolder({
                         <View className="flex flex-row items-center gap-3">
                             <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
                             <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>
-                                ( {shouldShowFilters ? filteredStories.length : stories.length} )
+                                ( {showFilters ?filteredStories.length : stories.length} )
                             </Text>
                         </View>
                         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
@@ -230,7 +236,7 @@ export default function StoryFolder({
                         )}
 
                         {/* Bouton toggle filtres - uniquement pour ALL et FAVORITE */}
-                        {expanded && isPremium && showContent && shouldShowFilters && !isLoading && (
+                        {expanded && (!isShared || isPremium) && showContent && !isLoading && (
                             <TouchableOpacity
                                 onPress={() => setShowFilters(!showFilters)}
                                 className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start ${showFilters
@@ -245,7 +251,7 @@ export default function StoryFolder({
                                 />
                                 <Text className={`ml-2 font-baloo ${showFilters ? 'text-white' : isNight ? 'text-white' : 'text-slate-700'
                                     }`}>
-                                    {showFilters ? 'Masquer les filtres' : 'Afficher les filtres'}
+                                    {showFilters ? t('storyFolder.hideFilters') : t('storyFolder.showFilters')}
                                 </Text>
                                 <Feather
                                     name={showFilters ? "chevron-up" : "chevron-down"}
@@ -257,11 +263,11 @@ export default function StoryFolder({
                         )}
 
                         {/* Filtres - uniquement pour ALL et FAVORITE */}
-                        {expanded && showContent && shouldShowFilters && !isLoading && showFilters && (
+                        {expanded && showContent && !isLoading && showFilters &&  (
                             <View className="mt-2 mb-4 bg-white/10 rounded-2xl p-4">
                                 {/* Filtre type de personnage */}
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
-                                    Type de personnage
+                                    {t('storyFolder.characterType')}
                                 </Text>
                                 <ScrollView
                                     horizontal
@@ -279,7 +285,7 @@ export default function StoryFolder({
                                             ? 'text-white'
                                             : isNight ? 'text-white' : 'text-slate-700'
                                             }`}>
-                                            Tous
+                                            {t('storyFolder.all')}
                                         </Text>
                                     </TouchableOpacity>
 
@@ -294,7 +300,7 @@ export default function StoryFolder({
                                             ? 'text-white'
                                             : isNight ? 'text-white' : 'text-slate-700'
                                             }`}>
-                                            👤 Humain
+                                            {t('storyFolder.human')}
                                         </Text>
                                     </TouchableOpacity>
 
@@ -309,14 +315,56 @@ export default function StoryFolder({
                                             ? 'text-white'
                                             : isNight ? 'text-white' : 'text-slate-700'
                                             }`}>
-                                            🐾 Animal
+                                            {t('storyFolder.animal')}
                                         </Text>
                                     </TouchableOpacity>
                                 </ScrollView>
 
+                                {/* Filtre langue */}
+                                <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
+                                    {t('storyFolder.language')}
+                                </Text>
+                                <ScrollView
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    className="mb-4"
+                                >
+                                    <TouchableOpacity
+                                        onPress={() => setSelectedLanguage('ALL')}
+                                        className={`mr-2 px-4 py-2 rounded-full ${selectedLanguage === 'ALL'
+                                            ? 'bg-blue-500'
+                                            : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                            }`}
+                                    >
+                                        <Text className={`font-baloo ${selectedLanguage === 'ALL'
+                                            ? 'text-white'
+                                            : isNight ? 'text-white' : 'text-slate-700'
+                                            }`}>
+                                            {t('storyFolder.allLanguages')}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    {availableLanguages.map(lang => (
+                                        <TouchableOpacity
+                                            key={lang}
+                                            onPress={() => setSelectedLanguage(lang)}
+                                            className={`mr-2 px-4 py-2 rounded-full ${selectedLanguage === lang
+                                                ? 'bg-blue-500'
+                                                : isNight ? 'bg-white/20' : 'bg-gray-200'
+                                                }`}
+                                        >
+                                            <Text className={`font-baloo ${selectedLanguage === lang
+                                                ? 'text-white'
+                                                : isNight ? 'text-white' : 'text-slate-700'
+                                                }`}>
+                                                {getLanguageFlag(lang)} {t(`storyFolder.languages.${lang}`, lang)}
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ))}
+                                </ScrollView>
+
                                 {/* Filtre nombre de pages */}
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
-                                    Nombre de pages max : {maxPages}
+                                    {t('storyFolder.maxPages', { count: maxPages })}
                                 </Text>
                                 <Slider
                                     style={{ width: '100%', height: 40 }}
@@ -331,10 +379,10 @@ export default function StoryFolder({
                                 />
                                 <View className="flex flex-row justify-between">
                                     <Text className={`${isNight ? "text-white/60" : "text-slate-500"} text-sm font-baloo`}>
-                                        1 page
+                                        {t('storyFolder.onePage')}
                                     </Text>
                                     <Text className={`${isNight ? "text-white/60" : "text-slate-500"} text-sm font-baloo`}>
-                                        {maxPagesInStories} pages
+                                        {t('storyFolder.nPages', { count: maxPagesInStories })}
                                     </Text>
                                 </View>
                             </View>
@@ -359,14 +407,14 @@ export default function StoryFolder({
                                 </Text>
                             </View>
                         ) : expanded && showContent && filteredStories.length === 0 ? (
-                            <View className="flex-1 items-center mt-6">
-                                <Text className="text-gray-500 mb-4 font-baloo-medium">
-                                    {shouldShowFilters
-                                        ? "Aucune histoire ne correspond aux filtres"
+                            <View className="flex-1 items-center mt-2">
+                                <Text className={`${isNight ? "text-white" : "text-slate-800"} mb-4 font-baloo-medium`}>
+                                    {showFilters
+                                        ? t('storyFolder.noMatchingStories')
                                         : t('storyFolder.noStoriesCreated')
                                     }
                                 </Text>
-                                {!shouldShowFilters && (
+                                {!showFilters && (
                                     <TouchableOpacity
                                         className="bg-white px-4 py-2 rounded-lg"
                                         onPress={() => navigation.navigate('CreateStory')}
@@ -415,7 +463,7 @@ export default function StoryFolder({
                                                             className='flex px-4 flex-row gap-3 p-2'
                                                         >
                                                             <Text className="text-slate-800 font-baloo text-sm">
-                                                                Deviens explorateur pour tout débloquer
+                                                                {t('storyFolder.unlockPremium')}
                                                             </Text>
                                                             <Feather name="arrow-right" size={16} color="#1e293b" />
                                                         </BlurView>

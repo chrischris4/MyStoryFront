@@ -36,25 +36,8 @@ import Background from '~/components/Background';
 import { useUserStore } from '~/store/useUserStore';
 
 
-
-
-const LANGUAGE_FLAGS: Record<string, string> = {
-  french: '\u{1F1EB}\u{1F1F7}',
-  english: '\u{1F1EC}\u{1F1E7}',
-  spanish: '\u{1F1EA}\u{1F1F8}',
-  german: '\u{1F1E9}\u{1F1EA}',
-  italian: '\u{1F1EE}\u{1F1F9}',
-  portuguese: '\u{1F1F5}\u{1F1F9}',
-  danish: '\u{1F1E9}\u{1F1F0}',
-};
-
-const getLanguageFlag = (language: string): string => {
-  return LANGUAGE_FLAGS[language.toLowerCase()] || '\u{1F30D}';
-};
-
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
 type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 export default function StoryDetailScreen() {
   const navigation = useNavigation<StoryDetailNavigationProp>();
   const { t } = useTranslation();
@@ -447,7 +430,6 @@ export default function StoryDetailScreen() {
     );
   }
 
-
   return (
     <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
       {/* 🌤️ Background animé */}
@@ -569,22 +551,6 @@ export default function StoryDetailScreen() {
               <Feather name="book-open" size={18} color={isNight ? '#fff' : '#64748b'} />
               <Text className={`text-base font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
                 {story?.numberOfPages ?? story?.pages?.length ?? '-'}
-              </Text>
-            </BlurView>
-            <BlurView
-              intensity={90}
-              tint={isNight ? "dark" : "light"}
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 9999,
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
-              }}
-            >
-              <Text style={{ fontSize: 22 }}>
-                {getLanguageFlag(story?.language || '')}
               </Text>
             </BlurView>
             <BlurView

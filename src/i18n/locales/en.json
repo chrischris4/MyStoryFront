@@ -15,7 +15,8 @@
     "no": "No",
     "ok": "OK",
     "close": "Close",
-    "retry": "Retry"
+    "retry": "Retry",
+    "and": "and"
   },
   "auth": {
     "login": "Login",
@@ -253,7 +254,36 @@
     "noStoriesCreated": "No stories created.",
     "createStory": "Create a story",
     "author": "Author",
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "showFilters": "Show filters",
+    "hideFilters": "Hide filters",
+    "characterType": "Character type",
+    "all": "All",
+    "human": "👤 Human",
+    "animal": "🐾 Animal",
+    "maxPages": "Max pages: {{count}}",
+    "onePage": "1 page",
+    "nPages": "{{count}} pages",
+    "noMatchingStories": "No stories match the filters",
+    "unlockPremium": "Become an explorer to unlock everything",
+    "language": "Language",
+    "allLanguages": "🌍 All",
+    "languages": {
+      "french": "French",
+      "fr": "French",
+      "en": "English",
+      "english": "English",
+      "es": "Spanish",
+      "spanish": "Spanish",
+      "de": "German",
+      "german": "German",
+      "it": "Italian",
+      "italian": "Italian",
+      "pt": "Portuguese",
+      "portuguese": "Portuguese",
+      "da": "Danish",
+      "danish": "Danish"
+    }
   },
   "storyReader": {
     "music": "Music",
@@ -383,8 +413,10 @@
     "storyTitle": "Title",
     "storyTitlePlaceholder": "Ex: Mimi and the magic forest",
     "storySummary": "Summary",
-    "storySummaryDesc": "Describe your story as best you can - the characters, the setting. The more details you provide, the more the story will match your expectations!",
-    "storySummaryPlaceholder": "Ex: A magical adventure in the mountains where a young boy discovers a secret world...",
+    "storySummaryDesc": "Describe your story as best you can - the characters, the setting, the actions. The more details you provide, the more the story will match your expectations!",
+    "storySummaryPlaceholderMale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. He meets a sweet magical animal who needs his help to find its family...",
+    "storySummaryPlaceholderFemale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. She meets a sweet magical animal who needs her help to find its family...",
+    "storySummaryPlaceholderPlural": "Ex: Today, {{name}} go on an adventure in a beautiful enchanted forest. They meet a sweet magical animal who needs their help to find its family...",
     "storyStyle": "Style",
     "storyLanguage": "Language",
     "ageGroup": "Age group",
@@ -535,6 +567,59 @@
     "freeLimitMessage": "With the free plan, you can create up to 2 characters. To create up to 5, upgrade to Adventurer or Legend plan!",
     "premiumLimitMessage": "You have reached the limit of 5 characters. To create a new one, you must first delete one.",
     "upgradePlan": "View subscriptions",
-    "deleteToCreate": "You must delete an existing character to create a new one."
+    "deleteToCreate": "You must delete an existing character to create a new one.",
+    "maleAnimal": "Male",
+    "femaleAnimal": "Female",
+    "skinColors": {
+      "light": "Light",
+      "medium-light": "Medium light",
+      "medium": "Medium",
+      "medium-dark": "Medium dark",
+      "dark": "Dark"
+    },
+    "hairColors": {
+      "blond": "Blond",
+      "brown": "Brown",
+      "black": "Black",
+      "red": "Red",
+      "gray": "Gray",
+      "white": "White"
+    },
+    "eyeColors": {
+      "brown": "Brown",
+      "blue": "Blue",
+      "green": "Green",
+      "hazel": "Hazel",
+      "gray": "Gray"
+    },
+    "furColors": {
+      "white": "White",
+      "black": "Black",
+      "brown": "Brown",
+      "golden": "Golden",
+      "gray": "Gray",
+      "spotted": "Spotted",
+      "rainbow": "Rainbow"
+    },
+    "animalTypes": {
+      "dog": "Dog",
+      "cat": "Cat",
+      "rabbit": "Rabbit",
+      "bird": "Bird",
+      "horse": "Horse",
+      "dragon": "Dragon",
+      "unicorn": "Unicorn",
+      "bear": "Bear"
+    },
+    "animalAges": {
+      "YOUNG": "Young",
+      "ADULT": "Adult",
+      "OLD": "Old"
+    },
+    "summaryAge": "{{age}} years old",
+    "summarySkin": "{{color}} skin",
+    "summaryHair": "{{color}} hair",
+    "summaryEyes": "{{color}} eyes",
+    "summaryFur": "{{color}} fur"
   }
 }

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useCharacters } from '~/hooks/useCharacters';
 import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
-import { ANIMAL_TYPES, ANIMAL_AGE_RANGES, GENDERS, getHumanEmoji } from '~/types';
+import { getHumanEmoji } from '~/types';
 import CharacterLimitModal from './CharacterLimitModal';
 import LottieView from 'lottie-react-native';
 
@@ -142,21 +142,24 @@ export default function CharacterSection({
   const getCharacterSummary = (character: Character): string => {
     const parts: string[] = [];
 
-    // Gender
-    const genderLabel = GENDERS.find((g) => g.id === character.gender)?.label;
-    if (genderLabel) parts.push(genderLabel);
+    // Gender - mâle/femelle pour animaux, masculin/féminin pour humains
+    if (character.gender) {
+      if (character.type === 'ANIMAL') {
+        parts.push(character.gender === 'MALE' ? t('character.maleAnimal') : t('character.femaleAnimal'));
+      } else {
+        parts.push(character.gender === 'MALE' ? t('character.male') : t('character.female'));
+      }
+    }
 
     if (character.type === 'HUMAN') {
-      if (character.age) parts.push(`${character.age} ans`);
-      if (character.skinColor) parts.push(`peau ${character.skinColor}`);
-      if (character.hairColor) parts.push(`cheveux ${character.hairColor}`);
-      if (character.eyeColor) parts.push(`yeux ${character.eyeColor}`);
+      if (character.age) parts.push(t('character.summaryAge', { age: character.age }));
+      if (character.skinColor) parts.push(t('character.summarySkin', { color: t(`character.skinColors.${character.skinColor}`, character.skinColor) }));
+      if (character.hairColor) parts.push(t('character.summaryHair', { color: t(`character.hairColors.${character.hairColor}`, character.hairColor) }));
+      if (character.eyeColor) parts.push(t('character.summaryEyes', { color: t(`character.eyeColors.${character.eyeColor}`, character.eyeColor) }));
     } else {
-      const animalLabel = ANIMAL_TYPES.find((a) => a.id === character.animalType)?.label;
-      if (animalLabel) parts.push(animalLabel);
-      const ageLabel = ANIMAL_AGE_RANGES.find((a) => a.id === character.animalAge)?.label;
-      if (ageLabel) parts.push(ageLabel.toLowerCase());
-      if (character.furColor) parts.push(`pelage ${character.furColor}`);
+      if (character.animalType) parts.push(t(`character.animalTypes.${character.animalType}`, character.animalType));
+      if (character.animalAge) parts.push(t(`character.animalAges.${character.animalAge}`, character.animalAge).toLowerCase());
+      if (character.furColor) parts.push(t('character.summaryFur', { color: t(`character.furColors.${character.furColor}`, character.furColor) }));
     }
 
     return parts.join(', ');
