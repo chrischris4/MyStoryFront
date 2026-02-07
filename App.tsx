@@ -62,7 +62,7 @@ const toastConfig = {
               style={{
                 fontSize: 14,
                 fontFamily: 'Baloo2-Medium',
-                color: '#047857',
+                color: '#37b350',
               }}
             >
               {props.text2}
@@ -110,7 +110,7 @@ const toastConfig = {
               style={{
                 fontSize: 14,
                 fontFamily: 'Baloo2-Medium',
-                color: '#B91C1C',
+                color: '#b33737',
               }}
             >
               {props.text2}
@@ -158,7 +158,7 @@ const toastConfig = {
               style={{
                 fontSize: 14,
                 fontFamily: 'Baloo2-Medium',
-                color: '#1D4ED8',
+                color: '#5175db',
               }}
             >
               {props.text2}

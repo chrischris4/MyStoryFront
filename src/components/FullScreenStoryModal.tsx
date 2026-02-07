@@ -275,22 +275,33 @@ export default function FullScreenStoryModal({
                       </Text>
                     </View>
                   )}
-                  {/* Cadre de couleur en overlay */}
-                  <StoryFrame
-                    type={selectedFrame}
-                    width={rotatedWidth}
-                    height={isRotated ? rotatedHeight : rotatedWidth * (9 / 16)}
-                  />
-                  {/* Effet animé en overlay */}
-                  <StoryEffect
-                    type={selectedEffect}
-                    width={rotatedWidth}
-                    height={isRotated ? rotatedHeight : rotatedWidth * (9 / 16)}
-                  />
                 </View>
               </View>
             )}
           />
+
+          {/* Cadre + Effet rendus une seule fois en overlay */}
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              top: isRotated ? 0 : (rotatedHeight - rotatedWidth * (9 / 16)) / 2,
+              left: 0,
+              width: rotatedWidth,
+              height: isRotated ? rotatedHeight : rotatedWidth * (9 / 16),
+            }}
+          >
+            <StoryFrame
+              type={selectedFrame}
+              width={rotatedWidth}
+              height={isRotated ? rotatedHeight : rotatedWidth * (9 / 16)}
+            />
+            <StoryEffect
+              type={selectedEffect}
+              width={rotatedWidth}
+              height={isRotated ? rotatedHeight : rotatedWidth * (9 / 16)}
+            />
+          </View>
 
           {/* Overlay sombre quand le menu est visible */}
           <Animated.View

@@ -135,7 +135,7 @@ export default function StoryFolder({
 
     // Calcul du nombre max de pages dans les stories
     const maxPagesInStories = useMemo(() => {
-        if (!stories || stories.length === 0) return 16;
+        if (!stories || stories.length === 0) return 12;
         return Math.max(...stories.map(story => story.numberOfPages || 0));
     }, [stories]);
 
@@ -228,7 +228,7 @@ export default function StoryFolder({
                         <View className="flex flex-row items-center gap-3">
                             <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
                             <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>
-                                ( {showFilters ?filteredStories.length : stories.length} )
+                                ( {filteredStories.length ? filteredStories.length : stories.length} )
                             </Text>
                         </View>
                         <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
@@ -246,7 +246,7 @@ export default function StoryFolder({
                         {expanded && (!isShared || isPremium) && showContent && !isLoading && (
                             <TouchableOpacity
                                 onPress={() => setShowFilters(!showFilters)}
-                                className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start ${showFilters
+                                className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start w-full ${showFilters
                                     ? 'bg-blue-500'
                                     : isNight ? 'bg-white/20' : 'bg-gray-200'
                                     }`}
