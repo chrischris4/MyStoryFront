@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -37,6 +38,23 @@ export default function GroupScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('myGroups');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const createModalOpacity = useRef(new Animated.Value(0)).current;
+  const createModalScale = useRef(new Animated.Value(0.9)).current;
+
+  const openCreateModal = useCallback(() => {
+    setShowCreateModal(true);
+    Animated.parallel([
+      Animated.timing(createModalOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+      Animated.spring(createModalScale, { toValue: 1, useNativeDriver: true, tension: 65, friction: 8 }),
+    ]).start();
+  }, []);
+
+  const closeCreateModal = useCallback(() => {
+    Animated.timing(createModalOpacity, { toValue: 0, duration: 150, useNativeDriver: true }).start(() => {
+      setShowCreateModal(false);
+      createModalScale.setValue(0.9);
+    });
+  }, []);
 
   const createGroupSchema = Yup.object().shape({
     name: Yup.string()
@@ -73,7 +91,7 @@ export default function GroupScreen() {
         text1: t('common.success'),
         text2: t('groups.groupCreated'),
       });
-      setShowCreateModal(false);
+      closeCreateModal();
       resetForm();
     } catch (error) {
       Toast.show({
@@ -366,7 +384,7 @@ export default function GroupScreen() {
               <View className='mb-24'>
                 <TouchableOpacity
                   activeOpacity={0.8}
-                  onPress={() => setShowCreateModal(true)}
+                  onPress={openCreateModal}
                   className="mb-4"
                 >
                   <BlurView
@@ -416,7 +434,7 @@ export default function GroupScreen() {
                             source={require('../../assets/animations/LoadingWhite.json')}
                             autoPlay
                             loop={true}
-                            style={{ width: 200, height: 200 }}
+                            style={{ width: 100, height: 100 }}
                           />
                         </Animated.View>
                       </View>
@@ -484,7 +502,7 @@ export default function GroupScreen() {
                         source={require('../../assets/animations/LoadingWhite.json')}
                         autoPlay
                         loop={true}
-                        style={{ width: 200, height: 200 }}
+                        style={{ width: 100, height: 100 }}
                       />
                     </Animated.View>
                   </View>
@@ -509,109 +527,117 @@ export default function GroupScreen() {
 
           {/* Modal de création de groupe */}
           {showCreateModal && (
-            <View className="absolute inset-0 bg-black/50 items-center justify-center px-4">
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                className="w-full p-6 rounded-3xl overflow-hidden"
-                style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
-              >
-                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold mb-4`}>
-                  {t('groups.createGroup')}
-                </Text>
-
-                <Formik
-                  initialValues={{ name: '', description: '' }}
-                  validationSchema={createGroupSchema}
-                  onSubmit={handleCreateGroup}
+            <Animated.View
+              className="absolute inset-0 items-center justify-center px-4"
+              style={{ opacity: createModalOpacity, backgroundColor: 'rgba(0,0,0,0.5)' }}
+            >
+              <TouchableWithoutFeedback onPress={closeCreateModal}>
+                <View className="absolute inset-0" />
+              </TouchableWithoutFeedback>
+              <Animated.View style={{ transform: [{ scale: createModalScale }], width: '100%' }}>
+                <BlurView
+                  intensity={90}
+                  tint={isNight ? "dark" : "light"}
+                  className="w-full p-6 rounded-3xl overflow-hidden"
+                  style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
                 >
-                  {({ handleChange, handleSubmit, values, errors, touched }) => (
-                    <>
-                      <View className="mb-3">
-                        <TextInput
-                          value={values.name}
-                          onChangeText={handleChange('name')}
-                          placeholder={t('groups.groupName')}
-                          placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                          maxLength={25}
-                          className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.name && errors.name ? 'border border-red-500' : ''}`}
-                        />
-                        <View className="flex-row justify-between mt-1 px-1">
-                          {touched.name && errors.name ? (
-                            <Text className="text-red-500 text-xs font-baloo">{errors.name}</Text>
-                          ) : (
-                            <View />
-                          )}
-                          <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
-                            {values.name.length}/25
-                          </Text>
-                        </View>
-                      </View>
+                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold mb-4`}>
+                    {t('groups.createGroup')}
+                  </Text>
 
-                      <View className="mb-4">
-                        <TextInput
-                          value={values.description}
-                          onChangeText={handleChange('description')}
-                          placeholder={t('groups.description')}
-                          placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
-                          multiline
-                          numberOfLines={3}
-                          maxLength={100}
-                          className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.description && errors.description ? 'border border-red-500' : ''}`}
-                          style={{ textAlignVertical: 'top' }}
-                        />
-                        <View className="flex-row justify-between mt-1 px-1">
-                          {touched.description && errors.description ? (
-                            <Text className="text-red-500 text-xs font-baloo">{errors.description}</Text>
-                          ) : (
-                            <View />
-                          )}
-                          <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
-                            {values.description.length}/100
-                          </Text>
-                        </View>
-                      </View>
-
-                      <View className="flex-row gap-3">
-                        <TouchableOpacity
-                          activeOpacity={0.8}
-                          onPress={() => setShowCreateModal(false)}
-                          className="flex-1"
-                        >
-                          <View className={`${isNight ? 'bg-slate-700' : 'bg-slate-200'} py-3 h-12 rounded-xl items-center`}>
-                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
-                              {t('common.cancel')}
+                  <Formik
+                    initialValues={{ name: '', description: '' }}
+                    validationSchema={createGroupSchema}
+                    onSubmit={handleCreateGroup}
+                  >
+                    {({ handleChange, handleSubmit, values, errors, touched }) => (
+                      <>
+                        <View className="mb-3">
+                          <TextInput
+                            value={values.name}
+                            onChangeText={handleChange('name')}
+                            placeholder={t('groups.groupName')}
+                            placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                            maxLength={25}
+                            className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.name && errors.name ? 'border border-red-500' : ''}`}
+                          />
+                          <View className="flex-row justify-between mt-1 px-1">
+                            {touched.name && errors.name ? (
+                              <Text className="text-red-500 text-xs font-baloo">{errors.name}</Text>
+                            ) : (
+                              <View />
+                            )}
+                            <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
+                              {values.name.length}/25
                             </Text>
                           </View>
-                        </TouchableOpacity>
+                        </View>
 
-                        <TouchableOpacity
-                          activeOpacity={0.8}
-                          onPress={() => handleSubmit()}
-                          className="flex-1"
-                          disabled={createGroupMutation.isPending}
-                        >
-                          <View className="bg-blue-500 py-3 h-12 rounded-xl items-center">
-                            {createGroupMutation.isPending ? (
-                              <LottieView
-                                source={require('../../assets/animations/LoadingWhite.json')}
-                                autoPlay
-                                loop={true}
-                                style={{ width: 80, height: 80 }}
-                              />
+                        <View className="mb-4">
+                          <TextInput
+                            value={values.description}
+                            onChangeText={handleChange('description')}
+                            placeholder={t('groups.description')}
+                            placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
+                            multiline
+                            numberOfLines={3}
+                            maxLength={100}
+                            className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.description && errors.description ? 'border border-red-500' : ''}`}
+                            style={{ textAlignVertical: 'top' }}
+                          />
+                          <View className="flex-row justify-between mt-1 px-1">
+                            {touched.description && errors.description ? (
+                              <Text className="text-red-500 text-xs font-baloo">{errors.description}</Text>
                             ) : (
-                              <Text className="text-white font-baloo-semibold">
-                                {t('groups.create')}
-                              </Text>
+                              <View />
                             )}
+                            <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
+                              {values.description.length}/100
+                            </Text>
                           </View>
-                        </TouchableOpacity>
-                      </View>
-                    </>
-                  )}
-                </Formik>
-              </BlurView>
-            </View>
+                        </View>
+
+                        <View className="flex-row gap-3">
+                          <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={closeCreateModal}
+                            className="flex-1"
+                          >
+                            <View className={`${isNight ? 'bg-slate-700' : 'bg-slate-200'} py-3 h-12 rounded-xl items-center`}>
+                              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
+                                {t('common.cancel')}
+                              </Text>
+                            </View>
+                          </TouchableOpacity>
+
+                          <TouchableOpacity
+                            activeOpacity={0.8}
+                            onPress={() => handleSubmit()}
+                            className="flex-1"
+                            disabled={createGroupMutation.isPending}
+                          >
+                            <View className="bg-blue-500 py-3 h-12 rounded-xl items-center">
+                              {createGroupMutation.isPending ? (
+                                <LottieView
+                                  source={require('../../assets/animations/LoadingWhite.json')}
+                                  autoPlay
+                                  loop={true}
+                                  style={{ width: 80, height: 80 }}
+                                />
+                              ) : (
+                                <Text className="text-white font-baloo-semibold">
+                                  {t('groups.create')}
+                                </Text>
+                              )}
+                            </View>
+                          </TouchableOpacity>
+                        </View>
+                      </>
+                    )}
+                  </Formik>
+                </BlurView>
+              </Animated.View>
+            </Animated.View>
           )}
 
           {/* Modal de détails du groupe */}

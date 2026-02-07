@@ -55,7 +55,7 @@ export default function LoginScreen() {
         const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
         Toast.show({
-          type: 'success',
+          type: 'info',
           text1: t('welcome.greeting', { name: userName }),
           text2: randomMessage,
         });
@@ -87,7 +87,7 @@ export default function LoginScreen() {
       const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
       Toast.show({
-        type: 'success',
+        type: 'info',
         text1: t('welcome.greeting', { name: userName }),
         text2: randomMessage,
       });

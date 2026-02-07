@@ -201,7 +201,6 @@ export default function HomeScreen() {
             />
             <HomeButton
               style="half"
-
               isNight={isNight}
               onPress={() => navigation.navigate('GroupScreen')}
               title={t('home.myGroups')}

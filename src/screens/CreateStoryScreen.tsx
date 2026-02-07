@@ -108,7 +108,7 @@ const createStorySchema = (t: (key: string) => string) => Yup.object().shape({
     .required(t('createStory.validation.promptRequired')),
   numPages: Yup.number()
     .min(1, t('createStory.validation.pagesMin'))
-    .max(16, t('createStory.validation.pagesMax'))
+    .max(12, t('createStory.validation.pagesMax'))
     .required(t('createStory.validation.pagesRequired')),
   selectedStyle: Yup.string()
     .required(t('createStory.validation.styleRequired')),
@@ -842,7 +842,7 @@ export default function CreateStoryScreen() {
         prompt={formik.values.prompt}
         numPages={formik.values.numPages}
         styleName={getStyleTranslation(formik.values.selectedStyle).name}
-        styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle)?.emoji || ''}
+        styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle) || ''}
         languageName={t(`storyFolder.languages.${formik.values.language}`, LANGUAGES.find(l => l.id === formik.values.language)?.name || '')}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
         ageGroupName={t(`createStory.ageGroups.${formik.values.ageGroup}.name`)}

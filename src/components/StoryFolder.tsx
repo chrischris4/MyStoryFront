@@ -533,11 +533,11 @@ export default function StoryFolder({
 
                                                 {item.characters && item.characters.length > 0 && (
                                                     <View className='flex flex-row flex-wrap gap-2 mt-2 mb-1'>
-                                                        {item.characters.map((storyCharacter: any) => {
+                                                        {item.characters.map((storyCharacter: any, charIndex: number) => {
                                                             const character = storyCharacter.character;
                                                             if (!character) return null;
                                                             return (
-                                                                <View key={storyCharacter.id} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
+                                                                <View key={storyCharacter.id ?? `char-${charIndex}`} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
                                                                     <View
                                                                         className={`w-8 h-8 rounded-full items-center justify-center ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
                                                                             }`}

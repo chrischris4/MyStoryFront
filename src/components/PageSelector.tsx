@@ -11,7 +11,7 @@ interface PageSelectorProps {
 
 export default function PageSelector({ numPages, setNumPages, isNight }: PageSelectorProps) {
   const { t } = useTranslation();
-  const maxPages = 16;
+  const maxPages = 12;
 
   const [currentIndex, setCurrentIndex] = useState(numPages - 8);
   const translateX = useRef(new Animated.Value(0)).current;

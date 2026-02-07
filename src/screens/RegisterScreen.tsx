@@ -93,7 +93,7 @@ export default function RegisterScreen() {
       const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
       Toast.show({
-        type: 'success',
+        type: 'info',
         text1: t('welcome.greeting', { name: userName }),
         text2: randomMessage,
       });
