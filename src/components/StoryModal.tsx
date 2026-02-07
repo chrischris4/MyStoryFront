@@ -266,7 +266,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
 
                     {/* Contenu texte et boutons */}
                     {loading ? (
-                        <View className="flex h-full justify-end items-center relative mb-4">
+                        <View className="flex h-full justify-between items-center relative mb-4">
                             <Animated.View
                                 style={{
                                     backgroundColor: groundColor,
@@ -280,10 +280,21 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                     bottom: '-130%',
                                 }}
                             />
-                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-11/12 abolute top-4'>
-                                <Animated.Text className="text-xl font-baloo-medium text-center ">
-                                    {t('storyCreation.creationInProgress')}
-                                </Animated.Text>
+
+                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='p-4 flex flex-col justify-center items-center w-full'>
+                                <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-full'>
+                                    <Animated.Text className="text-xl font-baloo-medium text-center ">
+                                        {t('storyCreation.creationInProgress')}
+                                    </Animated.Text>
+
+
+                                </View>
+                                <LottieView
+                                    source={require('../../assets/animations/LoadingWhite.json')}
+                                    autoPlay
+                                    loop={true}
+                                    style={{ width: 100, height: 100 }}
+                                />
                             </View>
                             <View className='bg-white p-4 w-11/12 rounded-xl  my-4'>
                                 <Animated.Text className="text-base font-baloo text-center">

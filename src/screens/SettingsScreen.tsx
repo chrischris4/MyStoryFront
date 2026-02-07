@@ -53,7 +53,7 @@ export default function SettingsScreen() {
         await logout();
         navigation.navigate('Login' as never);
         Toast.show({
-            type: 'success',
+            type: 'info',
             text1: t('welcome.goodbye', { name: userName }),
             text2: t('welcome.seeYouSoon'),
         });

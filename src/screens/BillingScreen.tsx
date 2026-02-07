@@ -9,7 +9,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '~/types';
 import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
-import StarryBackground from '~/components/StarryBackground';
 import { useIAP } from '~/hooks/useIAP';
 import { usePurchaseProduct } from '~/hooks/usePurchaseProduct';
 import { usePurchaseSubscription } from '~/hooks/usePurchaseSubscription';
@@ -119,7 +118,7 @@ export default function BillingScreen() {
             showStoreBubble();
         }, 2000);
 
-        // Puis toutes les 30s
+        // Puis toutes les 20s
         const interval = setInterval(() => {
             showStoreBubble();
         }, 20000);

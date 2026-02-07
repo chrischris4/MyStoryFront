@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { CommonActions } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
 export default function FloatingStoryCreation() {
   const { t } = useTranslation();
@@ -113,6 +114,8 @@ export default function FloatingStoryCreation() {
         shadowRadius: 8,
         elevation: 10,
         zIndex: 9999,
+        borderColor: loading ? '#3B82F6' : '#10B981',
+        borderWidth: 2,
         transform: [{ translateX: pan.x }, { translateY: pan.y }],
       }}
     >
@@ -120,10 +123,17 @@ export default function FloatingStoryCreation() {
         <View className="flex-1 items-center justify-center p-2">
           {loading ? (
             <>
+              <LottieView
+                source={require('../../assets/animations/LoadingWhite.json')}
+                autoPlay
+                loop={true}
+                style={{ width: 80, height: 80 }}
+              />
               <Text className="text-white text-[10px] text-center mt-1 font-medium">
                 {t('storyCreation.creating')}
               </Text>
-              <Text className="text-gray-400 text-[9px] text-center mt-0.5" numberOfLines={1}>
+
+              <Text className="text-gray-400 text-[9px] text-center mt-0.5">
                 {title}
               </Text>
             </>
