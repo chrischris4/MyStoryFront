@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet } from 'react-native';
+import { View, Animated, StyleSheet, Easing } from 'react-native';
 import { Feather, Ionicons } from '@expo/vector-icons';
-import { useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming, Easing } from 'react-native-reanimated';
 
 export type FrameType =
   | 'none'
@@ -69,7 +68,7 @@ const TwinkleStar = ({ stagger, size, left, top, color }: {
         transform: [{ scale }],
       }}
     >
-      <Feather name="star" size={size} color={color} />
+      <Ionicons name="star" size={size} color={color} />
     </Animated.View>
   );
 };
@@ -302,51 +301,44 @@ export const MagicFrame = ({ width, height }: FrameProps) => {
 
 // ===== SNOW - Flocons lents (recursive, zero flash) =====
 
-const Snowflake = ({ stagger, startLeft, duration, size }: {
-  stagger: number; startLeft: number; duration: number; size: number;
+const Snowflake = ({ stagger, startLeft, startTop, moveY, duration, size }: {
+  stagger: number; startLeft: number; startTop: number; moveY: number; duration: number; size: number;
 }) => {
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-10)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const alive = useRef(true);
 
   useEffect(() => {
     const rest = 800 + Math.random() * 500;
-    const swayAmount = 12 + Math.random() * 15;
-    const swayDuration = 1200 + Math.random() * 600;
 
     const runCycle = () => {
       if (!alive.current) return;
-      translateY.setValue(-10);
+      translateY.setValue(0);
+      scaleAnim.setValue(0.3);
 
       Animated.sequence([
         Animated.parallel([
-          Animated.timing(opacity, { toValue: 0.85, duration: 500, useNativeDriver: true }),
-          Animated.timing(translateY, { toValue: 160, duration, useNativeDriver: true, easing: Easing.linear }),
+          Animated.timing(opacity, { toValue: 0.85, duration: 400, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: moveY, duration, useNativeDriver: true, easing: Easing.linear }),
         ]),
-        Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+        Animated.parallel([
+          Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 0.3, duration: 500, useNativeDriver: true }),
+        ]),
         Animated.delay(rest),
       ]).start(({ finished }) => { if (finished) runCycle(); });
     };
 
     const timer = setTimeout(runCycle, stagger);
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateX, { toValue: swayAmount, duration: swayDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-        Animated.timing(translateX, { toValue: -swayAmount, duration: swayDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-      ])
-    ).start();
-
-    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); translateX.stopAnimation(); };
+    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); scaleAnim.stopAnimation(); };
   }, []);
 
   return (
-    <Animated.View style={{
-      position: 'absolute', left: `${startLeft}%`, top: 0,
-      width: size, height: size, borderRadius: size / 2, backgroundColor: '#FFFFFF',
-      opacity, transform: [{ translateY }, { translateX }],
-    }} />
+    <Animated.View style={{ position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`, opacity, transform: [{ translateY }, { scale: scaleAnim }] }}>
+      <View style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#FFFFFF' }} />
+    </Animated.View>
   );
 };
 
@@ -355,8 +347,10 @@ export const SnowFrame = ({ width, height }: FrameProps) => {
     Array.from({ length: 28 }, (_, i) => ({
       id: i, stagger: Math.random() * 4000,
       startLeft: 2 + Math.random() * 96,
-      duration: 4000 + Math.random() * 3000,
-      size: 2 + Math.random() * 6,
+      startTop: 1 + Math.random() * 8,
+      moveY: 80 + Math.random() * 80,
+      duration: 3000 + Math.random() * 2500,
+      size: 3 + Math.random() * 6,
     }))
   ).current;
 
@@ -388,100 +382,39 @@ export const FloatingHeart = ({
   size,
   color,
 }: FloatingHeartProps) => {
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const translateX = useSharedValue(0);
-  const scale = useSharedValue(0.4);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.2)).current;
+  const alive = useRef(true);
 
   useEffect(() => {
-    const rest = 700 + Math.random() * 600;
-    const swayAmount = 6 + Math.random() * 10;
-    const swayDuration = 900 + Math.random() * 700;
+    const rest = 800 + Math.random() * 500;
 
-    // 🌊 sway horizontal (loop infini, UI thread)
-    translateX.value = withRepeat(
-      withSequence(
-        withTiming(swayAmount, {
-          duration: swayDuration,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        withTiming(-swayAmount, {
-          duration: swayDuration,
-          easing: Easing.inOut(Easing.ease),
-        })
-      ),
-      -1,
-      true
-    );
+    const runCycle = () => {
+      if (!alive.current) return;
+      translateY.setValue(0);
+      scaleAnim.setValue(0.2);
 
-    // ❤️ cycle principal
-    opacity.value = withDelay(
-      stagger,
-      withRepeat(
-        withSequence(
-          // reset invisible
-          withTiming(0, { duration: 0 }),
-          withTiming(0.95, { duration: 350 }),
-          withTiming(0, { duration: 500, easing: Easing.in(Easing.ease) }),
-          withTiming(0, { duration: rest })
-        ),
-        -1,
-        false
-      )
-    );
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(opacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: moveY, duration, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
+        ]),
+        Animated.parallel([
+          Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 0.2, duration: 500, useNativeDriver: true }),
+        ]),
+        Animated.delay(rest),
+      ]).start(({ finished }) => { if (finished) runCycle(); });
+    };
 
-    scale.value = withDelay(
-      stagger,
-      withRepeat(
-        withSequence(
-          withTiming(0.4, { duration: 0 }),
-          withSpring(1, { damping: 8, stiffness: 120 }),
-          withTiming(0.4, { duration: 500 }),
-          withTiming(0.4, { duration: rest })
-        ),
-        -1,
-        false
-      )
-    );
-
-    translateY.value = withDelay(
-      stagger,
-      withRepeat(
-        withSequence(
-          withTiming(0, { duration: 0 }),
-          withTiming(moveY, {
-            duration,
-            easing: Easing.out(Easing.cubic),
-          }),
-          withTiming(0, { duration: 0 }),
-          withTiming(0, { duration: rest })
-        ),
-        -1,
-        false
-      )
-    );
+    const timer = setTimeout(runCycle, stagger);
+    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); scaleAnim.stopAnimation(); };
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
-  }));
-
   return (
-    <Animated.View
-      style={[
-        styles.heart,
-        {
-          left: `${startLeft}%`,
-          top: `${startTop}%`,
-        },
-        animatedStyle,
-      ]}
-    >
+    <Animated.View style={{ position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`, alignItems: 'center', justifyContent: 'center', opacity, transform: [{ translateY }, { scale: scaleAnim }] }}>
       <Ionicons name="heart" size={size} color={color} />
     </Animated.View>
   );
@@ -502,39 +435,41 @@ export const HeartsFrame = ({ width, height }: FrameProps) => {
     '#C9184A',
   ];
 
-  const hearts = Array.from({ length: 20 }, (_, i) => {
-    const edge = Math.floor(Math.random() * 4);
-    let left: number, top: number;
+  const hearts = useRef(
+    Array.from({ length: 20 }, (_, i) => {
+      const edge = Math.floor(Math.random() * 4);
+      let left: number, top: number;
 
-    switch (edge) {
-      case 0:
-        left = 5 + Math.random() * 90;
-        top = 82 + Math.random() * 15;
-        break;
-      case 1:
-        left = 88 + Math.random() * 10;
-        top = 5 + Math.random() * 90;
-        break;
-      case 2:
-        left = 5 + Math.random() * 90;
-        top = 2 + Math.random() * 10;
-        break;
-      default:
-        left = 2 + Math.random() * 10;
-        top = 5 + Math.random() * 90;
-    }
+      switch (edge) {
+        case 0:
+          left = 5 + Math.random() * 90;
+          top = 82 + Math.random() * 15;
+          break;
+        case 1:
+          left = 88 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+          break;
+        case 2:
+          left = 5 + Math.random() * 90;
+          top = 2 + Math.random() * 10;
+          break;
+        default:
+          left = 2 + Math.random() * 10;
+          top = 5 + Math.random() * 90;
+      }
 
-    return {
-      id: i,
-      stagger: Math.random() * 3000,
-      startLeft: left,
-      startTop: top,
-      moveY: -25 - Math.random() * 25,
-      duration: 2200 + Math.random() * 1600,
-      size: 14 + Math.floor(Math.random() * 10),
-      color: colors[i % colors.length],
-    };
-  });
+      return {
+        id: i,
+        stagger: Math.random() * 3000,
+        startLeft: left,
+        startTop: top,
+        moveY: -25 - Math.random() * 25,
+        duration: 2200 + Math.random() * 1600,
+        size: 14 + Math.floor(Math.random() * 10),
+        color: colors[i % colors.length],
+      };
+    })
+  ).current;
 
   return (
     <View pointerEvents="none" style={[styles.frame, { width, height }]}>
@@ -549,58 +484,52 @@ export const HeartsFrame = ({ width, height }: FrameProps) => {
 
 // ===== BUBBLES - Bulles (recursive, zero flash) =====
 
-const Bubble = ({ stagger, startLeft, startTop, size, duration }: {
-  stagger: number; startLeft: number; startTop: number; size: number; duration: number;
+const Bubble = ({ stagger, startLeft, startTop, moveY, size, duration }: {
+  stagger: number; startLeft: number; startTop: number; moveY: number; size: number; duration: number;
 }) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.2)).current;
   const alive = useRef(true);
 
   useEffect(() => {
     const rest = 800 + Math.random() * 500;
-    const riseDistance = -55 - Math.random() * 25;
-    const driftAmount = 10 + Math.random() * 15;
-    const driftDuration = 1200 + Math.random() * 800;
 
     const runCycle = () => {
       if (!alive.current) return;
       translateY.setValue(0);
+      scaleAnim.setValue(0.2);
 
       Animated.sequence([
         Animated.parallel([
-          Animated.timing(opacity, { toValue: 0.7, duration: 500, useNativeDriver: true }),
-          Animated.timing(translateY, { toValue: riseDistance, duration, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
+          Animated.timing(opacity, { toValue: 0.7, duration: 400, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 400, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: moveY, duration, useNativeDriver: true, easing: Easing.out(Easing.ease) }),
         ]),
-        Animated.timing(opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+        Animated.parallel([
+          Animated.timing(opacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 0.2, duration: 500, useNativeDriver: true }),
+        ]),
         Animated.delay(rest),
       ]).start(({ finished }) => { if (finished) runCycle(); });
     };
 
     const timer = setTimeout(runCycle, stagger);
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateX, { toValue: driftAmount, duration: driftDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-        Animated.timing(translateX, { toValue: -driftAmount, duration: driftDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-      ])
-    ).start();
-
-    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); translateX.stopAnimation(); };
+    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); scaleAnim.stopAnimation(); };
   }, []);
 
   return (
-    <Animated.View style={{
-      position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`,
-      width: size, height: size, borderRadius: size / 2,
-      borderWidth: 1.5, borderColor: 'rgba(135, 206, 250, 0.7)', backgroundColor: 'rgba(135, 206, 250, 0.1)',
-      opacity, transform: [{ translateY }, { translateX }],
-    }}>
+    <Animated.View style={{ position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`, alignItems: 'center', justifyContent: 'center', opacity, transform: [{ translateY }, { scale: scaleAnim }] }}>
       <View style={{
-        position: 'absolute', top: size * 0.15, left: size * 0.2,
-        width: size * 0.3, height: size * 0.2, borderRadius: size * 0.15,
-        backgroundColor: 'rgba(255, 255, 255, 0.6)', transform: [{ rotate: '-30deg' }],
-      }} />
+        width: size, height: size, borderRadius: size / 2,
+        borderWidth: 1.5, borderColor: 'rgba(135, 206, 250, 0.7)', backgroundColor: 'rgba(135, 206, 250, 0.1)',
+      }}>
+        <View style={{
+          position: 'absolute', top: size * 0.15, left: size * 0.2,
+          width: size * 0.3, height: size * 0.2, borderRadius: size * 0.15,
+          backgroundColor: 'rgba(255, 255, 255, 0.6)', transform: [{ rotate: '-30deg' }],
+        }} />
+      </View>
     </Animated.View>
   );
 };
@@ -610,6 +539,7 @@ export const BubblesFrame = ({ width, height }: FrameProps) => {
     Array.from({ length: 24 }, (_, i) => ({
       id: i, stagger: Math.random() * 3500,
       startLeft: 3 + Math.random() * 94, startTop: 78 + Math.random() * 19,
+      moveY: -55 - Math.random() * 25,
       size: 8 + Math.random() * 14, duration: 2200 + Math.random() * 2000,
     }))
   ).current;
@@ -624,126 +554,125 @@ export const BubblesFrame = ({ width, height }: FrameProps) => {
 
 // ===== FIREFLIES - Lucioles vagabondes (continu, pas de reset) =====
 
-const Firefly = ({ stagger, startLeft, startTop }: {
-  stagger: number; startLeft: number; startTop: number;
-}) => {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
-  const glowScale = useRef(new Animated.Value(0.5)).current;
-  const alive = useRef(true);
+// const Firefly = ({ stagger, startLeft, startTop }: {
+//   stagger: number; startLeft: number; startTop: number;
+// }) => {
+//   const translateX = useRef(new Animated.Value(0)).current;
+//   const translateY = useRef(new Animated.Value(0)).current;
+//   const opacity = useRef(new Animated.Value(0)).current;
+//   const glowScale = useRef(new Animated.Value(0.5)).current;
 
-  useEffect(() => {
-    const runGlow = () => {
-      if (!alive.current) return;
-      Animated.sequence([
-        Animated.parallel([
-          Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
-          Animated.timing(glowScale, { toValue: 1.3, duration: 600, useNativeDriver: true }),
-        ]),
-        Animated.parallel([
-          Animated.timing(opacity, { toValue: 0.15, duration: 800, useNativeDriver: true }),
-          Animated.timing(glowScale, { toValue: 0.5, duration: 800, useNativeDriver: true }),
-        ]),
-        Animated.delay(Math.random() * 600),
-      ]).start(({ finished }) => { if (finished) runGlow(); });
-    };
+//   useEffect(() => {
+//     const ampX = 20 + Math.random() * 30;
+//     const ampY = 15 + Math.random() * 20;
+//     const durX = 2500 + Math.random() * 1500;
+//     const durY = 2200 + Math.random() * 1200;
+//     const glowPause = 100 + Math.random() * 500;
 
-    const timer = setTimeout(runGlow, stagger);
+//     const wanderX = Animated.loop(
+//       Animated.sequence([
+//         Animated.timing(translateX, { toValue: ampX, duration: durX, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
+//         Animated.timing(translateX, { toValue: -ampX, duration: durX, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
+//       ])
+//     );
 
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateX, { toValue: 20 + Math.random() * 30, duration: 2500 + Math.random() * 1500, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-        Animated.timing(translateX, { toValue: -(20 + Math.random() * 30), duration: 2500 + Math.random() * 1500, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-      ])
-    ).start();
+//     const wanderY = Animated.loop(
+//       Animated.sequence([
+//         Animated.timing(translateY, { toValue: ampY, duration: durY, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
+//         Animated.timing(translateY, { toValue: -ampY, duration: durY, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
+//       ])
+//     );
 
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateY, { toValue: 15 + Math.random() * 20, duration: 2200 + Math.random() * 1200, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-        Animated.timing(translateY, { toValue: -(15 + Math.random() * 20), duration: 2200 + Math.random() * 1200, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-      ])
-    ).start();
+//     const glow = Animated.loop(
+//       Animated.sequence([
+//         Animated.parallel([
+//           Animated.timing(opacity, { toValue: 1, duration: 600, useNativeDriver: true }),
+//           Animated.timing(glowScale, { toValue: 1.3, duration: 600, useNativeDriver: true }),
+//         ]),
+//         Animated.parallel([
+//           Animated.timing(opacity, { toValue: 0.15, duration: 800, useNativeDriver: true }),
+//           Animated.timing(glowScale, { toValue: 0.5, duration: 800, useNativeDriver: true }),
+//         ]),
+//         Animated.delay(glowPause),
+//       ])
+//     );
 
-    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); glowScale.stopAnimation(); translateX.stopAnimation(); translateY.stopAnimation(); };
-  }, []);
+//     const timer = setTimeout(() => { wanderX.start(); wanderY.start(); glow.start(); }, stagger);
+//     return () => { clearTimeout(timer); wanderX.stop(); wanderY.stop(); glow.stop(); };
+//   }, []);
 
-  return (
-    <Animated.View style={{ position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`, alignItems: 'center', justifyContent: 'center', opacity, transform: [{ translateX }, { translateY }] }}>
-      <Animated.View style={{ position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(200, 255, 50, 0.25)', transform: [{ scale: glowScale }] }} />
-      <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#C8FF32' }} />
-    </Animated.View>
-  );
-};
+//   return (
+//     <Animated.View style={{ position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`, alignItems: 'center', justifyContent: 'center', opacity, transform: [{ translateX }, { translateY }] }}>
+//       <Animated.View style={{ position: 'absolute', width: 20, height: 20, borderRadius: 10, backgroundColor: 'rgba(200, 255, 50, 0.25)', transform: [{ scale: glowScale }] }} />
+//       <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#C8FF32' }} />
+//     </Animated.View>
+//   );
+// };
 
-export const FirefliesFrame = ({ width, height }: FrameProps) => {
-  const fireflies = useRef(
-    Array.from({ length: 22 }, (_, i) => ({
-      id: i, stagger: Math.random() * 2000,
-      startLeft: 10 + Math.random() * 80, startTop: 10 + Math.random() * 80,
-    }))
-  ).current;
+// export const FirefliesFrame = ({ width, height }: FrameProps) => {
+//   const fireflies = useRef(
+//     Array.from({ length: 22 }, (_, i) => ({
+//       id: i, stagger: Math.random() * 2000,
+//       startLeft: 10 + Math.random() * 80, startTop: 10 + Math.random() * 80,
+//     }))
+//   ).current;
 
-  return (
-    <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
-      {fireflies.map((f) => <Firefly key={f.id} {...f} />)}
-    </View>
-  );
-};
+//   return (
+//     <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
+//       {fireflies.map((f) => <Firefly key={f.id} {...f} />)}
+//     </View>
+//   );
+// };
 
 
 // ===== CONFETTI - Confettis (recursive, zero flash) =====
 
-const ConfettiPiece = ({ stagger, startLeft, color, duration, size }: {
-  stagger: number; startLeft: number; color: string; duration: number; size: number;
+const ConfettiPiece = ({ stagger, startLeft, startTop, moveY, color, duration, size }: {
+  stagger: number; startLeft: number; startTop: number; moveY: number; color: string; duration: number; size: number;
 }) => {
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-10)).current;
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.2)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const alive = useRef(true);
 
   useEffect(() => {
     const rest = 800 + Math.random() * 500;
-    const swayAmount = 15 + Math.random() * 20;
-    const swayDuration = 600 + Math.random() * 400;
 
     const runCycle = () => {
       if (!alive.current) return;
-      translateY.setValue(-10);
+      translateY.setValue(0);
+      scaleAnim.setValue(0.2);
       rotateAnim.setValue(0);
 
       Animated.sequence([
         Animated.parallel([
-          Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-          Animated.timing(translateY, { toValue: 140, duration, useNativeDriver: true }),
+          Animated.timing(opacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 1, duration: 300, useNativeDriver: true }),
+          Animated.timing(translateY, { toValue: moveY, duration, useNativeDriver: true }),
           Animated.timing(rotateAnim, { toValue: 1, duration, useNativeDriver: true }),
         ]),
-        Animated.timing(opacity, { toValue: 0, duration: 250, useNativeDriver: true }),
+        Animated.parallel([
+          Animated.timing(opacity, { toValue: 0, duration: 400, useNativeDriver: true }),
+          Animated.timing(scaleAnim, { toValue: 0.2, duration: 400, useNativeDriver: true }),
+        ]),
         Animated.delay(rest),
       ]).start(({ finished }) => { if (finished) runCycle(); });
     };
 
     const timer = setTimeout(runCycle, stagger);
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(translateX, { toValue: swayAmount, duration: swayDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-        Animated.timing(translateX, { toValue: -swayAmount, duration: swayDuration, useNativeDriver: true, easing: Easing.inOut(Easing.ease) }),
-      ])
-    ).start();
-
-    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); translateX.stopAnimation(); rotateAnim.stopAnimation(); };
+    return () => { alive.current = false; clearTimeout(timer); opacity.stopAnimation(); translateY.stopAnimation(); scaleAnim.stopAnimation(); rotateAnim.stopAnimation(); };
   }, []);
 
   const spin = rotateAnim.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
 
   return (
     <Animated.View style={{
-      position: 'absolute', left: `${startLeft}%`, top: 0,
-      width: size, height: size * 1.6, backgroundColor: color, borderRadius: 1,
-      opacity, transform: [{ translateY }, { translateX }, { rotate: spin }],
-    }} />
+      position: 'absolute', left: `${startLeft}%`, top: `${startTop}%`,
+      opacity, transform: [{ translateY }, { scale: scaleAnim }, { rotate: spin }],
+    }}>
+      <View style={{ width: size, height: size * 1.6, backgroundColor: color, borderRadius: 1 }} />
+    </Animated.View>
   );
 };
 
@@ -752,7 +681,10 @@ export const ConfettiFrame = ({ width, height }: FrameProps) => {
   const confetti = useRef(
     Array.from({ length: 26 }, (_, i) => ({
       id: i, stagger: Math.random() * 2500,
-      startLeft: 3 + Math.random() * 94, color: colors[i % colors.length],
+      startLeft: 3 + Math.random() * 94,
+      startTop: 1 + Math.random() * 8,
+      moveY: 80 + Math.random() * 80,
+      color: colors[i % colors.length],
       duration: 2000 + Math.random() * 1500, size: 5 + Math.random() * 4,
     }))
   ).current;
@@ -799,7 +731,7 @@ export const StoryEffect = ({ type, width, height }: { type: EffectType; width: 
     case 'snow': return <SnowFrame width={width} height={height} />;
     case 'hearts': return <HeartsFrame width={width} height={height} />;
     case 'bubbles': return <BubblesFrame width={width} height={height} />;
-    case 'fireflies': return <FirefliesFrame width={width} height={height} />;
+    // case 'fireflies': return <FirefliesFrame width={width} height={height} />;
     case 'confetti': return <ConfettiFrame width={width} height={height} />;
     case 'none': default: return null;
   }

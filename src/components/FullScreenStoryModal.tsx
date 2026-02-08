@@ -916,7 +916,7 @@ export default function FullScreenStoryModal({
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectBubbles')}</Text>
                               </TouchableOpacity>
 
-                              <TouchableOpacity
+                              {/* <TouchableOpacity
                                 onPress={() => setSelectedEffect('fireflies')}
                                 style={{
                                   borderRadius: 12,
@@ -931,7 +931,7 @@ export default function FullScreenStoryModal({
                                   <View style={{ position: 'absolute', bottom: 6, left: 14, width: 4, height: 4, backgroundColor: '#FFEB3B', borderRadius: 2, opacity: 0.8 }} />
                                 </View>
                                 <Text style={{ fontSize: 11, marginTop: 4 }}>{t('storyReader.effectFireflies')}</Text>
-                              </TouchableOpacity>
+                              </TouchableOpacity> */}
 
                               <TouchableOpacity
                                 onPress={() => setSelectedEffect('confetti')}
