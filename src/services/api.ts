@@ -214,7 +214,7 @@ export class ApiService {
     return this.post<{ accessToken: string; refreshToken: string }>('/auth/register', { email, password, username }, false);
   }
 
-  async oauthLogin(provider: 'google' | 'facebook', accessToken: string, name?: string) {
+  async oauthLogin(provider: 'google', accessToken: string, name?: string) {
     return this.post<{ accessToken: string; refreshToken: string }>('/auth/oauth', { provider, accessToken, name }, false);
   }
 

@@ -50,9 +50,7 @@
     "emailAlreadyUsed": "Cet email est déjà utilisé",
     "or": "ou",
     "googleNotConfigured": "Connexion Google non configurée",
-    "facebookNotConfigured": "Connexion Facebook non configurée",
-    "googleAuthFailed": "Échec de l'authentification Google",
-    "facebookAuthFailed": "Échec de l'authentification Facebook"
+    "googleAuthFailed": "Échec de l'authentification Google"
   },
   "forgotPassword": {
     "title": "Mot de passe oublié ?",
@@ -77,7 +75,7 @@
     "success": "Succès !",
     "passwordChanged": "Votre mot de passe a été modifié",
     "backToLogin": "Retour à la connexion",
-    "oauthUser": "Ce compte utilise Google ou Facebook. Connectez-vous via votre provider."
+    "oauthUser": "Ce compte utilise Google. Connectez-vous via votre provider."
   },
   "welcome": {
     "messages": [

@@ -280,18 +280,6 @@ export default function SettingsScreen() {
                         >
                             <FontAwesome name="twitter" size={28} color={isNight ? "#fff" : "#000"} />
                         </TouchableOpacity>
-                        <TouchableOpacity
-                            activeOpacity={0.7}
-                            className='items-center justify-center rounded-2xl'
-                            style={{ width: 56, height: 56, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }}
-                            onPress={() => {
-                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                                playSound('click');
-                                Linking.openURL('https://facebook.com/flunapp');
-                            }}
-                        >
-                            <FontAwesome name="facebook" size={28} color={isNight ? "#fff" : "#000"} />
-                        </TouchableOpacity>
                     </View>
                 </BlurView>
                 <BlurView intensity={90}

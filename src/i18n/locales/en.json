@@ -50,9 +50,7 @@
     "emailAlreadyUsed": "This email is already in use",
     "or": "or",
     "googleNotConfigured": "Google sign-in not configured",
-    "facebookNotConfigured": "Facebook sign-in not configured",
-    "googleAuthFailed": "Google authentication failed",
-    "facebookAuthFailed": "Facebook authentication failed"
+    "googleAuthFailed": "Google authentication failed"
   },
   "forgotPassword": {
     "title": "Forgot password?",
@@ -77,7 +75,7 @@
     "success": "Success!",
     "passwordChanged": "Your password has been changed",
     "backToLogin": "Back to login",
-    "oauthUser": "This account uses Google or Facebook. Please sign in with your provider."
+    "oauthUser": "This account uses Google. Please sign in with your provider."
   },
   "welcome": {
     "messages": [

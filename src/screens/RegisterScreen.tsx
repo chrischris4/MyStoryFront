@@ -17,7 +17,7 @@ export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [showPassword, setShowPassword] = useState(false);
-  const { signInWithGoogle, signInWithFacebook, isLoading: isOAuthLoading, loadingProvider } = useOAuth();
+  const { signInWithGoogle, isLoading: isOAuthLoading, loadingProvider } = useOAuth();
   const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
 
   const registerSchema = Yup.object().shape({
@@ -111,13 +111,6 @@ export default function RegisterScreen() {
 
   const handleGoogleLogin = async () => {
     const success = await signInWithGoogle();
-    if (success) {
-      await handleOAuthSuccess();
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    const success = await signInWithFacebook();
     if (success) {
       await handleOAuthSuccess();
     }
@@ -222,26 +215,6 @@ export default function RegisterScreen() {
                       <>
                         <FontAwesome name="google" size={20} color="#4285F4" />
                         <Text className="font-baloo-medium text-gray-700">Google</Text>
-                      </>
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    className="flex-1 flex-row items-center justify-center bg-[#1877F2] rounded-xl h-12 gap-2"
-                    onPress={handleFacebookLogin}
-                    disabled={isOAuthLoading}
-                  >
-                    {loadingProvider === 'facebook' ? (
-                      <LottieView
-                        source={require('../../assets/animations/LoadingWhite.json')}
-                        autoPlay
-                        loop={true}
-                        style={{ width: 100, height: 100 }}
-                      />
-                    ) : (
-                      <>
-                        <FontAwesome name="facebook" size={20} color="#fff" />
-                        <Text className="font-baloo-medium text-white">Facebook</Text>
                       </>
                     )}
                   </TouchableOpacity>
