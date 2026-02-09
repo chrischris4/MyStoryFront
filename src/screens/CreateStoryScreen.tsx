@@ -483,7 +483,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
                 <TextInput
@@ -530,7 +530,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
@@ -577,7 +577,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
 
@@ -706,7 +706,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
                 <View className="flex-row flex-wrap gap-2">
@@ -743,7 +743,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
@@ -786,7 +786,7 @@ export default function CreateStoryScreen() {
               <BlurView
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <PageSelector
                   isNight={isNight}

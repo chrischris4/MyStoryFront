@@ -22,7 +22,7 @@ export default function GroupCard({ group, isNight, onPress }: GroupCardProps) {
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="p-4 rounded-2xl overflow-hidden"
-                style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
                 <Text className={`${isNight ? "text-white" : "text-slate-800"} text-xl font-baloo-semibold`}>
                     {group.name}

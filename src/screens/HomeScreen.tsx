@@ -113,7 +113,7 @@ export default function HomeScreen() {
               intensity={90}
               tint={isNight ? 'dark' : 'light'}
               className="p-3 rounded-full overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+              style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
               <Feather
                 name={isMusicEnabled ? 'volume-2' : 'volume-x'}
@@ -166,7 +166,7 @@ export default function HomeScreen() {
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="py-2 px-4 rounded-2xl overflow-hidden"
-                style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
                   {planName}
@@ -179,7 +179,7 @@ export default function HomeScreen() {
               intensity={90}
               tint={isNight ? "dark" : "light"}
               className="py-2 px-4 rounded-2xl overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+              style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
               <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
                 {profile?.storyCoin || '0'} {t('home.tokens')}

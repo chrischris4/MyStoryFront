@@ -32,7 +32,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       <BlurView
         intensity={90}
         tint={isNight ? "dark" : "light"}
-        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
         className="p-4 flex-col justify-between items-center"
       >
         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo-semibold self-start`}>{title}</Text>

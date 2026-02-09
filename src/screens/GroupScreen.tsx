@@ -211,7 +211,7 @@ export default function GroupScreen() {
         intensity={90}
         tint={isNight ? "dark" : "light"}
         className="p-4 rounded-2xl mb-3 overflow-hidden"
-        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
       >
         <View className="flex-row justify-between items-start">
           <View className="flex-1">
@@ -267,7 +267,7 @@ export default function GroupScreen() {
         intensity={90}
         tint={isNight ? "dark" : "light"}
         className="p-4 rounded-2xl mb-3 overflow-hidden"
-        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
       >
         <View className="flex-row justify-between items-start">
           <View className="flex-1">
@@ -409,7 +409,7 @@ export default function GroupScreen() {
                       intensity={90}
                       tint={isNight ? "dark" : "light"}
                       className="mb-4 rounded-2xl overflow-hidden"
-                      style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                      style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                     >
                       <View className="flex-row items-center px-4 py-3">
                         <Feather name="search" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
@@ -443,7 +443,7 @@ export default function GroupScreen() {
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="p-8 rounded-2xl overflow-hidden items-center"
-                        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                       >
                         <Feather name="search" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                         <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
@@ -475,7 +475,7 @@ export default function GroupScreen() {
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
-                    style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                    style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                   >
                     <Feather name="users" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
@@ -511,7 +511,7 @@ export default function GroupScreen() {
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
-                    style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                    style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                   >
                     <Feather name="inbox" size={48} color={isNight ? '#64748b' : '#94a3b8'} />
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>

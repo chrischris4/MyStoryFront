@@ -218,7 +218,7 @@ export default function StoryFolder({
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     style={{
-                        flex: 1, padding: 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : ''
+                        flex: 1, padding: 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
                     }}
                 >
                     <View

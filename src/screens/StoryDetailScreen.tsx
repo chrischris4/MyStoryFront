@@ -309,7 +309,7 @@ export default function StoryDetailScreen() {
           tint={isNight ? "dark" : "light"}
           style={{
             padding: 16, borderRadius: 12,
-            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
           }}
         >
           <View className='flex flex-col items-center'>
@@ -369,7 +369,7 @@ export default function StoryDetailScreen() {
             style={{
               padding: 16, borderRadius: 100,
               height: 56,
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
             }}
           >
             <Animated.View
@@ -393,7 +393,7 @@ export default function StoryDetailScreen() {
               borderRadius: 9999,
               justifyContent: 'center',
               alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
             }}
           >
             <Animated.View
@@ -448,7 +448,7 @@ export default function StoryDetailScreen() {
           tint={isNight ? "dark" : "light"}
           style={{
             padding: 16, borderRadius: 12,
-            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+            overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
           }}
         >
           <View className='flex flex-col'>
@@ -492,7 +492,7 @@ export default function StoryDetailScreen() {
                 borderRadius: 100,
                 height: 56,
                 paddingHorizontal: 12,
-                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
               }}
               className='flex items-center justify-center'
             >
@@ -545,7 +545,7 @@ export default function StoryDetailScreen() {
                 gap: 3,
                 justifyContent: 'center',
                 alignItems: 'center',
-                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
               }}
             >
               <Feather name="book-open" size={18} color={isNight ? '#fff' : '#64748b'} />
@@ -562,7 +562,7 @@ export default function StoryDetailScreen() {
                 borderRadius: 9999,
                 justifyContent: 'center',
                 alignItems: 'center',
-                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : ''
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
               }}
 
             >
@@ -592,7 +592,7 @@ export default function StoryDetailScreen() {
             marginTop: 16,
             marginBottom: 16,
             overflow: 'hidden',
-            backgroundColor: isNight ? '#1e293b90' : ''
+            backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
           }}
         >
           <TouchableOpacity
@@ -739,7 +739,7 @@ export default function StoryDetailScreen() {
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="p-4 rounded-xl overflow-hidden items-center"
-                        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                       >
                         <Feather name="users" size={32} color={isNight ? '#64748b' : '#94a3b8'} />
                         <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
@@ -761,7 +761,7 @@ export default function StoryDetailScreen() {
                               intensity={90}
                               tint={isNight ? "dark" : "light"}
                               className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
-                              style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+                              style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
                             >
                               <View className="flex-row items-center justify-between">
                                 <View className="flex-1">

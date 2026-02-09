@@ -114,6 +114,19 @@ export default function CharacterModal({
   const deleteCharacterMutation = useDeleteCharacter();
 
   const isEditing = !!editCharacter;
+
+  const getDescriptionPlaceholder = () => {
+    if (formik.values.characterType === 'ANIMAL') {
+      const animalType = formik.values.animalType;
+      if (animalType) {
+        return t(`character.descriptionPlaceholders.${animalType}`, t('character.descriptionPlaceholders.animal'));
+      }
+      return t('character.descriptionPlaceholders.animal');
+    }
+    if (formik.values.gender === 'MALE') return t('character.descriptionPlaceholders.humanMale');
+    if (formik.values.gender === 'FEMALE') return t('character.descriptionPlaceholders.humanFemale');
+    return t('character.descriptionPlaceholders.human');
+  };
   const isPending =
     createCharacterMutation.isPending ||
     updateCharacterMutation.isPending ||
@@ -512,7 +525,7 @@ export default function CharacterModal({
                     } rounded-xl p-4 font-baloo`}
                   value={formik.values.description}
                   onChangeText={(text) => formik.setFieldValue('description', text)}
-                  placeholder={t('character.descriptionPlaceholder')}
+                  placeholder={getDescriptionPlaceholder()}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                   multiline
                   numberOfLines={3}

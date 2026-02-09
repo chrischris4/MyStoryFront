@@ -176,7 +176,7 @@ export default function CharacterSection({
       <BlurView
         intensity={90}
         tint={isNight ? 'dark' : 'light'}
-        style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '' }}
+        style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
       >
         <Text
           className={`text-2xl font-baloo-semibold mb-1 ${isNight ? 'text-white' : 'text-slate-900'

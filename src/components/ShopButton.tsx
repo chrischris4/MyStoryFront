@@ -27,7 +27,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, descr
         intensity={90}
         tint={isNight ? "dark" : "light"}
         className="flex flex-col w-full p-2 h-full relative"
-        style={{ backgroundColor: isNight ? '#1e293b90' : '' }}
+        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
       >
         <View className='flex flex-col flex-1'>
           <Text className={`${isNight ? "text-white" : "text-slate-900"} text-lg font-baloo-semibold`}>{title}</Text>

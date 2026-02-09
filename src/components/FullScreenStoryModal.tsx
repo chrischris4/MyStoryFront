@@ -576,7 +576,7 @@ export default function FullScreenStoryModal({
                                     backgroundColor: selectedMusic?.id === music.id ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                                   }}
                                 >
-                                  <Text style={{ fontSize: 13 }}>{music.emoji} {music.name}</Text>
+                                  <Text style={{ fontSize: 13 }}>{music.emoji} {t(music.translationKey)}</Text>
                                 </TouchableOpacity>
                               ))}
                             </View>

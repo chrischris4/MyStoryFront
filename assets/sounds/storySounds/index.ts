@@ -1,13 +1,9 @@
-// Liste des musiques disponibles pour le lecteur d'histoires
-// Pour ajouter une nouvelle musique :
-// 1. Ajouter le fichier .mp3 dans ce dossier
-// 2. Ajouter une entrée dans STORY_MUSICS avec require()
 
 export type MusicCategory = 'calm' | 'adventure' | 'epic' | 'fun';
 
 export type StoryMusic = {
   id: string;
-  name: string;
+  translationKey: string;
   emoji: string;
   category: MusicCategory;
   source: any;
@@ -23,84 +19,84 @@ export const MUSIC_CATEGORIES: { id: MusicCategory; emoji: string; translationKe
 export const STORY_MUSICS: StoryMusic[] = [
   {
     id: 'CALME',
-    name: 'Sous la lune',
+    translationKey: 'storyReader.musics.calm1',
     emoji: '🎶',
     category: 'calm',
     source: require('./CALME.mp3'),
   },
   {
     id: 'CALME2',
-    name: 'Sous les étoiles',
+    translationKey: 'storyReader.musics.calm2',
     emoji: '🎶',
     category: 'calm',
     source: require('./CALME2.mp3'),
   },
   {
     id: 'CALME3',
-    name: 'Sous les planètes',
+    translationKey: 'storyReader.musics.calm3',
     emoji: '🎶',
     category: 'calm',
     source: require('./CALME3.mp3'),
   },
   {
     id: 'AVENTURE',
-    name: 'Belle aventure',
+    translationKey: 'storyReader.musics.adventure1',
     emoji: '🎶',
     category: 'adventure',
     source: require('./AVENTURE.mp3'),
   },
   {
     id: 'AVENTURE2',
-    name: 'Joyeuse aventure',
+    translationKey: 'storyReader.musics.adventure2',
     emoji: '🎶',
     category: 'adventure',
     source: require('./AVENTURE2.mp3'),
   },
   {
     id: 'AVENTURE3',
-    name: 'Calme aventure',
+    translationKey: 'storyReader.musics.adventure3',
     emoji: '🎶',
     category: 'adventure',
     source: require('./AVENTURE3.mp3'),
   },
   {
     id: 'EPIC',
-    name: 'Aventure courageuse',
+    translationKey: 'storyReader.musics.epic1',
     emoji: '🎶',
     category: 'epic',
     source: require('./EPIC.mp3'),
   },
   {
     id: 'EPIC2',
-    name: 'Aventure de héros',
+    translationKey: 'storyReader.musics.epic2',
     emoji: '🎶',
     category: 'epic',
     source: require('./EPIC2.mp3'),
   },
   {
     id: 'EPIC3',
-    name: 'Aventure épique',
+    translationKey: 'storyReader.musics.epic3',
     emoji: '🎶',
     category: 'epic',
     source: require('./EPIC3.mp3'),
   },
   {
     id: 'FUN',
-    name: 'Balade de rires',
+    translationKey: 'storyReader.musics.fun1',
     emoji: '🎶',
     category: 'fun',
     source: require('./FUN.mp3'),
   },
   {
     id: 'FUN2',
-    name: 'Balade enjouée',
+    translationKey: 'storyReader.musics.fun2',
     emoji: '🎶',
     category: 'fun',
     source: require('./FUN2.mp3'),
   },
   {
     id: 'FUN3',
-    name: 'Balade joyeuse',
+    translationKey: 'storyReader.musics.fun3',
     emoji: '🎶',
     category: 'fun',
     source: require('./FUN3.mp3'),
