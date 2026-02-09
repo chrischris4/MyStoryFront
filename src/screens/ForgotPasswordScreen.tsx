@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -19,10 +19,11 @@ import { mapApiError } from '~/utils/errorMapper';
 import LottieView from 'lottie-react-native';
 import Animated, {
   FadeInDown,
-  FadeInUp,
   FadeOut,
 } from 'react-native-reanimated';
 import { useAuth } from '~/context/AuthContext';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 type Step = 'email' | 'code' | 'password';
 
@@ -32,10 +33,7 @@ export default function ForgotPasswordScreen() {
   const { login } = useAuth();
 
   const [step, setStep] = useState<Step>('email');
-  const [email, setEmail] = useState('');
   const [code, setCode] = useState(['', '', '', '', '', '']);
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,6 +41,42 @@ export default function ForgotPasswordScreen() {
 
   // Refs pour les inputs du code
   const codeInputRefs = useRef<(TextInput | null)[]>([]);
+
+  // Validation schemas par étape
+  const emailSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        email: Yup.string()
+          .email(t('auth.emailInvalid'))
+          .required(t('auth.emailRequired')),
+      }),
+    [t]
+  );
+
+  const passwordSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        newPassword: Yup.string()
+          .min(6, t('auth.passwordMinLength'))
+          .required(t('auth.passwordRequired')),
+        confirmPassword: Yup.string()
+          .oneOf([Yup.ref('newPassword')], t('auth.passwordMismatch'))
+          .required(t('auth.confirmPasswordRequired')),
+      }),
+    [t]
+  );
+
+  const emailFormik = useFormik({
+    initialValues: { email: '' },
+    validationSchema: emailSchema,
+    onSubmit: () => handleSendCode(),
+  });
+
+  const passwordFormik = useFormik({
+    initialValues: { newPassword: '', confirmPassword: '' },
+    validationSchema: passwordSchema,
+    onSubmit: () => handleResetPassword(),
+  });
 
   // Countdown pour renvoyer le code
   useEffect(() => {
@@ -53,18 +87,12 @@ export default function ForgotPasswordScreen() {
   }, [countdown]);
 
   const handleSendCode = async () => {
-    if (!email.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.emailRequired'),
-      });
-      return;
-    }
+    const email = emailFormik.values.email.trim().toLowerCase();
+    if (!email) return;
 
     setIsLoading(true);
     try {
-      await api.forgotPassword(email.trim().toLowerCase());
+      await api.forgotPassword(email);
       Toast.show({
         type: 'success',
         text1: t('forgotPassword.codeSent'),
@@ -137,7 +165,7 @@ export default function ForgotPasswordScreen() {
 
     setIsLoading(true);
     try {
-      await api.verifyResetCode(email.trim().toLowerCase(), codeToVerify);
+      await api.verifyResetCode(emailFormik.values.email.trim().toLowerCase(), codeToVerify);
       Toast.show({
         type: 'success',
         text1: t('forgotPassword.codeValid'),
@@ -168,30 +196,12 @@ export default function ForgotPasswordScreen() {
   };
 
   const handleResetPassword = async () => {
-    if (newPassword.length < 6) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.passwordMinLength'),
-      });
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.passwordMismatch'),
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
       const result = await api.resetPassword(
-        email.trim().toLowerCase(),
+        emailFormik.values.email.trim().toLowerCase(),
         code.join(''),
-        newPassword
+        passwordFormik.values.newPassword
       );
 
       Toast.show({
@@ -263,19 +273,23 @@ export default function ForgotPasswordScreen() {
       <View className="mb-4">
         <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
         <TextInput
-          className="w-full border border-gray-300 rounded-xl p-4"
+          className={`w-full border ${emailFormik.touched.email && emailFormik.errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
           placeholder={t('auth.emailPlaceholder')}
           placeholderTextColor="#6B7280"
           keyboardType="email-address"
           autoCapitalize="none"
-          value={email}
-          onChangeText={setEmail}
+          value={emailFormik.values.email}
+          onChangeText={emailFormik.handleChange('email')}
+          onBlur={emailFormik.handleBlur('email')}
         />
+        {emailFormik.touched.email && emailFormik.errors.email && (
+          <Text className="text-red-500 text-sm mt-1 ml-2 font-baloo">{emailFormik.errors.email}</Text>
+        )}
       </View>
 
       <TouchableOpacity
         className={`${isLoading ? 'bg-gray-400' : 'bg-[#38b6ff]'} rounded-xl h-14 justify-center items-center mb-4`}
-        onPress={handleSendCode}
+        onPress={() => emailFormik.handleSubmit()}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -302,7 +316,7 @@ export default function ForgotPasswordScreen() {
           {t('forgotPassword.enterCode')}
         </Text>
         <Text className="text-gray-500 font-baloo text-center mt-2">
-          {t('forgotPassword.codeDescription', { email })}
+          {t('forgotPassword.codeDescription', { email: emailFormik.values.email })}
         </Text>
       </View>
 
@@ -371,12 +385,13 @@ export default function ForgotPasswordScreen() {
         <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
         <View className="relative">
           <TextInput
-            className="w-full border border-gray-300 rounded-xl p-4 pr-12"
+            className={`w-full border ${passwordFormik.touched.newPassword && passwordFormik.errors.newPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
             placeholder={t('forgotPassword.newPasswordPlaceholder')}
             placeholderTextColor="#6B7280"
             secureTextEntry={!showPassword}
-            value={newPassword}
-            onChangeText={setNewPassword}
+            value={passwordFormik.values.newPassword}
+            onChangeText={passwordFormik.handleChange('newPassword')}
+            onBlur={passwordFormik.handleBlur('newPassword')}
           />
           <TouchableOpacity
             className="absolute right-4 top-4"
@@ -385,18 +400,22 @@ export default function ForgotPasswordScreen() {
             <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
           </TouchableOpacity>
         </View>
+        {passwordFormik.touched.newPassword && passwordFormik.errors.newPassword && (
+          <Text className="text-red-500 text-sm mt-1 ml-2 font-baloo">{passwordFormik.errors.newPassword}</Text>
+        )}
       </View>
 
       <View className="mb-4">
         <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.confirmPassword')}</Text>
         <View className="relative">
           <TextInput
-            className="w-full border border-gray-300 rounded-xl p-4 pr-12"
+            className={`w-full border ${passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
             placeholder={t('auth.confirmPasswordPlaceholder')}
             placeholderTextColor="#6B7280"
             secureTextEntry={!showConfirmPassword}
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
+            value={passwordFormik.values.confirmPassword}
+            onChangeText={passwordFormik.handleChange('confirmPassword')}
+            onBlur={passwordFormik.handleBlur('confirmPassword')}
           />
           <TouchableOpacity
             className="absolute right-4 top-4"
@@ -405,11 +424,14 @@ export default function ForgotPasswordScreen() {
             <Feather name={showConfirmPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
           </TouchableOpacity>
         </View>
+        {passwordFormik.touched.confirmPassword && passwordFormik.errors.confirmPassword && (
+          <Text className="text-red-500 text-sm mt-1 ml-2 font-baloo">{passwordFormik.errors.confirmPassword}</Text>
+        )}
       </View>
 
       <TouchableOpacity
         className={`${isLoading ? 'bg-gray-400' : 'bg-green-500'} rounded-xl h-14 justify-center items-center mb-4`}
-        onPress={handleResetPassword}
+        onPress={() => passwordFormik.handleSubmit()}
         disabled={isLoading}
       >
         {isLoading ? (

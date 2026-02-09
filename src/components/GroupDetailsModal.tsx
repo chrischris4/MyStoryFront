@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -29,6 +29,8 @@ import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
 import LottieView from 'lottie-react-native';
 import { useTranslation } from 'react-i18next';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -45,8 +47,24 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const { user: currentUser } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalMounted, setIsModalMounted] = useState(false);
-  const [inviteUsername, setInviteUsername] = useState('');
   const [activeTab, setActiveTab] = useState<'members' | 'stories'>('members');
+
+  const inviteSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        inviteUsername: Yup.string()
+          .trim()
+          .required(t('groups.enterUsername'))
+          .max(25),
+      }),
+    [t]
+  );
+
+  const inviteFormik = useFormik({
+    initialValues: { inviteUsername: '' },
+    validationSchema: inviteSchema,
+    onSubmit: () => handleInvite(),
+  });
 
   // Animation
   const modalTranslateY = useSharedValue(SCREEN_HEIGHT);
@@ -73,7 +91,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
       modalOpacity.value = withTiming(0, { duration: 250 });
       setTimeout(() => {
         setIsModalMounted(false);
-        setInviteUsername('');
+        inviteFormik.resetForm();
       }, 250);
     }
   }, [visible]);
@@ -91,26 +109,20 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const memberCount = groupMembers.length;
 
   const handleInvite = async () => {
-    if (!inviteUsername.trim()) {
-      Toast.show({
-        type: 'error',
-        text1: t('groups.nameRequired'),
-        text2: t('groups.enterUsername'),
-      });
-      return;
-    }
+    const username = inviteFormik.values.inviteUsername.trim();
+    if (!username) return;
 
     inviteToGroupMutation.mutate(
-      { groupId: group.id, name: inviteUsername },
+      { groupId: group.id, name: username },
       {
         onSuccess: () => {
           Toast.show({
             type: 'success',
             text1: t('groups.invitationSent'),
-            text2: t('groups.invitationSentTo', { name: inviteUsername }),
+            text2: t('groups.invitationSentTo', { name: username }),
             props: { emoji: '📨' },
           });
-          setInviteUsername('');
+          inviteFormik.resetForm();
         },
         onError: (error: any) => {
           Toast.show({
@@ -260,22 +272,23 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   {t('groups.inviteMember')}
                 </Text>
                 <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
-                  {inviteUsername.length}/25
+                  {inviteFormik.values.inviteUsername.length}/25
                 </Text>
               </View>
               <View className="flex-row gap-2">
                 <TextInput
-                  value={inviteUsername}
-                  onChangeText={setInviteUsername}
+                  value={inviteFormik.values.inviteUsername}
+                  onChangeText={inviteFormik.handleChange('inviteUsername')}
+                  onBlur={inviteFormik.handleBlur('inviteUsername')}
                   placeholder={t('groups.usernamePlaceholder')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#64748b'}
                   maxLength={25}
-                  className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl`}
+                  className={`flex-1 ${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-2 rounded-xl ${inviteFormik.touched.inviteUsername && inviteFormik.errors.inviteUsername ? 'border border-red-500' : ''}`}
                   autoCapitalize="none"
                 />
                 <TouchableOpacity
                   activeOpacity={0.8}
-                  onPress={handleInvite}
+                  onPress={() => inviteFormik.handleSubmit()}
                   className="bg-blue-500 px-4 py-2 rounded-xl justify-center"
                   disabled={inviteToGroupMutation.isPending}
                 >
@@ -290,6 +303,9 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   )}
                 </TouchableOpacity>
               </View>
+              {inviteFormik.touched.inviteUsername && inviteFormik.errors.inviteUsername && (
+                <Text className="text-red-500 text-sm mt-1 font-baloo">{inviteFormik.errors.inviteUsername}</Text>
+              )}
             </View>
           )}
 

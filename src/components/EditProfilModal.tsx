@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, Image, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,8 @@ import { useTheme } from '~/context/ThemeContext';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 import { containsProfanity } from '~/utils/profanityFilter';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 type EditProfilModalProps = {
   visible: boolean;
@@ -22,9 +24,66 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
   const { mutate: editProfil, isPending } = useEditProfil();
   const updateProfile = useUserStore((state) => state.updateProfile);
 
-  const [name, setName] = useState(user?.profil?.name || '');
-  const [newImageUri, setNewImageUri] = useState<string | null>(null); // URI locale de la nouvelle image
-  const currentImageUrl = user?.profil?.imageUrl || ''; // URL existante sur R2
+  const [newImageUri, setNewImageUri] = useState<string | null>(null);
+  const currentImageUrl = user?.profil?.imageUrl || '';
+
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string()
+          .min(3, t('profile.pseudoMinLength'))
+          .max(20, t('profile.pseudoMaxLength'))
+          .matches(/^[a-zA-Z0-9_-]*$/, t('profile.pseudoInvalidChars'))
+          .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value)),
+      }),
+    [t]
+  );
+
+  const formik = useFormik({
+    initialValues: { name: user?.profil?.name || '' },
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: (values) => {
+      const updates: { name?: string; imageUri?: string } = {};
+
+      if (values.name !== user?.profil?.name) {
+        updates.name = values.name;
+      }
+
+      if (newImageUri) {
+        updates.imageUri = newImageUri;
+      }
+
+      if (Object.keys(updates).length === 0) {
+        onClose();
+        return;
+      }
+
+      editProfil(updates, {
+        onSuccess: (data) => {
+          updateProfile({
+            name: data.name,
+            imageUrl: data.imageUrl,
+          });
+
+          Toast.show({
+            type: 'success',
+            text1: t('profile.profileUpdated'),
+            text2: t('profile.profileUpdatedMessage'),
+            props: { emoji: '✅' },
+          });
+          onClose();
+        },
+        onError: (error) => {
+          Toast.show({
+            type: 'error',
+            text1: t('common.error'),
+            text2: error instanceof Error ? error.message : t('errors.unknownError'),
+          });
+        },
+      });
+    },
+  });
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -44,58 +103,6 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
     if (!result.canceled && result.assets[0]) {
       setNewImageUri(result.assets[0].uri);
     }
-  };
-
-  const handleSave = () => {
-    if (containsProfanity(name)) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('validation.profanity'),
-        props: { emoji: '🚫' },
-      });
-      return;
-    }
-
-    const updates: { name?: string; imageUri?: string } = {};
-
-    if (name !== user?.profil?.name) {
-      updates.name = name;
-    }
-
-    if (newImageUri) {
-      updates.imageUri = newImageUri;
-    }
-
-    if (Object.keys(updates).length === 0) {
-      onClose();
-      return;
-    }
-
-    editProfil(updates, {
-      onSuccess: (data) => {
-        // Mettre à jour le store Zustand avec les données retournées par l'API
-        updateProfile({
-          name: data.name,
-          imageUrl: data.imageUrl,
-        });
-
-        Toast.show({
-          type: 'success',
-          text1: t('profile.profileUpdated'),
-          text2: t('profile.profileUpdatedMessage'),
-          props: { emoji: '✅' },
-        });
-        onClose();
-      },
-      onError: (error) => {
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: error instanceof Error ? error.message : t('errors.unknownError'),
-        });
-      },
-    });
   };
 
   return (
@@ -142,12 +149,17 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
                 {t('profile.displayName')}
               </Text>
               <TextInput
-                className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'} rounded-xl p-4 text-lg font-baloo`}
-                value={name}
-                onChangeText={setName}
+                className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'} rounded-xl p-4 text-lg font-baloo ${formik.touched.name && formik.errors.name ? 'border-2 border-red-500' : ''}`}
+                value={formik.values.name}
+                onChangeText={formik.handleChange('name')}
+                onBlur={formik.handleBlur('name')}
                 placeholder={t('profile.enterName')}
                 placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
+                maxLength={20}
               />
+              {formik.touched.name && formik.errors.name && (
+                <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.name}</Text>
+              )}
             </View>
           </View>
 
@@ -155,7 +167,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
           <View className="p-6 pt-0 gap-3">
             <TouchableOpacity
               className={`${isNight ? 'bg-blue-600' : 'bg-[#0D1821]'} px-6 py-4 rounded-xl items-center ${isPending ? 'opacity-50' : ''}`}
-              onPress={handleSave}
+              onPress={() => formik.handleSubmit()}
               disabled={isPending}
             >
               <Text className="text-white font-baloo-bold text-lg">

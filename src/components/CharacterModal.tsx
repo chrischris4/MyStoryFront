@@ -525,16 +525,21 @@ export default function CharacterModal({
                 </Text>
                 <TextInput
                   className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                    } rounded-xl p-4 font-baloo`}
+                    } rounded-xl p-4 font-baloo ${formik.touched.description && formik.errors.description ? 'border-2 border-red-500' : ''}`}
                   value={formik.values.description}
                   onChangeText={(text) => formik.setFieldValue('description', text)}
+                  onBlur={() => formik.setFieldTouched('description', true)}
                   placeholder={getDescriptionPlaceholder()}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                   multiline
                   numberOfLines={3}
                   textAlignVertical="top"
+                  maxLength={80}
                   style={{ minHeight: 80 }}
                 />
+                {formik.touched.description && formik.errors.description && (
+                  <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.description}</Text>
+                )}
               </View>
               {isEditing && (
                 <TouchableOpacity

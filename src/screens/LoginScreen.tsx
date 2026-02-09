@@ -123,17 +123,18 @@ export default function LoginScreen() {
             validationSchema={loginSchema}
             onSubmit={handleLogin}
           >
-            {({ handleChange, handleSubmit, values, errors, touched, setTouched }) => (
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setTouched }) => (
               <>
                 <View className="mb-4">
                   <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
                   <TextInput
-                    className={`w-full border ${touched.email && errors.email ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4`}
+                    className={`w-full border border-gray-300 rounded-xl p-4`}
                     placeholder={t('auth.emailPlaceholder')}
                     placeholderTextColor="#6B7280"
                     keyboardType="email-address"
                     value={values.email}
                     onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
                   />
                   {touched.email && errors.email && (
                     <Text className="text-red-500 text-sm mt-1 ml-2">{errors.email}</Text>
@@ -144,12 +145,13 @@ export default function LoginScreen() {
                   <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
                   <View className="relative">
                     <TextInput
-                      className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
+                      className={`w-full border border-gray-300 rounded-xl p-4 pr-12`}
                       placeholder={t('auth.passwordPlaceholder')}
                       placeholderTextColor="#6B7280"
                       secureTextEntry={!showPassword}
                       value={values.password}
                       onChangeText={handleChange('password')}
+                      onBlur={handleBlur('password')}
                     />
                     <TouchableOpacity
                       activeOpacity={0.8}

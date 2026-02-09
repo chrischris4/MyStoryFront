@@ -555,6 +555,7 @@ export default function CreateStoryScreen() {
                   autoCorrect={true}
                   spellCheck={true}
                   textAlignVertical="top"
+                  maxLength={500}
                   style={{ minHeight: 160 }}
                 />
                 <View className='flex flex-row gap-2'>
