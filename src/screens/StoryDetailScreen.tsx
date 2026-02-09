@@ -111,6 +111,7 @@ export default function StoryDetailScreen() {
           type: 'error',
           text1: t('common.error'),
           text2: t('storyDetail.userNotAuthenticated'),
+          props: { emoji: '🔒' },
         });
         return;
       }
@@ -167,6 +168,7 @@ export default function StoryDetailScreen() {
         type: 'info',
         text1: t('common.information'),
         text2: t('storyDetail.noNewGroupSelected'),
+        props: { emoji: 'ℹ️' },
       });
       return;
     }
@@ -198,6 +200,7 @@ export default function StoryDetailScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: parts.join(' '),
+        props: { emoji: '📤' },
       });
       setSelectedGroups([]); // Réinitialiser la sélection après le partage
       setShowShareModal(false);
@@ -223,6 +226,7 @@ export default function StoryDetailScreen() {
           type: 'success',
           text1: t('common.success'),
           text2: t('storyDetail.storyDeleted'),
+          props: { emoji: '🗑️' },
         });
         setTimeout(() => {
           navigation.navigate('MainTabs');

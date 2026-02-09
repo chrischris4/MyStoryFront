@@ -52,6 +52,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
         type: 'error',
         text1: t('common.error'),
         text2: t('validation.profanity'),
+        props: { emoji: '🚫' },
       });
       return;
     }
@@ -83,6 +84,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
           type: 'success',
           text1: t('profile.profileUpdated'),
           text2: t('profile.profileUpdatedMessage'),
+          props: { emoji: '✅' },
         });
         onClose();
       },

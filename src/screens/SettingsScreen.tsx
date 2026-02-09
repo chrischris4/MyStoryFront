@@ -56,6 +56,7 @@ export default function SettingsScreen() {
             type: 'info',
             text1: t('welcome.goodbye', { name: userName }),
             text2: t('welcome.seeYouSoon'),
+            props: { emoji: '👋' },
         });
     };
     const handleBilling = () => {
@@ -494,6 +495,7 @@ export default function SettingsScreen() {
                                             type: 'success',
                                             text1: t('settings.accountDeleted'),
                                             text2: t('settings.accountDeletedMessage'),
+                                            props: { emoji: '🗑️' },
                                         });
                                     } catch (error) {
                                         Toast.show({

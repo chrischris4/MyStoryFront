@@ -69,6 +69,7 @@ export default function ForgotPasswordScreen() {
         type: 'success',
         text1: t('forgotPassword.codeSent'),
         text2: t('forgotPassword.checkEmail'),
+        props: { emoji: '📧' },
       });
       setStep('code');
       setCountdown(60);
@@ -79,6 +80,7 @@ export default function ForgotPasswordScreen() {
           type: 'info',
           text1: t('common.information'),
           text2: t('forgotPassword.oauthUser'),
+          props: { emoji: 'ℹ️' },
         });
       } else {
         // On affiche quand même le message de succès (sécurité)
@@ -86,6 +88,7 @@ export default function ForgotPasswordScreen() {
           type: 'success',
           text1: t('forgotPassword.codeSent'),
           text2: t('forgotPassword.checkEmail'),
+          props: { emoji: '📧' },
         });
         setStep('code');
         setCountdown(60);
@@ -139,6 +142,7 @@ export default function ForgotPasswordScreen() {
         type: 'success',
         text1: t('forgotPassword.codeValid'),
         text2: t('forgotPassword.enterNewPassword'),
+        props: { emoji: '✅' },
       });
       setStep('password');
     } catch (error: any) {
@@ -194,6 +198,7 @@ export default function ForgotPasswordScreen() {
         type: 'success',
         text1: t('forgotPassword.success'),
         text2: t('forgotPassword.passwordChanged'),
+        props: { emoji: '🔑' },
       });
 
       // Si le backend renvoie des tokens, connecter l'utilisateur automatiquement

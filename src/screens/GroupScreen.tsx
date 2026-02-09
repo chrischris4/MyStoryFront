@@ -90,6 +90,7 @@ export default function GroupScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: t('groups.groupCreated'),
+        props: { emoji: '🎉' },
       });
       closeCreateModal();
       resetForm();
@@ -109,6 +110,7 @@ export default function GroupScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: t('groups.invitationAccepted'),
+        props: { emoji: '🤝' },
       });
     } catch (error) {
       Toast.show({
@@ -126,6 +128,7 @@ export default function GroupScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: t('groups.invitationDeclined'),
+        props: { emoji: '👋' },
       });
     } catch (error) {
       Toast.show({
@@ -143,6 +146,7 @@ export default function GroupScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: t('groups.joinRequestSent'),
+        props: { emoji: '📨' },
       });
     } catch (error) {
       Toast.show({

@@ -185,6 +185,7 @@ export default function BillingScreen() {
                                 type: 'success',
                                 text1: t('billing.tokensPurchased'),
                                 text2: t('billing.tokensReceived', { count: data.coinsAdded }),
+                                props: { emoji: '🪙' },
                             });
                         },
                         onError: (error) => {
@@ -213,6 +214,7 @@ export default function BillingScreen() {
                                 type: 'success',
                                 text1: t('billing.subscriptionActivated'),
                                 text2: t('billing.welcomePremium'),
+                                props: { emoji: '⭐' },
                             });
                         },
                         onError: (error) => {

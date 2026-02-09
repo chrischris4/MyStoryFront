@@ -55,6 +55,7 @@ export const useOAuth = () => {
         type: 'error',
         text1: t('common.error'),
         text2: t('auth.googleNotConfigured'),
+        props: { emoji: '⚙️' },
       });
       return false;
     }

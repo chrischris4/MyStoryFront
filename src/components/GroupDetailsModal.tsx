@@ -108,6 +108,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             type: 'success',
             text1: t('groups.invitationSent'),
             text2: t('groups.invitationSentTo', { name: inviteUsername }),
+            props: { emoji: '📨' },
           });
           setInviteUsername('');
         },
@@ -131,6 +132,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             type: 'success',
             text1: t('groups.memberRemoved'),
             text2: t('groups.memberRemovedMessage'),
+            props: { emoji: '👋' },
           });
         },
         onError: (error: any) => {

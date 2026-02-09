@@ -73,6 +73,7 @@ export default function RegisterScreen() {
         type: 'success',
         text1: t('common.success'),
         text2: t('auth.accountCreated'),
+        props: { emoji: '🎉' },
       });
       navigation.navigate('CompleteProfileScreen', { accessToken, refreshToken });
 
@@ -96,6 +97,7 @@ export default function RegisterScreen() {
         type: 'info',
         text1: t('welcome.greeting', { name: userName }),
         text2: randomMessage,
+        props: { emoji: '👋' },
       });
     } catch {
       // Ignore si on ne peut pas récupérer le profil

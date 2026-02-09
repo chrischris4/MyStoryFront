@@ -58,6 +58,7 @@ export default function LoginScreen() {
           type: 'info',
           text1: t('welcome.greeting', { name: userName }),
           text2: randomMessage,
+          props: { emoji: '👋' },
         });
       }
 
@@ -90,6 +91,7 @@ export default function LoginScreen() {
         type: 'info',
         text1: t('welcome.greeting', { name: userName }),
         text2: randomMessage,
+        props: { emoji: '👋' },
       });
     } catch {
       // Ignore si on ne peut pas récupérer le profil

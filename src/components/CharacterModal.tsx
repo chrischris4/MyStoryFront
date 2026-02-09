@@ -201,6 +201,7 @@ export default function CharacterModal({
                 type: 'success',
                 text1: t('character.updated'),
                 text2: t('character.updatedMessage'),
+                props: { emoji: '✏️' },
               });
               onCharacterCreated?.(updatedCharacter);
               onClose();
@@ -222,6 +223,7 @@ export default function CharacterModal({
               type: 'success',
               text1: t('character.created'),
               text2: t('character.createdMessage'),
+              props: { emoji: '🎉' },
             });
             onCharacterCreated?.(newCharacter);
             onClose();
@@ -265,6 +267,7 @@ export default function CharacterModal({
                   type: 'success',
                   text1: t('character.deleted'),
                   text2: t('character.deletedMessage'),
+                  props: { emoji: '🗑️' },
                 });
                 onClose();
                 formik.resetForm();

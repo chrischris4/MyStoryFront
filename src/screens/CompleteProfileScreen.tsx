@@ -43,6 +43,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                 type: 'error',
                 text1: t('profile.permissionDenied'),
                 text2: t('profile.photoPermissionMessage'),
+                props: { emoji: '🔒' },
             });
             return;
         }

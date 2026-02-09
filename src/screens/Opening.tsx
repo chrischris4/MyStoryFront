@@ -28,6 +28,7 @@ export default function OpeningScreen() {
                     type: 'info',
                     text1: t('welcome.greeting', { name: userName }),
                     text2: randomMessage,
+                    props: { emoji: '👋' },
                 });
 
                 navigation.replace('MainTabs');
