@@ -10,6 +10,7 @@ import ConfirmationModal from '~/components/ConfirmationModal';
 import { Feather } from '@expo/vector-icons';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { containsProfanity } from '~/utils/profanityFilter';
 import { useUserStore } from '~/store/useUserStore';
 import { useStoryCreationStore } from '~/store/useStoryCreationStore';
 import { useNavigation } from '@react-navigation/native';
@@ -101,11 +102,13 @@ const createStorySchema = (t: (key: string) => string) => Yup.object().shape({
   title: Yup.string()
     .min(3, t('createStory.validation.titleMin'))
     .max(40, t('createStory.validation.titleMax'))
-    .required(t('createStory.validation.titleRequired')),
+    .required(t('createStory.validation.titleRequired'))
+    .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value)),
   prompt: Yup.string()
     .min(10, t('createStory.validation.promptMin'))
     .max(500, t('createStory.validation.promptMax'))
-    .required(t('createStory.validation.promptRequired')),
+    .required(t('createStory.validation.promptRequired'))
+    .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value)),
   numPages: Yup.number()
     .min(1, t('createStory.validation.pagesMin'))
     .max(12, t('createStory.validation.pagesMax'))

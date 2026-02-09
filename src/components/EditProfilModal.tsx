@@ -8,6 +8,7 @@ import { useUserStore } from '~/store/useUserStore';
 import { useTheme } from '~/context/ThemeContext';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
+import { containsProfanity } from '~/utils/profanityFilter';
 
 type EditProfilModalProps = {
   visible: boolean;
@@ -46,6 +47,15 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
   };
 
   const handleSave = () => {
+    if (containsProfanity(name)) {
+      Toast.show({
+        type: 'error',
+        text1: t('common.error'),
+        text2: t('validation.profanity'),
+      });
+      return;
+    }
+
     const updates: { name?: string; imageUri?: string } = {};
 
     if (name !== user?.profil?.name) {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -17,6 +17,9 @@ import { useUpdateCharacter } from '~/hooks/useUpdateCharacter';
 import { useDeleteCharacter } from '~/hooks/useDeleteCharacter';
 import Toast from 'react-native-toast-message';
 import { Alert } from 'react-native';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { containsProfanity } from '~/utils/profanityFilter';
 import type {
   Character,
   CharacterType,
@@ -47,7 +50,6 @@ type OptionSelectorProps = {
   selectedValue: string;
   onSelect: (value: string) => void;
   isNight: boolean;
-  showCustomInput?: boolean;
   translationKey?: string;
 };
 
@@ -57,27 +59,9 @@ function OptionSelector({
   selectedValue,
   onSelect,
   isNight,
-  showCustomInput = true,
   translationKey,
 }: OptionSelectorProps) {
   const { t } = useTranslation();
-  const [showCustom, setShowCustom] = useState(false);
-  const [customValue, setCustomValue] = useState('');
-
-  const isCustomSelected = selectedValue && !options.find((o) => o.id === selectedValue);
-
-  useEffect(() => {
-    if (isCustomSelected) {
-      setShowCustom(true);
-      setCustomValue(selectedValue);
-    }
-  }, [selectedValue, isCustomSelected]);
-
-  const handleCustomSubmit = () => {
-    if (customValue.trim()) {
-      onSelect(customValue.trim());
-    }
-  };
 
   return (
     <View className="mb-4">
@@ -94,7 +78,6 @@ function OptionSelector({
               key={option.id}
               onPress={() => {
                 onSelect(option.id);
-                setShowCustom(false);
               }}
               className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isSelected
                   ? 'bg-green-500'
@@ -113,49 +96,7 @@ function OptionSelector({
             </TouchableOpacity>
           );
         })}
-        {showCustomInput && (
-          <TouchableOpacity
-            onPress={() => setShowCustom(!showCustom)}
-            className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isCustomSelected
-                ? 'bg-green-500'
-                : isNight
-                  ? 'bg-slate-700'
-                  : 'bg-gray-200'
-              }`}
-          >
-            <Feather
-              name="plus"
-              size={14}
-              color={isCustomSelected ? '#fff' : isNight ? '#fff' : '#374151'}
-            />
-            <Text
-              className={`font-baloo-medium ${isCustomSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-gray-700'
-                }`}
-            >
-              {t('character.other')}
-            </Text>
-          </TouchableOpacity>
-        )}
       </View>
-      {showCustom && showCustomInput && (
-        <View className="mt-2 flex-row gap-2">
-          <TextInput
-            className={`flex-1 ${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-              } rounded-xl p-3 font-baloo`}
-            value={customValue}
-            onChangeText={setCustomValue}
-            placeholder={t('character.enterCustomValue')}
-            placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
-            onSubmitEditing={handleCustomSubmit}
-          />
-          <TouchableOpacity
-            onPress={handleCustomSubmit}
-            className="bg-green-500 px-4 rounded-xl justify-center"
-          >
-            <Feather name="check" size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      )}
     </View>
   );
 }
@@ -178,112 +119,100 @@ export default function CharacterModal({
     updateCharacterMutation.isPending ||
     deleteCharacterMutation.isPending;
 
-  // Form state
-  const [characterType, setCharacterType] = useState<CharacterType>('HUMAN');
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState<Gender | ''>('');
-  const [age, setAge] = useState('');
-  const [animalAge, setAnimalAge] = useState<AnimalAge | ''>('');
-  const [description, setDescription] = useState('');
-  // Human fields
-  const [skinColor, setSkinColor] = useState('');
-  const [hairColor, setHairColor] = useState('');
-  const [eyeColor, setEyeColor] = useState('');
-  const [clothing, setClothing] = useState('');
-  // Animal fields
-  const [animalType, setAnimalType] = useState('');
-  const [furColor, setFurColor] = useState('');
+  const validationSchema = useMemo(
+    () =>
+      Yup.object().shape({
+        name: Yup.string()
+          .required(t('character.validation.nameRequired'))
+          .min(2, t('character.validation.nameMin'))
+          .max(25, t('character.validation.nameMax'))
+          .matches(/^[\p{L}0-9-]+$/u, t('character.validation.nameFormat'))
+          .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value)),
+        clothing: Yup.string()
+          .max(80, t('character.validation.clothingMax')),
+        description: Yup.string()
+          .max(80, t('character.validation.descriptionMax')),
+      }),
+    [t]
+  );
 
-  // Errors
-  const [errors, setErrors] = useState<{ name?: string; type?: string }>({});
+  const initialValues = useMemo(
+    () => ({
+      characterType: (editCharacter?.type || 'HUMAN') as CharacterType,
+      name: editCharacter?.name || '',
+      gender: ((editCharacter?.gender as Gender) || '') as Gender | '',
+      age: editCharacter?.age?.toString() || '',
+      animalAge: ((editCharacter?.animalAge as AnimalAge) || '') as AnimalAge | '',
+      description: editCharacter?.description || '',
+      skinColor: editCharacter?.skinColor || '',
+      hairColor: editCharacter?.hairColor || '',
+      eyeColor: editCharacter?.eyeColor || '',
+      clothing: editCharacter?.clothing || '',
+      animalType: editCharacter?.animalType || '',
+      furColor: editCharacter?.furColor || '',
+    }),
+    [editCharacter, visible]
+  );
 
-  // Initialize form when editing
-  useEffect(() => {
-    if (editCharacter) {
-      setCharacterType(editCharacter.type);
-      setName(editCharacter.name);
-      setGender((editCharacter.gender as Gender) || '');
-      setAge(editCharacter.age?.toString() || '');
-      setAnimalAge((editCharacter.animalAge as AnimalAge) || '');
-      setDescription(editCharacter.description || '');
-      setSkinColor(editCharacter.skinColor || '');
-      setHairColor(editCharacter.hairColor || '');
-      setEyeColor(editCharacter.eyeColor || '');
-      setClothing(editCharacter.clothing || '');
-      setAnimalType(editCharacter.animalType || '');
-      setFurColor(editCharacter.furColor || '');
-    } else {
-      resetForm();
-    }
-  }, [editCharacter, visible]);
+  const formik = useFormik({
+    initialValues,
+    enableReinitialize: true,
+    validationSchema,
+    onSubmit: (values) => {
+      const characterData: CreateCharacterInput = {
+        name: values.name.trim(),
+        type: values.characterType,
+        gender: values.gender || undefined,
+        description: values.description.trim() || undefined,
+        ...(values.characterType === 'HUMAN'
+          ? {
+            age: values.age ? parseInt(values.age, 10) : undefined,
+            skinColor: values.skinColor || undefined,
+            hairColor: values.hairColor || undefined,
+            eyeColor: values.eyeColor || undefined,
+            clothing: values.clothing.trim() || undefined,
+          }
+          : {
+            animalAge: values.animalAge || undefined,
+            animalType: values.animalType || undefined,
+            furColor: values.furColor || undefined,
+          }),
+      };
 
-  const resetForm = () => {
-    setCharacterType('HUMAN');
-    setName('');
-    setGender('');
-    setAge('');
-    setAnimalAge('');
-    setDescription('');
-    setSkinColor('');
-    setHairColor('');
-    setEyeColor('');
-    setClothing('');
-    setAnimalType('');
-    setFurColor('');
-    setErrors({});
-  };
-
-  const validate = (): boolean => {
-    const newErrors: { name?: string; type?: string } = {};
-
-    if (!name.trim()) {
-      newErrors.name = t('character.validation.nameRequired');
-    } else if (name.trim().length < 2) {
-      newErrors.name = t('character.validation.nameMin');
-    } else if (name.trim().length > 50) {
-      newErrors.name = t('character.validation.nameMax');
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = () => {
-    if (!validate()) return;
-
-    const characterData: CreateCharacterInput = {
-      name: name.trim(),
-      type: characterType,
-      gender: gender || undefined,
-      description: description.trim() || undefined,
-      ...(characterType === 'HUMAN'
-        ? {
-          age: age ? parseInt(age, 10) : undefined,
-          skinColor: skinColor || undefined,
-          hairColor: hairColor || undefined,
-          eyeColor: eyeColor || undefined,
-          clothing: clothing.trim() || undefined,
-        }
-        : {
-          animalAge: animalAge || undefined,
-          animalType: animalType || undefined,
-          furColor: furColor || undefined,
-        }),
-    };
-
-    if (isEditing && editCharacter) {
-      updateCharacterMutation.mutate(
-        { id: editCharacter.id, data: characterData },
-        {
-          onSuccess: (updatedCharacter) => {
+      if (isEditing && editCharacter) {
+        updateCharacterMutation.mutate(
+          { id: editCharacter.id, data: characterData },
+          {
+            onSuccess: (updatedCharacter) => {
+              Toast.show({
+                type: 'success',
+                text1: t('character.updated'),
+                text2: t('character.updatedMessage'),
+              });
+              onCharacterCreated?.(updatedCharacter);
+              onClose();
+              formik.resetForm();
+            },
+            onError: (error) => {
+              Toast.show({
+                type: 'error',
+                text1: t('common.error'),
+                text2: error instanceof Error ? error.message : t('errors.unknownError'),
+              });
+            },
+          }
+        );
+      } else {
+        createCharacterMutation.mutate(characterData, {
+          onSuccess: (newCharacter) => {
             Toast.show({
               type: 'success',
-              text1: t('character.updated'),
-              text2: t('character.updatedMessage'),
+              text1: t('character.created'),
+              text2: t('character.createdMessage'),
             });
-            onCharacterCreated?.(updatedCharacter);
+            onCharacterCreated?.(newCharacter);
             onClose();
-            resetForm();
+            formik.resetForm();
           },
           onError: (error) => {
             Toast.show({
@@ -292,33 +221,13 @@ export default function CharacterModal({
               text2: error instanceof Error ? error.message : t('errors.unknownError'),
             });
           },
-        }
-      );
-    } else {
-      createCharacterMutation.mutate(characterData, {
-        onSuccess: (newCharacter) => {
-          Toast.show({
-            type: 'success',
-            text1: t('character.created'),
-            text2: t('character.createdMessage'),
-          });
-          onCharacterCreated?.(newCharacter);
-          onClose();
-          resetForm();
-        },
-        onError: (error) => {
-          Toast.show({
-            type: 'error',
-            text1: t('common.error'),
-            text2: error instanceof Error ? error.message : t('errors.unknownError'),
-          });
-        },
-      });
-    }
-  };
+        });
+      }
+    },
+  });
 
   const handleClose = () => {
-    resetForm();
+    formik.resetForm();
     onClose();
   };
 
@@ -345,7 +254,7 @@ export default function CharacterModal({
                   text2: t('character.deletedMessage'),
                 });
                 onClose();
-                resetForm();
+                formik.resetForm();
               },
               onError: (error) => {
                 Toast.show({
@@ -394,8 +303,8 @@ export default function CharacterModal({
                 </Text>
                 <View className="flex-row gap-3">
                   <TouchableOpacity
-                    onPress={() => setCharacterType('HUMAN')}
-                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${characterType === 'HUMAN'
+                    onPress={() => formik.setFieldValue('characterType', 'HUMAN')}
+                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${formik.values.characterType === 'HUMAN'
                         ? 'bg-blue-500'
                         : isNight
                           ? 'bg-slate-700'
@@ -403,7 +312,7 @@ export default function CharacterModal({
                       }`}
                   >
                     <Text
-                      className={`font-baloo-semibold ${characterType === 'HUMAN'
+                      className={`font-baloo-semibold ${formik.values.characterType === 'HUMAN'
                           ? 'text-white'
                           : isNight
                             ? 'text-white/80'
@@ -414,8 +323,8 @@ export default function CharacterModal({
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
-                    onPress={() => setCharacterType('ANIMAL')}
-                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${characterType === 'ANIMAL'
+                    onPress={() => formik.setFieldValue('characterType', 'ANIMAL')}
+                    className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${formik.values.characterType === 'ANIMAL'
                         ? 'bg-blue-500'
                         : isNight
                           ? 'bg-slate-700'
@@ -423,7 +332,7 @@ export default function CharacterModal({
                       }`}
                   >
                     <Text
-                      className={`font-baloo-semibold ${characterType === 'ANIMAL'
+                      className={`font-baloo-semibold ${formik.values.characterType === 'ANIMAL'
                           ? 'text-white'
                           : isNight
                             ? 'text-white/80'
@@ -445,14 +354,19 @@ export default function CharacterModal({
                 </Text>
                 <TextInput
                   className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                    } rounded-xl p-4 font-baloo ${errors.name ? 'border-2 border-red-500' : ''}`}
-                  value={name}
-                  onChangeText={setName}
+                    } rounded-xl p-4 font-baloo ${formik.touched.name && formik.errors.name ? 'border-2 border-red-500' : ''}`}
+                  value={formik.values.name}
+                  onChangeText={(text) => {
+                    const filtered = text.replace(/[^\p{L}0-9-]/gu, '');
+                    formik.setFieldValue('name', filtered);
+                  }}
+                  onBlur={() => formik.setFieldTouched('name', true)}
                   placeholder={t('character.namePlaceholder')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
+                  maxLength={25}
                 />
-                {errors.name && (
-                  <Text className="text-red-500 text-sm mt-1 font-baloo">{errors.name}</Text>
+                {formik.touched.name && formik.errors.name && (
+                  <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.name}</Text>
                 )}
               </View>
 
@@ -461,18 +375,17 @@ export default function CharacterModal({
                 label={t('character.gender')}
                 options={GENDERS.map(g => ({
                   ...g,
-                  label: characterType === 'ANIMAL'
+                  label: formik.values.characterType === 'ANIMAL'
                     ? (g.id === 'MALE' ? t('character.maleAnimal') : t('character.femaleAnimal'))
                     : (g.id === 'MALE' ? t('character.male') : t('character.female'))
                 }))}
-                selectedValue={gender}
-                onSelect={(value) => setGender(value as Gender)}
+                selectedValue={formik.values.gender}
+                onSelect={(value) => formik.setFieldValue('gender', value)}
                 isNight={isNight}
-                showCustomInput={false}
               />
 
               {/* Age - différent selon le type */}
-              {characterType === 'HUMAN' ? (
+              {formik.values.characterType === 'HUMAN' ? (
                 <View className="mb-4">
                   <Text
                     className={`${isNight ? 'text-white' : 'text-gray-600'} text-sm font-baloo-semibold mb-2`}
@@ -483,8 +396,8 @@ export default function CharacterModal({
                     <TextInput
                       className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
                         } rounded-xl p-4 font-baloo w-24 text-center`}
-                      value={age}
-                      onChangeText={(text) => setAge(text.replace(/[^0-9]/g, ''))}
+                      value={formik.values.age}
+                      onChangeText={(text) => formik.setFieldValue('age', text.replace(/[^0-9]/g, ''))}
                       placeholder="8"
                       placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                       keyboardType="numeric"
@@ -501,22 +414,21 @@ export default function CharacterModal({
                 <OptionSelector
                   label={t('character.animalAgeLabel')}
                   options={ANIMAL_AGE_RANGES}
-                  selectedValue={animalAge}
-                  onSelect={(value) => setAnimalAge(value as AnimalAge)}
+                  selectedValue={formik.values.animalAge}
+                  onSelect={(value) => formik.setFieldValue('animalAge', value)}
                   isNight={isNight}
-                  showCustomInput={false}
                   translationKey="character.animalAges"
                 />
               )}
 
               {/* Human-specific fields */}
-              {characterType === 'HUMAN' && (
+              {formik.values.characterType === 'HUMAN' && (
                 <>
                   <OptionSelector
                     label={t('character.skinColor')}
                     options={SKIN_COLORS}
-                    selectedValue={skinColor}
-                    onSelect={setSkinColor}
+                    selectedValue={formik.values.skinColor}
+                    onSelect={(value) => formik.setFieldValue('skinColor', value)}
                     isNight={isNight}
                     translationKey="character.skinColors"
                   />
@@ -524,8 +436,8 @@ export default function CharacterModal({
                   <OptionSelector
                     label={t('character.hairColor')}
                     options={HAIR_COLORS}
-                    selectedValue={hairColor}
-                    onSelect={setHairColor}
+                    selectedValue={formik.values.hairColor}
+                    onSelect={(value) => formik.setFieldValue('hairColor', value)}
                     isNight={isNight}
                     translationKey="character.hairColors"
                   />
@@ -533,8 +445,8 @@ export default function CharacterModal({
                   <OptionSelector
                     label={t('character.eyeColor')}
                     options={EYE_COLORS}
-                    selectedValue={eyeColor}
-                    onSelect={setEyeColor}
+                    selectedValue={formik.values.eyeColor}
+                    onSelect={(value) => formik.setFieldValue('eyeColor', value)}
                     isNight={isNight}
                     translationKey="character.eyeColors"
                   />
@@ -548,26 +460,31 @@ export default function CharacterModal({
                     <TextInput
                       className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
                         } rounded-xl p-4 font-baloo`}
-                      value={clothing}
-                      onChangeText={setClothing}
+                      value={formik.values.clothing}
+                      onChangeText={(text) => formik.setFieldValue('clothing', text)}
+                      onBlur={() => formik.setFieldTouched('clothing', true)}
                       placeholder={t('character.clothingPlaceholder')}
                       placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                       multiline
                       numberOfLines={2}
                       textAlignVertical="top"
+                      maxLength={80}
                     />
+                    {formik.touched.clothing && formik.errors.clothing && (
+                      <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.clothing}</Text>
+                    )}
                   </View>
                 </>
               )}
 
               {/* Animal-specific fields */}
-              {characterType === 'ANIMAL' && (
+              {formik.values.characterType === 'ANIMAL' && (
                 <>
                   <OptionSelector
                     label={t('character.animalType')}
                     options={ANIMAL_TYPES}
-                    selectedValue={animalType}
-                    onSelect={setAnimalType}
+                    selectedValue={formik.values.animalType}
+                    onSelect={(value) => formik.setFieldValue('animalType', value)}
                     isNight={isNight}
                     translationKey="character.animalTypes"
                   />
@@ -575,8 +492,8 @@ export default function CharacterModal({
                   <OptionSelector
                     label={t('character.furColor')}
                     options={FUR_COLORS}
-                    selectedValue={furColor}
-                    onSelect={setFurColor}
+                    selectedValue={formik.values.furColor}
+                    onSelect={(value) => formik.setFieldValue('furColor', value)}
                     isNight={isNight}
                     translationKey="character.furColors"
                   />
@@ -593,8 +510,8 @@ export default function CharacterModal({
                 <TextInput
                   className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
                     } rounded-xl p-4 font-baloo`}
-                  value={description}
-                  onChangeText={setDescription}
+                  value={formik.values.description}
+                  onChangeText={(text) => formik.setFieldValue('description', text)}
                   placeholder={t('character.descriptionPlaceholder')}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                   multiline
@@ -622,7 +539,7 @@ export default function CharacterModal({
               <TouchableOpacity
                 className={`${isNight ? 'bg-blue-600' : 'bg-[#0D1821]'
                   } px-6 py-4 rounded-xl items-center ${isPending ? 'opacity-50' : ''}`}
-                onPress={handleSave}
+                onPress={() => formik.handleSubmit()}
                 disabled={isPending}
               >
                 <Text className="text-white font-baloo-bold text-lg">

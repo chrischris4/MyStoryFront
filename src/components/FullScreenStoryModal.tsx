@@ -19,8 +19,8 @@ import { useAudioPlayer } from 'expo-audio';
 import type { Page } from '~/types';
 import { StoryFrame, StoryEffect, type FrameType, type EffectType } from './StoryFrames';
 import { useTranslation } from 'react-i18next';
-import { STORY_MUSICS } from '../../assets/sounds/storySounds';
-import type { StoryMusic } from '../../assets/sounds/storySounds';
+import { STORY_MUSICS, MUSIC_CATEGORIES } from '../../assets/sounds/storySounds';
+import type { StoryMusic, MusicCategory } from '../../assets/sounds/storySounds';
 
 interface FullScreenStoryModalProps {
   visible: boolean;
@@ -45,6 +45,7 @@ export default function FullScreenStoryModal({
   const [showControls, setShowControls] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
+  const [expandedCategory, setExpandedCategory] = useState<MusicCategory | null>(null);
   const [selectedMusic, setSelectedMusic] = useState<StoryMusic | null>(null);
   const [showBrightnessMenu, setShowBrightnessMenu] = useState(false);
 
@@ -534,25 +535,53 @@ export default function FullScreenStoryModal({
                             backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
                           }}
                         >
-                          <Text style={{ fontSize: 14 }}>🔇 {t('storyReader.noMusic')}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <Feather name="volume-x" size={16} color="#666" />
+                            <Text style={{ fontSize: 14 }}>{t('storyReader.noMusic')}</Text>
+                          </View>
                         </TouchableOpacity>
 
-                        {/* Liste dynamique des musiques */}
-                        {STORY_MUSICS.map((music) => (
-                          <TouchableOpacity
-                            key={music.id}
-                            onPress={() => {
-                              setSelectedMusic(music);
-                            }}
-                            style={{
-                              padding: 12,
-                              borderRadius: 8,
-                              backgroundColor: selectedMusic?.id === music.id ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
-                            }}
-                          >
-                            <Text style={{ fontSize: 14 }}>{music.emoji} {music.name}</Text>
-                          </TouchableOpacity>
-                        ))}
+                        {/* Sous-menus par catégorie */}
+                        {MUSIC_CATEGORIES.map((cat) => {
+                          const isExpanded = expandedCategory === cat.id;
+                          const musics = STORY_MUSICS.filter((m) => m.category === cat.id);
+                          const hasSelected = musics.some((m) => m.id === selectedMusic?.id);
+                          return (
+                            <View key={cat.id}>
+                              <TouchableOpacity
+                                onPress={() => setExpandedCategory(isExpanded ? null : cat.id)}
+                                style={{
+                                  padding: 12,
+                                  borderRadius: 8,
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  backgroundColor: hasSelected ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                                }}
+                              >
+                                <Text style={{ fontSize: 14, fontWeight: '600' }}>
+                                  {cat.emoji} {t(cat.translationKey)}
+                                </Text>
+                                <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={16} color="#666" />
+                              </TouchableOpacity>
+                              {isExpanded && musics.map((music) => (
+                                <TouchableOpacity
+                                  key={music.id}
+                                  onPress={() => setSelectedMusic(music)}
+                                  style={{
+                                    paddingVertical: 10,
+                                    paddingLeft: 32,
+                                    paddingRight: 12,
+                                    borderRadius: 8,
+                                    backgroundColor: selectedMusic?.id === music.id ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                                  }}
+                                >
+                                  <Text style={{ fontSize: 13 }}>{music.emoji} {music.name}</Text>
+                                </TouchableOpacity>
+                              ))}
+                            </View>
+                          );
+                        })}
                       </ScrollView>
                     </BlurView>
                   </Animated.View>

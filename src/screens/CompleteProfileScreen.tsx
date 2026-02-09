@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { containsProfanity } from '~/utils/profanityFilter';
 import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
 import Toast from 'react-native-toast-message';
@@ -31,6 +32,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
             .min(3, t('profile.pseudoMinLength'))
             .max(20, t('profile.pseudoMaxLength'))
             .matches(/^[a-zA-Z0-9_-]*$/, t('profile.pseudoInvalidChars'))
+            .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value))
             .optional(),
     });
 

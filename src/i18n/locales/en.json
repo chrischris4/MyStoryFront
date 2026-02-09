@@ -226,6 +226,9 @@
     "unknownError": "An error occurred",
     "loadingError": "Loading error"
   },
+  "validation": {
+    "profanity": "This text contains inappropriate language"
+  },
   "storyCreation": {
     "confirmTitle": "Confirm creation",
     "confirmSubtitle": "Check the information before creating your story",
@@ -288,6 +291,12 @@
   "storyReader": {
     "music": "Music",
     "noMusic": "No music",
+    "categories": {
+      "calm": "Calm",
+      "adventure": "Adventure",
+      "epic": "Epic",
+      "fun": "Fun"
+    },
     "softAmbience": "Soft ambience",
     "adventure": "Adventure",
     "lullaby": "Lullaby",
@@ -414,9 +423,9 @@
     "storyTitlePlaceholder": "Ex: Mimi and the magic forest",
     "storySummary": "Summary",
     "storySummaryDesc": "Describe your story as best you can - the characters, the setting, the actions. The more details you provide, the more the story will match your expectations!",
-    "storySummaryPlaceholderMale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. He meets a sweet magical animal who needs his help to find its family...",
-    "storySummaryPlaceholderFemale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. She meets a sweet magical animal who needs her help to find its family...",
-    "storySummaryPlaceholderPlural": "Ex: Today, {{name}} go on an adventure in a beautiful enchanted forest. They meet a sweet magical animal who needs their help to find its family...",
+    "storySummaryPlaceholderMale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. He meets some sweet magical animals who help him explore the forest and offer him a mysterious gift!",
+    "storySummaryPlaceholderFemale": "Ex: Today, {{name}} goes on an adventure in a beautiful enchanted forest. She meets some sweet magical animals who help her explore the forest and offer her a mysterious gift!",
+    "storySummaryPlaceholderPlural": "Ex: Today, {{name}} go on an adventure in a beautiful enchanted forest. They meet some sweet magical animals who help them explore the forest and offer them a mysterious gift!",
     "storyStyle": "Style",
     "storyLanguage": "Language",
     "ageGroup": "Age group",
@@ -517,6 +526,7 @@
     "subtitle": "Choose or create a character for your story",
     "createNew": "Create",
     "selectCharacter": "Select a character",
+    "selected": "Selected character",
     "noCharacters": "No characters yet",
     "createFirst": "Create your first character!",
     "modalTitle": "Create Character",
@@ -560,8 +570,11 @@
     "validation": {
       "nameRequired": "Name is required",
       "nameMin": "Name must be at least 2 characters",
-      "nameMax": "Name cannot exceed 50 characters",
-      "typeRequired": "Please select a type"
+      "nameMax": "Name cannot exceed 25 characters",
+      "nameFormat": "Name can only contain letters, numbers and hyphens",
+      "typeRequired": "Please select a type",
+      "clothingMax": "Clothing description cannot exceed 80 characters",
+      "descriptionMax": "Description cannot exceed 80 characters"
     },
     "limitReached": "Limit reached",
     "freeLimitMessage": "With the free plan, you can create up to 2 characters. To create up to 5, upgrade to Adventurer or Legend plan!",
