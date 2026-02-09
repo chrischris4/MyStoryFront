@@ -552,6 +552,8 @@ export default function CreateStoryScreen() {
                   onChangeText={formik.handleChange('prompt')}
                   onBlur={formik.handleBlur('prompt')}
                   multiline
+                  autoCorrect={true}
+                  spellCheck={true}
                   textAlignVertical="top"
                   style={{ minHeight: 160 }}
                 />
