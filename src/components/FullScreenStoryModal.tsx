@@ -205,6 +205,7 @@ export default function FullScreenStoryModal({
           style={isRotated ? {
             width: height,
             height: width,
+            backgroundColor: 'black',
             transform: [
               { rotate: '90deg' },
               { translateX: (height - width) / 2 },
@@ -213,6 +214,7 @@ export default function FullScreenStoryModal({
           } : {
             width,
             height,
+            backgroundColor: 'black',
           }}
         >
           <FlatList
@@ -231,7 +233,7 @@ export default function FullScreenStoryModal({
             }}
             renderItem={({ item }) => (
               <View
-                style={{ width: rotatedWidth, height: rotatedHeight }}
+                style={{ width: rotatedWidth, height: rotatedHeight, backgroundColor: 'black' }}
                 className="justify-center items-center"
               >
                 <View
@@ -258,7 +260,7 @@ export default function FullScreenStoryModal({
                       className={` ${isRotated ? 'top-10 px-4 py-2' : 'top-4 px-2 py-1'} absolute self-center bg-white/90 rounded-xl`}
                     >
                       <Text
-                        className={` ${isRotated ? 'text-3xl mt-3' : 'text-lg'} font-baloo-bold`}
+                        className={` ${isRotated ? 'text-3xl mt-3' : 'text-lg md:text-2xl'} font-baloo-bold`}
                       >
                         {title}
                       </Text>

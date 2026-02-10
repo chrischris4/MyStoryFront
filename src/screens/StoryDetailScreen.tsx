@@ -73,7 +73,6 @@ export default function StoryDetailScreen() {
   const unshareStoryMutation = useUnshareStoryFromGroup();
   const deleteStoryMutation = useDeleteStory();
   const skyColor = isNight ? '#020205' : '#87CEEB';
-  const cloudColor = isNight ? '#A0AEC0' : '#FFFFFF';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
@@ -440,7 +439,7 @@ export default function StoryDetailScreen() {
       <Background isNight={isNight} />
       <ScrollView
         ref={scrollViewRef}
-        className="flex-grow px-4 z-20"
+        className="flex-grow px-4 md:px-8 z-20"
         contentContainerStyle={{ paddingBottom: 70 }}
         scrollEventThrottle={16}
         onScroll={handleGoBackTopScroll}
@@ -456,10 +455,10 @@ export default function StoryDetailScreen() {
           }}
         >
           <View className='flex flex-col'>
-            <Text className={`text-3xl font-baloo-bold mb-2 mt-2 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
+            <Text className={`text-3xl md:text-4xl font-baloo-bold mb-2 mt-2 md:pt-4 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
               <View
-                className='w-2/3 relative aspect-square rounded-full self-center z-20 overflow-hidden'
+                className='w-2/3 md:w-2/5 relative aspect-square rounded-full self-center z-20 overflow-hidden'
               >
                 <Image
                   source={{ uri: story.coverUrl }}
@@ -470,14 +469,14 @@ export default function StoryDetailScreen() {
             )}
 
             {story.description && (
-              <Text className={`text-base font-baloo text-center mt-4 px-4 ${isNight ? 'text-white/80' : 'text-slate-600'}`}>
+              <Text className={`text-base self-center md:text-lg md:w-10/12 font-baloo text-center mt-4 px-4 ${isNight ? 'text-white/80' : 'text-slate-600'}`}>
                 {story.description}
               </Text>
             )}
 
             {/* Author date */}
             <View className='flex flex-row gap-2 items-center mt-4 justify-center'>
-              <Text className={`text-base font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>{t('storyDetail.author', { name: story.user?.profil?.name || t('storyDetail.anonymous') })}</Text>
+              <Text className={`text-base md:text-lg font-baloo-medium ${isNight ? 'text-white' : 'text-black'}`}>{t('storyDetail.author', { name: story.user?.profil?.name || t('storyDetail.anonymous') })}</Text>
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
           </View>

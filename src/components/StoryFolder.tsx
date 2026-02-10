@@ -126,7 +126,7 @@ export default function StoryFolder({
     const [selectedLanguage, setSelectedLanguage] = useState<string>('ALL');
 
     const width = useSharedValue(SCREEN_WIDTH / 1.08);
-    const height = useSharedValue(84);
+    const height = useSharedValue(isMd ? 110 : 84);
     const translateY = useSharedValue(0);
     const navigation = useNavigation<StoryFolderNavigationProp>();
 
