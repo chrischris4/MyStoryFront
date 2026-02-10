@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -43,6 +44,8 @@ type GroupDetailsModalProps = {
 export default function GroupDetailsModal({ visible, group, onClose }: GroupDetailsModalProps) {
   const { t } = useTranslation();
   const { isNight } = useTheme();
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const { playSound } = useSound();
   const { user: currentUser } = useAuth();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -103,7 +106,6 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const removeMemberMutation = useRemoveMember();
 
   const groupMembers = group?.members || fetchedMembers;
-  const ownerName = group?.owner?.profil?.name || group?.owner?.email || t('groups.unknownCreator');
   const isCurrentUserOwner = currentUser?.id === group?.ownerId;
 
   const memberCount = groupMembers.length;
@@ -186,8 +188,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
             position: 'absolute',
             bottom: 100,
             top: 100,
-            left: 0,
-            right: 0,
+            left: isTablet ? '20%' : 0,
+            right: isTablet ? '20%' : 0,
             maxHeight: SCREEN_HEIGHT * 0.9,
             paddingHorizontal: 16,
             zIndex: 50,

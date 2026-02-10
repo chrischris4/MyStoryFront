@@ -52,7 +52,7 @@ export default function BillingScreen() {
                         color: '#333',
                         textAlign: 'center',
                     }}
-                    className='font-baloo-semibold text-xl'
+                    className='font-baloo-semibold text-xl md:text-2xl'
                 >
                     {text}
                 </Text>
@@ -142,6 +142,7 @@ export default function BillingScreen() {
 
     const { isNight } = useTheme();
     const { width: screenWidth } = useWindowDimensions();
+    const isTablet = screenWidth >= 768;
 
     // États pour la modal d'abonnement
     const [modalVisible, setModalVisible] = useState(false);
@@ -450,7 +451,7 @@ export default function BillingScreen() {
     }, []);
 
     return (
-        <View className="flex-1 flex-col overflow-hidden pt-4 px-4 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
+        <View className="flex-1 flex-col overflow-hidden pt-4 px-4 md:px-8 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
             {/* 🌤️ Background animé */}
             <Background isNight={isNight} />
             <View
@@ -464,15 +465,15 @@ export default function BillingScreen() {
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
             </View>
-            <Text className={`font-baloo-semibold text-4xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>{t('billing.title')}</Text>
+            <Text className={`font-baloo-semibold text-4xl md:text-5xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>{t('billing.title')}</Text>
 
             {/* Boutons de jetons*/}
             <View className='flex-col w-full mt-4'>
                 <View className='flex flex-row gap-2 items-center'>
-                    <Text className={`font-baloo-semibold text-2xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenPacks')}</Text>
-                    <Text className={`font-baloo text-base -mb-1 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenInfo')}</Text>
+                    <Text className={`font-baloo-semibold text-2xl md:text-3xl -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenPacks')}</Text>
+                    <Text className={`font-baloo text-base md:text-lg -mb-1 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.tokenInfo')}</Text>
                 </View>
-                <View className='flex-row w-full gap-2'>
+                <View className='flex-row w-full gap-2 md:gap-4'>
                     <Animated.View
                         style={{
                             flex: 1,
@@ -521,8 +522,8 @@ export default function BillingScreen() {
 
             {/* Boutons Premium*/}
             <View className='flex flex-col w-full'>
-                <Text className={`z-20 font-baloo-semibold text-2xl mt-4 -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.subscriptions')}</Text>
-                <View className='flex-row w-full gap-2'>
+                <Text className={`z-20 font-baloo-semibold text-2xl md:text-3xl mt-4 md:mt-6 -mb-2 ${isNight ? 'text-white' : 'text-slate-900'}`}>{t('billing.subscriptions')}</Text>
+                <View className='flex-row w-full gap-2 md:gap-4'>
                     <Animated.View
                         style={{
                             flex: 1,
@@ -589,20 +590,20 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: -75,
-                    left: 20,
+                    bottom: isTablet ? -40 : -75,
+                    left: isTablet ? 140 : 20,
                     zIndex: 1
                 }}
                 className="self-center">
-                <View style={{ width: 500, height: 500, position: 'relative' }}>
+                <View style={{ position: 'relative' }}>
                     {/* BULLE UNIQUE À GAUCHE */}
                     {showBubble && storePhrase && (
                         <StoreBubble
                             text={storePhrase}
                             style={{
                                 position: 'absolute',
-                                top: 200,
-                                left: 60,
+                                top: isTablet ? 200 : 120,
+                                left: isTablet ? 60 : 30,
                                 zIndex: 10,
                                 opacity: bubbleOpacity,
                                 transform: [{ scale: bubbleScale }],
@@ -615,7 +616,7 @@ export default function BillingScreen() {
                         source={require('../../assets/animations/Store.json')}
                         autoPlay
                         loop={false}
-                        style={{ width: 500, height: 500 }}
+                        style={{ width: isTablet ? 700 : 300, height: isTablet ? 500 : 300 }}
                     />
                 </View>
             </Animated.View>
@@ -624,8 +625,8 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: 60,
-                    left: -140,
+                    bottom: isTablet ? 75 : 60,
+                    left: isTablet ? -50 : -140,
                 }}
             >
                 <LottieView
@@ -633,7 +634,7 @@ export default function BillingScreen() {
                     source={require('../../assets/animations/tree.json')}
                     autoPlay
                     loop={false}
-                    style={{ width: 500, height: 500 }}
+                    style={{ width: isTablet ? 700 : 300, height: isTablet ? 500 : 300 }}
                 />
             </Animated.View>
 

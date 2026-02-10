@@ -392,7 +392,7 @@ export default function CreateStoryScreen() {
             <View
               className="px-4 py-3 flex w-72 rounded-2xl bg-white text-black"
             >
-              <Text className="font-baloo-medium text-center">
+              <Text className="font-baloo-medium md:text-lg text-center">
                 {t('sharedStories.storeBubble')}
               </Text>
             </View>
@@ -454,7 +454,7 @@ export default function CreateStoryScreen() {
               className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
               onPress={() => navigation.navigate('BillingScreen')}
             >
-              <Text className="text-gray-800 font-baloo-semibold text-center text-base">
+              <Text className="text-gray-800 font-baloo-semibold text-center text-base md:text-lg">
                 {t('createStory.getStoryCoins')}
               </Text>
               <Feather name="arrow-right" size={20} color="#000" />
@@ -463,10 +463,10 @@ export default function CreateStoryScreen() {
         </>
       )}
 
-      <Text className={`text-4xl font-baloo-bold pt-10 px-4 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
-      <Text className={`text-xl font-baloo pb-4 px-4 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
+      <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
+      <Text className={`text-xl md:text-2xl font-baloo pb-4 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
-        className="flex-1 px-4 z-20"
+        className="flex-1 px-4 md:px-8 z-20"
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
@@ -485,7 +485,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={`text-2xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
+                <Text className={`text-2xl md:text-3xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
                 <TextInput
                   className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder={t('createStory.storyTitlePlaceholder')}
@@ -496,9 +496,9 @@ export default function CreateStoryScreen() {
                   maxLength={40}
                 />
                 <View className='flex flex-row gap-2'>
-                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm mt-1`}>{formik.values.title.length}/40</Text>
+                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.title.length}/40</Text>
                   {formik.touched.title && formik.errors.title && (
-                    <Text className="text-red-500 text-sm mt-1">{formik.errors.title}</Text>
+                    <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.title}</Text>
                   )}
                 </View>
               </BlurView>
@@ -532,8 +532,8 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
                 <TextInput
                   className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
                   placeholder={(() => {
@@ -559,9 +559,9 @@ export default function CreateStoryScreen() {
                   style={{ minHeight: 160 }}
                 />
                 <View className='flex flex-row gap-2'>
-                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm mt-1`}>{formik.values.prompt.length}/500</Text>
+                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.prompt.length}/500</Text>
                   {formik.touched.prompt && formik.errors.prompt && (
-                    <Text className="text-red-500 text-sm mt-1">{formik.errors.prompt}</Text>
+                    <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
                   )}
                 </View>
               </BlurView>
@@ -580,7 +580,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
 
                 {/* Carrousel de styles */}
                 <Animated.ScrollView
@@ -611,7 +611,7 @@ export default function CreateStoryScreen() {
                           borderWidth: isSelected ? 4 : 0,
                           borderColor: isSelected ? '#10B981' : 'transparent',
                         }}
-                        className="h-40"
+                        className="h-40 md:h-60"
                       >
                         <ImageBackground
                           source={{ uri: style.imageUrl }}
@@ -638,13 +638,13 @@ export default function CreateStoryScreen() {
                               </View>
                             )}
                             <Text
-                              className="font-bold text-xl mb-1 text-white"
+                              className="font-bold text-xl md:text-2xl mb-1 text-white"
                             >
                               {getStyleTranslation(style.id).name}
                             </Text>
 
 
-                            <Text className="text-white text-sm">
+                            <Text className="text-white text-sm md:text-base">
                               {getStyleTranslation(style.id).description}
                             </Text>
                           </LinearGradient>
@@ -691,7 +691,7 @@ export default function CreateStoryScreen() {
                   })}
                 </View>
                 {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                  <Text className="text-red-500 text-sm mt-2 text-center">{formik.errors.selectedStyle}</Text>
+                  <Text className="text-red-500 text-sm md:text-base mt-2 text-center">{formik.errors.selectedStyle}</Text>
                 )}
               </BlurView>
             </View>
@@ -709,7 +709,7 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {LANGUAGES.map((lang) => {
                     const isSelected = formik.values.language === lang.id;
@@ -719,8 +719,8 @@ export default function CreateStoryScreen() {
                         onPress={() => formik.setFieldValue('language', lang.id)}
                         className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
                       >
-                        <Text className="text-xl">{lang.flag}</Text>
-                        <Text className={`font-baloo-medium ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
+                        <Text className="text-xl md:text-2xl">{lang.flag}</Text>
+                        <Text className={`font-baloo-medium md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
                           {t(`storyFolder.languages.${lang.id}`, lang.name)}
                         </Text>
                       </TouchableOpacity>
@@ -728,7 +728,7 @@ export default function CreateStoryScreen() {
                   })}
                 </View>
                 {formik.touched.language && formik.errors.language && (
-                  <Text className="text-red-500 text-sm mt-2">{formik.errors.language}</Text>
+                  <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.language}</Text>
                 )}
               </BlurView>
             </View>
@@ -746,8 +746,8 @@ export default function CreateStoryScreen() {
                 tint={isNight ? "dark" : "light"}
                 style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
+                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
                 <View className="flex-row flex-wrap gap-2">
                   {AGE_GROUPS.map((age) => {
                     const isSelected = formik.values.ageGroup === age.id;
@@ -758,12 +758,12 @@ export default function CreateStoryScreen() {
                         className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
                       >
                         <View className="flex-row items-center gap-2 mb-1">
-                          <Text className="text-xl">{age.emoji}</Text>
-                          <Text className={`font-baloo-semibold ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-800'}`}>
+                          <Text className="text-xl md:text-2xl">{age.emoji}</Text>
+                          <Text className={`font-baloo-semibold md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-800'}`}>
                             {t(`createStory.ageGroups.${age.id}.name`)}
                           </Text>
                         </View>
-                        <Text className={`text-xs ${isSelected ? 'text-white/90' : isNight ? 'text-white/60' : 'text-slate-600'}`}>
+                        <Text className={`text-xs md:text-sm ${isSelected ? 'text-white/90' : isNight ? 'text-white/60' : 'text-slate-600'}`}>
                           {t(`createStory.ageGroups.${age.id}.desc`)}
                         </Text>
                       </TouchableOpacity>
@@ -771,7 +771,7 @@ export default function CreateStoryScreen() {
                   })}
                 </View>
                 {formik.touched.ageGroup && formik.errors.ageGroup && (
-                  <Text className="text-red-500 text-sm mt-2">{formik.errors.ageGroup}</Text>
+                  <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.ageGroup}</Text>
                 )}
               </BlurView>
             </View>
@@ -795,7 +795,7 @@ export default function CreateStoryScreen() {
                   setNumPages={(n) => formik.setFieldValue('numPages', n)}
                 />
                 {formik.touched.numPages && formik.errors.numPages && (
-                  <Text className="text-red-500 text-sm mt-1 text-center">{formik.errors.numPages}</Text>
+                  <Text className="text-red-500 text-sm md:text-base mt-1 text-center">{formik.errors.numPages}</Text>
                 )}
               </BlurView>
             </View>
@@ -804,25 +804,25 @@ export default function CreateStoryScreen() {
             {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
               (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
                 <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
-                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base mb-2`}>{t('createStory.missingInfo')}</Text>
+                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base md:text-lg mb-2`}>{t('createStory.missingInfo')}</Text>
                   <View className="gap-1">
                     {formik.touched.title && formik.errors.title && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.title}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.title}</Text>
                     )}
                     {formik.touched.prompt && formik.errors.prompt && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.prompt}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.prompt}</Text>
                     )}
                     {formik.touched.numPages && formik.errors.numPages && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.numPages}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.numPages}</Text>
                     )}
                     {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.selectedStyle}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.selectedStyle}</Text>
                     )}
                     {formik.touched.language && formik.errors.language && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.language}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.language}</Text>
                     )}
                     {formik.touched.ageGroup && formik.errors.ageGroup && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm`}>• {formik.errors.ageGroup}</Text>
+                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.ageGroup}</Text>
                     )}
                   </View>
                 </View>
@@ -831,7 +831,7 @@ export default function CreateStoryScreen() {
               className={`bg-black px-4 py-3 rounded-3xl items-center`}
               onPress={handleCreateClick}
             >
-              <Text className="font-baloo-semibold text-lg text-white">{t('createStory.createMyStory')}</Text>
+              <Text className="font-baloo-semibold text-lg md:text-xl text-white">{t('createStory.createMyStory')}</Text>
             </TouchableOpacity>
           </View>
         )}

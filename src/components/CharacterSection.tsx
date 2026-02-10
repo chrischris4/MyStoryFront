@@ -179,13 +179,13 @@ export default function CharacterSection({
         style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
       >
         <Text
-          className={`text-2xl font-baloo-semibold mb-1 ${isNight ? 'text-white' : 'text-slate-900'
+          className={`text-2xl md:text-3xl font-baloo-semibold mb-1 ${isNight ? 'text-white' : 'text-slate-900'
             }`}
         >
           {t('character.title')}
         </Text>
         <Text
-          className={`text-sm font-baloo mb-4 ${isNight ? 'text-white/80' : 'text-slate-600'
+          className={`text-sm md:text-base font-baloo mb-4 ${isNight ? 'text-white/80' : 'text-slate-600'
             }`}
         >
           {t('character.subtitle')}
@@ -243,7 +243,7 @@ export default function CharacterSection({
           <View className="mt-4 gap-2">
             {/* Counter */}
             <Text
-              className={`font-baloo-medium text-sm ${isNight ? 'text-white/60' : 'text-gray-500'
+              className={`font-baloo-medium text-sm md:text-base ${isNight ? 'text-white/80' : 'text-gray-700'
                 }`}
             >
               {t('character.selected', { count: selectedCharacters.length, max: MAX_CHARACTERS_PER_STORY })}

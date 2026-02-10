@@ -286,7 +286,9 @@
       "danish": "Danois"
     },
     "generating": "Histoire en cours de création...",
-    "generationFailed": "La création de l'histoire a échoué."
+    "generationFailed": "La création de l'histoire a échoué.",
+    "subscriptionRequired": "Pour avoir accès à ces histoires partagées, il vous faut un abonnement",
+    "subscribe": "Découvrir les offres"
   },
   "storyReader": {
     "music": "Musiques",
@@ -536,7 +538,7 @@
     "fetchError": "Erreur lors de la récupération de l'histoire"
   },
   "character": {
-    "title": "Personnage de l'histoire",
+    "title": "Personnages",
     "subtitle": "Choisissez ou créez un personnage pour votre histoire",
     "createNew": "Créer",
     "selectCharacter": "Sélectionner un personnage",

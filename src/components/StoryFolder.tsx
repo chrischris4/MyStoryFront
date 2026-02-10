@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     FlatList,
     ScrollView,
+    useWindowDimensions,
 } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, {
@@ -111,6 +112,9 @@ export default function StoryFolder({
     isLoading = false,
 }: StoryFolderProps) {
     const { t } = useTranslation();
+    const { width: screenWidth } = useWindowDimensions();
+    const isMd = screenWidth >= 768;
+    const numColumns = isMd ? 2 : 1;
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
@@ -176,10 +180,11 @@ export default function StoryFolder({
     // Pour les non-premium sur les folders partagés, limiter à 5 histoires
     const isLockedPreview = !isPremium && isShared;
     const displayedStories = useMemo(() => {
+        const stories = isLockedPreview ? filteredStories.slice(0, 5) : filteredStories;
         if (isLockedPreview) {
-            return filteredStories.slice(0, 5);
+            return [...stories, { id: '__locked__', _isLockedCard: true } as any];
         }
-        return filteredStories;
+        return stories;
     }, [filteredStories, isLockedPreview]);
 
     const onLayout = (event: LayoutChangeEvent) => {
@@ -191,7 +196,7 @@ export default function StoryFolder({
         if (expanded) {
             setShowContent(false);
             width.value = SCREEN_WIDTH / 1.08;
-            height.value = 84;
+            height.value = isMd ? 110 : 84;
             translateY.value = 0;
         } else {
             const EXPANDED_TOP = 10;
@@ -218,20 +223,20 @@ export default function StoryFolder({
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     style={{
-                        flex: 1, padding: 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
+                        flex: 1, padding: isMd ? 28 : 16, borderRadius: 24, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
                     }}
                 >
                     <View
                         className="w-full mb-4 relative"
                         style={{ flex: expanded ? 1 : undefined }}
                     >
-                        <View className="flex flex-row items-center gap-3">
-                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl font-baloo-semibold self-start`}>{title}</Text>
-                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg font-baloo self-start`}>
+                        <View className="flex flex-row items-center gap-3 md:gap-4">
+                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{title}</Text>
+                            <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-lg md:text-xl font-baloo self-start`}>
                                 ( {filteredStories.length ? filteredStories.length : stories.length} )
                             </Text>
                         </View>
-                        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg font-baloo`}>{description}</Text>
+                        <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-slate-500 text-lg md:text-xl font-baloo`}>{description}</Text>
 
                         {expanded && (
                             <Pressable
@@ -270,8 +275,8 @@ export default function StoryFolder({
                         )}
 
                         {/* Filtres - uniquement pour ALL et FAVORITE */}
-                        {expanded && showContent && !isLoading && showFilters &&  (
-                            <View className="mt-2 mb-4 bg-white/10 rounded-2xl p-4">
+                        {expanded && showContent && !isLoading && showFilters && (
+                            <View className="mt-2 bg-white/20 rounded-2xl p-4">
                                 {/* Filtre type de personnage */}
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} font-baloo-semibold mb-2`}>
                                     {t('storyFolder.characterType')}
@@ -396,7 +401,10 @@ export default function StoryFolder({
                         )}
 
                         {expanded && !showContent && (isLoading || stories.length === 0) ? (
-                            <View style={{ flex: 1, marginTop: 16 }}>
+                            <View style={{ flex: 1, marginTop: 16 }} className='md:grid md:grid-cols-2 gap-4'>
+                                <StorySkeleton />
+                                <StorySkeleton />
+                                <StorySkeleton />
                                 <StorySkeleton />
                                 <StorySkeleton />
                                 <StorySkeleton />
@@ -423,7 +431,7 @@ export default function StoryFolder({
                                 </Text>
                                 {!showFilters && (
                                     <TouchableOpacity
-                                        className="bg-white px-4 py-2 rounded-lg"
+                                        className="bg-white px-4 md:px-8 py-2 rounded-lg"
                                         onPress={() => navigation.navigate('CreateStory')}
                                     >
                                         <Text className="font-baloo-semibold">{t('storyFolder.createStory')}</Text>
@@ -432,27 +440,55 @@ export default function StoryFolder({
                             </View>
                         ) : expanded && showContent ? (
                             <FlatList
+                                key={numColumns}
                                 data={displayedStories}
                                 keyExtractor={(item, index) => `${item.id}-${index}`}
+                                numColumns={numColumns}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
+                                columnWrapperStyle={numColumns > 1 ? { gap: 8, alignItems: 'stretch' } : undefined}
                                 showsVerticalScrollIndicator={false}
                                 initialNumToRender={3}
                                 maxToRenderPerBatch={3}
                                 windowSize={5}
                                 removeClippedSubviews={true}
                                 renderItem={({ item, index }) => {
+                                    if (item._isLockedCard) {
+                                        return (
+                                            <Animated.View
+                                                entering={FadeInDown.duration(200)}
+                                                style={numColumns > 1 ? { flex: 1, maxWidth: '50%' } : undefined}
+                                            >
+                                                <TouchableOpacity
+                                                    activeOpacity={0.7}
+                                                    onPress={() => navigation.navigate('BillingScreen')}
+                                                    className={`mb-2 p-4 rounded-3xl flex-1 items-center justify-center ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
+                                                >
+                                                    <Feather name="lock" size={32} color={isNight ? '#94a3b8' : '#64748b'} />
+                                                    <Text className={`text-center text-base font-baloo-medium mt-3 ${isNight ? 'text-slate-300' : 'text-slate-600'}`}>
+                                                        {t('storyFolder.subscriptionRequired')}
+                                                    </Text>
+                                                    <View className="flex-row items-center gap-2 mt-3 bg-blue-500 rounded-full px-4 py-2">
+                                                        <Text className="text-white font-baloo-semibold text-sm">{t('storyFolder.subscribe')}</Text>
+                                                        <Feather name="arrow-right" size={16} color="white" />
+                                                    </View>
+                                                </TouchableOpacity>
+                                            </Animated.View>
+                                        );
+                                    }
+
                                     const cover = item.coverUrl;
                                     const isGenerating = item.status === 'PENDING' || item.status === 'GENERATING';
                                     const isFailed = item.status === 'FAILED';
 
                                     return (
                                         <Animated.View
-                                            entering={FadeInDown.delay(index * 100).springify().damping(50)}
+                                            entering={index < 6 ? FadeInDown.delay(index * 100).springify().damping(50) : FadeInDown.duration(200)}
+                                            style={numColumns > 1 ? { flex: 1, maxWidth: '50%' } : undefined}
                                         >
                                             <TouchableOpacity
                                                 activeOpacity={isLockedPreview || isGenerating || isFailed ? 1 : 0.5}
-                                                className={`mb-2 p-4 rounded-3xl relative ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
+                                                className={`mb-2 p-4 rounded-3xl relative flex-1 justify-between ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
                                                 onPress={() => {
                                                     if (isLockedPreview || isGenerating || isFailed) {
                                                         return;
@@ -468,6 +504,9 @@ export default function StoryFolder({
                                                     >
                                                         <BlurView
                                                             intensity={90}
+                                                            style={{
+                                                                backgroundColor: isNight ? '#1e293b90' : '#38b6ff40',
+                                                            }}
                                                             tint="light"
                                                             className='flex px-4 flex-row gap-3 p-2'
                                                         >
@@ -478,59 +517,60 @@ export default function StoryFolder({
                                                         </BlurView>
                                                     </TouchableOpacity>
                                                 )}
-                                                <View className="flex flex-row justify-between items-center mb-1">
-                                                    <Text className={` ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
+                                                <View>
+                                                    <View className="mb-1">
+                                                        <Text className={` ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
+                                                    </View>
+                                                    {isGenerating && (
+                                                        <View className="flex-row items-center gap-2 bg-amber-100 rounded-xl p-3 mb-2">
+                                                            <LottieView
+                                                                source={require('../../assets/animations/LoadingWhite.json')}
+                                                                autoPlay
+                                                                loop={true}
+                                                                style={{ width: 30, height: 30 }}
+                                                            />
+                                                            <Text className="text-amber-800 font-baloo-medium text-sm flex-1">
+                                                                {t('storyFolder.generating')}
+                                                            </Text>
+                                                        </View>
+                                                    )}
+                                                    {isFailed && (
+                                                        <View className="flex-row items-center gap-2 bg-red-100 rounded-xl p-3 mb-2">
+                                                            <Feather name="alert-circle" size={20} color="#dc2626" />
+                                                            <Text className="text-red-700 font-baloo-medium text-sm flex-1">
+                                                                {t('storyFolder.generationFailed')}
+                                                            </Text>
+                                                        </View>
+                                                    )}
+                                                    {cover && !isGenerating && !isFailed && (
+                                                        <View style={{ position: 'relative' }}>
+                                                            <Image
+                                                                source={{ uri: cover }}
+                                                                style={{ width: '100%', height: 150, borderRadius: 8 }}
+                                                                contentFit="cover"
+                                                                cachePolicy="memory-disk"
+                                                                transition={200}
+                                                            />
+                                                            {isNight && (
+                                                                <View style={{
+                                                                    position: 'absolute',
+                                                                    top: 0,
+                                                                    left: 0,
+                                                                    right: 0,
+                                                                    bottom: 0,
+                                                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                                                                    borderRadius: 8,
+                                                                }} />
+                                                            )}
+                                                        </View>
+                                                    )}
+
+                                                    {item.description && (
+                                                        <Text className={`text-sm ${isNight ? 'text-slate-300' : 'text-slate-600'} font-baloo mt-2`} numberOfLines={2}>
+                                                            {item.description}
+                                                        </Text>
+                                                    )}
                                                 </View>
-                                                {isGenerating && (
-                                                    <View className="flex-row items-center gap-2 bg-amber-100 rounded-xl p-3 mb-2">
-                                                        <LottieView
-                                                            source={require('../../assets/animations/LoadingWhite.json')}
-                                                            autoPlay
-                                                            loop={true}
-                                                            style={{ width: 30, height: 30 }}
-                                                        />
-                                                        <Text className="text-amber-800 font-baloo-medium text-sm flex-1">
-                                                            {t('storyFolder.generating')}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                                {isFailed && (
-                                                    <View className="flex-row items-center gap-2 bg-red-100 rounded-xl p-3 mb-2">
-                                                        <Feather name="alert-circle" size={20} color="#dc2626" />
-                                                        <Text className="text-red-700 font-baloo-medium text-sm flex-1">
-                                                            {t('storyFolder.generationFailed')}
-                                                        </Text>
-                                                    </View>
-                                                )}
-                                                {cover && !isGenerating && !isFailed && (
-                                                    <View style={{ position: 'relative' }}>
-                                                        <Image
-                                                            source={{ uri: cover }}
-                                                            style={{ width: '100%', height: 150, borderRadius: 8 }}
-                                                            contentFit="cover"
-                                                            cachePolicy="memory-disk"
-                                                            transition={200}
-                                                        />
-                                                        {isNight && (
-                                                            <View style={{
-                                                                position: 'absolute',
-                                                                top: 0,
-                                                                left: 0,
-                                                                right: 0,
-                                                                bottom: 0,
-                                                                backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                                                                borderRadius: 8,
-                                                            }} />
-                                                        )}
-                                                    </View>
-                                                )}
-
-                                                {item.description && (
-                                                    <Text className={`text-sm ${isNight ? 'text-slate-300' : 'text-slate-600'} font-baloo mt-2`} numberOfLines={2}>
-                                                        {item.description}
-                                                    </Text>
-                                                )}
-
                                                 {item.characters && item.characters.length > 0 && (
                                                     <View className='flex flex-row flex-wrap gap-2 mt-2 mb-1'>
                                                         {item.characters.map((storyCharacter: any, charIndex: number) => {

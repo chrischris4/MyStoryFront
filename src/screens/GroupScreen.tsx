@@ -7,6 +7,7 @@ import {
   ScrollView,
   Animated,
   TouchableWithoutFeedback,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -34,6 +35,8 @@ type TabType = 'myGroups' | 'search' | 'invitations';
 export default function GroupScreen() {
   const { t } = useTranslation();
   const { isNight } = useTheme();
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState<TabType>('myGroups');
   const [searchQuery, setSearchQuery] = useState('');
@@ -180,7 +183,7 @@ export default function GroupScreen() {
             size={18}
             color={isNight ? '#ffffff' : '#1e293b'}
           />
-          <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold`}>
+          <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base md:text-lg`}>
             {label}
           </Text>
         </View>
@@ -366,10 +369,10 @@ export default function GroupScreen() {
         </TouchableOpacity>
       </View>
       <SafeAreaView className="flex-1">
-        <View className="flex-1 w-full px-4 pt-4">
+        <View className="flex-1 w-full px-4 md:px-8 pt-4">
           {/* Header */}
           <View className="mb-4">
-            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-4xl font-baloo-semibold pt-4`}>
+            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-4xl md:text-5xl font-baloo-semibold pt-4`}>
               {t('groups.myGroups')}
             </Text>
             <View style={{ width: 24 }} />
@@ -399,7 +402,7 @@ export default function GroupScreen() {
                   >
                     <View className="flex-row items-center justify-center gap-2">
                       <Feather name="plus" size={20} color={isNight ? '#ffffff' : '#1e293b'} />
-                      <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base`}>
+                      <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base md:text-lg`}>
                         {t('groups.createNewGroup')}
                       </Text>
                     </View>
@@ -538,17 +541,16 @@ export default function GroupScreen() {
               <TouchableWithoutFeedback onPress={closeCreateModal}>
                 <View className="absolute inset-0" />
               </TouchableWithoutFeedback>
-              <Animated.View style={{ transform: [{ scale: createModalScale }], width: '100%' }}>
+              <Animated.View style={{ transform: [{ scale: createModalScale }], width: isTablet ? '60%' : '100%' }}>
                 <BlurView
                   intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="w-full p-6 rounded-3xl overflow-hidden"
                   style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
                 >
-                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold mb-4`}>
+                  <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-xl md:text-2xl font-baloo-semibold mb-4`}>
                     {t('groups.createGroup')}
                   </Text>
-
                   <Formik
                     initialValues={{ name: '', description: '' }}
                     validationSchema={createGroupSchema}

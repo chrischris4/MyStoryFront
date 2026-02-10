@@ -54,7 +54,7 @@ export default function PageSelector({ numPages, setNumPages, isNight }: PageSel
 
   return (
     <View className="text-center mb-4">
-      <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl font-baloo-semibold mb-4`}>{t('storyCreation.numPages')}</Text>
+      <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('storyCreation.numPages')}</Text>
 
       <View className="flex-row justify-end items-center space-x-10">
         <TouchableOpacity onPress={goLeft} disabled={currentIndex === 0}>

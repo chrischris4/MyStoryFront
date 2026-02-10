@@ -19,6 +19,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<BottomTabNavigationProp<MainTabParamList>>();
   const { playBackgroundMusic, toggleBackgroundMusic, isMusicEnabled } = useSound();
   const { width } = useWindowDimensions();
+  const isMd = width >= 768;
 
   const translateX = useRef(new Animated.Value(width)).current;
   const animationRef = useRef(null);
@@ -31,8 +32,8 @@ export default function HomeScreen() {
     animationRef.current?.play();
 
     Animated.timing(translateX, {
-      toValue: -300,
-      duration: 5000,
+      toValue: -600,
+      duration: 8000,
       useNativeDriver: true,
     }).start();
   }, []);
@@ -45,9 +46,9 @@ export default function HomeScreen() {
   // Récupérer les données depuis Zustand au lieu de faire un fetch
   const user = useUserStore((state) => state.user);
   const profile = {
-    name: user?.profil.name || t('home.defaultName'),
+    name: user?.profil?.name || t('home.defaultName'),
     isPremium: isPremiumUser(user?.subscriptionPlan),
-    imageUrl: user?.profil.imageUrl,
+    imageUrl: user?.profil?.imageUrl,
     storyCoin: user?.storyCoin || 0,
   };
 
@@ -67,11 +68,6 @@ export default function HomeScreen() {
   const planName = getPlanDisplayName(user?.subscriptionPlan);
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
-
-  // Debug: log subscription plan
-  // console.log('🎯 User subscriptionPlan:', user?.subscriptionPlan);
-  // console.log('💎 isPremium:', profile.isPremium);
-  // console.log('📛 planName:', planName);
 
   return (
     <View className="flex-1 relative">
@@ -103,11 +99,12 @@ export default function HomeScreen() {
       )}
       {/* 🌟 Contenu principal au-dessus */}
       <View className="flex-1 items-center w-full absolute top-0 left-0 right-0 bottom-0">
-        <View className="flex flex-row mt-8 w-11/12 items-center relative">
+        <View className="flex flex-row mt-8 md:mt-12 w-full items-center relative">
           {/* Bouton musique en haut à droite */}
           <TouchableOpacity
             onPress={toggleBackgroundMusic}
             className="absolute right-0 top-0 z-10"
+            style={isMd ? { right: 28 } : { right: 16 }}
           >
             <BlurView
               intensity={90}
@@ -122,14 +119,10 @@ export default function HomeScreen() {
               />
             </BlurView>
           </TouchableOpacity>
-
           <View className="flex flex-col items-center mx-auto">
-
             <View
-              className='relative'
+              className='relative w-40 h-40 md:w-60 md:h-60'
               style={{
-                width: 140,
-                height: 140,
                 borderRadius: 104,
                 shadowColor: isNight ? '#FFFFFF' : '#FBBF24',
                 shadowOffset: { width: 0, height: 0 },
@@ -144,22 +137,19 @@ export default function HomeScreen() {
               <Image
                 source={profile?.imageUrl ? { uri: profile.imageUrl } : require('../../assets/default-avatar.png')}
                 style={{
-                  width: 140,
-                  height: 140,
+                  
                   borderRadius: 104,
                   borderWidth: 6,
                   borderColor: isNight ? '#FFFFFF' : '#FACC15',
                 }}
-                className='absolute bottom-0 left-0'
+                className='absolute bottom-0 left-0 w-40 h-40 md:h-60 md:w-60'
               />
-
             </View>
-
           </View>
         </View>
-        <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl font-baloo-semibold mt-2`}>{profile?.name || 'Jean'}</Text>
+        <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl md:text-5xl font-baloo-semibold mt-2 md:pt-4`}>{profile?.name || 'Jean'}</Text>
 
-        <View className='flex-row items-center gap-4 self-center mb-4'>
+        <View className='flex-row items-center gap-4 self-center mb-4 md:mb-6 md:mt-2'>
           {profile.isPremium && (
             <View>
               <BlurView
@@ -168,7 +158,7 @@ export default function HomeScreen() {
                 className="py-2 px-4 rounded-2xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
+                <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg md:text-xl text-center font-baloo-semibold`}>
                   {planName}
                 </Text>
               </BlurView>
@@ -181,7 +171,7 @@ export default function HomeScreen() {
               className="py-2 px-4 rounded-2xl overflow-hidden"
               style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
-              <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg text-center font-baloo-semibold`}>
+              <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg md:text-xl md:pt-1 text-center font-baloo-semibold`}>
                 {profile?.storyCoin || '0'} {t('home.tokens')}
               </Text>
             </BlurView>
@@ -189,8 +179,8 @@ export default function HomeScreen() {
         </View>
 
 
-        <View className="flex flex-col gap-4 w-11/12">
-          <View className='flex-row gap-4'>
+        <View className="flex flex-col gap-4 px-4 md:px-8 w-full">
+          <View className='flex-row gap-4 md:gap-6 md:mb-2'>
             <HomeButton
               style="half"
               isNight={isNight}
@@ -208,7 +198,7 @@ export default function HomeScreen() {
               icon={<Feather name="users" size={24} color="#334155" />}
             />
           </View>
-          <View className='flex-row gap-4'>
+          <View className='flex-row gap-4 md:gap-6'>
             <HomeButton
               style="half"
 

@@ -1,5 +1,5 @@
-import React, { useRef, useMemo } from 'react';
-import { View, Text, Animated, TouchableOpacity } from 'react-native';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
+import { View, Text, Animated, TouchableOpacity, useWindowDimensions } from 'react-native';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
@@ -26,17 +26,27 @@ export default function StoriesScreen() {
   const { data: stories = [], isLoading: isLoadingStories } = useStories();
   const { data: favoriteStories = [], isLoading: isLoadingFavorites } = useFavoriteStories();
   const animationRef = useRef(null);
-
-  // 10 stories les plus récentes, triées par date
-  const recentStories = useMemo(() => {
-    return [...stories]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 10);
-  }, [stories]);
+  const [showBubble, setShowBubble] = useState(false);
+  const bubbleOpacity = useRef(new Animated.Value(0)).current;
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
+  // Show bubble after 2 seconds delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowBubble(true);
+      Animated.timing(bubbleOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  });
 
   return (
     <View className="flex-1 pt-10 relative"
@@ -46,9 +56,8 @@ export default function StoriesScreen() {
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: 65,
-          right: -15,
-          zIndex: 10,
+          bottom: isTablet ? -25 : 65,
+          right: isTablet ? -40 : -15,
         }}
       >
         <TouchableOpacity
@@ -59,15 +68,15 @@ export default function StoriesScreen() {
             source={require('../../assets/animations/Store.json')}
             autoPlay
             loop={false}
-            style={{ width: 200, height: 200, zIndex: 5 }}
+            style={{ width: isTablet ? 500 : 200, height: isTablet ? 500 : 200, zIndex: 5 }}
           />
         </TouchableOpacity>
       </Animated.View>
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: 110,
-          right: 50,
+          bottom: isTablet ? 120 : 110,
+          right: isTablet ? 120 : 50,
         }}
       >
         <LottieView
@@ -75,7 +84,7 @@ export default function StoriesScreen() {
           source={require('../../assets/animations/tree.json')}
           autoPlay
           loop={false}
-          style={{ width: 200, height: 200 }}
+          style={{ width: isTablet ? 500 : 200, height: isTablet ? 500 : 200, zIndex: 5 }}
         />
       </Animated.View>
       {/* Sol */}
@@ -83,8 +92,8 @@ export default function StoriesScreen() {
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      <Text className={`text-4xl font-baloo-bold px-4 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>
-      <Text className={` text-xl font-baloo mb-4 px-4 ${isNight ? "text-white" : "text-slate-600"}`}>
+      <Text className={`text-4xl md:text-5xl font-baloo-bold px-4 md:px-8 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>
+      <Text className={` text-xl md:text-2xl font-baloo mb-4 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"}`}>
         {t('stories.subtitle')}
       </Text>
       <View className="flex-1 gap-4">
@@ -107,6 +116,37 @@ export default function StoriesScreen() {
           isLoading={isLoadingFavorites}
         />
       </View>
+      {showBubble && (
+
+        <Animated.View
+          className="absolute bottom-60 md:bottom-80 right-20 md:right-72 z-10"
+          style={{ opacity: bubbleOpacity }}
+        >
+          <View
+            className="px-4 py-3 flex w-80 md:w-96 rounded-2xl bg-white text-black"
+          >
+            <Text className="font-baloo-medium text-base md:text-lg text-center">
+              {t('sharedStories.storeBubble')}
+            </Text>
+          </View>
+          {/* Petite flèche de la bulle */}
+          <View
+            style={{
+              position: 'absolute',
+              bottom: -10,
+              right: 20,
+              width: 0,
+              height: 0,
+              borderLeftWidth: 10,
+              borderRightWidth: 10,
+              borderTopWidth: 12,
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+              borderTopColor: 'white',
+            }}
+          />
+        </Animated.View>
+      )}
     </View>
   );
 }

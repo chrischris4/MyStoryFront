@@ -114,9 +114,9 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-      <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
+      <View className="w-[160%] md:w-[90%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[60%]'>
-          <Text className="font-baloo-bold text-2xl mb-4 text-center text-gray-800">{t('auth.login')}</Text>
+          <Text className="font-baloo-bold text-2xl md:text-3xl mb-4 text-center text-gray-800">{t('auth.login')}</Text>
 
           <Formik
             initialValues={{ email: '', password: '' }}
@@ -126,7 +126,7 @@ export default function LoginScreen() {
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setTouched }) => (
               <>
                 <View className="mb-4">
-                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
+                  <Text className="text-gray-700 md:text-lg font-baloo-medium mb-1 ml-1">{t('auth.email')}</Text>
                   <TextInput
                     className={`w-full border border-gray-300 rounded-xl p-4`}
                     placeholder={t('auth.emailPlaceholder')}
@@ -137,12 +137,12 @@ export default function LoginScreen() {
                     onBlur={handleBlur('email')}
                   />
                   {touched.email && errors.email && (
-                    <Text className="text-red-500 text-sm mt-1 ml-2">{errors.email}</Text>
+                    <Text className="text-red-500 text-sm md:text-base mt-1 ml-2">{errors.email}</Text>
                   )}
                 </View>
 
                 <View className="mb-4">
-                  <Text className="text-gray-700 font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
+                  <Text className="text-gray-700 md:text-lg font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
                   <View className="relative">
                     <TextInput
                       className={`w-full border border-gray-300 rounded-xl p-4 pr-12`}
@@ -162,12 +162,12 @@ export default function LoginScreen() {
                     </TouchableOpacity>
                   </View>
                   {touched.password && errors.password && (
-                    <Text className="text-red-500 text-sm mt-1 ml-2">{errors.password}</Text>
+                    <Text className="text-red-500 text-sm md:text-base mt-1 ml-2">{errors.password}</Text>
                   )}
                 </View>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('ForgotPassword')} className="self-end mb-4">
-                  <Text className="text-[#38b6ff] font-baloo text-sm">{t('auth.forgotPassword')}</Text>
+                  <Text className="text-[#38b6ff] font-baloo text-sm md:text-base">{t('auth.forgotPassword')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -186,18 +186,18 @@ export default function LoginScreen() {
                       loop={true}
                       style={{ width: 100, height: 100 }}
                     />) : (
-                    <Text className="text-white text-lg font-baloo-semibold text-center">{t('auth.loginButton')}</Text>
+                    <Text className="text-white text-lg md:text-xl font-baloo-semibold text-center">{t('auth.loginButton')}</Text>
                   )}
                 </TouchableOpacity>
 
                 <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate('Register')}>
-                  <Text className="text-[#38b6ff] text-center font-baloo">{t('auth.noAccount')}</Text>
+                  <Text className="text-[#38b6ff] md:text-lg text-center font-baloo">{t('auth.noAccount')}</Text>
                 </TouchableOpacity>
 
                 {/* Séparateur */}
                 <View className="flex-row items-center my-4">
                   <View className="flex-1 h-[1px] bg-gray-300" />
-                  <Text className="mx-4 text-gray-500 font-baloo">{t('auth.or')}</Text>
+                  <Text className="mx-4 text-gray-500 md:text-lg font-baloo">{t('auth.or')}</Text>
                   <View className="flex-1 h-[1px] bg-gray-300" />
                 </View>
 
@@ -218,7 +218,7 @@ export default function LoginScreen() {
                       />) : (
                       <>
                         <FontAwesome name="google" size={20} color="#4285F4" />
-                        <Text className="font-baloo-medium text-gray-700">Google</Text>
+                        <Text className="font-baloo-medium md:text-lg text-gray-700">Google</Text>
                       </>
                     )}
                   </TouchableOpacity>
