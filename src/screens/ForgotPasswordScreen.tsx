@@ -467,10 +467,9 @@ export default function ForgotPasswordScreen() {
             }
           }}
         >
-          <Feather name="arrow-left" size={28} color="#1f2937" />
+          <Feather name="arrow-left" size={28} color="#ffffff" />
         </TouchableOpacity>
-
-        <View className="w-[160%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
+        <View className="w-[160%] md:w-[90%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
           <View className="w-[60%]">
             {renderStepIndicator()}
             {step === 'email' && renderEmailStep()}
