@@ -699,26 +699,26 @@ export const ConfettiFrame = ({ width, height }: FrameProps) => {
 
 // ===== CADRE COULEUR =====
 
-export const ColorFrame = ({ width, height, color }: FrameProps & { color: string }) => (
+export const ColorFrame = ({ width, height, color, borderSize = 12 }: FrameProps & { color: string; borderSize?: number }) => (
   <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
-    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderWidth: 12, borderColor: color }} />
+    <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderWidth: borderSize, borderColor: color }} />
   </View>
 );
 
 
 // ===== COMPOSANTS PRINCIPAUX =====
 
-export const StoryFrame = ({ type, width, height }: { type: FrameType; width: number; height: number }) => {
+export const StoryFrame = ({ type, width, height, borderSize = 12 }: { type: FrameType; width: number; height: number; borderSize?: number }) => {
   switch (type) {
-    case 'blue': return <ColorFrame width={width} height={height} color="#3B82F6" />;
-    case 'pink': return <ColorFrame width={width} height={height} color="#EC4899" />;
-    case 'red': return <ColorFrame width={width} height={height} color="#EF4444" />;
-    case 'black': return <ColorFrame width={width} height={height} color="#000000" />;
-    case 'white': return <ColorFrame width={width} height={height} color="#FFFFFF" />;
-    case 'yellow': return <ColorFrame width={width} height={height} color="#F59E0B" />;
-    case 'green': return <ColorFrame width={width} height={height} color="#10B981" />;
-    case 'purple': return <ColorFrame width={width} height={height} color="#8B5CF6" />;
-    case 'gold': return <ColorFrame width={width} height={height} color="#FFD700" />;
+    case 'blue': return <ColorFrame width={width} height={height} color="#3B82F6" borderSize={borderSize} />;
+    case 'pink': return <ColorFrame width={width} height={height} color="#EC4899" borderSize={borderSize} />;
+    case 'red': return <ColorFrame width={width} height={height} color="#EF4444" borderSize={borderSize} />;
+    case 'black': return <ColorFrame width={width} height={height} color="#000000" borderSize={borderSize} />;
+    case 'white': return <ColorFrame width={width} height={height} color="#FFFFFF" borderSize={borderSize} />;
+    case 'yellow': return <ColorFrame width={width} height={height} color="#F59E0B" borderSize={borderSize} />;
+    case 'green': return <ColorFrame width={width} height={height} color="#10B981" borderSize={borderSize} />;
+    case 'purple': return <ColorFrame width={width} height={height} color="#8B5CF6" borderSize={borderSize} />;
+    case 'gold': return <ColorFrame width={width} height={height} color="#FFD700" borderSize={borderSize} />;
     case 'none': default: return null;
   }
 };

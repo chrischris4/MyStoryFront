@@ -25,7 +25,7 @@ function NotificationHandler() {
 // Configuration personnalisée des toasts - Style Bubbly / Playful
 const toastConfig = {
   success: (props: any) => (
-    <View style={{ paddingHorizontal: 16, width: '100%' }}>
+    <View className='w-full px-4 md:px-8'>
       <View
         style={{
           flexDirection: 'row',
@@ -73,7 +73,7 @@ const toastConfig = {
     </View>
   ),
   error: (props: any) => (
-    <View style={{ paddingHorizontal: 16, width: '100%' }}>
+    <View className='w-full px-4 md:px-8'>
       <View
         style={{
           flexDirection: 'row',
@@ -121,7 +121,7 @@ const toastConfig = {
     </View>
   ),
   info: (props: any) => (
-    <View style={{ paddingHorizontal: 16, width: '100%' }}>
+    <View className='w-full px-4 md:px-8'>
       <View
         style={{
           flexDirection: 'row',

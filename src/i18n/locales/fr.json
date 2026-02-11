@@ -2,7 +2,7 @@
   "common": {
     "loading": "Chargement...",
     "error": "Oups",
-    "success": "Succès",
+    "success": "C'est fait !",
     "information": "Information",
     "cancel": "Annuler",
     "confirm": "Confirmer",

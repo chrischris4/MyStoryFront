@@ -363,7 +363,7 @@ export default function GroupScreen() {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => navigation.goBack()}
-          className=""
+          className="px-4"
         >
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>

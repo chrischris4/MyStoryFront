@@ -73,7 +73,7 @@ export default function SettingsScreen() {
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
             <Text className={`font-baloo-bold text-4xl md:text-5xl pt-2 px-4 md:px-8 md:pb-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
-            <ScrollView className='pb-72 px-4 md:px-8' showsVerticalScrollIndicator={false}>
+            <ScrollView className='px-4 md:px-8' showsVerticalScrollIndicator={false}>
                 <BlurView intensity={90}
                     tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between'>
@@ -530,6 +530,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 40,
+                paddingBottom: 20,
     },
     section: {
         borderRadius: 24,

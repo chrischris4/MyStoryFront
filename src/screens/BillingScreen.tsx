@@ -460,7 +460,7 @@ export default function BillingScreen() {
             >
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
-                    className=""
+                    className="px-4"
                 >
                     <Feather name="chevron-left" size={24} color="white" />
                 </TouchableOpacity>
@@ -596,14 +596,14 @@ export default function BillingScreen() {
                 }}
                 className="self-center">
                 <View style={{ position: 'relative' }}>
-                    {/* BULLE UNIQUE À GAUCHE */}
+                    {/* BULLE UNIQUE */}
                     {showBubble && storePhrase && (
                         <StoreBubble
                             text={storePhrase}
                             style={{
                                 position: 'absolute',
                                 top: isTablet ? 200 : 120,
-                                left: isTablet ? 60 : 30,
+                                right: isTablet ? 400 : 30,
                                 zIndex: 10,
                                 opacity: bubbleOpacity,
                                 transform: [{ scale: bubbleScale }],

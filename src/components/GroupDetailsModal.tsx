@@ -186,11 +186,10 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           modalAnimatedStyle,
           {
             position: 'absolute',
-            bottom: 100,
-            top: 100,
+            bottom: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.05,
+            top: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.05,
             left: isTablet ? '20%' : 0,
             right: isTablet ? '20%' : 0,
-            maxHeight: SCREEN_HEIGHT * 0.9,
             paddingHorizontal: 16,
             zIndex: 50,
           },
@@ -269,14 +268,9 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {/* Section invitation - visible uniquement pour le owner */}
           {activeTab === 'members' && isCurrentUserOwner && (
             <View className="mb-4">
-              <View className="flex-row justify-between items-center">
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
                   {t('groups.inviteMember')}
                 </Text>
-                <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} text-xs font-baloo`}>
-                  {inviteFormik.values.inviteUsername.length}/25
-                </Text>
-              </View>
               <View className="flex-row gap-2">
                 <TextInput
                   value={inviteFormik.values.inviteUsername}

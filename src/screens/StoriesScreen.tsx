@@ -68,7 +68,7 @@ export default function StoriesScreen() {
             source={require('../../assets/animations/Store.json')}
             autoPlay
             loop={false}
-            style={{ width: isTablet ? 500 : 200, height: isTablet ? 500 : 200, zIndex: 5 }}
+            style={{ width: isTablet ? 500 : 200, height: isTablet ? 500 : 200, zIndex: 10 }}
           />
         </TouchableOpacity>
       </Animated.View>
@@ -89,7 +89,7 @@ export default function StoriesScreen() {
       </Animated.View>
       {/* Sol */}
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-5'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className={`text-4xl md:text-5xl font-baloo-bold px-4 md:px-8 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>

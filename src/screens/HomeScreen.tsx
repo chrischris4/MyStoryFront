@@ -12,6 +12,7 @@ import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '~/context/SoundContext';
 import { useEffect, useRef } from 'react';
+import Toast from 'react-native-toast-message';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -178,6 +179,28 @@ export default function HomeScreen() {
           </View>
         </View>
 
+
+        {/* TEST TOASTS - À supprimer */}
+        {/* <View className='flex-row gap-2 px-4 mb-2'>
+          <TouchableOpacity
+            onPress={() => Toast.show({ type: 'success', text1: 'Bravo !', text2: 'Action réussie' })}
+            className='bg-emerald-500 px-3 py-2 rounded-xl'
+          >
+            <Text className='text-white font-baloo-bold'>Success</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Toast.show({ type: 'error', text1: 'Erreur', text2: 'Quelque chose a échoué' })}
+            className='bg-red-500 px-3 py-2 rounded-xl'
+          >
+            <Text className='text-white font-baloo-bold'>Error</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => Toast.show({ type: 'info', text1: 'Info', text2: 'Petit message informatif' })}
+            className='bg-blue-500 px-3 py-2 rounded-xl'
+          >
+            <Text className='text-white font-baloo-bold'>Info</Text>
+          </TouchableOpacity>
+        </View> */}
 
         <View className="flex flex-col gap-4 px-4 md:px-8 w-full">
           <View className='flex-row gap-4 md:gap-6 md:mb-2'>

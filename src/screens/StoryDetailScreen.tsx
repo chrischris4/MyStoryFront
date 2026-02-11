@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   Animated,
+  useWindowDimensions,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -43,6 +44,8 @@ export default function StoryDetailScreen() {
   const { t } = useTranslation();
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMd = width >= 768;
   const currentUser = useUserStore((state) => state.user);
 
   const { storyId } = route.params;
@@ -334,7 +337,7 @@ export default function StoryDetailScreen() {
                 opacity: skeletonAnim,
                 backgroundColor: isNight ? '#475569' : '#cbd5e1',
               }}
-              className="w-5/6 relative aspect-square rounded-full self-center z-20 overflow-hidden"
+              className="w-2/3 md:w-3/5 relative aspect-square rounded-full self-center z-20 overflow-hidden"
             />
 
             {/* Skeleton Author */}
@@ -458,7 +461,7 @@ export default function StoryDetailScreen() {
             <Text className={`text-3xl md:text-4xl font-baloo-bold mb-2 mt-2 md:pt-4 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
               <View
-                className='w-2/3 md:w-2/5 relative aspect-square rounded-full self-center z-20 overflow-hidden'
+                className='w-2/3 md:w-3/5 relative aspect-square rounded-full self-center z-20 overflow-hidden'
               >
                 <Image
                   source={{ uri: story.coverUrl }}
@@ -695,8 +698,8 @@ export default function StoryDetailScreen() {
             <BlurView
               intensity={90}
               tint={isNight ? "dark" : "light"}
-              className="rounded-3xl p-6 mx-4 w-11/12 min-h-[70vh] max-w-md overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', maxHeight: '80%' }}
+              className="rounded-3xl p-6 mx-4 w-11/12  max-w-md overflow-hidden"
+              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', minHeight: '60%', maxHeight: '80%' }}
             >
               <View className="flex-1">
                 <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
@@ -838,10 +841,10 @@ export default function StoryDetailScreen() {
           .map((page) => (
             <View key={page.id} className=" bg-gray-100 p-4 rounded-lg relative shadow mb-4 w-full">
               <Text style={{ maxWidth: '90%' }}
-                className=" mb-2 text-sm absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
+                className=" mb-2 text-sm md:text-lg absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
               <Image
                 source={{ uri: page.imageUrl }}
-                style={{ width: '100%', height: 200, borderRadius: 10 }}
+                style={{ width: '100%', height: isMd ? 350 : 200, borderRadius: 10 }}
                 resizeMode="cover"
               />
             </View>
@@ -859,7 +862,7 @@ export default function StoryDetailScreen() {
       >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className=""
+          className="px-4"
         >
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
@@ -880,6 +883,7 @@ export default function StoryDetailScreen() {
             playSound('pop');
             setShowDeleteModal(true);
           }}
+          className='px-4'
         >
           <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>

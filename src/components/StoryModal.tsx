@@ -28,6 +28,7 @@ type StoryModalProps = {
 export default function StoryModal({ loading, title, description, coverUrl, storyPages, storyId, onClose }: StoryModalProps) {
     const { t } = useTranslation();
     const { close } = useStoryCreationStore();
+    const { width: screenWidth } = useWindowDimensions();
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -167,11 +168,6 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
     });
 
 
-    const { width: screenWidth } = useWindowDimensions();
-    const orbitSize = screenWidth * 1.4;
-    const sunSize = orbitSize * 0.22;
-    const moonSize = orbitSize * 0.15;
-
     // Animation de sortie du modal
     const animateOut = (callback: () => void) => {
         Animated.parallel([
@@ -189,17 +185,11 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
         ]).start(() => callback());
     };
 
-    const handleMinimize = () => {
-        animateOut(() => close()); // Anime puis ferme tout
-    };
     return (
         <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
-
-            {/* Cet overlay transparent (ou semi-noir) intercepte les clics */}
             <TouchableOpacity
                 activeOpacity={1}
-                style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }} // Optionnel: assombrit le fond
-                onPress={() => { /* Optionnel: fermer la modal au clic extérieur */ }}
+                style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
             />
             <Animated.View
                 className="absolute flex flex-col bottom-28 left-4 right-4 border-4 border-white h-[66vh] rounded-2xl shadow-lg z-50"
@@ -223,12 +213,11 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                     <Animated.View
                         style={{
                             position: 'absolute',
-                            width: orbitSize,
-                            height: orbitSize,
+                            aspectRatio: 1,
+                            width: screenWidth - 32,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            top: 60,
-                            right: -100,
+                            top: 200,
                             transform: [{ rotate }],
                         }}
                     >
@@ -236,16 +225,24 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                         <View style={{
                             position: 'absolute',
                             top: 0,
-                            width: sunSize,
-                            height: sunSize,
-                            borderRadius: 100,
+                            width: 150,
+                            height: 150,
+                            borderRadius: 9999,
                             backgroundColor: '#FFD700',
                         }} />
+                        <View style={{
+                            position: 'absolute',
+                            bottom: 0,
+                            width: 150,
+                            height: 150,
+                            borderRadius: 9999,
+                            backgroundColor: '#ffffff',
+                        }} />
                         {/* Lune */}
-                        <Animated.View
+                        {/* <Animated.View
                             style={{
                                 position: 'absolute',
-                                bottom: 10,
+                                bottom: 0,
                                 alignSelf: 'center',
                             }}
                         >
@@ -255,11 +252,11 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
 
                                 loop={true}
                                 style={{
-                                    width: 150, height: 150, position: 'absolute',
+                                    width: 300, height: 300, position: 'absolute',
                                     bottom: 0,
                                 }}
                             />
-                        </Animated.View>
+                        </Animated.View> */}
                     </Animated.View>
 
 
@@ -268,20 +265,19 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                     {loading ? (
                         <View className="flex h-full justify-between items-center relative mb-4">
                             <Animated.View
+                                className="h-20 md:h-28"
                                 style={{
                                     backgroundColor: groundColor,
-                                    borderWidth: 4,
+                                    borderTopWidth: 4,
                                     borderColor: groundBorderColor,
-                                    width: '200%',
+                                    width: '120%',
                                     alignSelf: 'center',
                                     aspectRatio: 1,
-                                    borderRadius: 9999,
                                     position: 'absolute',
-                                    bottom: '-130%',
+                                    bottom: 0,
                                 }}
                             />
-
-                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='p-4 flex flex-col justify-center items-center w-full'>
+                            <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='p-4 md:p-6 flex flex-col justify-center items-center w-full'>
                                 <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4 w-full'>
                                     <Animated.Text className="text-xl font-baloo-medium text-center ">
                                         {t('storyCreation.creationInProgress')}
@@ -303,29 +299,28 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                             </View>
                         </View>
                     ) : (
-                        <View className="flex-1 w-full justify-between relative p-2">
+                        <View className="flex-1 w-full justify-between relative p-4 md:p-6">
                             <Animated.View
+                                className="h-20 md:h-28"
                                 style={{
                                     backgroundColor: groundColor,
-                                    borderWidth: 4,
+                                    borderTopWidth: 4,
                                     borderColor: groundBorderColor,
-                                    width: '200%',
+                                    width: '120%',
                                     alignSelf: 'center',
                                     aspectRatio: 1,
-                                    borderRadius: 9999,
                                     position: 'absolute',
-                                    bottom: '-130%',
+                                    bottom: 0,
                                 }}
                             />
-
                             <Animated.View
                                 style={{
                                     transform: [{ translateY: contentSlideAnim }],
                                     opacity: contentOpacityAnim,
                                 }}
                             >
-                                <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 8 }} className='bg-white p-4'>
-                                    <Animated.Text className="text-xl font-baloo text-center">
+                                <View style={{ borderRadius: 10, overflow: 'hidden' }} className='bg-white p-4 mb-4'>
+                                    <Animated.Text className="text-xl md:text-2xl font-baloo-medium text-center">
                                         {t('storyCreation.storyReady')}
                                     </Animated.Text>
                                 </View>
@@ -333,7 +328,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                 {coverUrl && (
                                     <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
                                         <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
-                                            <Animated.Text className="font-baloo-bold text-3xl text-center" style={{ color: textColor }}>
+                                            <Animated.Text className="font-baloo-bold text-3xl md:text-4xl md:p-4 text-center" style={{ color: textColor }}>
                                                 {title}
                                             </Animated.Text>
                                             <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
@@ -345,7 +340,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                             </View>
                                             {description && (
                                                 <Animated.Text
-                                                    className="font-baloo text-base text-center mt-2"
+                                                    className="font-baloo text-base md:text-lg text-center mt-2"
                                                     style={{ color: textColor }}
                                                     numberOfLines={2}
                                                 >
@@ -367,7 +362,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                     }
                                 }}
                             >
-                                <Animated.Text className="text-lg font-baloo-medium text-center">
+                                <Animated.Text className="text-lg md:text-xl font-baloo-medium text-center">
                                     {t('storyCreation.discoverStory')}
                                 </Animated.Text>
                             </TouchableOpacity>
