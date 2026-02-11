@@ -590,8 +590,8 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: isTablet ? -40 : -75,
-                    left: isTablet ? 140 : 20,
+                    bottom: isTablet ? -40 : -45,
+                    left: isTablet ? 140 : 60,
                     zIndex: 1
                 }}
                 className="self-center">
@@ -602,8 +602,8 @@ export default function BillingScreen() {
                             text={storePhrase}
                             style={{
                                 position: 'absolute',
-                                top: isTablet ? 200 : 120,
-                                right: isTablet ? 400 : 30,
+                                top: isTablet ? 200 : 140,
+                                right: isTablet ? 400 : 220,
                                 zIndex: 10,
                                 opacity: bubbleOpacity,
                                 transform: [{ scale: bubbleScale }],
@@ -616,7 +616,7 @@ export default function BillingScreen() {
                         source={require('../../assets/animations/Store.json')}
                         autoPlay
                         loop={false}
-                        style={{ width: isTablet ? 700 : 300, height: isTablet ? 500 : 300 }}
+                        style={{ width: isTablet ? 700 : 400, height: isTablet ? 500 : 400 }}
                     />
                 </View>
             </Animated.View>
@@ -625,8 +625,8 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: isTablet ? 75 : 60,
-                    left: isTablet ? -50 : -140,
+                    bottom: isTablet ? 75 : 75,
+                    left: isTablet ? -50 : -60,
                 }}
             >
                 <LottieView
@@ -634,7 +634,7 @@ export default function BillingScreen() {
                     source={require('../../assets/animations/tree.json')}
                     autoPlay
                     loop={false}
-                    style={{ width: isTablet ? 700 : 300, height: isTablet ? 500 : 300 }}
+                    style={{ width: isTablet ? 700 : 400, height: isTablet ? 500 : 400 }}
                 />
             </Animated.View>
 

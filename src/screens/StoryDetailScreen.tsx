@@ -59,6 +59,7 @@ export default function StoryDetailScreen() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<number[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
+  const coverFade = useRef(new Animated.Value(0)).current;
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
   // Hook pour les sons
@@ -275,6 +276,16 @@ export default function StoryDetailScreen() {
     fetchStory();
   }, [storyId]);
 
+  useEffect(() => {
+    if (!loading && story) {
+      Animated.timing(coverFade, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [loading, story]);
+
   // Initialiser selectedGroups avec les groupes déjà partagés quand la modal s'ouvre
   useEffect(() => {
     if (showShareModal && sharedGroups.length > 0) {
@@ -307,7 +318,7 @@ export default function StoryDetailScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 pt-10 px-4" style={{ backgroundColor: skyColor }}>
+      <View className="flex-1 pt-10 px-4 md:px-8" style={{ backgroundColor: skyColor }}>
         {isNight && <StarryBackground starCount={50} />}
         {/* Skeleton Cover */}
         <BlurView
@@ -341,6 +352,16 @@ export default function StoryDetailScreen() {
             />
 
             {/* Skeleton Author */}
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: '75%',
+                height: 20,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 6,
+                marginTop: 16,
+              }}
+            />
             <Animated.View
               style={{
                 opacity: skeletonAnim,
@@ -390,6 +411,7 @@ export default function StoryDetailScreen() {
           </BlurView>
 
           {/* Skeleton Like Button */}
+          <View className='flex flex-row gap-3'>
           <BlurView
             intensity={90}
             tint={isNight ? "dark" : "light"}
@@ -412,6 +434,29 @@ export default function StoryDetailScreen() {
               }}
             />
           </BlurView>
+          <BlurView
+            intensity={90}
+            tint={isNight ? "dark" : "light"}
+            style={{
+              padding: 16, width: 56,
+              height: 56,
+              borderRadius: 9999,
+              justifyContent: 'center',
+              alignItems: 'center',
+              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
+            }}
+          >
+            <Animated.View
+              style={{
+                opacity: skeletonAnim,
+                width: 24,
+                height: 24,
+                backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                borderRadius: 12,
+              }}
+            />
+          </BlurView>
+          </View>
         </View>
 
         {/* Ground decoration */}
@@ -460,15 +505,16 @@ export default function StoryDetailScreen() {
           <View className='flex flex-col'>
             <Text className={`text-3xl md:text-4xl font-baloo-bold mb-2 mt-2 md:pt-4 text-center ${isNight ? 'text-white' : 'text-black'}`}>{story.title}</Text>
             {story.pages[0] && (
-              <View
+              <Animated.View
                 className='w-2/3 md:w-3/5 relative aspect-square rounded-full self-center z-20 overflow-hidden'
+                style={{ opacity: coverFade }}
               >
                 <Image
                   source={{ uri: story.coverUrl }}
                   resizeMode="cover"
                   className='w-full h-full'
                 />
-              </View>
+              </Animated.View>
             )}
 
             {story.description && (

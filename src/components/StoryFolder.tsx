@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
     View,
     Text,
-    Dimensions,
     Pressable,
     LayoutChangeEvent,
     TouchableOpacity,
@@ -68,7 +67,6 @@ const getLanguageFlag = (language: string): string => {
     return LANGUAGE_FLAGS[language.toLowerCase()] || '🌍';
 };
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const NAVBAR_HEIGHT = 80;
 
 // Composant Skeleton pour les stories
@@ -112,9 +110,12 @@ export default function StoryFolder({
     isLoading = false,
 }: StoryFolderProps) {
     const { t } = useTranslation();
-    const { width: screenWidth } = useWindowDimensions();
+    const { width: screenWidth, height: screenHeight } = useWindowDimensions();
     const isMd = screenWidth >= 768;
     const numColumns = isMd ? 2 : 1;
+    const columnGap = 8;
+    const containerPadding = isMd ? 28 : 16;
+    const itemWidth = isMd ? (screenWidth - containerPadding * 2 - columnGap) / 2 : undefined;
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
@@ -125,10 +126,20 @@ export default function StoryFolder({
     const [selectedCharacterType, setSelectedCharacterType] = useState<'ALL' | 'HUMAN' | 'ANIMAL'>('ALL');
     const [selectedLanguage, setSelectedLanguage] = useState<string>('ALL');
 
-    const width = useSharedValue(SCREEN_WIDTH / 1.08);
+    const width = useSharedValue(screenWidth / 1.08);
     const height = useSharedValue(isMd ? 110 : 84);
     const translateY = useSharedValue(0);
     const navigation = useNavigation<StoryFolderNavigationProp>();
+    const initialAnimDone = useRef(false);
+
+    useEffect(() => {
+        if (showContent) {
+            const timer = setTimeout(() => { initialAnimDone.current = true; }, 1000);
+            return () => clearTimeout(timer);
+        } else {
+            initialAnimDone.current = false;
+        }
+    }, [showContent]);
 
     const animatedStyle = useAnimatedStyle(() => ({
         width: withTiming(width.value, { duration: 300 }),
@@ -195,13 +206,13 @@ export default function StoryFolder({
     const handleToggle = () => {
         if (expanded) {
             setShowContent(false);
-            width.value = SCREEN_WIDTH / 1.08;
+            width.value = screenWidth / 1.08;
             height.value = isMd ? 110 : 84;
             translateY.value = 0;
         } else {
             const EXPANDED_TOP = 10;
-            width.value = SCREEN_WIDTH;
-            height.value = SCREEN_HEIGHT - NAVBAR_HEIGHT;
+            width.value = screenWidth;
+            height.value = screenHeight - NAVBAR_HEIGHT;
             translateY.value = EXPANDED_TOP - layoutY;
             const delay = !isLoading && stories.length > 0 ? 300 : 800;
             setTimeout(() => setShowContent(true), delay);
@@ -401,13 +412,10 @@ export default function StoryFolder({
                         )}
 
                         {expanded && !showContent && (isLoading || stories.length === 0) ? (
-                            <View style={{ flex: 1, marginTop: 16 }} className='md:grid md:grid-cols-2 gap-4'>
-                                <StorySkeleton />
-                                <StorySkeleton />
-                                <StorySkeleton />
-                                <StorySkeleton />
-                                <StorySkeleton />
-                                <StorySkeleton />
+                            <View style={{ flex: 1, marginTop: 16 }}>
+                                {[1, 2, 3, 4, 5, 6].map((i) => (
+                                    <StorySkeleton key={i} />
+                                ))}
                             </View>
                         ) : expanded && showContent && isLoading ? (
                             <View className="flex-1 items-center justify-center mt-6">
@@ -446,23 +454,23 @@ export default function StoryFolder({
                                 numColumns={numColumns}
                                 style={{ flex: 1, marginTop: 16 }}
                                 contentContainerStyle={{ paddingBottom: 100 }}
-                                columnWrapperStyle={numColumns > 1 ? { gap: 8, alignItems: 'stretch' } : undefined}
+                                columnWrapperStyle={numColumns > 1 ? { gap: columnGap } : undefined}
                                 showsVerticalScrollIndicator={false}
-                                initialNumToRender={3}
-                                maxToRenderPerBatch={3}
-                                windowSize={5}
-                                removeClippedSubviews={true}
+                                initialNumToRender={6}
+                                maxToRenderPerBatch={5}
+                                windowSize={11}
+                                removeClippedSubviews={false}
                                 renderItem={({ item, index }) => {
                                     if (item._isLockedCard) {
                                         return (
                                             <Animated.View
-                                                entering={FadeInDown.duration(200)}
-                                                style={numColumns > 1 ? { flex: 1, maxWidth: '50%' } : undefined}
+                                                entering={!initialAnimDone.current ? FadeInDown.duration(200) : undefined}
+                                                style={itemWidth ? { width: itemWidth, marginBottom: 16 } : { marginBottom: 16 }}
                                             >
                                                 <TouchableOpacity
                                                     activeOpacity={0.7}
                                                     onPress={() => navigation.navigate('BillingScreen')}
-                                                    className={`mb-2 p-4 rounded-3xl flex-1 items-center justify-center ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
+                                                    className={`mb-2 p-4 rounded-3xl items-center justify-center ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
                                                 >
                                                     <Feather name="lock" size={32} color={isNight ? '#94a3b8' : '#64748b'} />
                                                     <Text className={`text-center text-base font-baloo-medium mt-3 ${isNight ? 'text-slate-300' : 'text-slate-600'}`}>
@@ -483,12 +491,12 @@ export default function StoryFolder({
 
                                     return (
                                         <Animated.View
-                                            entering={index < 6 ? FadeInDown.delay(index * 100).springify().damping(50) : FadeInDown.duration(200)}
-                                            style={numColumns > 1 ? { flex: 1, maxWidth: '50%' } : undefined}
+                                            entering={!initialAnimDone.current && index < 6 ? FadeInDown.delay(index * 100).springify().damping(50) : undefined}
+                                            style={itemWidth ? { width: itemWidth } : undefined}
                                         >
                                             <TouchableOpacity
                                                 activeOpacity={isLockedPreview || isGenerating || isFailed ? 1 : 0.5}
-                                                className={`mb-2 p-4 rounded-3xl relative flex-1 justify-between ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
+                                                className={`mb-2 p-4 rounded-3xl relative ${isNight ? 'bg-slate-800' : 'bg-gray-100'}`}
                                                 onPress={() => {
                                                     if (isLockedPreview || isGenerating || isFailed) {
                                                         return;

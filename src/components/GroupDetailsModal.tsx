@@ -186,8 +186,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           modalAnimatedStyle,
           {
             position: 'absolute',
-            bottom: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.05,
-            top: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.05,
+            bottom: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.15,
+            top: isTablet ? SCREEN_HEIGHT * 0.2 : SCREEN_HEIGHT * 0.1,
             left: isTablet ? '20%' : 0,
             right: isTablet ? '20%' : 0,
             paddingHorizontal: 16,

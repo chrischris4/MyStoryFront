@@ -279,7 +279,7 @@ export default function FullScreenStoryModal({
                     <View
                       className="absolute self-center bg-white/90 rounded-xl"
                       style={{
-                        top: isRotated ? (isMd ? 30 : 40) : (isMd ? 30 : 8),
+                        top: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
                         paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
                         paddingVertical: isRotated ? (isMd ? 12 : 8) : (isMd ? 6 : 4),
                       }}
@@ -287,7 +287,7 @@ export default function FullScreenStoryModal({
                       <Text
                         className="font-baloo-bold"
                         style={{
-                          fontSize: isRotated ? 30 : (isMd ? 24 : 18),
+                          fontSize: isRotated ? (isMd ? 30 : 24) : (isMd ? 24 : 16),
                         }}
                       >
                         {title}
@@ -299,7 +299,7 @@ export default function FullScreenStoryModal({
                     <View
                       className="absolute flex justify-center items-center self-center bg-white/90 rounded-xl"
                       style={{
-                        bottom: isRotated ? (isMd ? 30 : 110) : (isMd ? 30 : 8),
+                        bottom: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
                         maxWidth: '80%',
                         paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
                         paddingVertical: isRotated ? (isMd ? 12 : 8) : (isMd ? 6 : 4),
@@ -308,7 +308,7 @@ export default function FullScreenStoryModal({
                       <Text
                         className="font-baloo-medium"
                         style={{
-                          fontSize: isRotated ? (isMd ? 24 : 20) : (isMd ? 18 : 16),
+                          fontSize: isRotated ? (isMd ? 24 : 20) : (isMd ? 18 : 12),
                         }}
                       >
                         {item.text}
