@@ -112,7 +112,7 @@ export default function SharedStoriesScreen() {
       </Animated.View>
       {/* Sol */}
       <View
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-10'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {!isPremium && (

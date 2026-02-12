@@ -291,7 +291,7 @@ export const MagicFrame = ({ width, height }: FrameProps) => {
     <View style={[styles.frameContainer, { width, height }]} pointerEvents="none">
       <MagicGlow position="top" color="#9B59B6" stagger={0} />
       <MagicGlow position="right" color="#3498DB" stagger={500} />
-      <MagicGlow position="bottom" color="#9B59B6" stagger={1000} />
+      <MagicGlow position="bottom" color="#9B59B650" stagger={1000} />
       <MagicGlow position="left" color="#3498DB" stagger={1500} />
       {sparkles.map((s) => <MagicSparkle key={s.id} {...s} />)}
     </View>

@@ -461,7 +461,7 @@ export default function StoryDetailScreen() {
 
         {/* Ground decoration */}
         <View
-          className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+          className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
           style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
         />
 
@@ -899,7 +899,7 @@ export default function StoryDetailScreen() {
       </ScrollView>
       {/* Navbar */}
       <View
-        className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+        className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
 

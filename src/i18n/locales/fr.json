@@ -54,7 +54,7 @@
   },
   "forgotPassword": {
     "title": "Mot de passe oublié ?",
-    "emailDescription": "Entrez votre email et nous vous enverrons un code pour réinitialiser votre mot de passe.",
+    "emailDescription": "Entre ton email et on t'enverras un code pour réinitialiser ton mot de passe.",
     "sendCode": "Envoyer le code",
     "codeSent": "Code envoyé !",
     "checkEmail": "Vérifiez votre boîte mail",
@@ -64,7 +64,7 @@
     "codeValid": "Code vérifié !",
     "codeInvalid": "Code invalide",
     "codeExpired": "Le code a expiré. Veuillez en demander un nouveau.",
-    "enterNewPassword": "Vous pouvez maintenant créer un nouveau mot de passe",
+    "enterNewPassword": "Tu peux maintenant créer un nouveau mot de passe",
     "verify": "Vérifier",
     "resendCode": "Renvoyer le code",
     "resendIn": "Renvoyer dans {{seconds}}s",
@@ -75,7 +75,7 @@
     "success": "Succès !",
     "passwordChanged": "Votre mot de passe a été modifié",
     "backToLogin": "Retour à la connexion",
-    "oauthUser": "Ce compte utilise Google. Connectez-vous via votre provider."
+    "oauthUser": "Ce compte utilise Google. Connecte-toi via ton provider."
   },
   "welcome": {
     "messages": [
@@ -102,7 +102,7 @@
     "shop": "Boutique",
     "shopDesc": "Paquets de Jetons disponibles !",
     "createStory": "Créer une histoire",
-    "noStories": "Vous n'avez pas encore d'histoires"
+    "noStories": "Tu n'as pas encore d'histoires"
   },
   "story": {
     "title": "Titre",
@@ -130,10 +130,10 @@
     "notifications": "Notifications",
     "enableNotifications": "Activer les notifications",
     "history": "Historique",
-    "viewPurchases": "Consulter vos achats",
+    "viewPurchases": "Consulter tes achats",
     "subscription": "Abonnement",
     "currentPlan": "Plan actuel",
-    "noSubscription": "Vous n'avez pas d'abonnement actif",
+    "noSubscription": "Tu n'as pas d'abonnement actif",
     "manageSubscription": "Gérer mon abonnement",
     "contact": "Contact",
     "followUs": "Suivez-nous",
@@ -141,10 +141,10 @@
     "deleteAccount": "Supprimer mon compte",
     "deleteAccountButton": "Supprimer mon compte",
     "deleteAccountTitle": "Supprimer votre compte",
-    "deleteAccountWarning": "Cette action est irréversible. Toutes vos données, histoires et achats seront définitivement supprimés.",
-    "deleteAccountConfirm": "Êtes-vous sûr de vouloir supprimer votre compte ?",
+    "deleteAccountWarning": "Cette action est irréversible. Toutes tes données, histoires et achats seront définitivement supprimés.",
+    "deleteAccountConfirm": "Es-tu sûr de vouloir supprimer ton compte ?",
     "accountDeleted": "Compte supprimé",
-    "accountDeletedMessage": "Votre compte a été supprimé avec succès",
+    "accountDeletedMessage": "Ton compte a été supprimé avec succès",
     "language": "Langue",
     "theme": "Thème",
     "privacy": "Confidentialité",
@@ -153,7 +153,7 @@
   "transactions": {
     "title": "Historique des achats",
     "noTransactions": "Aucune transaction",
-    "noTransactionsMessage": "Vous n'avez pas encore effectué d'achat",
+    "noTransactionsMessage": "Tu n'as pas encore effectué d'achat",
     "subscription": "Abonnement",
     "tokenPack": "Pack de jetons",
     "tokens": "{{count}} jetons",
@@ -205,11 +205,11 @@
     "tapToChangePhoto": "Appuyez pour changer votre photo",
     "permissionRequired": "Permission requise",
     "permissionDenied": "Permission refusée",
-    "photoPermissionMessage": "Vous devez autoriser l'accès à vos photos pour changer votre image de profil.",
+    "photoPermissionMessage": "Tu dois autoriser l'accès à tes photos pour changer votre image de profil.",
     "noChanges": "Aucune modification",
-    "noChangesMessage": "Vous n'avez apporté aucune modification",
+    "noChangesMessage": "Tu n'as apporté aucune modification",
     "profileUpdated": "Profil modifié",
-    "profileUpdatedMessage": "Votre profil a été mis à jour avec succès",
+    "profileUpdatedMessage": "Ton profil a été mis à jour avec succès",
     "sending": "Envoi...",
     "continue": "Continuer",
     "skipStep": "Passer cette étape",
@@ -218,7 +218,7 @@
     "pseudoInvalidChars": "Seuls les lettres, chiffres, tirets (-) et underscores (_) sont autorisés",
     "pseudoTaken": "Ce nom d'utilisateur est déjà pris",
     "profileUpdateError": "Erreur lors de la mise à jour du profil",
-    "loginError": "Erreur lors de la connexion. Veuillez vous reconnecter."
+    "loginError": "Erreur lors de la connexion. Essaye de te reconnecter."
   },
   "errors": {
     "networkError": "Erreur de connexion",
@@ -287,7 +287,7 @@
     },
     "generating": "Histoire en cours de création...",
     "generationFailed": "La création de l'histoire a échoué.",
-    "subscriptionRequired": "Pour avoir accès à ces histoires partagées, il vous faut un abonnement",
+    "subscriptionRequired": "Pour avoir accès à ces histoires partagées, il te faut un abonnement",
     "subscribe": "Découvrir les offres"
   },
   "storyReader": {
@@ -390,7 +390,7 @@
     "join": "Rejoindre",
     "searchPlaceholder": "Rechercher un groupe...",
     "noGroupFound": "Aucun groupe trouvé",
-    "noGroupYet": "Vous n'avez pas encore de groupe",
+    "noGroupYet": "Tu n'as pas encore de groupe",
     "noInvitations": "Aucune invitation en attente",
     "invitationFrom": "Invitation de",
     "user": "Utilisateur",
@@ -429,7 +429,8 @@
     "allStoriesDesc": "Il y en a pour tout le monde !",
     "mostLiked": "Les plus appréciées",
     "mostLikedDesc": "Les 10 histoires les plus populaires",
-    "storeBubble": "Hey ! Viens faire un tour à la boutique si tu as besoin d'un abonnement !"
+    "storeBubble": "Hey ! Viens faire un tour à la boutique si tu as besoin d'un abonnement !",
+    "storeBubble2": "Hey ! Viens faire un tour à la boutique si tu as besoin de jetons !"
   },
   "createStory": {
     "title": "Création d'histoire",
@@ -492,13 +493,13 @@
   },
   "stories": {
     "title": "Mes histoires",
-    "subtitle": "Toutes vos aventures vous attendent ici !",
+    "subtitle": "Toutes tes aventures t'attendent ici !",
     "all": "Tout",
-    "allDesc": "Toutes vos histoires au même endroit",
+    "allDesc": "Toutes tes histoires au même endroit",
     "recent": "Récent",
-    "recentDesc": "Vos 10 histoires les plus récentes",
+    "recentDesc": "Tes 10 histoires les plus récentes",
     "favorite": "Favoris",
-    "favoriteDesc": "Vos histoires préférées"
+    "favoriteDesc": "Tes histoires préférées"
   },
   "storyDetail": {
     "author": "Auteur : {{name}}",
@@ -518,7 +519,7 @@
     "shareToEveryone": "Partager à tout le monde",
     "visibleByCommunity": "Visible par toute la communauté",
     "shareToGroups": "Partager à des groupes",
-    "noGroupYet": "Vous n'avez pas encore de groupe",
+    "noGroupYet": "Tu n'as pas encore de groupe",
     "members": "{{count}} membres",
     "alreadyShared": "Déjà partagé",
     "shareToNewGroups": "Partager à {{count}} nouveau(x) groupe(s)",
@@ -607,10 +608,10 @@
       "descriptionMax": "La description ne peut pas dépasser 80 caractères"
     },
     "limitReached": "Limite atteinte",
-    "freeLimitMessage": "Avec le plan gratuit, vous pouvez créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passez au plan Aventurier ou Légende !",
-    "premiumLimitMessage": "Vous avez atteint la limite de 5 personnages. Pour en créer un nouveau, vous devez d'abord en supprimer un.",
+    "freeLimitMessage": "Avec le plan gratuit, tu peux créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passe au plan Aventurier ou Légende !",
+    "premiumLimitMessage": "Tu as atteint la limite de 5 personnages. Pour en créer un nouveau, tu dois d'abord en supprimer un.",
     "upgradePlan": "Voir les abonnements",
-    "deleteToCreate": "Vous devez supprimer un personnage existant pour pouvoir en créer un nouveau.",
+    "deleteToCreate": "Tu dois supprimer un personnage existant pour pouvoir en créer un nouveau.",
     "maleAnimal": "Mâle",
     "femaleAnimal": "Femelle",
     "skinColors": {

@@ -331,7 +331,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                       source={require('../../assets/animations/LoadingWhite.json')}
                       autoPlay
                       loop={true}
-                      style={{ width: 200, height: 200 }}
+                      style={{ width: 100, height: 100 }}
                     />
                   </Animated.View>
                 </View>
@@ -416,7 +416,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                       source={require('../../assets/animations/LoadingWhite.json')}
                       autoPlay
                       loop={true}
-                      style={{ width: 200, height: 200 }}
+                      style={{ width: 100, height: 100 }}
                     />
                   </Animated.View>
                 </View>

@@ -429,7 +429,8 @@
     "allStoriesDesc": "There's something for everyone!",
     "mostLiked": "Most liked",
     "mostLikedDesc": "The 10 most popular stories",
-    "storeBubble": "Hey! You should visit my shop, i got subscriptions!"
+    "storeBubble": "Hey! You should visit my shop, i got subscriptions!",
+    "storeBubble2": "Hey! You should visit my shop if you need mmore tokens!"
   },
   "createStory": {
     "title": "Story Creation",

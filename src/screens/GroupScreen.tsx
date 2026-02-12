@@ -352,10 +352,7 @@ export default function GroupScreen() {
     <View className="flex-1 relative" style={{ backgroundColor: isNight ? '#020205' : '#87CEEB' }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
-      <View
-        className='absolute bottom-0 -right-32 w-72 border-4 rounded-full h-36 flex flex-row items-center justify-between p-4'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
+
       <View
         className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] flex flex-row items-center justify-between p-4 z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}

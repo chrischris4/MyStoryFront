@@ -380,7 +380,7 @@ export default function CreateStoryScreen() {
       </TouchableOpacity> */}
       <View
         pointerEvents="none"
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'
+        className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-20'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       {storyCoin === 0 && (
@@ -827,12 +827,25 @@ export default function CreateStoryScreen() {
                   </View>
                 </View>
               )}
-            <TouchableOpacity
-              className={`bg-black px-4 py-3 rounded-3xl items-center`}
-              onPress={handleCreateClick}
-            >
-              <Text className="font-baloo-semibold text-lg md:text-xl text-white">{t('createStory.createMyStory')}</Text>
-            </TouchableOpacity>
+            <BlurView intensity={90}
+              tint={isNight ? 'dark' : 'light'} style={{
+                borderRadius: 24,
+                overflow: 'hidden'
+              }}
+              className='w-11/12 mx-auto'>
+              <TouchableOpacity activeOpacity={0.8} style={{
+                padding: 12,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 8, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
+              }}
+                onPress={handleCreateClick}
+              >
+                <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
+              </TouchableOpacity>
+            </BlurView>
           </View>
         )}
       </ScrollView>

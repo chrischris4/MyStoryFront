@@ -402,7 +402,7 @@ export default function FullScreenStoryModal({
                       <Text
                         className="font-baloo-medium"
                         style={{
-                          fontSize: isRotated ? (isMd ? 24 : 20) : (isMd ? 18 : 12),
+                          fontSize: isRotated ? (isMd ? 24 : 18) : (isMd ? 18 : 10),
                         }}
                       >
                         {item.text}

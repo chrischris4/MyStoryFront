@@ -69,7 +69,7 @@ export default function SettingsScreen() {
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
             <Background isNight={isNight} />
             <View
-                className='absolute bottom-0 -right-52 border-4 h-36 rounded-t-full w-[100%] z-0'
+                className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
                 style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
             />
             <Text className={`font-baloo-bold text-4xl md:text-5xl pt-2 px-4 md:px-8 md:pb-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
@@ -536,12 +536,12 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         padding: 16,
         marginBottom: 16,
-        overflow: 'hidden', // indispensable pour le BlurView
+        overflow: 'hidden',
     },
     sectionBis: {
         borderRadius: 24,
         marginBottom: 80,
-        overflow: 'hidden', // indispensable pour le BlurView
+        overflow: 'hidden',
     },
     sectionTitle: {
         fontSize: 18,
