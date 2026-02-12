@@ -222,19 +222,15 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                         }}
                     >
                         {/* Soleil */}
-                        <View style={{
+                        <View className='w-20 h-20 md:w-[150px] md:h-[150px]' style={{
                             position: 'absolute',
                             top: 0,
-                            width: 150,
-                            height: 150,
                             borderRadius: 9999,
                             backgroundColor: '#FFD700',
                         }} />
-                        <View style={{
+                        <View className='w-20 h-20 md:w-[150px] md:h-[150px]' style={{
                             position: 'absolute',
                             bottom: 0,
-                            width: 150,
-                            height: 150,
                             borderRadius: 9999,
                             backgroundColor: '#ffffff',
                         }} />
@@ -265,7 +261,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                     {loading ? (
                         <View className="flex h-full justify-between items-center relative mb-4">
                             <Animated.View
-                                className="h-20 md:h-28"
+                                className="h-24 md:h-28"
                                 style={{
                                     backgroundColor: groundColor,
                                     borderTopWidth: 4,
@@ -301,7 +297,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                     ) : (
                         <View className="flex-1 w-full justify-between relative p-4 md:p-6">
                             <Animated.View
-                                className="h-20 md:h-28"
+                                className="h-24 md:h-28"
                                 style={{
                                     backgroundColor: groundColor,
                                     borderTopWidth: 4,

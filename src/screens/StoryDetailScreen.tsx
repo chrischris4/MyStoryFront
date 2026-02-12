@@ -908,7 +908,7 @@ export default function StoryDetailScreen() {
       >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="px-4"
+          className="px-2 md:px-4"
         >
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
@@ -929,7 +929,7 @@ export default function StoryDetailScreen() {
             playSound('pop');
             setShowDeleteModal(true);
           }}
-          className='px-4'
+          className='px-2 md:px-4'
         >
           <Feather name="trash-2" size={24} color="white" />
         </TouchableOpacity>

@@ -365,7 +365,7 @@ export default function CreateStoryScreen() {
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
         onPress={() => {
           if (isCreating) {
@@ -377,7 +377,7 @@ export default function CreateStoryScreen() {
         }}
       >
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View
         pointerEvents="none"
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-t-full w-[100%] z-20'

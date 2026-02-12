@@ -10,7 +10,7 @@ import LottieView from 'lottie-react-native';
 export default function FloatingStoryCreation() {
   const { t } = useTranslation();
   const navigation = useNavigation();
-  const { isCreating, isMinimized, loading, storyPages, title, maximize, close } = useStoryCreationStore();
+  const { isCreating, isMinimized, loading, storyPages, title, maximize } = useStoryCreationStore();
 
   const { width, height } = useWindowDimensions();
   const miniWidth = width * 0.35;
@@ -95,7 +95,7 @@ export default function FloatingStoryCreation() {
   };
 
   const handleClose = () => {
-    close();
+    maximize();
   };
 
   return (

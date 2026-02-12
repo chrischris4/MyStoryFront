@@ -149,8 +149,8 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
 
     return (
         <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
-            <View className="w-[140%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
-                <View className='w-[70%]'>
+            <View className="w-[160%] md:w-[90%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
+                <View className='w-[60%]'>
                     <Text className='font-bold text-xl mb-2 text-center text-gray-800'>{t('profile.completeProfile')}</Text>
                     <Formik
                         initialValues={{ name: '' }}
