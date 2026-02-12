@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Modal,
   View,
@@ -29,6 +29,7 @@ interface FullScreenStoryModalProps {
   coverUrl?: string;
   title?: string;
   description?: string;
+  author?: string;
   isNight: boolean;
   onClose: () => void;
 }
@@ -38,6 +39,8 @@ export default function FullScreenStoryModal({
   pages,
   coverUrl,
   title,
+  description,
+  author,
   isNight,
   onClose,
 }: FullScreenStoryModalProps) {
@@ -93,6 +96,7 @@ export default function FullScreenStoryModal({
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scrollX = useRef(new Animated.Value(0)).current;
   const flatListRef = useRef<FlatList>(null);
 
   // Animations pour les menus
@@ -124,6 +128,7 @@ export default function FullScreenStoryModal({
       useNativeDriver: true,
     }).start();
   }, [showFrameMenu]);
+
 
   const { width, height } = useWindowDimensions();
   const isMd = width >= 768;
@@ -195,6 +200,37 @@ export default function FullScreenStoryModal({
   const rotatedWidth = isRotated ? height : width;
   const rotatedHeight = isRotated ? width : height;
 
+  // Opacité et slide du texte liés à la position du scroll
+  const textOpacity = useMemo(() => {
+    const n = allItems.length;
+    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [1, 1], extrapolate: 'clamp' });
+    const inputRange: number[] = [];
+    const outputRange: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const center = i * rotatedWidth;
+      if (i > 0) { inputRange.push(center - rotatedWidth * 0.15); outputRange.push(0); }
+      inputRange.push(center);
+      outputRange.push(1);
+      if (i < n - 1) { inputRange.push(center + rotatedWidth * 0.15); outputRange.push(0); }
+    }
+    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
+  }, [allItems.length, rotatedWidth]);
+
+  const textSlide = useMemo(() => {
+    const n = allItems.length;
+    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [0, 0], extrapolate: 'clamp' });
+    const inputRange: number[] = [];
+    const outputRange: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const center = i * rotatedWidth;
+      if (i > 0) { inputRange.push(center - rotatedWidth * 0.15); outputRange.push(8); }
+      inputRange.push(center);
+      outputRange.push(0);
+      if (i < n - 1) { inputRange.push(center + rotatedWidth * 0.15); outputRange.push(8); }
+    }
+    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
+  }, [allItems.length, rotatedWidth]);
+
   // Dimensions réelles de l'image affichée (contentFit="contain" avec ratio 16:9)
   // Arrondi pour éviter les gaps sub-pixel entre le cadre et l'image
   const imageAspect = 16 / 9;
@@ -250,6 +286,11 @@ export default function FullScreenStoryModal({
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onTouchStart={handleCloseMenus}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+              { useNativeDriver: false }
+            )}
+            scrollEventThrottle={16}
             onMomentumScrollEnd={(event) => {
               const index = Math.round(event.nativeEvent.contentOffset.x / rotatedWidth);
               setCurrentPageIndex(index);
@@ -274,35 +315,88 @@ export default function FullScreenStoryModal({
                     }}
                     contentFit="cover"
                   />
-                  {/* Afficher le titre si c'est la cover */}
+                  {/* Titre en haut de la cover */}
                   {item.isCover && title && (
-                    <View
-                      className="absolute self-center bg-white/90 rounded-xl"
+                    <Animated.View
+                      className="absolute self-center z-20 bg-white/90 rounded-xl"
                       style={{
                         top: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
+                        maxWidth: '85%',
                         paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
-                        paddingVertical: isRotated ? (isMd ? 12 : 8) : (isMd ? 6 : 4),
+                        paddingVertical: isRotated ? (isMd ? 12 : 4) : (isMd ? 6 : 2),
                       }}
                     >
                       <Text
-                        className="font-baloo-bold"
+                        className="font-baloo-bold text-center"
                         style={{
-                          fontSize: isRotated ? (isMd ? 30 : 24) : (isMd ? 24 : 16),
+                          fontSize: isRotated ? (isMd ? 30 : 24) : (isMd ? 24 : 12),
                         }}
                       >
                         {title}
                       </Text>
-                    </View>
+                    </Animated.View>
+                  )}
+                  {/* Description et auteur en bas de la cover */}
+                  {item.isCover && (description || author) && (
+                    <Animated.View
+                      className="absolute self-center z-20"
+                      style={{
+                        bottom: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
+                        maxWidth: '65%',
+                        alignItems: 'center',
+                        gap: isRotated ? 8 : 4,
+                      }}
+                    >
+                      {description && (
+                        <View
+                          className="bg-white/90 rounded-xl"
+                          style={{
+                            paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
+                            paddingVertical: isRotated ? (isMd ? 10 : 6) : (isMd ? 4 : 3),
+                          }}
+                        >
+                          <Text
+                            className="font-baloo text-center text-gray-800"
+                            style={{
+                              fontSize: isRotated ? (isMd ? 18 : 14) : (isMd ? 14 : 9),
+                            }}
+                            numberOfLines={3}
+                          >
+                            {description}
+                          </Text>
+                        </View>
+                      )}
+                      {author && (
+                        <View
+                          className="bg-white/90 rounded-xl"
+                          style={{
+                            paddingHorizontal: isRotated ? (isMd ? 20 : 12) : (isMd ? 10 : 6),
+                            paddingVertical: isRotated ? (isMd ? 8 : 4) : (isMd ? 3 : 2),
+                          }}
+                        >
+                          <Text
+                            className="font-baloo-medium text-center text-gray-900"
+                            style={{
+                              fontSize: isRotated ? (isMd ? 16 : 12) : (isMd ? 12 : 9),
+                            }}
+                          >
+                            {t('storyDetail.author', { name: author })}
+                          </Text>
+                        </View>
+                      )}
+                    </Animated.View>
                   )}
                   {/* Afficher le texte seulement si ce n'est pas la cover */}
                   {!item.isCover && (
-                    <View
-                      className="absolute flex justify-center items-center self-center bg-white/90 rounded-xl"
+                    <Animated.View
+                      className="absolute flex justify-center items-center self-center bg-white/90 rounded-xl z-20"
                       style={{
                         bottom: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
                         maxWidth: '80%',
                         paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
                         paddingVertical: isRotated ? (isMd ? 12 : 8) : (isMd ? 6 : 4),
+                        opacity: textOpacity,
+                        transform: [{ translateY: textSlide }],
                       }}
                     >
                       <Text
@@ -313,7 +407,7 @@ export default function FullScreenStoryModal({
                       >
                         {item.text}
                       </Text>
-                    </View>
+                    </Animated.View>
                   )}
                 </View>
               </View>
@@ -708,25 +802,25 @@ export default function FullScreenStoryModal({
               </TouchableOpacity>
 
               {/* Bouton plein écran (rotation) */}
-                <TouchableOpacity
-                  onPress={toggleRotation}
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                    borderRadius: 40,
-                    width: 65,
-                    height: 65,
-                    position: 'absolute',
-                    bottom: 95,
-                    right: 16,
-                  }}
-                  className='flex justify-center items-center'
-                >
-                  <Feather
-                    name={isRotated ? "minimize" : "maximize"}
-                    size={24}
-                    color="black"
-                  />
-                </TouchableOpacity>
+              <TouchableOpacity
+                onPress={toggleRotation}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  borderRadius: 40,
+                  width: 65,
+                  height: 65,
+                  position: 'absolute',
+                  bottom: 95,
+                  right: 16,
+                }}
+                className='flex justify-center items-center'
+              >
+                <Feather
+                  name={isRotated ? "minimize" : "maximize"}
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
             </Animated.View>
           )}
 

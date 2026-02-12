@@ -667,6 +667,7 @@ export default function StoryDetailScreen() {
           coverUrl={story.coverUrl}
           title={story.title}
           description={story.description}
+          author={story.user?.profil?.name}
           isNight={isNight}
           onClose={() => setIsFullScreen(false)}
         />
