@@ -162,7 +162,9 @@ export default function GroupScreen() {
   };
 
 
-  const renderTabButton = (tab: TabType, label: string, icon: string) => (
+  const pendingInvitationsCount = invitations.filter((inv: any) => inv.status === 'PENDING').length;
+
+  const renderTabButton = (tab: TabType, label: string, icon: string, badgeCount?: number) => (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => setActiveTab(tab)}
@@ -187,6 +189,11 @@ export default function GroupScreen() {
           <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo-semibold text-base md:text-lg`}>
             {label}
           </Text>
+          {!!badgeCount && badgeCount > 0 && (
+            <View className="bg-red-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1">
+              <Text className="text-white text-xs font-baloo-bold">{badgeCount > 99 ? '99+' : badgeCount}</Text>
+            </View>
+          )}
         </View>
       </BlurView>
     </TouchableOpacity>
@@ -379,7 +386,7 @@ export default function GroupScreen() {
           {/* Tabs */}
           <View className="flex-row gap-2 mb-4">
             {renderTabButton('myGroups', t('groups.myGroups'), 'users')}
-            {renderTabButton('invitations', t('groups.invitations'), 'mail')}
+            {renderTabButton('invitations', t('groups.invitations'), 'mail', pendingInvitationsCount)}
           </View>
 
           {/* Content */}

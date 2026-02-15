@@ -11,7 +11,6 @@ type ConfirmationModalProps = {
   prompt: string;
   numPages: number;
   styleName: string;
-  styleEmoji: string;
   languageName: string;
   languageFlag: string;
   ageGroupName?: string;
@@ -27,7 +26,6 @@ export default function ConfirmationModal({
   prompt,
   numPages,
   styleName,
-  styleEmoji,
   languageName,
   languageFlag,
   ageGroupName,

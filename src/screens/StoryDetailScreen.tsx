@@ -746,7 +746,7 @@ export default function StoryDetailScreen() {
               intensity={90}
               tint={isNight ? "dark" : "light"}
               className="rounded-3xl p-6 mx-4 w-11/12  max-w-md overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', minHeight: '60%', maxHeight: '80%' }}
+              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', minHeight: '80%', maxHeight: '80%' }}
             >
               <View className="flex-1">
                 <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>

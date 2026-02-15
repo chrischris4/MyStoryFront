@@ -32,6 +32,7 @@ import LottieView from 'lottie-react-native';
 import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useNotificationStore } from '~/store/useNotificationStore';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -104,6 +105,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const { data: groupStories = [], isLoading: isLoadingStories } = useGroupStories(group?.id || 0);
   const inviteToGroupMutation = useInviteToGroup();
   const removeMemberMutation = useRemoveMember();
+  const { getNewStoriesCount, markStoriesSeen } = useNotificationStore();
+  const newStoriesCount = group ? getNewStoriesCount(group.id, groupStories) : 0;
 
   const groupMembers = group?.members || fetchedMembers;
   const isCurrentUserOwner = currentUser?.id === group?.ownerId;
@@ -247,6 +250,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 playSound('click');
                 setActiveTab('stories');
+                if (group) markStoriesSeen(group.id);
               }}
               className={`flex-1 py-3 rounded-xl ${activeTab === 'stories' ? 'bg-blue-500' : isNight ? 'bg-slate-700' : 'bg-slate-200'
                 }`}
@@ -261,6 +265,11 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   }`}>
                   {t('groups.stories')}
                 </Text>
+                {newStoriesCount > 0 && activeTab !== 'stories' && (
+                  <View className="bg-red-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1">
+                    <Text className="text-white text-xs font-baloo-bold">{newStoriesCount > 99 ? '99+' : newStoriesCount}</Text>
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
           </View>

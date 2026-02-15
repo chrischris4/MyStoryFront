@@ -611,7 +611,7 @@
       "descriptionMax": "La description ne peut pas dépasser 80 caractères"
     },
     "limitReached": "Limite atteinte",
-    "freeLimitMessage": "Avec le plan gratuit, tu peux créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passe au plan Aventurier ou Légende !",
+    "freeLimitMessage": "Avec le plan gratuit, tu peux créer jusqu'à 2 personnages. Pour en créer jusqu'à 5, passe au plan Légende !",
     "premiumLimitMessage": "Tu as atteint la limite de 5 personnages. Pour en créer un nouveau, tu dois d'abord en supprimer un.",
     "upgradePlan": "Voir les abonnements",
     "deleteToCreate": "Tu dois supprimer un personnage existant pour pouvoir en créer un nouveau.",

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useSound } from '~/context/SoundContext';
 import { useEffect, useRef } from 'react';
 import Toast from 'react-native-toast-message';
+import { useGroupInvitations } from '~/hooks/useGroupInvitations';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -21,6 +22,8 @@ export default function HomeScreen() {
   const { playBackgroundMusic, toggleBackgroundMusic, isMusicEnabled } = useSound();
   const { width } = useWindowDimensions();
   const isMd = width >= 768;
+  const { data: invitations = [] } = useGroupInvitations();
+  const pendingInvitationsCount = invitations.filter((inv: any) => inv.status === 'PENDING').length;
 
   const translateX = useRef(new Animated.Value(width)).current;
   const animationRef = useRef(null);
@@ -219,6 +222,7 @@ export default function HomeScreen() {
               title={t('home.myGroups')}
               description={t('home.myGroupsDesc')}
               icon={<Feather name="users" size={24} color="#334155" />}
+              badge={pendingInvitationsCount}
             />
           </View>
           <View className='flex-row gap-4 md:gap-6'>

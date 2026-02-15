@@ -383,86 +383,6 @@ export default function CreateStoryScreen() {
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-20'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      {storyCoin === 0 && (
-        <>
-          <Animated.View
-            className="absolute bottom-60 right-24 z-40"
-            style={{ opacity: bubbleOpacity }}
-          >
-            <View
-              className="px-4 py-3 flex w-72 rounded-2xl bg-white text-black"
-            >
-              <Text className="font-baloo-medium md:text-lg text-center">
-                {t('sharedStories.storeBubble')}
-              </Text>
-            </View>
-            {/* Petite flèche de la bulle */}
-            <View
-              style={{
-                position: 'absolute',
-                bottom: -10,
-                right: 20,
-                width: 0,
-                height: 0,
-                borderLeftWidth: 10,
-                borderRightWidth: 10,
-                borderTopWidth: 12,
-                borderLeftColor: 'transparent',
-                borderRightColor: 'transparent',
-                borderTopColor: 'white',
-              }}
-            />
-          </Animated.View>
-          <Animated.View
-            style={{
-              position: 'absolute',
-              bottom: 110,
-              right: 50,
-            }}
-          >
-            <LottieView
-              ref={animationRef}
-              source={require('../../assets/animations/tree.json')}
-              autoPlay
-              loop={false}
-              style={{ width: 200, height: 200 }}
-            />
-          </Animated.View>
-
-          <Animated.View
-            style={{
-              position: 'absolute',
-              bottom: 65,
-              right: -15,
-              zIndex: 10
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => navigation.navigate('BillingScreen')}
-              activeOpacity={0.8}
-            >
-              <LottieView
-                source={require('../../assets/animations/Store.json')}
-                autoPlay
-                loop={false}
-                style={{ width: 200, height: 200 }}
-              />
-            </TouchableOpacity>
-          </Animated.View>
-          <View className="absolute self-center items-center" style={{ top: '50%', transform: [{ translateY: -50 }], zIndex: 10 }}>
-            <TouchableOpacity
-              className="bg-white/30 px-6 py-4 rounded-xl flex flex-row gap-2"
-              onPress={() => navigation.navigate('BillingScreen')}
-            >
-              <Text className="text-gray-800 font-baloo-semibold text-center text-base md:text-lg">
-                {t('createStory.getStoryCoins')}
-              </Text>
-              <Feather name="arrow-right" size={20} color="#000" />
-            </TouchableOpacity>
-          </View>
-        </>
-      )}
-
       <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
       <Text className={`text-xl md:text-2xl font-baloo pb-4 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
@@ -470,363 +390,363 @@ export default function CreateStoryScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
-        {storyCoin > 0 && (
-          <View>
-            {/* 🟣 Bloc Titre */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
+        <View>
+          {/* 🟣 Bloc Titre */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <Text className={`text-2xl md:text-3xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
-                <TextInput
-                  className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
-                  placeholder={t('createStory.storyTitlePlaceholder')}
-                  placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
-                  value={formik.values.title}
-                  onChangeText={formik.handleChange('title')}
-                  onBlur={formik.handleBlur('title')}
-                  maxLength={40}
-                />
-                <View className='flex flex-row gap-2'>
-                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.title.length}/40</Text>
-                  {formik.touched.title && formik.errors.title && (
-                    <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.title}</Text>
-                  )}
-                </View>
-              </BlurView>
-            </View>
+              <Text className={`text-2xl md:text-3xl font-baloo-semibold mb-2 ${isNight ? "text-white" : "text-slate-900"}`}>{t('createStory.storyTitle')}</Text>
+              <TextInput
+                className={`border rounded-lg p-2 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
+                placeholder={t('createStory.storyTitlePlaceholder')}
+                placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
+                value={formik.values.title}
+                onChangeText={formik.handleChange('title')}
+                onBlur={formik.handleBlur('title')}
+                maxLength={40}
+              />
+              <View className='flex flex-row gap-2'>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.title.length}/40</Text>
+                {formik.touched.title && formik.errors.title && (
+                  <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.title}</Text>
+                )}
+              </View>
+            </BlurView>
+          </View>
 
-            {/* 👤 Bloc Personnage */}
-            <CharacterSection
-              isNight={isNight}
-              selectedCharacters={selectedCharacters}
-              onCharactersChange={setSelectedCharacters}
-              onCreateNew={() => {
-                setEditingCharacter(null);
-                setShowCharacterModal(true);
-              }}
-              onEditCharacter={(character) => {
-                setEditingCharacter(character);
-                setShowCharacterModal(true);
-              }}
-            />
+          {/* 👤 Bloc Personnage */}
+          <CharacterSection
+            isNight={isNight}
+            selectedCharacters={selectedCharacters}
+            onCharactersChange={setSelectedCharacters}
+            onCreateNew={() => {
+              setEditingCharacter(null);
+              setShowCharacterModal(true);
+            }}
+            onEditCharacter={(character) => {
+              setEditingCharacter(character);
+              setShowCharacterModal(true);
+            }}
+          />
 
-            {/* 🟢 Bloc Résumé */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
+          {/* 🟢 Bloc Résumé */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
-                <TextInput
-                  className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
-                  placeholder={(() => {
-                    if (selectedCharacters.length === 2) {
-                      return t('createStory.storySummaryPlaceholderPlural', {
-                        name: `${selectedCharacters[0].name} ${t('common.and')} ${selectedCharacters[1].name}`,
-                      });
-                    }
-                    const char = selectedCharacters[0];
-                    const isMale = char ? char.gender === 'MALE' : false;
-                    const key = isMale ? 'storySummaryPlaceholderMale' : 'storySummaryPlaceholderFemale';
-                    return t(`createStory.${key}`, { name: char?.name || 'Mimi' });
-                  })()}
-                  placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
-                  value={formik.values.prompt}
-                  onChangeText={formik.handleChange('prompt')}
-                  onBlur={formik.handleBlur('prompt')}
-                  multiline
-                  autoCorrect={true}
-                  spellCheck={true}
-                  textAlignVertical="top"
-                  maxLength={500}
-                  style={{ minHeight: 160 }}
-                />
-                <View className='flex flex-row gap-2'>
-                  <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.prompt.length}/500</Text>
-                  {formik.touched.prompt && formik.errors.prompt && (
-                    <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
-                  )}
-                </View>
-              </BlurView>
-            </View>
+              <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold `}>{t('createStory.storySummary')}</Text>
+              <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.storySummaryDesc')}</Text>
+              <TextInput
+                className={`border rounded-lg p-3 ${isNight ? 'border-gray-600 text-white' : 'border-gray-400 text-gray-800'} font-baloo`}
+                placeholder={(() => {
+                  if (selectedCharacters.length === 2) {
+                    return t('createStory.storySummaryPlaceholderPlural', {
+                      name: `${selectedCharacters[0].name} ${t('common.and')} ${selectedCharacters[1].name}`,
+                    });
+                  }
+                  const char = selectedCharacters[0];
+                  const isMale = char ? char.gender === 'MALE' : false;
+                  const key = isMale ? 'storySummaryPlaceholderMale' : 'storySummaryPlaceholderFemale';
+                  return t(`createStory.${key}`, { name: char?.name || 'Mimi' });
+                })()}
+                placeholderTextColor={isNight ? '#9CA3AF' : '#6B7280'}
+                value={formik.values.prompt}
+                onChangeText={formik.handleChange('prompt')}
+                onBlur={formik.handleBlur('prompt')}
+                multiline
+                autoCorrect={true}
+                spellCheck={true}
+                textAlignVertical="top"
+                maxLength={500}
+                style={{ minHeight: 160 }}
+              />
+              <View className='flex flex-row gap-2'>
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.prompt.length}/500</Text>
+                {formik.touched.prompt && formik.errors.prompt && (
+                  <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
+                )}
+              </View>
+            </BlurView>
+          </View>
 
-            {/* 🟢 Bloc Style */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
+          {/* 🟢 Bloc Style */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
             >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
+              <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyStyle')}</Text>
 
-                {/* Carrousel de styles */}
-                <Animated.ScrollView
-                  ref={scrollViewRef}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  snapToInterval={screenWidth * 0.6}
-                  decelerationRate="fast"
-                  contentContainerStyle={{ paddingRight: 16 }}
-                  onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-                    { useNativeDriver: false }
-                  )}
-                  scrollEventThrottle={16}
-                >
-                  {STORY_STYLES.map((style) => {
-                    const isSelected = formik.values.selectedStyle === style.id;
-                    return (
-                      <TouchableOpacity
-                        activeOpacity={1}
-                        key={style.id}
-                        onPress={() => formik.setFieldValue('selectedStyle', style.id)}
+              {/* Carrousel de styles */}
+              <Animated.ScrollView
+                ref={scrollViewRef}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                snapToInterval={screenWidth * 0.6}
+                decelerationRate="fast"
+                contentContainerStyle={{ paddingRight: 16 }}
+                onScroll={Animated.event(
+                  [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+                  { useNativeDriver: false }
+                )}
+                scrollEventThrottle={16}
+              >
+                {STORY_STYLES.map((style) => {
+                  const isSelected = formik.values.selectedStyle === style.id;
+                  return (
+                    <TouchableOpacity
+                      activeOpacity={1}
+                      key={style.id}
+                      onPress={() => formik.setFieldValue('selectedStyle', style.id)}
+                      style={{
+                        width: screenWidth * 0.6,
+                        marginRight: 12,
+                        borderRadius: 22,
+                        overflow: 'hidden',
+                        borderWidth: isSelected ? 4 : 0,
+                        borderColor: isSelected ? '#10B981' : 'transparent',
+                      }}
+                      className="h-40 md:h-60"
+                    >
+                      <ImageBackground
+                        source={{ uri: style.imageUrl }}
                         style={{
-                          width: screenWidth * 0.6,
-                          marginRight: 12,
-                          borderRadius: 22,
+                          borderRadius: 16,
                           overflow: 'hidden',
-                          borderWidth: isSelected ? 4 : 0,
-                          borderColor: isSelected ? '#10B981' : 'transparent',
                         }}
-                        className="h-40 md:h-60"
+                        imageStyle={{ borderRadius: 16 }}
+                        className='h-full w-full'
                       >
-                        <ImageBackground
-                          source={{ uri: style.imageUrl }}
+                        <LinearGradient
+                          colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
                           style={{
+                            padding: 16,
                             borderRadius: 16,
-                            overflow: 'hidden',
+                            flex: 1,
+                            justifyContent: 'flex-end',
                           }}
-                          imageStyle={{ borderRadius: 16 }}
-                          className='h-full w-full'
                         >
-                          <LinearGradient
-                            colors={['transparent', 'rgba(0, 0, 0, 0.6)']}
-                            style={{
-                              padding: 16,
-                              borderRadius: 16,
-                              flex: 1,
-                              justifyContent: 'flex-end',
-                            }}
+
+                          {isSelected && (
+                            <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
+                              <Text className="text-white font-baloo-bold text-lg">✓</Text>
+                            </View>
+                          )}
+                          <Text
+                            className="font-bold text-xl md:text-2xl mb-1 text-white"
                           >
-
-                            {isSelected && (
-                              <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
-                                <Text className="text-white font-baloo-bold text-lg">✓</Text>
-                              </View>
-                            )}
-                            <Text
-                              className="font-bold text-xl md:text-2xl mb-1 text-white"
-                            >
-                              {getStyleTranslation(style.id).name}
-                            </Text>
-
-
-                            <Text className="text-white text-sm md:text-base">
-                              {getStyleTranslation(style.id).description}
-                            </Text>
-                          </LinearGradient>
-                        </ImageBackground>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </Animated.ScrollView>
-
-                {/* Indicateurs de style */}
-                <View className="flex-row justify-center mt-4 gap-2">
-                  {STORY_STYLES.map((style, index) => {
-                    const cardWidth = screenWidth * 0.6 + 12;
-
-                    const inputRange = [
-                      (index - 1) * cardWidth,
-                      index * cardWidth,
-                      (index + 1) * cardWidth,
-                    ];
-
-                    const dotWidth = scrollX.interpolate({
-                      inputRange,
-                      outputRange: [8, 24, 8],
-                      extrapolate: 'clamp',
-                    });
-
-                    const dotColor = scrollX.interpolate({
-                      inputRange,
-                      outputRange: ['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0.4)'],
-                      extrapolate: 'clamp',
-                    });
-
-                    return (
-                      <Animated.View
-                        key={`dot-${style.id}`}
-                        className="rounded-full"
-                        style={{
-                          width: dotWidth,
-                          height: 8,
-                          backgroundColor: dotColor,
-                        }}
-                      />
-                    );
-                  })}
-                </View>
-                {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                  <Text className="text-red-500 text-sm md:text-base mt-2 text-center">{formik.errors.selectedStyle}</Text>
-                )}
-              </BlurView>
-            </View>
-
-            {/* 🌍 Bloc Langue */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
-            >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {LANGUAGES.map((lang) => {
-                    const isSelected = formik.values.language === lang.id;
-                    return (
-                      <TouchableOpacity
-                        key={lang.id}
-                        onPress={() => formik.setFieldValue('language', lang.id)}
-                        className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
-                      >
-                        <Text className="text-xl md:text-2xl">{lang.flag}</Text>
-                        <Text className={`font-baloo-medium md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
-                          {t(`storyFolder.languages.${lang.id}`, lang.name)}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-                {formik.touched.language && formik.errors.language && (
-                  <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.language}</Text>
-                )}
-              </BlurView>
-            </View>
-
-            {/* 👶 Bloc Tranche d'âge */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
-            >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {AGE_GROUPS.map((age) => {
-                    const isSelected = formik.values.ageGroup === age.id;
-                    return (
-                      <TouchableOpacity
-                        key={age.id}
-                        onPress={() => formik.setFieldValue('ageGroup', age.id)}
-                        className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
-                      >
-                        <View className="flex-row items-center gap-2 mb-1">
-                          <Text className="text-xl md:text-2xl">{age.emoji}</Text>
-                          <Text className={`font-baloo-semibold md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-800'}`}>
-                            {t(`createStory.ageGroups.${age.id}.name`)}
+                            {getStyleTranslation(style.id).name}
                           </Text>
-                        </View>
-                        <Text className={`text-xs md:text-sm ${isSelected ? 'text-white/90' : isNight ? 'text-white/60' : 'text-slate-600'}`}>
-                          {t(`createStory.ageGroups.${age.id}.desc`)}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-                {formik.touched.ageGroup && formik.errors.ageGroup && (
-                  <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.ageGroup}</Text>
-                )}
-              </BlurView>
-            </View>
 
-            {/* 🧡 Sélecteur de pages */}
-            <View
-              style={{
-                borderRadius: 24,
-                overflow: 'hidden',
-                marginBottom: 16,
-              }}
-            >
-              <BlurView
-                intensity={90}
-                tint={isNight ? "dark" : "light"}
-                style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-              >
-                <PageSelector
-                  isNight={isNight}
-                  numPages={formik.values.numPages}
-                  setNumPages={(n) => formik.setFieldValue('numPages', n)}
-                />
-                {formik.touched.numPages && formik.errors.numPages && (
-                  <Text className="text-red-500 text-sm md:text-base mt-1 text-center">{formik.errors.numPages}</Text>
-                )}
-              </BlurView>
-            </View>
 
-            {/* Messages d'erreur résumés */}
-            {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
-              (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
-                <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
-                  <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base md:text-lg mb-2`}>{t('createStory.missingInfo')}</Text>
-                  <View className="gap-1">
-                    {formik.touched.title && formik.errors.title && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.title}</Text>
-                    )}
-                    {formik.touched.prompt && formik.errors.prompt && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.prompt}</Text>
-                    )}
-                    {formik.touched.numPages && formik.errors.numPages && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.numPages}</Text>
-                    )}
-                    {formik.touched.selectedStyle && formik.errors.selectedStyle && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.selectedStyle}</Text>
-                    )}
-                    {formik.touched.language && formik.errors.language && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.language}</Text>
-                    )}
-                    {formik.touched.ageGroup && formik.errors.ageGroup && (
-                      <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.ageGroup}</Text>
-                    )}
-                  </View>
-                </View>
+                          <Text className="text-white text-sm md:text-base">
+                            {getStyleTranslation(style.id).description}
+                          </Text>
+                        </LinearGradient>
+                      </ImageBackground>
+                    </TouchableOpacity>
+                  );
+                })}
+              </Animated.ScrollView>
+
+              {/* Indicateurs de style */}
+              <View className="flex-row justify-center mt-4 gap-2">
+                {STORY_STYLES.map((style, index) => {
+                  const cardWidth = screenWidth * 0.6 + 12;
+
+                  const inputRange = [
+                    (index - 1) * cardWidth,
+                    index * cardWidth,
+                    (index + 1) * cardWidth,
+                  ];
+
+                  const dotWidth = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [8, 24, 8],
+                    extrapolate: 'clamp',
+                  });
+
+                  const dotColor = scrollX.interpolate({
+                    inputRange,
+                    outputRange: ['rgba(255, 255, 255, 0.4)', 'rgba(255, 255, 255, 1)', 'rgba(255, 255, 255, 0.4)'],
+                    extrapolate: 'clamp',
+                  });
+
+                  return (
+                    <Animated.View
+                      key={`dot-${style.id}`}
+                      className="rounded-full"
+                      style={{
+                        width: dotWidth,
+                        height: 8,
+                        backgroundColor: dotColor,
+                      }}
+                    />
+                  );
+                })}
+              </View>
+              {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+                <Text className="text-red-500 text-sm md:text-base mt-2 text-center">{formik.errors.selectedStyle}</Text>
               )}
+            </BlurView>
+          </View>
+
+          {/* 🌍 Bloc Langue */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
+            >
+              <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold mb-4`}>{t('createStory.storyLanguage')}</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {LANGUAGES.map((lang) => {
+                  const isSelected = formik.values.language === lang.id;
+                  return (
+                    <TouchableOpacity
+                      key={lang.id}
+                      onPress={() => formik.setFieldValue('language', lang.id)}
+                      className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                    >
+                      <Text className="text-xl md:text-2xl">{lang.flag}</Text>
+                      <Text className={`font-baloo-medium md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
+                        {t(`storyFolder.languages.${lang.id}`, lang.name)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {formik.touched.language && formik.errors.language && (
+                <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.language}</Text>
+              )}
+            </BlurView>
+          </View>
+
+          {/* 👶 Bloc Tranche d'âge */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
+            >
+              <Text className={` ${isNight ? "text-white" : "text-slate-900"} text-2xl md:text-3xl font-baloo-semibold`}>{t('createStory.ageGroup')}</Text>
+              <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base font-baloo mb-4`}>{t('createStory.ageGroupDesc')}</Text>
+              <View className="flex-row flex-wrap gap-2">
+                {AGE_GROUPS.map((age) => {
+                  const isSelected = formik.values.ageGroup === age.id;
+                  return (
+                    <TouchableOpacity
+                      key={age.id}
+                      onPress={() => formik.setFieldValue('ageGroup', age.id)}
+                      className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                    >
+                      <View className="flex-row items-center gap-2 mb-1">
+                        <Text className="text-xl md:text-2xl">{age.emoji}</Text>
+                        <Text className={`font-baloo-semibold md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-800'}`}>
+                          {t(`createStory.ageGroups.${age.id}.name`)}
+                        </Text>
+                      </View>
+                      <Text className={`text-xs md:text-sm ${isSelected ? 'text-white/90' : isNight ? 'text-white/60' : 'text-slate-600'}`}>
+                        {t(`createStory.ageGroups.${age.id}.desc`)}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+              {formik.touched.ageGroup && formik.errors.ageGroup && (
+                <Text className="text-red-500 text-sm md:text-base mt-2">{formik.errors.ageGroup}</Text>
+              )}
+            </BlurView>
+          </View>
+
+          {/* 🧡 Sélecteur de pages */}
+          <View
+            style={{
+              borderRadius: 24,
+              overflow: 'hidden',
+              marginBottom: 16,
+            }}
+          >
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
+            >
+              <PageSelector
+                isNight={isNight}
+                numPages={formik.values.numPages}
+                setNumPages={(n) => formik.setFieldValue('numPages', n)}
+              />
+              {formik.touched.numPages && formik.errors.numPages && (
+                <Text className="text-red-500 text-sm md:text-base mt-1 text-center">{formik.errors.numPages}</Text>
+              )}
+            </BlurView>
+          </View>
+
+          {/* Messages d'erreur résumés */}
+          {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
+            (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
+              <View className={` ${isNight ? 'bg-red-400/30 border-red-400' : 'bg-red-400/20 border-red-600'} border mb-4 rounded-2xl p-4`}>
+                <Text className={` ${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base md:text-lg mb-2`}>{t('createStory.missingInfo')}</Text>
+                <View className="gap-1">
+                  {formik.touched.title && formik.errors.title && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.title}</Text>
+                  )}
+                  {formik.touched.prompt && formik.errors.prompt && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.prompt}</Text>
+                  )}
+                  {formik.touched.numPages && formik.errors.numPages && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.numPages}</Text>
+                  )}
+                  {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.selectedStyle}</Text>
+                  )}
+                  {formik.touched.language && formik.errors.language && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.language}</Text>
+                  )}
+                  {formik.touched.ageGroup && formik.errors.ageGroup && (
+                    <Text className={` ${isNight ? 'text-white/80' : 'text-black'} text-sm md:text-base`}>• {formik.errors.ageGroup}</Text>
+                  )}
+                </View>
+              </View>
+            )}
+          {storyCoin === 0 ? (
             <BlurView intensity={90}
               tint={isNight ? 'dark' : 'light'} style={{
                 borderRadius: 24,
@@ -846,8 +766,29 @@ export default function CreateStoryScreen() {
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
               </TouchableOpacity>
             </BlurView>
-          </View>
-        )}
+          ) : (
+
+            <BlurView intensity={90}
+              tint={isNight ? 'dark' : 'light'} style={{
+                borderRadius: 24,
+                overflow: 'hidden'
+              }}
+              className='w-11/12 mx-auto'>
+              <TouchableOpacity activeOpacity={0.8} style={{
+                padding: 12,
+                borderRadius: 12,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
+                gap: 8, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
+              }}
+                onPress={handleCreateClick}
+              >
+                <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
+              </TouchableOpacity>
+            </BlurView>
+          )}
+        </View>
       </ScrollView>
 
 
@@ -861,7 +802,6 @@ export default function CreateStoryScreen() {
         prompt={formik.values.prompt}
         numPages={formik.values.numPages}
         styleName={getStyleTranslation(formik.values.selectedStyle).name}
-        styleEmoji={STORY_STYLES.find(s => s.id === formik.values.selectedStyle) || ''}
         languageName={t(`storyFolder.languages.${formik.values.language}`, LANGUAGES.find(l => l.id === formik.values.language)?.name || '')}
         languageFlag={LANGUAGES.find(l => l.id === formik.values.language)?.flag || ''}
         ageGroupName={t(`createStory.ageGroups.${formik.values.ageGroup}.name`)}

@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, ReactNode, useContext } from 'react';
 import { useUserStore, User } from '~/store/useUserStore';
+import { useNotificationStore } from '~/store/useNotificationStore';
 import { API_BASE_URL } from '~/config/api';
 import { setupTokenRefresh, clearTokenRefresh } from '~/utils/authRefresh';
 
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const loadStoredAuth = async () => {
     try {
       await loadFromStorage();
+      await useNotificationStore.getState().loadFromStorage();
 
       // Si on a un token mais pas de user, on le récupère depuis l'API
       if (token && !user) {

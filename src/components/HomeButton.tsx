@@ -11,9 +11,10 @@ type HomeButtonProps = {
   onPress: (event: GestureResponderEvent) => void;
   isNight: boolean;
   style?: string;
+  badge?: number;
 };
 
-export default function HomeButton({ onPress, title, description, icon, isNight, style }: HomeButtonProps) {
+export default function HomeButton({ onPress, title, description, icon, isNight, style, badge }: HomeButtonProps) {
   const iconColor = isNight ? "rgba(255, 255, 255, 0.8)" : "rgb(71, 85, 105)";
   const { playSound } = useSound();
   const { width } = useWindowDimensions();
@@ -31,6 +32,11 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       onPress={handlePress}
       className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10 md:h-full`}
     >
+      {!!badge && badge > 0 && (
+        <View className="absolute top-2 right-2 z-20 bg-red-500 rounded-full min-w-[22px] h-[22px] items-center justify-center px-1">
+          <Text className="text-white text-xs font-baloo-bold">{badge > 99 ? '99+' : badge}</Text>
+        </View>
+      )}
       <BlurView
         intensity={90}
         tint={isNight ? "dark" : "light"}
