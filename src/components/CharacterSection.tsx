@@ -294,18 +294,6 @@ export default function CharacterSection({
             ))}
           </View>
         )}
-
-        {/* Empty state */}
-        {!isLoading && !error && (!characters || characters.length === 0) && (
-          <View className="items-center py-2">
-            <Text
-              className={`font-baloo text-sm ${isNight ? 'text-white/60' : 'text-gray-500'
-                }`}
-            >
-              {t('character.noCharacters')}
-            </Text>
-          </View>
-        )}
       </BlurView>
 
       {/* Character Limit Modal */}

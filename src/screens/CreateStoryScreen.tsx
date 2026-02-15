@@ -833,10 +833,13 @@ export default function CreateStoryScreen() {
         }}
         editCharacter={editingCharacter}
         onCharacterCreated={(character) => {
-          // Ajouter le personnage créé s'il y a de la place
-          if (selectedCharacters.length < 2) {
-            setSelectedCharacters([...selectedCharacters, character]);
-          }
+          // Mettre à jour le personnage dans selectedCharacters s'il y est déjà
+          setSelectedCharacters(prev =>
+            prev.map((c) => (c.id === character.id ? character : c))
+          );
+        }}
+        onCharacterDeleted={(characterId) => {
+          setSelectedCharacters(selectedCharacters.filter((c) => c.id !== characterId));
         }}
       />
     </View>

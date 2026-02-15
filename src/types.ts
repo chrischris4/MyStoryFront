@@ -197,9 +197,22 @@ const HUMAN_EMOJIS = {
   senior: { MALE: '👴', FEMALE: '👵', default: '🧓' },
 };
 
+// Composants ZWJ pour la couleur de cheveux (fonctionne avec les emojis adultes)
+const HAIR_ZWJ_COMPONENTS: Record<string, string> = {
+  'red': '🦰',
+  'white': '🦳',
+  'gray': '🦳',
+};
+
+// Suffixes de genre pour les emojis blonds (👱)
+const GENDER_ZWJ_SUFFIXES: Record<string, string> = {
+  'MALE': '\u200D\u2642\uFE0F',
+  'FEMALE': '\u200D\u2640\uFE0F',
+};
+
 /**
  * Génère un emoji approprié pour un personnage humain
- * basé sur son âge, genre et couleur de peau
+ * basé sur son âge, genre, couleur de peau et couleur de cheveux
  */
 export const getHumanEmoji = (character: Character): string => {
   if (character.type !== 'HUMAN') {
@@ -220,15 +233,31 @@ export const getHumanEmoji = (character: Character): string => {
     ageGroup = 'senior';
   }
 
-  // Obtenir l'emoji de base selon le genre
   const gender = character.gender || 'default';
-  const baseEmoji = HUMAN_EMOJIS[ageGroup][gender as keyof typeof HUMAN_EMOJIS.child]
-    || HUMAN_EMOJIS[ageGroup].default;
-
-  // Ajouter le modificateur de teint de peau si disponible
   const skinModifier = character.skinColor
     ? SKIN_TONE_MODIFIERS[character.skinColor] || ''
     : '';
+
+  // Pour les adultes, gérer la couleur de cheveux
+  if (ageGroup === 'adult' && character.hairColor) {
+    // Blond : utiliser l'emoji 👱 comme base + skin + suffixe genre
+    if (character.hairColor === 'blond') {
+      const genderSuffix = GENDER_ZWJ_SUFFIXES[gender] || '';
+      return '👱' + skinModifier + genderSuffix;
+    }
+
+    // Roux, blanc, gris : emoji de base + skin + ZWJ + composant cheveux
+    const hairComponent = HAIR_ZWJ_COMPONENTS[character.hairColor];
+    if (hairComponent) {
+      const baseEmoji = HUMAN_EMOJIS[ageGroup][gender as keyof typeof HUMAN_EMOJIS.adult]
+        || HUMAN_EMOJIS[ageGroup].default;
+      return baseEmoji + skinModifier + '\u200D' + hairComponent;
+    }
+  }
+
+  // Par défaut : brun/noir ou tranches d'âge sans support cheveux
+  const baseEmoji = HUMAN_EMOJIS[ageGroup][gender as keyof typeof HUMAN_EMOJIS.child]
+    || HUMAN_EMOJIS[ageGroup].default;
 
   return baseEmoji + skinModifier;
 };

@@ -41,6 +41,7 @@ type CharacterModalProps = {
   visible: boolean;
   onClose: () => void;
   onCharacterCreated?: (character: Character) => void;
+  onCharacterDeleted?: (characterId: number) => void;
   editCharacter?: Character | null;
 };
 
@@ -51,6 +52,7 @@ type OptionSelectorProps = {
   onSelect: (value: string) => void;
   isNight: boolean;
   translationKey?: string;
+  errorMessage?: string;
 };
 
 function OptionSelector({
@@ -60,6 +62,7 @@ function OptionSelector({
   onSelect,
   isNight,
   translationKey,
+  errorMessage,
 }: OptionSelectorProps) {
   const { t } = useTranslation();
 
@@ -97,6 +100,9 @@ function OptionSelector({
           );
         })}
       </View>
+      {errorMessage && (
+        <Text className="text-red-500 text-sm mt-1 font-baloo">{errorMessage}</Text>
+      )}
     </View>
   );
 }
@@ -105,6 +111,7 @@ export default function CharacterModal({
   visible,
   onClose,
   onCharacterCreated,
+  onCharacterDeleted,
   editCharacter,
 }: CharacterModalProps) {
   const { t } = useTranslation();
@@ -141,9 +148,53 @@ export default function CharacterModal({
           .max(25, t('character.validation.nameMax'))
           .matches(/^[\p{L}0-9-]+$/u, t('character.validation.nameFormat'))
           .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value)),
+        gender: Yup.string()
+          .required(t('character.validation.genderRequired')),
+        age: Yup.string()
+          .when('characterType', {
+            is: 'HUMAN',
+            then: (schema) => schema
+              .required(t('character.validation.ageRequired'))
+              .test('max-age', t('character.validation.ageMax'), (value) => !value || parseInt(value, 10) <= 100),
+          }),
+        skinColor: Yup.string()
+          .when('characterType', {
+            is: 'HUMAN',
+            then: (schema) => schema.required(t('character.validation.skinColorRequired')),
+          }),
+        hairColor: Yup.string()
+          .when('characterType', {
+            is: 'HUMAN',
+            then: (schema) => schema.required(t('character.validation.hairColorRequired')),
+          }),
+        eyeColor: Yup.string()
+          .when('characterType', {
+            is: 'HUMAN',
+            then: (schema) => schema.required(t('character.validation.eyeColorRequired')),
+          }),
         clothing: Yup.string()
-          .max(80, t('character.validation.clothingMax')),
+          .max(80, t('character.validation.clothingMax'))
+          .when('characterType', {
+            is: 'HUMAN',
+            then: (schema) => schema.required(t('character.validation.clothingRequired')),
+          }),
+        animalAge: Yup.string()
+          .when('characterType', {
+            is: 'ANIMAL',
+            then: (schema) => schema.required(t('character.validation.animalAgeRequired')),
+          }),
+        animalType: Yup.string()
+          .when('characterType', {
+            is: 'ANIMAL',
+            then: (schema) => schema.required(t('character.validation.animalTypeRequired')),
+          }),
+        furColor: Yup.string()
+          .when('characterType', {
+            is: 'ANIMAL',
+            then: (schema) => schema.required(t('character.validation.furColorRequired')),
+          }),
         description: Yup.string()
+          .required(t('character.validation.descriptionRequired'))
           .max(80, t('character.validation.descriptionMax')),
       }),
     [t]
@@ -269,6 +320,7 @@ export default function CharacterModal({
                   text2: t('character.deletedMessage'),
                   props: { emoji: '🗑️' },
                 });
+                onCharacterDeleted?.(editCharacter.id);
                 onClose();
                 formik.resetForm();
               },
@@ -398,6 +450,7 @@ export default function CharacterModal({
                 selectedValue={formik.values.gender}
                 onSelect={(value) => formik.setFieldValue('gender', value)}
                 isNight={isNight}
+                errorMessage={formik.touched.gender && formik.errors.gender ? formik.errors.gender : undefined}
               />
 
               {/* Age - différent selon le type */}
@@ -411,9 +464,16 @@ export default function CharacterModal({
                   <View className="flex-row items-center gap-2">
                     <TextInput
                       className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                        } rounded-xl p-4 font-baloo w-24 text-center`}
+                        } rounded-xl p-4 font-baloo w-24 text-center ${formik.touched.age && formik.errors.age ? 'border-2 border-red-500' : ''}`}
                       value={formik.values.age}
-                      onChangeText={(text) => formik.setFieldValue('age', text.replace(/[^0-9]/g, ''))}
+                      onChangeText={(text) => {
+                        const digits = text.replace(/[^0-9]/g, '');
+                        const num = parseInt(digits, 10);
+                        if (digits === '' || num <= 100) {
+                          formik.setFieldValue('age', digits);
+                        }
+                      }}
+                      onBlur={() => formik.setFieldTouched('age', true)}
                       placeholder="8"
                       placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                       keyboardType="numeric"
@@ -425,6 +485,9 @@ export default function CharacterModal({
                       {t('character.yearsOld')}
                     </Text>
                   </View>
+                  {formik.touched.age && formik.errors.age && (
+                    <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.age}</Text>
+                  )}
                 </View>
               ) : (
                 <OptionSelector
@@ -434,6 +497,7 @@ export default function CharacterModal({
                   onSelect={(value) => formik.setFieldValue('animalAge', value)}
                   isNight={isNight}
                   translationKey="character.animalAges"
+                  errorMessage={formik.touched.animalAge && formik.errors.animalAge ? formik.errors.animalAge : undefined}
                 />
               )}
 
@@ -447,6 +511,7 @@ export default function CharacterModal({
                     onSelect={(value) => formik.setFieldValue('skinColor', value)}
                     isNight={isNight}
                     translationKey="character.skinColors"
+                    errorMessage={formik.touched.skinColor && formik.errors.skinColor ? formik.errors.skinColor : undefined}
                   />
 
                   <OptionSelector
@@ -456,6 +521,7 @@ export default function CharacterModal({
                     onSelect={(value) => formik.setFieldValue('hairColor', value)}
                     isNight={isNight}
                     translationKey="character.hairColors"
+                    errorMessage={formik.touched.hairColor && formik.errors.hairColor ? formik.errors.hairColor : undefined}
                   />
 
                   <OptionSelector
@@ -465,6 +531,7 @@ export default function CharacterModal({
                     onSelect={(value) => formik.setFieldValue('eyeColor', value)}
                     isNight={isNight}
                     translationKey="character.eyeColors"
+                    errorMessage={formik.touched.eyeColor && formik.errors.eyeColor ? formik.errors.eyeColor : undefined}
                   />
 
                   <View className="mb-4">
@@ -475,7 +542,7 @@ export default function CharacterModal({
                     </Text>
                     <TextInput
                       className={`${isNight ? 'bg-slate-700 text-white' : 'bg-gray-100 text-gray-800'
-                        } rounded-xl p-4 font-baloo`}
+                        } rounded-xl p-4 font-baloo ${formik.touched.clothing && formik.errors.clothing ? 'border-2 border-red-500' : ''}`}
                       value={formik.values.clothing}
                       onChangeText={(text) => formik.setFieldValue('clothing', text)}
                       onBlur={() => formik.setFieldTouched('clothing', true)}
@@ -503,6 +570,7 @@ export default function CharacterModal({
                     onSelect={(value) => formik.setFieldValue('animalType', value)}
                     isNight={isNight}
                     translationKey="character.animalTypes"
+                    errorMessage={formik.touched.animalType && formik.errors.animalType ? formik.errors.animalType : undefined}
                   />
 
                   <OptionSelector
@@ -512,6 +580,7 @@ export default function CharacterModal({
                     onSelect={(value) => formik.setFieldValue('furColor', value)}
                     isNight={isNight}
                     translationKey="character.furColors"
+                    errorMessage={formik.touched.furColor && formik.errors.furColor ? formik.errors.furColor : undefined}
                   />
                 </>
               )}

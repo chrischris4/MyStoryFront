@@ -28,6 +28,8 @@ import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
 import Slider from '@react-native-community/slider';
+import Toast from 'react-native-toast-message';
+import { useDeleteStory } from '~/hooks/useDeleteStory';
 
 type StoryFolderNavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList>,
@@ -110,6 +112,7 @@ export default function StoryFolder({
     isLoading = false,
 }: StoryFolderProps) {
     const { t } = useTranslation();
+    const deleteStoryMutation = useDeleteStory();
     const { width: screenWidth, height: screenHeight } = useWindowDimensions();
     const isMd = screenWidth >= 768;
     const numColumns = isMd ? 2 : 1;
@@ -119,6 +122,7 @@ export default function StoryFolder({
     const [expanded, setExpanded] = useState(false);
     const [showContent, setShowContent] = useState(false);
     const [layoutY, setLayoutY] = useState(0);
+    const [deletedStoryIds, setDeletedStoryIds] = useState<Set<number>>(new Set());
 
     // États des filtres
     const [showFilters, setShowFilters] = useState(false);
@@ -166,6 +170,9 @@ export default function StoryFolder({
     // Filtrage des stories
     const filteredStories = useMemo(() => {
         return stories.filter(story => {
+            // Exclure les stories supprimées localement
+            if (deletedStoryIds.has(story.id)) return false;
+
             // Filtre par nombre de pages
             const pagesMatch = (story.numberOfPages || 0) <= maxPages;
 
@@ -186,7 +193,7 @@ export default function StoryFolder({
 
             return pagesMatch && characterMatch && languageMatch;
         });
-    }, [stories, maxPages, selectedCharacterType, selectedLanguage]);
+    }, [stories, maxPages, selectedCharacterType, selectedLanguage, deletedStoryIds]);
 
     // Pour les non-premium sur les folders partagés, limiter à 5 histoires
     const isLockedPreview = !isPremium && isShared;
@@ -526,8 +533,27 @@ export default function StoryFolder({
                                                     </TouchableOpacity>
                                                 )}
                                                 <View>
-                                                    <View className="mb-1">
-                                                        <Text className={` ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
+                                                    <View className="mb-1 flex-row items-center justify-between">
+                                                        <Text className={`flex-1 ${isNight ? 'text-white' : 'text-slate-800'} text-xl font-baloo-semibold`}>{item.title}</Text>
+                                                        {isFailed && (
+                                                            <TouchableOpacity
+                                                                onPress={() => {
+                                                                    setDeletedStoryIds(prev => new Set(prev).add(item.id));
+                                                                    deleteStoryMutation.mutate(item.id, {
+                                                                        onSuccess: () => {
+                                                                            Toast.show({
+                                                                                type: 'success',
+                                                                                text1: t('storyFolder.storyDeleted'),
+                                                                            });
+                                                                        },
+                                                                    });
+                                                                }}
+                                                                disabled={deleteStoryMutation.isPending}
+                                                                className="ml-2 p-2"
+                                                            >
+                                                                <Feather name="trash-2" size={20} color="#dc2626" />
+                                                            </TouchableOpacity>
+                                                        )}
                                                     </View>
                                                     {isGenerating && (
                                                         <View className="flex-row items-center gap-2 bg-amber-100 rounded-xl p-3 mb-2">
