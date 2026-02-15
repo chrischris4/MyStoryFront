@@ -148,6 +148,9 @@
     "language": "Language",
     "theme": "Theme",
     "privacy": "Privacy",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
     "about": "About"
   },
   "transactions": {

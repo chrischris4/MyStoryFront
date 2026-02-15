@@ -107,6 +107,8 @@ export function useNotifications() {
     registerForPushNotifications().then((token) => {
       if (token) {
         setExpoPushToken(token);
+        console.log('Expo Push Token:', token);
+
         registerTokenOnBackend(token);
       }
     });

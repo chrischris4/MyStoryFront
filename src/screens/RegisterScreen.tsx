@@ -128,6 +128,8 @@ export default function RegisterScreen() {
             initialValues={{ email: '', password: '' }}
             validationSchema={registerSchema}
             onSubmit={handleRegister}
+            validateOnBlur={false}
+            validateOnChange={false}
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <>

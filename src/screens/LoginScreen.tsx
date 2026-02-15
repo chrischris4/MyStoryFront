@@ -122,6 +122,8 @@ export default function LoginScreen() {
             initialValues={{ email: '', password: '' }}
             validationSchema={loginSchema}
             onSubmit={handleLogin}
+            validateOnBlur={false}
+            validateOnChange={false}
           >
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, setTouched }) => (
               <>

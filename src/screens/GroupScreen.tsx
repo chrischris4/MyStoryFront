@@ -8,6 +8,7 @@ import {
   Animated,
   TouchableWithoutFeedback,
   useWindowDimensions,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -70,8 +71,8 @@ export default function GroupScreen() {
   const [showGroupModal, setShowGroupModal] = useState(false);
 
   // Hooks pour les données
-  const { data: myGroups = [], isLoading: isLoadingGroups } = useGroups();
-  const { data: invitations = [], isLoading: isLoadingInvitations } = useGroupInvitations();
+  const { data: myGroups = [], isLoading: isLoadingGroups, refetch: refetchGroups, isRefetching: isRefetchingGroups } = useGroups();
+  const { data: invitations = [], isLoading: isLoadingInvitations, refetch: refetchInvitations, isRefetching: isRefetchingInvitations } = useGroupInvitations();
   const { data: searchResults = [], isLoading: isSearching } = useSearchGroups(searchQuery);
 
   // Hooks pour les mutations
@@ -382,7 +383,23 @@ export default function GroupScreen() {
           </View>
 
           {/* Content */}
-          <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={activeTab === 'myGroups' ? isRefetchingGroups : isRefetchingInvitations}
+                onRefresh={() => {
+                  if (activeTab === 'myGroups') {
+                    refetchGroups();
+                  } else {
+                    refetchInvitations();
+                  }
+                }}
+                tintColor='#ffffff'
+              />
+            }
+          >
             {/* Mes groupes */}
             {activeTab === 'myGroups' && (
               <View className='mb-24'>
@@ -470,7 +487,7 @@ export default function GroupScreen() {
                         source={require('../../assets/animations/LoadingWhite.json')}
                         autoPlay
                         loop={true}
-                        style={{ width: 200, height: 200 }}
+                        style={{ width: 100, height: 100 }}
                       />
                     </Animated.View>
                   </View>

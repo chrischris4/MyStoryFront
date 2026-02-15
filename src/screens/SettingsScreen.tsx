@@ -227,15 +227,34 @@ export default function SettingsScreen() {
                     <TouchableOpacity
                         activeOpacity={0.8}
                         style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
-                        className='mb-3'
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             playSound('click');
-                            Linking.openURL('mailto:support@flun.app');
+                            Linking.openURL('mailto:contact.flun@gmail.com');
                         }}
                     >
                         <Feather name="mail" size={18} color={isNight ? "#fff" : "#000"} />
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>support@flun.app</Text>
+                    </TouchableOpacity>
+                </BlurView>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.legal')}</Text>
+                        <Feather name="book-open" size={20} color={isNight ? "#fff" : "#000"} />
+                    </View>
+                    <TouchableOpacity
+                        activeOpacity={0.8}
+                        style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]}
+                        className='mb-3'
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            playSound('click');
+                            Linking.openURL('https://sites.google.com/view/flunprivacypolicy/privacy-policy');
+                        }}
+                    >
+                        <Feather name="shield" size={18} color={isNight ? "#fff" : "#000"} />
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.privacyPolicy')}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         activeOpacity={0.8}
@@ -243,11 +262,11 @@ export default function SettingsScreen() {
                         onPress={() => {
                             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             playSound('click');
-                            Linking.openURL('https://flun.app');
+                            Linking.openURL('https://sites.google.com/view/flunprivacypolicy/terms-of-services');
                         }}
                     >
-                        <Feather name="globe" size={18} color={isNight ? "#fff" : "#000"} />
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>flun.app</Text>
+                        <Feather name="file-text" size={18} color={isNight ? "#fff" : "#000"} />
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.termsOfService')}</Text>
                     </TouchableOpacity>
                 </BlurView>
                 <BlurView intensity={90}

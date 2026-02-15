@@ -293,7 +293,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                       source={require('../../assets/animations/LoadingWhite.json')}
                       autoPlay
                       loop={true}
-                      style={{ width: 100, height: 100 }}
+                      style={{ width: 50, height: 50 }}
                     />) : (
                     <Text className="text-white font-baloo-semibold">{t('groups.invite')}</Text>
                   )}
@@ -331,7 +331,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                       source={require('../../assets/animations/LoadingWhite.json')}
                       autoPlay
                       loop={true}
-                      style={{ width: 100, height: 100 }}
+                      style={{ width: 50, height: 50 }}
                     />
                   </Animated.View>
                 </View>
@@ -416,7 +416,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                       source={require('../../assets/animations/LoadingWhite.json')}
                       autoPlay
                       loop={true}
-                      style={{ width: 100, height: 100 }}
+                      style={{ width: 50, height: 50 }}
                     />
                   </Animated.View>
                 </View>
