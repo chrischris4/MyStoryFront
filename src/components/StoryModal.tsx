@@ -259,9 +259,9 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
 
                     {/* Contenu texte et boutons */}
                     {loading ? (
-                        <View className="flex-1 w-full justify-between relative p-4 md:p-6">
+                        <View className="flex h-full justify-between items-center relative mb-4">
                             <Animated.View
-                                className="h-24 md:h-28"
+                                className="h-28 md:h-32"
                                 style={{
                                     backgroundColor: groundColor,
                                     borderTopWidth: 4,
