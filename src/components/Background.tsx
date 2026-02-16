@@ -9,7 +9,7 @@ type BackgroundProps = {
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const CLOUD_WIDTH = 250; // Largeur approximative d'un nuage
 // Distance totale: du nuage le plus à gauche (-CLOUD_WIDTH - SCREEN_WIDTH * 1.5) jusqu'à sortie droite
-const TOTAL_TRAVEL = SCREEN_WIDTH * 2.5 + CLOUD_WIDTH * 2;
+const TOTAL_TRAVEL = SCREEN_WIDTH * 3.5 + CLOUD_WIDTH * 2;
 
 export default function Background({ isNight = false }: BackgroundProps) {
     const cloudAnim = useRef(new Animated.Value(0)).current;
@@ -56,7 +56,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
             <Animated.View
                 style={{
                     transform: [{ translateX: cloudAnim }],
-                    left: -CLOUD_WIDTH * 0.5,
+                    left: -CLOUD_WIDTH * 1.5,
                 }}
                 className='absolute top-40'
             >

@@ -390,7 +390,7 @@ export default function CreateStoryScreen() {
         onPress={() => setShowStoryExample(true)}
         className={`flex-row items-center gap-2 mx-4 md:mx-8 mb-4 px-4 py-2 rounded-xl self-start ${isNight ? 'bg-white/10' : 'bg-black/10'}`}
       >
-        <Feather name="eye" size={16} color={isNight ? '#fff' : '#334155'} />
+        <Feather name="book-open" size={16} color={isNight ? '#fff' : '#334155'} />
         <Text className={`font-baloo-medium text-sm ${isNight ? 'text-white' : 'text-slate-700'}`}>
           {t('storyExample.seeExample', 'Voir un exemple')}
         </Text>

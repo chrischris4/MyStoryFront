@@ -75,7 +75,6 @@ export default function SharedStoriesScreen() {
 
   // Show bubble after 2 seconds delay
   useEffect(() => {
-    if (!isPremium) {
       const timer = setTimeout(() => {
         setShowBubble(true);
         Animated.timing(bubbleOpacity, {
@@ -84,10 +83,8 @@ export default function SharedStoriesScreen() {
           useNativeDriver: true,
         }).start();
       }, 2000);
-
       return () => clearTimeout(timer);
-    }
-  }, [isPremium]);
+  },);
 
 
   return (
@@ -115,7 +112,6 @@ export default function SharedStoriesScreen() {
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-10'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
-      {!isPremium && (
         <Animated.View
           style={{
             position: 'absolute',
@@ -135,7 +131,6 @@ export default function SharedStoriesScreen() {
             />
           </TouchableOpacity>
         </Animated.View>
-      )}
       <Text className={` ${isNight ? "text-white" : "text-black"} text-4xl md:text-5xl font-baloo-bold px-4 md:px-8 pt-4`}>{t('sharedStories.title')}</Text>
       {isPremium ? (
         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-xl md:text-2xl font-baloo mb-4 px-4 md:px-8`}>
@@ -169,7 +164,7 @@ export default function SharedStoriesScreen() {
           stories={sharedStories}
           isLoading={loading}
         />
-        {!isPremium && showBubble && (
+        {showBubble && (
           <Animated.View
             className="absolute bottom-60 md:bottom-80 right-20 md:right-72 z-10"
             style={{ opacity: bubbleOpacity }}
