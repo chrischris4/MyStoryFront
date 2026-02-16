@@ -18,7 +18,6 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { MainTabParamList, RootStackParamList } from '~/types';
-import LottieView from 'lottie-react-native';
 import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
 import { useQueryClient } from '@tanstack/react-query';
@@ -27,6 +26,7 @@ import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import CharacterSection from '~/components/CharacterSection';
 import CharacterModal from '~/components/CharacterModal';
+import StoryExampleModal from '~/components/StoryExampleModal';
 import type { Character } from '~/types';
 import { SKIN_COLORS, HAIR_COLORS, EYE_COLORS, ANIMAL_TYPES, FUR_COLORS, GENDERS, ANIMAL_AGE_RANGES } from '~/types';
 
@@ -131,6 +131,7 @@ export default function CreateStoryScreen() {
   const { t } = useTranslation();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [showCharacterModal, setShowCharacterModal] = useState(false);
+  const [showStoryExample, setShowStoryExample] = useState(false);
   const [selectedCharacters, setSelectedCharacters] = useState<Character[]>([]);
   const [editingCharacter, setEditingCharacter] = useState<Character | null>(null);
   const { isNight } = useTheme();
@@ -384,7 +385,16 @@ export default function CreateStoryScreen() {
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       />
       <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
-      <Text className={`text-xl md:text-2xl font-baloo pb-4 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
+      <Text className={`text-xl md:text-2xl font-baloo pb-2 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
+      <TouchableOpacity
+        onPress={() => setShowStoryExample(true)}
+        className={`flex-row items-center gap-2 mx-4 md:mx-8 mb-4 px-4 py-2 rounded-xl self-start ${isNight ? 'bg-white/10' : 'bg-black/10'}`}
+      >
+        <Feather name="eye" size={16} color={isNight ? '#fff' : '#334155'} />
+        <Text className={`font-baloo-medium text-sm ${isNight ? 'text-white' : 'text-slate-700'}`}>
+          {t('storyExample.seeExample', 'Voir un exemple')}
+        </Text>
+      </TouchableOpacity>
       <ScrollView
         className="flex-1 px-4 md:px-8 z-20"
         contentContainerStyle={{ paddingBottom: 100 }}
@@ -823,6 +833,12 @@ export default function CreateStoryScreen() {
           onClose={() => close()}
         />
       )}
+
+      {/* Modal d'exemple d'histoire */}
+      <StoryExampleModal
+        visible={showStoryExample}
+        onClose={() => setShowStoryExample(false)}
+      />
 
       {/* Modal de création/édition de personnage */}
       <CharacterModal
