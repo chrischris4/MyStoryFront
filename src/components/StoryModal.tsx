@@ -254,9 +254,6 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                             />
                         </Animated.View> */}
                     </Animated.View>
-
-
-
                     {/* Contenu texte et boutons */}
                     {loading ? (
                         <View className="flex h-full justify-between items-center relative mb-4">
@@ -278,8 +275,6 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                     <Animated.Text className="text-xl font-baloo-medium text-center ">
                                         {t('storyCreation.creationInProgress')}
                                     </Animated.Text>
-
-
                                 </View>
                                 <LottieView
                                     source={require('../../assets/animations/LoadingWhite.json')}
@@ -334,15 +329,6 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                                     resizeMode="cover"
                                                 />
                                             </View>
-                                            {description && (
-                                                <Animated.Text
-                                                    className="font-baloo text-base md:text-lg text-center mt-2"
-                                                    style={{ color: textColor }}
-                                                    numberOfLines={2}
-                                                >
-                                                    {description}
-                                                </Animated.Text>
-                                            )}
                                         </BlurView>
                                     </View>
                                 )}

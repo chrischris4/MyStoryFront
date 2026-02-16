@@ -412,50 +412,50 @@ export default function StoryDetailScreen() {
 
           {/* Skeleton Like Button */}
           <View className='flex flex-row gap-3'>
-          <BlurView
-            intensity={90}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              padding: 16, width: 56,
-              height: 56,
-              borderRadius: 9999,
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
-            }}
-          >
-            <Animated.View
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
               style={{
-                opacity: skeletonAnim,
-                width: 24,
-                height: 24,
-                backgroundColor: isNight ? '#475569' : '#cbd5e1',
-                borderRadius: 12,
+                padding: 16, width: 56,
+                height: 56,
+                borderRadius: 9999,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
               }}
-            />
-          </BlurView>
-          <BlurView
-            intensity={90}
-            tint={isNight ? "dark" : "light"}
-            style={{
-              padding: 16, width: 56,
-              height: 56,
-              borderRadius: 9999,
-              justifyContent: 'center',
-              alignItems: 'center',
-              overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
-            }}
-          >
-            <Animated.View
+            >
+              <Animated.View
+                style={{
+                  opacity: skeletonAnim,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                  borderRadius: 12,
+                }}
+              />
+            </BlurView>
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
               style={{
-                opacity: skeletonAnim,
-                width: 24,
-                height: 24,
-                backgroundColor: isNight ? '#475569' : '#cbd5e1',
-                borderRadius: 12,
+                padding: 16, width: 56,
+                height: 56,
+                borderRadius: 9999,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden', backgroundColor: isNight ? '#1e293b90' : '#38b6ff10'
               }}
-            />
-          </BlurView>
+            >
+              <Animated.View
+                style={{
+                  opacity: skeletonAnim,
+                  width: 24,
+                  height: 24,
+                  backgroundColor: isNight ? '#475569' : '#cbd5e1',
+                  borderRadius: 12,
+                }}
+              />
+            </BlurView>
           </View>
         </View>
 
@@ -924,16 +924,18 @@ export default function StoryDetailScreen() {
           <Text className='text-white text-lg font-baloo-medium'>{t('storyDetail.readFullscreen')} </Text>
           <Feather name="play" size={20} color="white" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            playSound('pop');
-            setShowDeleteModal(true);
-          }}
-          className='px-2 md:px-4'
-        >
-          <Feather name="trash-2" size={24} color="white" />
-        </TouchableOpacity>
+        {currentUser?.id === story.user?.id && (
+          <TouchableOpacity
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              playSound('pop');
+              setShowDeleteModal(true);
+            }}
+            className='px-2 md:px-4'
+          >
+            <Feather name="trash-2" size={24} color="white" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Bouton retour en haut */}
