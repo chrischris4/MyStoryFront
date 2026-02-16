@@ -3,11 +3,14 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import Toast from 'react-native-toast-message';
 import { useCharacters } from '~/hooks/useCharacters';
+import { useDeleteCharacter } from '~/hooks/useDeleteCharacter';
 import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
 import { getHumanEmoji } from '~/types';
 import CharacterLimitModal from './CharacterLimitModal';
+import DeleteCharacterModal from './DeleteCharacterModal';
 import LottieView from 'lottie-react-native';
 
 const MAX_CHARACTERS_PER_STORY = 2;
@@ -24,11 +27,15 @@ function CharacterCard({
   character,
   isSelected,
   onPress,
+  onEdit,
+  onDelete,
   isNight,
 }: {
   character: Character;
   isSelected: boolean;
   onPress: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
   isNight: boolean;
 }) {
   return (
@@ -61,12 +68,29 @@ function CharacterCard({
         </Text>
       </View>
 
-      {/* Selected indicator */}
-      {isSelected && (
-        <View className="absolute top-2 right-2 bg-green-500 rounded-full w-6 h-6 items-center justify-center">
-          <Feather name="check" size={14} color="#fff" />
-        </View>
-      )}
+      {/* Edit button */}
+      <TouchableOpacity
+        onPress={(e) => {
+          e.stopPropagation();
+          onEdit();
+        }}
+        className="absolute top-2 left-2 rounded-full w-6 h-6 items-center justify-center"
+        style={{ backgroundColor: isNight ? '#475569' : '#e5e7eb' }}
+      >
+        <Feather name="edit-2" size={12} color={isNight ? '#fff' : '#374151'} />
+      </TouchableOpacity>
+
+      {/* Delete button */}
+      <TouchableOpacity
+        onPress={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="absolute top-2 right-2 rounded-full w-6 h-6 items-center justify-center"
+        style={{ backgroundColor: isNight ? '#475569' : '#e5e7eb' }}
+      >
+        <Feather name="trash-2" size={12} color="#dc2626" />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
 }
@@ -122,8 +146,10 @@ export default function CharacterSection({
 }: CharacterSectionProps) {
   const { t } = useTranslation();
   const { data: characters, isLoading, error } = useCharacters();
+  const deleteCharacterMutation = useDeleteCharacter();
   const subscriptionPlan = useUserStore((state) => state.user?.subscriptionPlan ?? 'FREE');
   const [showLimitModal, setShowLimitModal] = useState(false);
+  const [characterToDelete, setCharacterToDelete] = useState<Character | null>(null);
 
   const isFreeUser = subscriptionPlan === 'FREE' || subscriptionPlan === 'EXPLORER';
   const characterLimit = CHARACTER_LIMITS[subscriptionPlan] ?? CHARACTER_LIMITS.FREE;
@@ -136,6 +162,27 @@ export default function CharacterSection({
     } else {
       onCreateNew();
     }
+  };
+
+  const handleDeleteCharacter = (character: Character) => {
+    setCharacterToDelete(character);
+  };
+
+  const confirmDeleteCharacter = () => {
+    if (!characterToDelete) return;
+
+    deleteCharacterMutation.mutate(characterToDelete.id, {
+      onSuccess: () => {
+        onCharactersChange(selectedCharacters.filter((c) => c.id !== characterToDelete.id));
+        Toast.show({
+          type: 'success',
+          text1: t('character.deleted'),
+          text2: t('character.deletedMessage'),
+          props: { emoji: '🗑️' },
+        });
+        setCharacterToDelete(null);
+      },
+    });
   };
 
   // Build character summary for display
@@ -221,6 +268,8 @@ export default function CharacterSection({
                   key={character.id}
                   character={character}
                   isSelected={isSelected}
+                  onEdit={() => onEditCharacter(character)}
+                  onDelete={() => handleDeleteCharacter(character)}
                   onPress={() => {
                     if (isSelected) {
                       // Désélectionner le personnage
@@ -271,24 +320,12 @@ export default function CharacterSection({
                       {getCharacterSummary(character)}
                     </Text>
                   </View>
-                  <View className="flex-row gap-2">
-                    <TouchableOpacity
-                      onPress={() => onEditCharacter(character)}
-                      className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
-                    >
-                      <Feather
-                        name="edit-2"
-                        size={18}
-                        color={isNight ? '#fff' : '#374151'}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={() => onCharactersChange(selectedCharacters.filter((c) => c.id !== character.id))}
-                      className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
-                    >
-                      <Feather name="x" size={18} color={isNight ? '#fff' : '#374151'} />
-                    </TouchableOpacity>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => onCharactersChange(selectedCharacters.filter((c) => c.id !== character.id))}
+                    className={`p-2 rounded-lg ${isNight ? 'bg-slate-600' : 'bg-gray-200'}`}
+                  >
+                    <Feather name="x" size={18} color={isNight ? '#fff' : '#374151'} />
+                  </TouchableOpacity>
                 </View>
               </View>
             ))}
@@ -301,6 +338,15 @@ export default function CharacterSection({
         visible={showLimitModal}
         onClose={() => setShowLimitModal(false)}
         isFreeUser={isFreeUser}
+      />
+
+      {/* Delete Character Modal */}
+      <DeleteCharacterModal
+        visible={!!characterToDelete}
+        character={characterToDelete}
+        onConfirm={confirmDeleteCharacter}
+        onCancel={() => setCharacterToDelete(null)}
+        isPending={deleteCharacterMutation.isPending}
       />
     </View>
   );

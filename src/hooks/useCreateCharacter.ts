@@ -8,7 +8,10 @@ export const useCreateCharacter = () => {
   return useMutation({
     mutationFn: (input: CreateCharacterInput): Promise<Character> =>
       api.createCharacter(input),
-    onSuccess: () => {
+    onSuccess: (newCharacter) => {
+      queryClient.setQueryData<Character[]>(['characters'], (old) =>
+        old ? [...old, newCharacter] : [newCharacter]
+      );
       queryClient.invalidateQueries({ queryKey: ['characters'] });
     },
   });

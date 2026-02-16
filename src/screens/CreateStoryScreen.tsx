@@ -636,7 +636,7 @@ export default function CreateStoryScreen() {
                     <TouchableOpacity
                       key={lang.id}
                       onPress={() => formik.setFieldValue('language', lang.id)}
-                      className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                      className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
                     >
                       <Text className="text-xl md:text-2xl">{lang.flag}</Text>
                       <Text className={`font-baloo-medium md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
@@ -674,7 +674,7 @@ export default function CreateStoryScreen() {
                     <TouchableOpacity
                       key={age.id}
                       onPress={() => formik.setFieldValue('ageGroup', age.id)}
-                      className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-white/10' : 'bg-black/10'}`}
+                      className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
                     >
                       <View className="flex-row items-center gap-2 mb-1">
                         <Text className="text-xl md:text-2xl">{age.emoji}</Text>

@@ -13,7 +13,10 @@ export const useUpdateCharacter = () => {
   return useMutation({
     mutationFn: ({ id, data }: UpdateCharacterParams): Promise<Character> =>
       api.updateCharacter(id, data),
-    onSuccess: () => {
+    onSuccess: (updatedCharacter) => {
+      queryClient.setQueryData<Character[]>(['characters'], (old) =>
+        old ? old.map((c) => (c.id === updatedCharacter.id ? updatedCharacter : c)) : []
+      );
       queryClient.invalidateQueries({ queryKey: ['characters'] });
     },
   });

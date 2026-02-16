@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import { useCreateCharacter } from '~/hooks/useCreateCharacter';
 import { useUpdateCharacter } from '~/hooks/useUpdateCharacter';
 import { useDeleteCharacter } from '~/hooks/useDeleteCharacter';
 import Toast from 'react-native-toast-message';
-import { Alert } from 'react-native';
+import DeleteCharacterModal from './DeleteCharacterModal';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { containsProfanity } from '~/utils/profanityFilter';
@@ -83,10 +83,10 @@ function OptionSelector({
                 onSelect(option.id);
               }}
               className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isSelected
-                  ? 'bg-green-500'
-                  : isNight
-                    ? 'bg-slate-700'
-                    : 'bg-gray-200'
+                ? 'bg-green-500'
+                : isNight
+                  ? 'bg-slate-700'
+                  : 'bg-gray-200'
                 }`}
             >
               {option.emoji && <Text className="text-base">{option.emoji}</Text>}
@@ -120,6 +120,8 @@ export default function CharacterModal({
   const updateCharacterMutation = useUpdateCharacter();
   const deleteCharacterMutation = useDeleteCharacter();
 
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const isEditing = !!editCharacter;
 
   const getDescriptionPlaceholder = () => {
@@ -299,43 +301,33 @@ export default function CharacterModal({
 
   const handleDelete = () => {
     if (!editCharacter) return;
+    setShowDeleteModal(true);
+  };
 
-    Alert.alert(
-      t('character.deleteConfirm'),
-      t('character.deleteWarning'),
-      [
-        {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('common.delete'),
-          style: 'destructive',
-          onPress: () => {
-            deleteCharacterMutation.mutate(editCharacter.id, {
-              onSuccess: () => {
-                Toast.show({
-                  type: 'success',
-                  text1: t('character.deleted'),
-                  text2: t('character.deletedMessage'),
-                  props: { emoji: '🗑️' },
-                });
-                onCharacterDeleted?.(editCharacter.id);
-                onClose();
-                formik.resetForm();
-              },
-              onError: (error) => {
-                Toast.show({
-                  type: 'error',
-                  text1: t('common.error'),
-                  text2: error instanceof Error ? error.message : t('errors.unknownError'),
-                });
-              },
-            });
-          },
-        },
-      ]
-    );
+  const confirmDelete = () => {
+    if (!editCharacter) return;
+
+    deleteCharacterMutation.mutate(editCharacter.id, {
+      onSuccess: () => {
+        Toast.show({
+          type: 'success',
+          text1: t('character.deleted'),
+          text2: t('character.deletedMessage'),
+          props: { emoji: '🗑️' },
+        });
+        setShowDeleteModal(false);
+        onCharacterDeleted?.(editCharacter.id);
+        onClose();
+        formik.resetForm();
+      },
+      onError: (error) => {
+        Toast.show({
+          type: 'error',
+          text1: t('common.error'),
+          text2: error instanceof Error ? error.message : t('errors.unknownError'),
+        });
+      },
+    });
   };
 
   return (
@@ -361,7 +353,7 @@ export default function CharacterModal({
             </View>
 
             {/* Content */}
-            <ScrollView className="p-6" showsVerticalScrollIndicator={false}>
+            <ScrollView ref={scrollViewRef} className="p-6" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
               {/* Type selector */}
               <View className="mb-4">
                 <Text
@@ -373,18 +365,18 @@ export default function CharacterModal({
                   <TouchableOpacity
                     onPress={() => formik.setFieldValue('characterType', 'HUMAN')}
                     className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${formik.values.characterType === 'HUMAN'
-                        ? 'bg-blue-500'
-                        : isNight
-                          ? 'bg-slate-700'
-                          : 'bg-gray-200'
+                      ? 'bg-blue-500'
+                      : isNight
+                        ? 'bg-slate-700'
+                        : 'bg-gray-200'
                       }`}
                   >
                     <Text
                       className={`font-baloo-semibold ${formik.values.characterType === 'HUMAN'
-                          ? 'text-white'
-                          : isNight
-                            ? 'text-white/80'
-                            : 'text-gray-700'
+                        ? 'text-white'
+                        : isNight
+                          ? 'text-white/80'
+                          : 'text-gray-700'
                         }`}
                     >
                       {t('character.human')}
@@ -393,18 +385,18 @@ export default function CharacterModal({
                   <TouchableOpacity
                     onPress={() => formik.setFieldValue('characterType', 'ANIMAL')}
                     className={`flex-1 py-4 rounded-xl flex-row items-center justify-center gap-2 ${formik.values.characterType === 'ANIMAL'
-                        ? 'bg-blue-500'
-                        : isNight
-                          ? 'bg-slate-700'
-                          : 'bg-gray-200'
+                      ? 'bg-blue-500'
+                      : isNight
+                        ? 'bg-slate-700'
+                        : 'bg-gray-200'
                       }`}
                   >
                     <Text
                       className={`font-baloo-semibold ${formik.values.characterType === 'ANIMAL'
-                          ? 'text-white'
-                          : isNight
-                            ? 'text-white/80'
-                            : 'text-gray-700'
+                        ? 'text-white'
+                        : isNight
+                          ? 'text-white/80'
+                          : 'text-gray-700'
                         }`}
                     >
                       {t('character.animal')}
@@ -546,6 +538,11 @@ export default function CharacterModal({
                       value={formik.values.clothing}
                       onChangeText={(text) => formik.setFieldValue('clothing', text)}
                       onBlur={() => formik.setFieldTouched('clothing', true)}
+                      onFocus={() => {
+                        setTimeout(() => {
+                          scrollViewRef.current?.scrollToEnd({ animated: true });
+                        }, 300);
+                      }}
                       placeholder={t('character.clothingPlaceholder')}
                       placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                       multiline
@@ -598,6 +595,11 @@ export default function CharacterModal({
                   value={formik.values.description}
                   onChangeText={(text) => formik.setFieldValue('description', text)}
                   onBlur={() => formik.setFieldTouched('description', true)}
+                  onFocus={() => {
+                    setTimeout(() => {
+                      scrollViewRef.current?.scrollToEnd({ animated: true });
+                    }, 300);
+                  }}
                   placeholder={getDescriptionPlaceholder()}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                   multiline
@@ -610,25 +612,24 @@ export default function CharacterModal({
                   <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.description}</Text>
                 )}
               </View>
-              {isEditing && (
-                <TouchableOpacity
-                  className={`bg-red-500 px-6 py-4 rounded-xl items-center flex-row justify-center gap-2 ${isPending ? 'opacity-50' : ''}`}
-                  onPress={handleDelete}
-                  disabled={isPending}
-                >
-                  <Feather name="trash-2" size={20} color="#fff" />
-                  <Text className="text-white font-baloo-semibold text-lg">
-                    {t('common.delete')}
-                  </Text>
-                </TouchableOpacity>
-              )}
             </ScrollView>
 
             {/* Actions */}
-            <View className="p-6 pt-0 gap-3 mt-3">
+            <View className="p-6 flex flex-row pt-0 gap-3 mt-3">
+              <TouchableOpacity
+                className={`${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 flex-1 py-4 rounded-xl items-center`}
+                onPress={handleClose}
+                disabled={isPending}
+              >
+                <Text
+                  className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}
+                >
+                  {t('common.cancel')}
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 className={`${isNight ? 'bg-blue-600' : 'bg-[#0D1821]'
-                  } px-6 py-4 rounded-xl items-center ${isPending ? 'opacity-50' : ''}`}
+                  } px-6 py-4 rounded-xl flex-1 justify-center items-center ${isPending ? 'opacity-50' : ''}`}
                 onPress={() => formik.handleSubmit()}
                 disabled={isPending}
               >
@@ -640,22 +641,18 @@ export default function CharacterModal({
                       : t('character.createCharacter')}
                 </Text>
               </TouchableOpacity>
-
-              <TouchableOpacity
-                className={`${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
-                onPress={handleClose}
-                disabled={isPending}
-              >
-                <Text
-                  className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}
-                >
-                  {t('common.cancel')}
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      <DeleteCharacterModal
+        visible={showDeleteModal}
+        character={editCharacter ?? null}
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteModal(false)}
+        isPending={deleteCharacterMutation.isPending}
+      />
     </Modal>
   );
 }
