@@ -251,7 +251,7 @@ export default function HomeScreen() {
             style={{
               position: 'absolute',
               bottom: 24,
-              right: 50,
+              right: 10,
               zIndex: 100,
             }}
           >

@@ -571,17 +571,17 @@
     "description": "Additional description",
     "descriptionPlaceholder": "Describe personality, special traits...",
     "descriptionPlaceholders": {
-      "humanMale": "Ex: He is brave and loves going on adventures",
-      "humanFemale": "Ex: She is curious and loves exploring the world",
-      "human": "Ex: Cheerful personality, loves adventures",
+      "humanMale": "Ex: He has short hair, he is tall and strong",
+      "humanFemale": "Ex: She has long hair, she is small and quick",
+      "human": "Ex: Blonde hair, green eyes, wears an orange hat",
       "dog": "Ex: A golden retriever wearing a red collar",
-      "cat": "Ex: A ginger cat who loves sleeping in the sun",
-      "rabbit": "Ex: Has long ears and loves carrots",
-      "bird": "Ex: A colorful parrot who loves to sing",
+      "cat": "Ex: A long-haired cat with a white patch on its forehead",
+      "rabbit": "Ex: Has long grey ears and very soft fur",
+      "bird": "Ex: A colorful red and green parrot",
       "horse": "Ex: A majestic horse with a long mane",
-      "dragon": "Ex: A friendly dragon who breathes sparkles",
+      "dragon": "Ex: A large white dragon with sparkling blue eyes",
       "unicorn": "Ex: A magical unicorn with a golden horn",
-      "bear": "Ex: A soft brown bear who loves honey",
+      "bear": "Ex: A small yellow bear wearing a red t-shirt",
       "animal": "Ex: Describe its appearance, accessories..."
     },
     "skinColor": "Skin color",
@@ -696,5 +696,46 @@
     "sending": "Sending...",
     "reportSent": "Your report has been sent successfully",
     "reportError": "Error while sending the report"
+  },
+  "storyExample": {
+    "title": "Story example",
+    "subtitle": "Here is what you can get by creating a story",
+    "storyTitle": "Story title",
+    "promptUsed": "Prompt used",
+    "characters": "Characters",
+    "style": "Style",
+    "ageGroup": "Age group",
+    "language": "Language",
+    "numPages": "Number of pages",
+    "coverTitle": "Story cover",
+    "pagesTitle": "Story pages",
+    "readFullScreen": "Read fullscreen",
+    "close": "Close",
+    "example": {
+      "title": "The adventure of Mimi and Anton",
+      "prompt": "Mimi and Anton go on a mountain hike, along the way they discover a secret cave with sparkling crystals. Anton picks up a mysterious trail that leads them to a hidden lake. There they hear a voice that gives them a mission: find a magic flower at the top. Together they overcome obstacles and find the flower that lights up the whole valley.",
+      "style": "Classic",
+      "age": "8+ years",
+      "language": "🇫🇷 French",
+      "characters": {
+        "mimi": "Girl, 13 years old, fair skin, black hair, green eyes, she has long hair",
+        "anton": "Dog, young, white coat, a white Jack Russell with brown patches"
+      },
+      "pages": {
+        "cover": "Join Mimi and Anton on a magical adventure! Hike, discover secrets and find the flower that will light up the valley!",
+        "page1": "On a sunny morning, Anton and Mimi get ready for their mountain hike, eager to discover new horizons.",
+        "page2": "« I can feel this day is going to be incredible! » exclaims Anton. He smiles with enthusiasm.",
+        "page3": "They start climbing the mountain, admiring the magnificent landscape all around them, each step bringing them closer to their goal.",
+        "page4": "« Look at that cave! » cries Mimi, pointing to a mysterious opening in the rock. Anton nods with curiosity.",
+        "page5": "Entering the cave, they discover sparkling crystals that glitter like stars on the dark ceiling.",
+        "page6": "« It shines so much! » whispers Anton in amazement. Mimi nods with a big smile.",
+        "page7": "Suddenly, Anton picks up a mysterious trail leading to a hidden lake behind the trees. « Follow me! » he says with determination.",
+        "page8": "« Look at this lake! » exclaims Mimi in wonder. Their eyes shine at the beauty of the landscape.",
+        "page9": "« Hello young adventurers! » says the wise voice near the lake.",
+        "page10": "« You must find a magic flower at the top of the mountain » explains the voice wisely. The two friends nod seriously.",
+        "page11": "« Together we can accomplish this mission! » says Anton with determination. Mimi smiles and takes his hand.",
+        "page12": "« We found the magic flower! » cries Mimi joyfully, holding the shining flower. Anton smiles proudly beside her."
+      }
+    }
   }
 }

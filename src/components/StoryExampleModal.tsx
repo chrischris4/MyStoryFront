@@ -1,109 +1,62 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView, useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import FullScreenStoryModal from './FullScreenStoryModal';
 
 type StoryExampleModalProps = {
   visible: boolean;
   onClose: () => void;
 };
 
-const EXAMPLE_TITLE = 'Le Voyage de Luna et Félix';
-
-const EXAMPLE_PROMPT =
-  'Luna, une petite fille courageuse, et Félix, son chat magique, partent explorer une forêt enchantée où ils découvrent des créatures fantastiques et apprennent la valeur de l\'amitié.';
-
-const EXAMPLE_STYLE = 'Classique';
-const EXAMPLE_AGE = '4-5 ans';
-const EXAMPLE_LANGUAGE = '🇫🇷 Français';
-
-const EXAMPLE_CHARACTERS = [
-  {
-    name: 'Luna',
-    emoji: '👧🏻',
-    description: 'Fille, 5 ans, peau claire, cheveux blonds, yeux bleus',
-  },
-  {
-    name: 'Félix',
-    emoji: '🐱',
-    description: 'Chat, jeune, pelage doré',
-  },
-];
-
-const EXAMPLE_PAGES = [
-  {
-    page: 1,
-    text: 'Il était une fois, dans un petit village au bord de la forêt, une petite fille nommée Luna qui vivait avec son chat magique Félix.',
-    imageUrl: 'https://picsum.photos/seed/story1/800/500',
-  },
-  {
-    page: 2,
-    text: 'Un matin, Luna découvrit une carte mystérieuse dans le grenier. Elle montrait un chemin secret menant au cœur de la forêt enchantée.',
-    imageUrl: 'https://picsum.photos/seed/story2/800/500',
-  },
-  {
-    page: 3,
-    text: '« Allons-y Félix ! » s\'exclama Luna en enfilant ses bottes d\'aventurière. Félix miaula joyeusement et ses moustaches se mirent à briller.',
-    imageUrl: 'https://picsum.photos/seed/story3/800/500',
-  },
-  {
-    page: 4,
-    text: 'Ils traversèrent le vieux pont de pierre couvert de mousse. En dessous, la rivière chantait une mélodie douce et envoûtante.',
-    imageUrl: 'https://picsum.photos/seed/story4/800/500',
-  },
-  {
-    page: 5,
-    text: 'Dans la forêt, les arbres étaient si grands que leurs cimes touchaient les nuages. Des lucioles dansaient entre les branches comme des étoiles tombées du ciel.',
-    imageUrl: 'https://picsum.photos/seed/story5/800/500',
-  },
-  {
-    page: 6,
-    text: 'Soudain, ils rencontrèrent un petit lapin bleu qui pleurait. « J\'ai perdu mon chemin pour rentrer chez moi », sanglota-t-il.',
-    imageUrl: 'https://picsum.photos/seed/story6/800/500',
-  },
-  {
-    page: 7,
-    text: '« Ne t\'inquiète pas, nous allons t\'aider ! » dit Luna. Félix renifla l\'air et ses moustaches magiques pointèrent vers le nord.',
-    imageUrl: 'https://picsum.photos/seed/story7/800/500',
-  },
-  {
-    page: 8,
-    text: 'Ensemble, ils traversèrent un champ de fleurs géantes qui changeaient de couleur à chaque pas. Le lapin bleu retrouva le sourire.',
-    imageUrl: 'https://picsum.photos/seed/story8/800/500',
-  },
-  {
-    page: 9,
-    text: 'Ils arrivèrent devant une cascade arc-en-ciel. Derrière elle se cachait une grotte scintillante remplie de cristaux lumineux.',
-    imageUrl: 'https://picsum.photos/seed/story9/800/500',
-  },
-  {
-    page: 10,
-    text: 'Dans la grotte, une vieille tortue sage les accueillit. « Bienvenue, jeunes aventuriers. Le lapin habite juste de l\'autre côté de la colline aux champignons. »',
-    imageUrl: 'https://picsum.photos/seed/story10/800/500',
-  },
-  {
-    page: 11,
-    text: 'Ils accompagnèrent le lapin bleu jusqu\'à sa maison, un terrier douillet décoré de petites lanternes. Sa famille les remercia chaleureusement.',
-    imageUrl: 'https://picsum.photos/seed/story11/800/500',
-  },
-  {
-    page: 12,
-    text: 'Pour les remercier, le lapin offrit à Luna une fleur magique qui ne fane jamais, et à Félix une clochette qui tinte quand un ami a besoin d\'aide.',
-    imageUrl: 'https://picsum.photos/seed/story12/800/500',
-  },
-  {
-    page: 13,
-    text: 'Luna et Félix rentrèrent chez eux sous un ciel étoilé, le cœur rempli de bonheur. Ils savaient que la forêt enchantée les attendrait pour de nouvelles aventures.',
-    imageUrl: 'https://picsum.photos/seed/story13/800/500',
-  },
+const EXAMPLE_IMAGE_URLS = [
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/cover.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_1.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_2.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_3.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_4.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_5.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_6.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_7.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_8.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_9.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_10.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_11.webp',
+  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_12.webp',
 ];
 
 export default function StoryExampleModal({ visible, onClose }: StoryExampleModalProps) {
   const { t } = useTranslation();
-  const { width: screenWidth } = useWindowDimensions();
-  const imageWidth = (screenWidth - 48 - 12) / 2; // 2 columns, padding 24 each side, 12 gap
-  const imageHeight = imageWidth * 0.625; // ~16:10
+  const [showFullScreen, setShowFullScreen] = useState(false);
+
+  const exampleTitle = t('storyExample.example.title');
+  const examplePrompt = t('storyExample.example.prompt');
+  const exampleCharacters = [
+    { name: 'Mimi', emoji: '👧🏻', description: t('storyExample.example.characters.mimi') },
+    { name: 'Anton', emoji: '🐶', description: t('storyExample.example.characters.anton') },
+  ];
+  const examplePages = [
+    { page: 1, text: t('storyExample.example.pages.cover'), imageUrl: EXAMPLE_IMAGE_URLS[0] },
+    { page: 2, text: t('storyExample.example.pages.page1'), imageUrl: EXAMPLE_IMAGE_URLS[1] },
+    { page: 3, text: t('storyExample.example.pages.page2'), imageUrl: EXAMPLE_IMAGE_URLS[2] },
+    { page: 4, text: t('storyExample.example.pages.page3'), imageUrl: EXAMPLE_IMAGE_URLS[3] },
+    { page: 5, text: t('storyExample.example.pages.page4'), imageUrl: EXAMPLE_IMAGE_URLS[4] },
+    { page: 6, text: t('storyExample.example.pages.page5'), imageUrl: EXAMPLE_IMAGE_URLS[5] },
+    { page: 7, text: t('storyExample.example.pages.page6'), imageUrl: EXAMPLE_IMAGE_URLS[6] },
+    { page: 8, text: t('storyExample.example.pages.page7'), imageUrl: EXAMPLE_IMAGE_URLS[7] },
+    { page: 9, text: t('storyExample.example.pages.page8'), imageUrl: EXAMPLE_IMAGE_URLS[8] },
+    { page: 10, text: t('storyExample.example.pages.page9'), imageUrl: EXAMPLE_IMAGE_URLS[9] },
+    { page: 11, text: t('storyExample.example.pages.page10'), imageUrl: EXAMPLE_IMAGE_URLS[10] },
+    { page: 12, text: t('storyExample.example.pages.page11'), imageUrl: EXAMPLE_IMAGE_URLS[11] },
+    { page: 13, text: t('storyExample.example.pages.page12'), imageUrl: EXAMPLE_IMAGE_URLS[12] },
+  ];
+  const examplePagesAsPages = examplePages.map((p) => ({
+    id: p.page,
+    pageIndex: p.page - 1,
+    text: p.text,
+    imageUrl: p.imageUrl,
+  }));
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
@@ -127,10 +80,9 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
 
           <ScrollView
             className="flex-1"
-            contentContainerStyle={{ paddingBottom: 40 }}
             showsVerticalScrollIndicator={false}
           >
-            <View className="p-6">
+            <View className="p-6 pb-0">
               {/* Titre de l'histoire */}
               <View className="mb-4">
                 <Text className="text-gray-500 text-sm font-baloo-semibold mb-1">
@@ -138,7 +90,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
                   <Text className="text-gray-800 text-lg font-baloo-bold">
-                    {EXAMPLE_TITLE}
+                    {exampleTitle}
                   </Text>
                 </View>
               </View>
@@ -150,7 +102,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
                   <Text className="text-gray-800 text-base font-baloo">
-                    {EXAMPLE_PROMPT}
+                    {examplePrompt}
                   </Text>
                 </View>
               </View>
@@ -161,7 +113,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                   {t('storyExample.characters', 'Personnages')}
                 </Text>
                 <View className="gap-2">
-                  {EXAMPLE_CHARACTERS.map((character) => (
+                  {exampleCharacters.map((character) => (
                     <View key={character.name} className="bg-gray-100 rounded-xl p-4 flex-row items-center">
                       <Text className="text-2xl mr-3">{character.emoji}</Text>
                       <View className="flex-1">
@@ -185,7 +137,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 items-center">
                     <Text className="text-gray-800 font-baloo-semibold">
-                      {EXAMPLE_STYLE}
+                      {t('storyExample.example.style')}
                     </Text>
                   </View>
                 </View>
@@ -195,7 +147,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 items-center">
                     <Text className="text-gray-800 font-baloo-semibold">
-                      {EXAMPLE_AGE}
+                      {t('storyExample.example.age')}
                     </Text>
                   </View>
                 </View>
@@ -210,7 +162,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 items-center">
                     <Text className="text-gray-800 font-baloo-semibold">
-                      {EXAMPLE_LANGUAGE}
+                      {t('storyExample.example.language')}
                     </Text>
                   </View>
                 </View>
@@ -227,14 +179,37 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
               {/* Separator */}
               <View className="h-px bg-gray-200 mb-6" />
 
+              {/* Cover */}
+              <Text className="text-gray-800 text-xl font-baloo-bold mb-2">
+                {t('storyExample.coverTitle', 'Cover de l\'histoire')}
+              </Text>
+              <View className="rounded-xl overflow-hidden bg-gray-100 w-full mb-6">
+                <Image
+                  source={{ uri: EXAMPLE_IMAGE_URLS[0] }}
+                  contentFit="cover"
+                  style={{ width: '100%', aspectRatio: 16 / 10 }}
+                />
+                <View className="absolute top-2 self-center">
+                  <View className="bg-white/80 px-3 py-1 rounded-xl mx-4">
+                    <Text className="text-black font-baloo-bold text-lg text-center" numberOfLines={2}>
+                      {exampleTitle}
+                    </Text>
+                  </View>
+                </View>
+                <View className="px-2 py-1 bg-white/80 absolute bottom-2 max-w-[80%] self-center rounded-xl">
+                  <Text className="text-black text-[8px] font-baloo" numberOfLines={3}>
+                    {examplePages[0].text}
+                  </Text>
+                </View>
+              </View>
+
               {/* Pages title */}
-              <Text className="text-gray-800 text-xl font-baloo-bold mb-4">
+              <Text className="text-gray-800 text-xl font-baloo-bold mb-2">
                 {t('storyExample.pagesTitle', 'Pages de l\'histoire')}
               </Text>
 
-              {/* Pages grid - 2 columns */}
               <View className="flex flex-col">
-                {EXAMPLE_PAGES.map((page) => (
+                {examplePages.slice(1).map((page) => (
                   <View
                     key={page.page}
                     className="mb-2 w-full"
@@ -245,8 +220,8 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                         contentFit="cover"
                         style={{ width: '100%', aspectRatio: 16 / 10 }}
                       />
-                      <View className="p-3 bg-white/80 absolute bottom-2 max-w-[80%] self-center rounded-xl">
-                        <Text className="text-black text-xs font-baloo" numberOfLines={3}>
+                      <View className="px-2 py-1 bg-white/80 absolute bottom-2 max-w-[80%] self-center rounded-xl">
+                        <Text className="text-black text-[8px] font-baloo" numberOfLines={3}>
                           {page.text}
                         </Text>
                       </View>
@@ -255,21 +230,38 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                 ))}
               </View>
             </View>
-
-            {/* Footer button */}
-            <View className="px-6 mt-4">
-              <TouchableOpacity
-                className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
-                onPress={onClose}
-              >
-                <Text className="text-white font-baloo-bold text-lg">
-                  {t('storyExample.close', 'Fermer')}
-                </Text>
-              </TouchableOpacity>
-            </View>
           </ScrollView>
+          {/* Footer buttons */}
+          <View className="px-6 my-4 gap-3">
+            <TouchableOpacity
+              className="bg-[#0D1821] px-6 py-4 rounded-xl items-center flex-row justify-center gap-2"
+              onPress={() => setShowFullScreen(true)}
+            >
+              <Feather name="maximize" size={18} color="white" />
+              <Text className="text-white font-baloo-bold text-lg">
+                {t('storyExample.readFullScreen', 'Lire en plein écran')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="border border-gray-300 px-6 py-4 rounded-xl items-center"
+              onPress={onClose}
+            >
+              <Text className="text-gray-700 font-baloo-bold text-lg">
+                {t('storyExample.close', 'Fermer')}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+      <FullScreenStoryModal
+        visible={showFullScreen}
+        pages={examplePagesAsPages.slice(1)}
+        coverUrl={EXAMPLE_IMAGE_URLS[0]}
+        title={exampleTitle}
+        description={examplePrompt}
+        isNight={false}
+        onClose={() => setShowFullScreen(false)}
+      />
     </Modal>
   );
 }
