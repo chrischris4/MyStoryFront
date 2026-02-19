@@ -8,6 +8,7 @@ import {
   Modal,
   Animated,
   useWindowDimensions,
+  TextInput,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -26,6 +27,7 @@ import { useShareStoryToGroup } from '~/hooks/useShareStoryToGroup';
 import { useUnshareStoryFromGroup } from '~/hooks/useUnshareStoryFromGroup';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
 import { useDeleteStory } from '~/hooks/useDeleteStory';
+import { useReportStory, useHasReportedStory, ReportReason } from '~/hooks/useReportStory';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
@@ -76,6 +78,12 @@ export default function StoryDetailScreen() {
   const shareStoryMutation = useShareStoryToGroup();
   const unshareStoryMutation = useUnshareStoryFromGroup();
   const deleteStoryMutation = useDeleteStory();
+  const reportStoryMutation = useReportStory();
+  const isOwner = currentUser?.id === story?.user?.id;
+  const { data: hasReported = false } = useHasReportedStory(isOwner ? 0 : Number(storyId));
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
+  const [reportMessage, setReportMessage] = useState('');
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
@@ -245,6 +253,49 @@ export default function StoryDetailScreen() {
     });
   };
 
+
+  const reportReasons: { value: ReportReason; label: string }[] = [
+    { value: 'INAPPROPRIATE', label: t('report.inappropriate') },
+    { value: 'OFFENSIVE', label: t('report.offensive') },
+    { value: 'SPAM', label: t('report.spam') },
+    { value: 'COPYRIGHT', label: t('report.copyright') },
+    { value: 'OTHER', label: t('report.other') },
+  ];
+
+  const handleReportStory = () => {
+    if (!selectedReason) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    playSound('click');
+
+    reportStoryMutation.mutate(
+      {
+        storyId: Number(storyId),
+        reason: selectedReason,
+        message: reportMessage || undefined,
+      },
+      {
+        onSuccess: () => {
+          playSound('success');
+          Toast.show({
+            type: 'success',
+            text1: t('common.success'),
+            text2: t('report.reportSent'),
+          });
+          setShowReportModal(false);
+          setSelectedReason(null);
+          setReportMessage('');
+        },
+        onError: (error: any) => {
+          Toast.show({
+            type: 'error',
+            text1: t('common.error'),
+            text2: error?.message || t('report.reportError'),
+          });
+        },
+      }
+    );
+  };
 
   const fetchStory = async () => {
     try {
@@ -535,8 +586,8 @@ export default function StoryDetailScreen() {
 
         {/* //Share Like */}
         <View className='flex flex-row justify-between mt-4'>
-          {/* Bouton de partage - visible uniquement si l'utilisateur est l'auteur */}
-          {currentUser?.id === story.user?.id && (
+          {/* Bouton de partage (owner) ou Report (non-owner) */}
+          {isOwner ? (
             <BlurView
               intensity={90}
               tint={isNight ? "dark" : "light"}
@@ -572,7 +623,6 @@ export default function StoryDetailScreen() {
                         </Text>
                       </View>
                     )}
-
                   </>
                 ) : (
                   <>
@@ -582,6 +632,34 @@ export default function StoryDetailScreen() {
                     </Text>
                   </>
                 )}
+              </TouchableOpacity>
+            </BlurView>
+          ) : (
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              style={{
+                borderRadius: 100,
+                height: 56,
+                paddingHorizontal: 12,
+                overflow: 'hidden', backgroundColor: hasReported ? (isNight ? '#22c55e20' : '#22c55e30') : (isNight ? '#1e293b90' : '#38b6ff10')
+              }}
+              className='flex items-center justify-center'
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  if (hasReported) return;
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  playSound('pop');
+                  setShowReportModal(true);
+                }}
+                disabled={hasReported}
+                className="flex-row gap-2 items-center px-2"
+              >
+                <Feather name={hasReported ? 'check-circle' : 'flag'} size={18} color={hasReported ? '#22c55e' : '#ef4444'} />
+                <Text className={`text-lg font-baloo-semibold ${hasReported ? 'text-green-500' : 'text-red-500'}`}>
+                  {hasReported ? t('report.alreadyReported') : t('report.report')}
+                </Text>
               </TouchableOpacity>
             </BlurView>
           )}
@@ -876,6 +954,111 @@ export default function StoryDetailScreen() {
                 >
                   <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
                     {t('common.close')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+        </Modal>
+
+        {/* Modal de signalement */}
+        <Modal
+          visible={showReportModal}
+          transparent
+          animationType="fade"
+          onRequestClose={() => {
+            setShowReportModal(false);
+            setSelectedReason(null);
+            setReportMessage('');
+          }}
+        >
+          <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+            <BlurView
+              intensity={90}
+              tint={isNight ? "dark" : "light"}
+              className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
+              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
+            >
+              <View className="items-center mb-4">
+                <Feather name="flag" size={32} color="#ef4444" />
+                <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mt-2`}>
+                  {t('report.reportStory')}
+                </Text>
+                <Text className={`text-center font-baloo ${isNight ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+                  {t('report.reportDescription')}
+                </Text>
+              </View>
+
+              {/* Raisons */}
+              <View className="mb-4">
+                {reportReasons.map((reason) => (
+                  <TouchableOpacity
+                    key={reason.value}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setSelectedReason(reason.value);
+                    }}
+                    className="mb-2"
+                  >
+                    <BlurView
+                      intensity={90}
+                      tint={isNight ? "dark" : "light"}
+                      className={`p-3 rounded-xl overflow-hidden ${selectedReason === reason.value ? 'border-2 border-red-500' : ''}`}
+                      style={{ backgroundColor: selectedReason === reason.value ? (isNight ? '#ef444430' : '#ef444420') : (isNight ? '#1e293b90' : '#38b6ff10') }}
+                    >
+                      <View className="flex-row items-center justify-between">
+                        <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
+                          {reason.label}
+                        </Text>
+                        {selectedReason === reason.value && (
+                          <Feather name="check-circle" size={20} color="#ef4444" />
+                        )}
+                      </View>
+                    </BlurView>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Message optionnel */}
+              <TextInput
+                placeholder={t('report.messagePlaceholder')}
+                placeholderTextColor={isNight ? '#64748b' : '#94a3b8'}
+                value={reportMessage}
+                onChangeText={setReportMessage}
+                multiline
+                numberOfLines={3}
+                className={`p-3 rounded-xl mb-4 font-baloo ${isNight ? 'text-white' : 'text-gray-900'}`}
+                style={{
+                  backgroundColor: isNight ? '#0f172a' : '#f1f5f9',
+                  textAlignVertical: 'top',
+                  minHeight: 80,
+                }}
+              />
+
+              {/* Boutons */}
+              <View className="flex-col gap-3">
+                <TouchableOpacity
+                  onPress={handleReportStory}
+                  disabled={!selectedReason || reportStoryMutation.isPending}
+                  className={`p-4 rounded-xl items-center ${!selectedReason ? 'bg-red-300' : 'bg-red-600'}`}
+                >
+                  <Text className="text-white font-baloo-semibold text-lg">
+                    {reportStoryMutation.isPending ? t('report.sending') : t('report.send')}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    playSound('pop');
+                    setShowReportModal(false);
+                    setSelectedReason(null);
+                    setReportMessage('');
+                  }}
+                  className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
+                >
+                  <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
+                    {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
               </View>

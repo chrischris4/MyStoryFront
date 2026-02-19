@@ -680,5 +680,21 @@
     "summaryHair": "{{color}} hair",
     "summaryEyes": "{{color}} eyes",
     "summaryFur": "{{color}} fur"
+  },
+  "report": {
+    "report": "Report",
+    "alreadyReported": "Reported",
+    "reportStory": "Report this story",
+    "reportDescription": "Why do you want to report this story?",
+    "inappropriate": "Inappropriate content",
+    "offensive": "Offensive content",
+    "spam": "Spam",
+    "copyright": "Copyright violation",
+    "other": "Other",
+    "messagePlaceholder": "Additional details (optional)...",
+    "send": "Send report",
+    "sending": "Sending...",
+    "reportSent": "Your report has been sent successfully",
+    "reportError": "Error while sending the report"
   }
 }

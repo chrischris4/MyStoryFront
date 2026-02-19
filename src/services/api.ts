@@ -319,6 +319,15 @@ export class ApiService {
     return this.delete<{ message: string }>(`/user/me`);
   }
 
+  // --- Reports ---
+  async reportStory(dto: { storyId: number; reason: string; message?: string }) {
+    return this.post<any>('/report', dto);
+  }
+
+  async hasReportedStory(storyId: number) {
+    return this.get<{ hasReported: boolean }>(`/report/has-reported/${storyId}`);
+  }
+
   // --- Characters ---
   async getCharacters() {
     return this.get<any[]>('/character');

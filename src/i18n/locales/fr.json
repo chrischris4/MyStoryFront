@@ -680,5 +680,21 @@
     "summaryHair": "cheveux {{color}}",
     "summaryEyes": "yeux {{color}}",
     "summaryFur": "pelage {{color}}"
+  },
+  "report": {
+    "report": "Signaler",
+    "alreadyReported": "Signalé",
+    "reportStory": "Signaler cette histoire",
+    "reportDescription": "Pourquoi souhaitez-vous signaler cette histoire ?",
+    "inappropriate": "Contenu inapproprié",
+    "offensive": "Contenu offensant",
+    "spam": "Spam",
+    "copyright": "Violation de droits d'auteur",
+    "other": "Autre",
+    "messagePlaceholder": "Détails supplémentaires (optionnel)...",
+    "send": "Envoyer le signalement",
+    "sending": "Envoi en cours...",
+    "reportSent": "Votre signalement a bien été envoyé",
+    "reportError": "Erreur lors de l'envoi du signalement"
   }
 }
