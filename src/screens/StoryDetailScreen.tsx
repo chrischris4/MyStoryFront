@@ -8,7 +8,6 @@ import {
   Modal,
   Animated,
   useWindowDimensions,
-  TextInput,
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,15 +18,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { BlurView } from 'expo-blur';
-import { useQueryClient } from '@tanstack/react-query';
 import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
-import { useGroups } from '~/hooks/useGroups';
-import { useShareStoryToGroup } from '~/hooks/useShareStoryToGroup';
-import { useUnshareStoryFromGroup } from '~/hooks/useUnshareStoryFromGroup';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
 import { useDeleteStory } from '~/hooks/useDeleteStory';
-import { useReportStory, useHasReportedStory, ReportReason } from '~/hooks/useReportStory';
+import { useHasReportedStory } from '~/hooks/useReportStory';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
 import FullScreenStoryModal from '~/components/FullScreenStoryModal';
@@ -37,6 +32,8 @@ import StarryBackground from '~/components/StarryBackground';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import { useUserStore } from '~/store/useUserStore';
+import ShareStoryModal from '~/components/ShareStoryModal';
+import ReportStoryModal from '~/components/ReportStoryModal';
 
 
 type StoryDetailRouteProp = RouteProp<RootStackParamList, 'StoryDetail'>;
@@ -59,10 +56,8 @@ export default function StoryDetailScreen() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedGroups, setSelectedGroups] = useState<number[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
   const coverFade = useRef(new Animated.Value(0)).current;
-  const confirmSlideAnim = useRef(new Animated.Value(width)).current;
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
   // Hook pour les sons
@@ -72,20 +67,11 @@ export default function StoryDetailScreen() {
   const { data: isFavorite = false } = useCheckFavorite(Number(storyId));
   const toggleFavoriteMutation = useToggleFavorite();
 
-  // Hooks pour les groupes
-  const queryClient = useQueryClient();
-  const { data: myGroups = [] } = useGroups();
-  const { data: sharedGroups = [], isLoading: isLoadingSharedGroups, error: sharedGroupsError } = useStoryGroups(Number(storyId));
-  const shareStoryMutation = useShareStoryToGroup();
-  const unshareStoryMutation = useUnshareStoryFromGroup();
-  const deleteStoryMutation = useDeleteStory();
-  const reportStoryMutation = useReportStory();
   const isOwner = currentUser?.id === story?.user?.id;
-  const { data: hasReported = false } = useHasReportedStory(isOwner ? 0 : Number(storyId));
+  const { data: sharedGroups = [] } = useStoryGroups(isOwner ? Number(storyId) : 0);
+  const deleteStoryMutation = useDeleteStory();
+  const { data: hasReported = false } = useHasReportedStory(!story || isOwner ? 0 : Number(storyId));
   const [showReportModal, setShowReportModal] = useState(false);
-  const [showShareCommunityConfirm, setShowShareCommunityConfirm] = useState(false);
-  const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
-  const [reportMessage, setReportMessage] = useState('');
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
@@ -111,120 +97,6 @@ export default function StoryDetailScreen() {
         },
       }
     );
-  };
-
-  const handleShareToCommunity = async () => {
-    // Si déjà partagé, ne rien faire
-    if (isShared) return;
-
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: t('storyDetail.userNotAuthenticated'),
-          props: { emoji: '🔒' },
-        });
-        return;
-      }
-
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/${storyId}/toggle-shared`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        setIsShared(true);
-        if (story) {
-          setStory({ ...story, isShared: true });
-        }
-        queryClient.invalidateQueries({ queryKey: ['stories'] });
-        queryClient.invalidateQueries({ queryKey: ['communityStories'] });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: t('storyDetail.shareStatusError'),
-        });
-      }
-    } catch (err) {
-      console.error('Erreur lors du partage:', err);
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('errors.unknownError'),
-      });
-    }
-  };
-
-  const handleToggleGroup = (groupId: number) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    playSound('pop');
-
-    setSelectedGroups(prev =>
-      prev.includes(groupId)
-        ? prev.filter(id => id !== groupId)
-        : [...prev, groupId]
-    );
-  };
-
-  const handleShareToGroups = async () => {
-    const sharedGroupIds = sharedGroups.map((g: any) => g.id);
-    const newGroupsToShare = selectedGroups.filter(id => !sharedGroupIds.includes(id));
-    const groupsToUnshare = sharedGroupIds.filter((id: number) => !selectedGroups.includes(id));
-
-    if (newGroupsToShare.length === 0 && groupsToUnshare.length === 0) {
-      Toast.show({
-        type: 'info',
-        text1: t('common.information'),
-        text2: t('storyDetail.noNewGroupSelected'),
-        props: { emoji: 'ℹ️' },
-      });
-      return;
-    }
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    playSound('click');
-
-    try {
-      await Promise.all([
-        ...newGroupsToShare.map(groupId =>
-          shareStoryMutation.mutateAsync({
-            groupId,
-            storyId: Number(storyId),
-          })
-        ),
-        ...groupsToUnshare.map((groupId: number) =>
-          unshareStoryMutation.mutateAsync({
-            groupId,
-            storyId: Number(storyId),
-          })
-        ),
-      ]);
-
-      playSound('success');
-      const parts = [];
-      if (newGroupsToShare.length > 0) parts.push(t('storyDetail.storySharedToGroups', { count: newGroupsToShare.length }));
-      if (groupsToUnshare.length > 0) parts.push(t('storyDetail.storyUnsharedFromGroups', { count: groupsToUnshare.length }));
-      Toast.show({
-        type: 'success',
-        text1: t('common.success'),
-        text2: parts.join(' '),
-        props: { emoji: '📤' },
-      });
-      setSelectedGroups([]); // Réinitialiser la sélection après le partage
-      setShowShareModal(false);
-    } catch (error: any) {
-      console.error('Erreur lors du partage:', error);
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: error?.message || t('storyDetail.shareError'),
-      });
-    }
   };
 
   const handleDeleteStory = () => {
@@ -256,49 +128,6 @@ export default function StoryDetailScreen() {
   };
 
 
-  const reportReasons: { value: ReportReason; label: string }[] = [
-    { value: 'INAPPROPRIATE', label: t('report.inappropriate') },
-    { value: 'OFFENSIVE', label: t('report.offensive') },
-    { value: 'SPAM', label: t('report.spam') },
-    { value: 'COPYRIGHT', label: t('report.copyright') },
-    { value: 'OTHER', label: t('report.other') },
-  ];
-
-  const handleReportStory = () => {
-    if (!selectedReason) return;
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    playSound('click');
-
-    reportStoryMutation.mutate(
-      {
-        storyId: Number(storyId),
-        reason: selectedReason,
-        message: reportMessage || undefined,
-      },
-      {
-        onSuccess: () => {
-          playSound('success');
-          Toast.show({
-            type: 'success',
-            text1: t('common.success'),
-            text2: t('report.reportSent'),
-          });
-          setShowReportModal(false);
-          setSelectedReason(null);
-          setReportMessage('');
-        },
-        onError: (error: any) => {
-          Toast.show({
-            type: 'error',
-            text1: t('common.error'),
-            text2: error?.message || t('report.reportError'),
-          });
-        },
-      }
-    );
-  };
-
   const fetchStory = async () => {
     try {
       const token = await AsyncStorage.getItem('accessToken');
@@ -309,6 +138,17 @@ export default function StoryDetailScreen() {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 403) {
+        const data = await response.json().catch(() => ({}));
+        Toast.show({
+          type: 'error',
+          text1: t('common.error'),
+          text2: data.message || t('storyDetail.accessDenied'),
+        });
+        navigation.goBack();
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(t('storyDetail.fetchError'));
@@ -338,32 +178,6 @@ export default function StoryDetailScreen() {
       }).start();
     }
   }, [loading, story]);
-
-  // Initialiser selectedGroups avec les groupes déjà partagés quand la modal s'ouvre
-  useEffect(() => {
-    if (showShareModal && sharedGroups.length > 0) {
-      const sharedGroupIds = sharedGroups.map((g: any) => g.id);
-      setSelectedGroups(sharedGroupIds);
-    }
-  }, [showShareModal, sharedGroups]);
-
-  // Animation slide du panneau de confirmation communauté
-  useEffect(() => {
-    if (showShareCommunityConfirm) {
-      Animated.spring(confirmSlideAnim, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 80,
-        friction: 12,
-      }).start();
-    } else {
-      Animated.timing(confirmSlideAnim, {
-        toValue: width,
-        duration: 220,
-        useNativeDriver: true,
-      }).start();
-    }
-  }, [showShareCommunityConfirm]);
 
   // Animation pour le skeleton
   const skeletonAnim = useRef(new Animated.Value(0.3)).current;
@@ -830,325 +644,26 @@ export default function StoryDetailScreen() {
           </View>
         </Modal>
 
-        {/* Modal de partage */}
-        <Modal
-          visible={showShareModal}
-          transparent
-          animationType="fade"
-          onRequestClose={() => {
-            setSelectedGroups([]);
-            setShowShareModal(false);
-          }}
-        >
-          <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <BlurView
-              intensity={90}
-              tint={isNight ? "dark" : "light"}
-              className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', minHeight: '80%', maxHeight: '80%' }}
-            >
-              <View className="flex-1">
-                <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
-                  {t('storyDetail.shareStoryTitle')}
-                </Text>
+        {isOwner && (
+          <ShareStoryModal
+            visible={showShareModal}
+            onClose={() => setShowShareModal(false)}
+            storyId={Number(storyId)}
+            isNight={isNight}
+            isShared={isShared}
+            onSharedToCommunity={() => {
+              setIsShared(true);
+              setStory(prev => prev ? { ...prev, isShared: true } : prev);
+            }}
+          />
+        )}
 
-                {/* Option: Partager à tout le monde */}
-                <TouchableOpacity
-                  onPress={() => {
-                    if (!isShared) setShowShareCommunityConfirm(true);
-                  }}
-                  disabled={isShared}
-                  className="mb-4"
-                >
-                  <BlurView
-                    intensity={90}
-                    tint={isNight ? "dark" : "light"}
-                    className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-green-500' : ''}`}
-                    style={{ backgroundColor: isShared ? (isNight ? '#22c55e50' : '#22c55e30') : (isNight ? '#3b82f690' : '#3b82f630') }}
-                  >
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-1">
-                        <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                          {isShared ? t('storyDetail.sharedToEveryone') : t('storyDetail.shareToEveryone')}
-                        </Text>
-                        <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                          {isShared ? t('storyDetail.alreadySharedToCommunity') : t('storyDetail.visibleByCommunity')}
-                        </Text>
-                      </View>
-                      {isShared && (
-                        <Feather name="check-circle" size={24} color="#22c55e" />
-                      )}
-                    </View>
-                  </BlurView>
-                </TouchableOpacity>
-
-                {/* Option: Partager à des groupes */}
-                <View className="flex-1 mb-4">
-                  <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'} mb-2`}>
-                    {t('storyDetail.shareToGroups')}
-                  </Text>
-                  <ScrollView className="flex-1" showsVerticalScrollIndicator={true}>
-                    {myGroups.length === 0 ? (
-                      <BlurView
-                        intensity={90}
-                        tint={isNight ? "dark" : "light"}
-                        className="p-4 rounded-xl overflow-hidden items-center"
-                        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-                      >
-                        <Feather name="users" size={32} color={isNight ? '#64748b' : '#94a3b8'} />
-                        <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
-                          {t('storyDetail.noGroupYet')}
-                        </Text>
-                      </BlurView>
-                    ) : (
-                      myGroups.map((group: any) => {
-                        const isAlreadyShared = sharedGroups.some((g: any) => g.id === group.id);
-                        const isSelected = selectedGroups.includes(group.id);
-
-                        return (
-                          <TouchableOpacity
-                            key={group.id}
-                            onPress={() => handleToggleGroup(group.id)}
-                            className="mb-2"
-                          >
-                            <BlurView
-                              intensity={90}
-                              tint={isNight ? "dark" : "light"}
-                              className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
-                              style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
-                            >
-                              <View className="flex-row items-center justify-between">
-                                <View className="flex-1">
-                                  <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                                    {group.name}
-                                  </Text>
-                                  <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
-                                    {t('storyDetail.members', { count: group._count?.members || 0 })} {isAlreadyShared ? `• ${t('storyDetail.alreadyShared')}` : ''}
-                                  </Text>
-                                </View>
-                                {isSelected && (
-                                  <Feather
-                                    name="check-circle"
-                                    size={20}
-                                    color={isAlreadyShared ? "#10b981" : "#3b82f6"}
-                                  />
-                                )}
-                              </View>
-                            </BlurView>
-                          </TouchableOpacity>
-                        );
-                      })
-                    )}
-                  </ScrollView>
-                </View>
-              </View>
-
-              {/* Boutons d'action - en bas */}
-              <View className="flex-col gap-3 pt-4">
-                {(() => {
-                  const sharedGroupIds = sharedGroups.map((g: any) => g.id);
-                  const newGroupsCount = selectedGroups.filter(id => !sharedGroupIds.includes(id)).length;
-                  const removedGroupsCount = sharedGroupIds.filter((id: number) => !selectedGroups.includes(id)).length;
-                  const hasChanges = newGroupsCount > 0 || removedGroupsCount > 0;
-
-                  return hasChanges && (
-                    <TouchableOpacity
-                      onPress={handleShareToGroups}
-                      className={`${removedGroupsCount > 0 && newGroupsCount === 0 ? 'bg-red-500' : 'bg-blue-600'} p-4 rounded-xl items-center`}
-                    >
-                      <Text className="text-white font-baloo-semibold text-lg">
-                        {newGroupsCount > 0 && removedGroupsCount > 0
-                          ? t('storyDetail.updateGroupSharing')
-                          : newGroupsCount > 0
-                            ? t('storyDetail.shareToNewGroups', { count: newGroupsCount })
-                            : t('storyDetail.removeFromGroups', { count: removedGroupsCount })
-                        }
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })()}
-
-                <TouchableOpacity
-                  onPress={() => {
-                    setSelectedGroups([]);
-                    setShowShareModal(false);
-                  }}
-                  className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
-                >
-                  <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
-                    {t('common.close')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-
-            {/* Panneau de confirmation - slide depuis la droite */}
-            <Animated.View
-              pointerEvents={showShareCommunityConfirm ? 'auto' : 'none'}
-              style={{
-                position: 'absolute',
-                top: 0, left: 0, right: 0, bottom: 0,
-                justifyContent: 'center',
-                transform: [{ translateX: confirmSlideAnim }],
-              }}
-            >
-              <BlurView
-                intensity={95}
-                tint={isNight ? "dark" : "light"}
-                style={{
-                  borderColor: isNight ? '#1e293b' : '#ffffff',
-                  borderWidth: 2,
-                  marginHorizontal: 16,
-                  borderRadius: 24,
-                  overflow: 'hidden',
-                  backgroundColor: isNight ? '#1e293b' : '#ffffff',
-                  padding: 24,
-                }}
-              >
-                <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-3`}>
-                  {t('storyDetail.shareToEveryoneConfirmTitle')}
-                </Text>
-                <Text className={`font-baloo text-base ${isNight ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
-                  {t('storyDetail.shareToEveryoneConfirmMessage')}
-                </Text>
-                <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-500'} mb-4`}>
-                  {t('storyDetail.shareToEveryoneConfirmPermanent')}
-                </Text>
-                <View className={`rounded-xl p-3 mb-5 ${isNight ? 'bg-yellow-500/20' : 'bg-yellow-50'}`}>
-                  <Text className={`font-baloo-semibold text-sm ${isNight ? 'text-yellow-300' : 'text-yellow-700'} text-center`}>
-                    {t('storyDetail.shareToEveryoneConfirmBonus')}
-                  </Text>
-                </View>
-                <View className="flex-row gap-3">
-                  <TouchableOpacity
-                    onPress={() => {
-                      setShowShareCommunityConfirm(false);
-                      handleShareToCommunity();
-                    }}
-                    className="bg-blue-600 p-4 rounded-xl items-center flex-1"
-                  >
-                    <Text className="text-white font-baloo-bold text-lg">
-                      {t('storyDetail.share')}
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => setShowShareCommunityConfirm(false)}
-                    className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 flex-1 rounded-xl items-center`}
-                  >
-                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>
-                      {t('common.cancel')}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </BlurView>
-            </Animated.View>
-          </View>
-        </Modal>
-
-        {/* Modal de signalement */}
-        <Modal
+        <ReportStoryModal
           visible={showReportModal}
-          transparent
-          animationType="fade"
-          onRequestClose={() => {
-            setShowReportModal(false);
-            setSelectedReason(null);
-            setReportMessage('');
-          }}
-        >
-          <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <BlurView
-              intensity={90}
-              tint={isNight ? "dark" : "light"}
-              className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
-              style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
-            >
-              <View className="items-center mb-4">
-                <Feather name="flag" size={32} color="#ef4444" />
-                <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mt-2`}>
-                  {t('report.reportStory')}
-                </Text>
-                <Text className={`text-center font-baloo ${isNight ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
-                  {t('report.reportDescription')}
-                </Text>
-              </View>
-
-              {/* Raisons */}
-              <View className="mb-4">
-                {reportReasons.map((reason) => (
-                  <TouchableOpacity
-                    key={reason.value}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      setSelectedReason(reason.value);
-                    }}
-                    className="mb-2"
-                  >
-                    <BlurView
-                      intensity={90}
-                      tint={isNight ? "dark" : "light"}
-                      className={`p-3 rounded-xl overflow-hidden ${selectedReason === reason.value ? 'border-2 border-red-500' : ''}`}
-                      style={{ backgroundColor: selectedReason === reason.value ? (isNight ? '#ef444430' : '#ef444420') : (isNight ? '#1e293b90' : '#38b6ff10') }}
-                    >
-                      <View className="flex-row items-center justify-between">
-                        <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>
-                          {reason.label}
-                        </Text>
-                        {selectedReason === reason.value && (
-                          <Feather name="check-circle" size={20} color="#ef4444" />
-                        )}
-                      </View>
-                    </BlurView>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {/* Message optionnel */}
-              <TextInput
-                placeholder={t('report.messagePlaceholder')}
-                placeholderTextColor={isNight ? '#64748b' : '#94a3b8'}
-                value={reportMessage}
-                onChangeText={setReportMessage}
-                multiline
-                numberOfLines={3}
-                className={`p-3 rounded-xl mb-4 font-baloo ${isNight ? 'text-white' : 'text-gray-900'}`}
-                style={{
-                  backgroundColor: isNight ? '#0f172a' : '#f1f5f9',
-                  textAlignVertical: 'top',
-                  minHeight: 80,
-                }}
-              />
-
-              {/* Boutons */}
-              <View className="flex-col gap-3">
-                <TouchableOpacity
-                  onPress={handleReportStory}
-                  disabled={!selectedReason || reportStoryMutation.isPending}
-                  className={`p-4 rounded-xl items-center ${!selectedReason ? 'bg-red-300' : 'bg-red-600'}`}
-                >
-                  <Text className="text-white font-baloo-semibold text-lg">
-                    {reportStoryMutation.isPending ? t('report.sending') : t('report.send')}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    playSound('pop');
-                    setShowReportModal(false);
-                    setSelectedReason(null);
-                    setReportMessage('');
-                  }}
-                  className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
-                >
-                  <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
-                    {t('common.cancel')}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-          </View>
-        </Modal>
+          onClose={() => setShowReportModal(false)}
+          storyId={Number(storyId)}
+          isNight={isNight}
+        />
 
         {isExpanded && story.pages
           .sort((a, b) => a.pageIndex - b.pageIndex)
@@ -1171,12 +686,13 @@ export default function StoryDetailScreen() {
       />
 
       <View
-        className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30 flex flex-row items-center justify-between px-8 p-4'
+        className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
       >
+        <View className="flex flex-row relative w-full h-full items-center justify-center">
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          className="px-2 md:px-4"
+          className="px-2 md:px-4 absolute left-6"
         >
           <Feather name="chevron-left" size={24} color="white" />
         </TouchableOpacity>
@@ -1198,11 +714,12 @@ export default function StoryDetailScreen() {
               playSound('pop');
               setShowDeleteModal(true);
             }}
-            className='px-2 md:px-4'
+            className='px-2 md:px-4 absolute right-6'
           >
             <Feather name="trash-2" size={24} color="white" />
           </TouchableOpacity>
         )}
+        </View>
       </View>
 
       {/* Bouton retour en haut */}

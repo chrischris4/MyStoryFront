@@ -20,7 +20,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
 import { useTheme } from '~/context/ThemeContext';
-import { useAuth } from '~/context/AuthContext';
+import { useUserStore } from '~/store/useUserStore';
 import { useGroupMembers } from '~/hooks/useGroupMembers';
 import { useInviteToGroup } from '~/hooks/useInviteToGroup';
 import { useRemoveMember } from '~/hooks/useRemoveMember';
@@ -48,7 +48,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const { playSound } = useSound();
-  const { user: currentUser } = useAuth();
+  const currentUser = useUserStore((state) => state.user);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [isModalMounted, setIsModalMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'members' | 'stories'>('members');
@@ -277,9 +277,9 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           {/* Section invitation - visible uniquement pour le owner */}
           {activeTab === 'members' && isCurrentUserOwner && (
             <View className="mb-4">
-                <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
-                  {t('groups.inviteMember')}
-                </Text>
+              <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
+                {t('groups.inviteMember')}
+              </Text>
               <View className="flex-row gap-2">
                 <TextInput
                   value={inviteFormik.values.inviteUsername}
@@ -298,12 +298,8 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                   disabled={inviteToGroupMutation.isPending}
                 >
                   {inviteToGroupMutation.isPending ? (
-                    <LottieView
-                      source={require('../../assets/animations/LoadingWhite.json')}
-                      autoPlay
-                      loop={true}
-                      style={{ width: 50, height: 50 }}
-                    />) : (
+                    <Text className="text-white/50 font-baloo-semibold">{t('groups.invite')}</Text>
+                  ) : (
                     <Text className="text-white font-baloo-semibold">{t('groups.invite')}</Text>
                   )}
                 </TouchableOpacity>
@@ -378,7 +374,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                             )}
                           </View>
 
-                          {!isOwner && (
+                          {isCurrentUserOwner && !isOwner && (
                             <TouchableOpacity
                               activeOpacity={0.8}
                               onPress={() => {

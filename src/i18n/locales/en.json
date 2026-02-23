@@ -546,7 +546,8 @@
     "shareError": "Unable to share story",
     "storyDeleted": "Story deleted successfully",
     "deleteError": "Unable to delete story",
-    "fetchError": "Error fetching story"
+    "fetchError": "Error fetching story",
+    "accessDenied": "You don't have access to this story"
   },
   "character": {
     "title": "Character",
@@ -698,6 +699,7 @@
     "copyright": "Copyright violation",
     "other": "Other",
     "messagePlaceholder": "Additional details (optional)...",
+    "messageTooLong": "Message cannot exceed {{max}} characters",
     "send": "Send report",
     "sending": "Sending...",
     "reportSent": "Your report has been sent successfully",

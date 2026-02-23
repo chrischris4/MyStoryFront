@@ -546,7 +546,8 @@
     "shareError": "Impossible de partager l'histoire",
     "storyDeleted": "Histoire supprimée avec succès",
     "deleteError": "Impossible de supprimer l'histoire",
-    "fetchError": "Erreur lors de la récupération de l'histoire"
+    "fetchError": "Erreur lors de la récupération de l'histoire",
+    "accessDenied": "Tu n'as pas accès à cette histoire"
   },
   "character": {
     "title": "Personnages",
@@ -698,6 +699,7 @@
     "copyright": "Violation de droits d'auteur",
     "other": "Autre",
     "messagePlaceholder": "Détails supplémentaires (optionnel)...",
+    "messageTooLong": "Le message ne peut pas dépasser {{max}} caractères",
     "send": "Envoyer le signalement",
     "sending": "Envoi en cours...",
     "reportSent": "Votre signalement a bien été envoyé",

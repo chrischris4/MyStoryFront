@@ -190,8 +190,8 @@ export default function GroupScreen() {
             {label}
           </Text>
           {!!badgeCount && badgeCount > 0 && (
-            <View className="bg-red-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1">
-              <Text className="text-white text-xs font-baloo-bold">{badgeCount > 99 ? '99+' : badgeCount}</Text>
+            <View className="bg-red-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1 z-10">
+              <Text className="text-white text-sm -mb-[2px] font-baloo-bold">{badgeCount > 99 ? '99+' : badgeCount}</Text>
             </View>
           )}
         </View>
@@ -294,7 +294,7 @@ export default function GroupScreen() {
             </Text>
           </View>
           {isPending && (
-            <View className="flex-row gap-2 ml-3">
+            <View className="flex-row h-full items-center gap-2 ml-3">
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => handleAcceptInvitation(invitation.id)}
@@ -307,12 +307,8 @@ export default function GroupScreen() {
                   style={{ backgroundColor: isNight ? '#22c55e90' : '#22c55e30' }}
                 >
                   {acceptInvitationMutation.isPending ? (
-                    <LottieView
-                      source={require('../../assets/animations/LoadingWhite.json')}
-                      autoPlay
-                      loop={true}
-                      style={{ width: 100, height: 100 }}
-                    />
+                    <Feather name="check" size={20} color={isNight ? '#ffffff' : '#16a34a50'} />
+
                   ) : (
                     <Feather name="check" size={20} color={isNight ? '#ffffff' : '#16a34a'} />
                   )}
@@ -330,12 +326,8 @@ export default function GroupScreen() {
                   style={{ backgroundColor: isNight ? '#ef444490' : '#ef444430' }}
                 >
                   {declineInvitationMutation.isPending ? (
-                    <LottieView
-                      source={require('../../assets/animations/LoadingWhite.json')}
-                      autoPlay
-                      loop={true}
-                      style={{ width: 100, height: 100 }}
-                    />
+                    <Feather name="x" size={20} color={isNight ? '#ffffff' : '#dc262650'} />
+
                   ) : (
                     <Feather name="x" size={20} color={isNight ? '#ffffff' : '#dc2626'} />
                   )}
@@ -590,7 +582,7 @@ export default function GroupScreen() {
                           />
                           <View className="flex-row justify-between mt-1 px-1">
                             {touched.name && errors.name ? (
-                              <Text className="text-red-500 text-xs font-baloo">{errors.name}</Text>
+                              <Text className="text-red-500 text-sm font-baloo">{errors.name}</Text>
                             ) : (
                               <View />
                             )}

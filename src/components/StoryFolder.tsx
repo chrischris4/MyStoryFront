@@ -108,7 +108,6 @@ export default function StoryFolder({
     description,
     stories,
     isNight,
-    storyType,
     isLoading = false,
 }: StoryFolderProps) {
     const { t } = useTranslation();

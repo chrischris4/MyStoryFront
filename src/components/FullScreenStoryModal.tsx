@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Modal,
   View,
@@ -93,6 +94,41 @@ export default function FullScreenStoryModal({
   const [selectedFrame, setSelectedFrame] = useState<FrameType>('black');
   const [selectedEffect, setSelectedEffect] = useState<EffectType>('none');
   const [selectedTextStyle, setSelectedTextStyle] = useState<TextStylePreset>(TEXT_STYLE_PRESETS[0]);
+
+  // Charger les préférences sauvegardées au montage
+  useEffect(() => {
+    const loadPrefs = async () => {
+      try {
+        const [frame, effect, textStyleId] = await Promise.all([
+          AsyncStorage.getItem('@story_reader_frame'),
+          AsyncStorage.getItem('@story_reader_effect'),
+          AsyncStorage.getItem('@story_reader_text_style'),
+        ]);
+        if (frame) setSelectedFrame(frame as FrameType);
+        if (effect) setSelectedEffect(effect as EffectType);
+        if (textStyleId) {
+          const preset = TEXT_STYLE_PRESETS.find(p => p.id === textStyleId);
+          if (preset) setSelectedTextStyle(preset);
+        }
+      } catch {}
+    };
+    loadPrefs();
+  }, []);
+
+  const handleSelectFrame = (frame: FrameType) => {
+    setSelectedFrame(frame);
+    AsyncStorage.setItem('@story_reader_frame', frame).catch(() => {});
+  };
+
+  const handleSelectEffect = (effect: EffectType) => {
+    setSelectedEffect(effect);
+    AsyncStorage.setItem('@story_reader_effect', effect).catch(() => {});
+  };
+
+  const handleSelectTextStyle = (style: TextStylePreset) => {
+    setSelectedTextStyle(style);
+    AsyncStorage.setItem('@story_reader_text_style', style.id).catch(() => {});
+  };
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -732,11 +768,11 @@ export default function FullScreenStoryModal({
                     isNight={isNight}
                     maxWidth={width - 30}
                     selectedFrame={selectedFrame}
-                    onSelectFrame={setSelectedFrame}
+                    onSelectFrame={handleSelectFrame}
                     selectedEffect={selectedEffect}
-                    onSelectEffect={setSelectedEffect}
+                    onSelectEffect={handleSelectEffect}
                     selectedTextStyle={selectedTextStyle}
-                    onSelectTextStyle={setSelectedTextStyle}
+                    onSelectTextStyle={handleSelectTextStyle}
                   />
                 </View>
               </View>

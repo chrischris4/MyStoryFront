@@ -157,9 +157,15 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
                 placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
                 maxLength={20}
               />
-              {formik.touched.name && formik.errors.name && (
-                <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.name}</Text>
-              )}
+              <View className="flex-row justify-between items-center mt-1">
+                {formik.touched.name && formik.errors.name
+                  ? <Text className="text-red-500 text-sm font-baloo">{formik.errors.name}</Text>
+                  : <View />
+                }
+                <Text className={`${isNight ? 'text-white/80' : 'text-slate-600'} text-sm font-baloo self-end`}>
+                  {formik.values.name.length}/20
+                </Text>
+              </View>
             </View>
           </View>
 

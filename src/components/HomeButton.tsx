@@ -33,8 +33,8 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10 md:h-full`}
     >
       {!!badge && badge > 0 && (
-        <View className="absolute top-2 right-2 z-20 bg-red-500 rounded-full min-w-[22px] h-[22px] items-center justify-center px-1">
-          <Text className="text-white text-xs font-baloo-bold">{badge > 99 ? '99+' : badge}</Text>
+        <View className="absolute top-4 right-4 z-20 bg-red-500 rounded-full min-w-[22px] h-[22px] items-center justify-center px-1">
+          <Text className="text-white text-sm font-baloo-bold -mb-[2px]">{badge > 99 ? '99+' : badge}</Text>
         </View>
       )}
       <BlurView
