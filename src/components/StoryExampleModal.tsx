@@ -59,7 +59,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
   }));
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 justify-center items-center bg-black/50 px-4 py-[10%]">
         <View className="flex-1 w-full bg-white rounded-3xl overflow-hidden">
           {/* Header */}

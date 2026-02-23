@@ -325,6 +325,7 @@
     "low": "Faible (30%)",
     "medium": "Moyenne (50%)",
     "high": "Forte (70%)",
+    "textStyle": "Texte",
     "frame": "Cadre",
     "frameNone": "Aucun",
     "frameStars": "Étoiles",
@@ -522,6 +523,11 @@
     "shareStorySubtitle": "Choisissez comment partager votre histoire",
     "shareToEveryone": "Partager à tout le monde",
     "visibleByCommunity": "Visible par toute la communauté",
+    "shareToEveryoneConfirmTitle": "Partager à la communauté 🌍",
+    "shareToEveryoneConfirmMessage": "Votre histoire sera visible par tous les utilisateurs. C'est une belle façon de faire découvrir votre créativité !",
+    "shareToEveryoneConfirmPermanent": "Note : ce partage est définitif.",
+    "shareToEveryoneConfirmBonus": "🎁 Après 10 histoires partagées, vous gagnez 1 jeton offert !",
+    "shareToEveryoneConfirmButton": "Partager maintenant",
     "shareToGroups": "Partager à des groupes",
     "noGroupYet": "Tu n'as pas encore de groupe",
     "members": "{{count}} membres",
@@ -698,6 +704,8 @@
     "reportError": "Erreur lors de l'envoi du signalement"
   },
   "storyExample": {
+    "seeExample": "Voir un exemple",
+    "seeExampleSubtitle": "Découvrez ce que vous pouvez créer",
     "title": "Exemple d'histoire",
     "subtitle": "Voici ce que vous pouvez obtenir en créant une histoire",
     "storyTitle": "Titre de l'histoire",

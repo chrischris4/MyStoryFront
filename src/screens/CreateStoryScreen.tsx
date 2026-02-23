@@ -22,6 +22,7 @@ import Toast from 'react-native-toast-message';
 import { useCreateStory } from '~/hooks/useCreateStory';
 import { useQueryClient } from '@tanstack/react-query';
 import { api } from '~/services/api';
+import { API_BASE_URL } from '~/config/api';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import CharacterSection from '~/components/CharacterSection';
@@ -138,10 +139,11 @@ export default function CreateStoryScreen() {
   const { width: screenWidth } = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
+  const accessToken = useUserStore((state) => state.accessToken);
+  const isSharedRef = useRef(true);
   const scrollX = useRef(new Animated.Value(0)).current;
   const createStoryMutation = useCreateStory();
   const queryClient = useQueryClient();
-  const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const {
     isCreating,
     loading,
@@ -219,6 +221,7 @@ export default function CreateStoryScreen() {
           style: values.selectedStyle,
           language: values.language,
           ageGroup: values.ageGroup,
+          isShared: isSharedRef.current,
           characterIds: selectedCharacters.map((c) => c.id),
           characterDescriptions: selectedCharacters.length > 0
             ? selectedCharacters.map((c) => buildCharacterDescription(c))
@@ -312,6 +315,58 @@ export default function CreateStoryScreen() {
     return description;
   };
 
+  const handleTestCreate = async (isShared: boolean) => {
+    isSharedRef.current = isShared;
+    setShowConfirmationModal(false);
+    startCreation(formik.values.title);
+    try {
+      const payload = {
+        prompt: formik.values.prompt,
+        numberOfPages: formik.values.numPages,
+        title: formik.values.title,
+        style: formik.values.selectedStyle,
+        language: formik.values.language,
+        ageGroup: formik.values.ageGroup,
+        isShared: isSharedRef.current,
+        characterIds: selectedCharacters.map((c) => c.id),
+        characterDescriptions: selectedCharacters.length > 0
+          ? selectedCharacters.map((c) => buildCharacterDescription(c))
+          : undefined,
+      };
+      const response = await fetch(`${API_BASE_URL}/story/test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error('Test creation failed');
+      const { storyId: newStoryId } = await response.json();
+
+      const pollInterval = setInterval(async () => {
+        try {
+          const statusRes = await api.getStoryStatus(newStoryId);
+          if (statusRes.status === 'COMPLETED') {
+            clearInterval(pollInterval);
+            const fullStory = await api.getStoryDetail(newStoryId);
+            updateProgress(fullStory.pages ?? [], fullStory.id?.toString() ?? null, fullStory.coverUrl ?? null, fullStory.description ?? null, false);
+            queryClient.invalidateQueries({ queryKey: ['stories'] });
+          }
+          if (statusRes.status === 'FAILED') {
+            clearInterval(pollInterval);
+            Toast.show({ type: 'error', text1: t('common.error'), text2: statusRes.failureReason || t('createStory.creationError') });
+            close();
+          }
+        } catch {
+          clearInterval(pollInterval);
+          Toast.show({ type: 'error', text1: t('common.error'), text2: t('createStory.creationError') });
+          close();
+        }
+      }, 3000);
+    } catch {
+      Toast.show({ type: 'error', text1: t('common.error'), text2: t('createStory.creationError') });
+      close();
+    }
+  };
+
   const handleCreateClick = async () => {
     const errors = await formik.validateForm();
 
@@ -386,21 +441,37 @@ export default function CreateStoryScreen() {
       />
       <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
       <Text className={`text-xl md:text-2xl font-baloo pb-2 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
-      <TouchableOpacity
-        onPress={() => setShowStoryExample(true)}
-        className={`flex-row items-center gap-2 mx-4 md:mx-8 mb-4 px-4 py-2 rounded-xl self-start ${isNight ? 'bg-white/10' : 'bg-black/10'}`}
-      >
-        <Feather name="book-open" size={16} color={isNight ? '#fff' : '#334155'} />
-        <Text className={`font-baloo-medium text-sm ${isNight ? 'text-white' : 'text-slate-700'}`}>
-          {t('storyExample.seeExample', 'Voir un exemple')}
-        </Text>
-      </TouchableOpacity>
       <ScrollView
         className="flex-1 px-4 md:px-8 z-20"
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
       >
         <View>
+          {/* 📖 Voir un exemple */}
+          <View style={{ borderRadius: 24, overflow: 'hidden', marginBottom: 16 }}>
+            <BlurView
+              intensity={90}
+              tint={isNight ? 'dark' : 'light'}
+              style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
+            >
+              <TouchableOpacity
+                onPress={() => setShowStoryExample(true)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 16 }}
+              >
+                <Feather name="book-open" size={20} color={isNight ? '#fff' : '#334155'} />
+                <View style={{ flex: 1 }}>
+                  <Text className={`font-baloo-semibold text-base ${isNight ? 'text-white' : 'text-slate-800'}`}>
+                    {t('storyExample.seeExample', 'Voir un exemple')}
+                  </Text>
+                  <Text className={`font-baloo text-sm ${isNight ? 'text-white/60' : 'text-slate-500'}`}>
+                    {t('storyExample.seeExampleSubtitle', 'Découvrez ce que vous pouvez créer')}
+                  </Text>
+                </View>
+                <Feather name="chevron-right" size={18} color={isNight ? '#ffffff80' : '#94a3b8'} />
+              </TouchableOpacity>
+            </BlurView>
+          </View>
+
           {/* 🟣 Bloc Titre */}
           <View
             style={{
@@ -424,11 +495,11 @@ export default function CreateStoryScreen() {
                 onBlur={formik.handleBlur('title')}
                 maxLength={40}
               />
-              <View className='flex flex-row gap-2'>
-                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.title.length}/40</Text>
+              <View className='flex flex-row justify-end gap-2 w-full relative'>
                 {formik.touched.title && formik.errors.title && (
-                  <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.title}</Text>
+                  <Text className="absolute left-0 top-0 text-red-500 text-sm md:text-base mt-1">{formik.errors.title}</Text>
                 )}
+                <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm self-end md:text-base mt-1`}>{formik.values.title.length}/40</Text>
               </View>
             </BlurView>
           </View>
@@ -487,10 +558,10 @@ export default function CreateStoryScreen() {
                 maxLength={500}
                 style={{ minHeight: 160 }}
               />
-              <View className='flex flex-row gap-2'>
+              <View className='flex flex-row gap-2 justify-end w-full relative'>
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm md:text-base mt-1`}>{formik.values.prompt.length}/500</Text>
                 {formik.touched.prompt && formik.errors.prompt && (
-                  <Text className="text-red-500 text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
+                  <Text className="absolute left-0 top-0 text-red-500 text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
                 )}
               </View>
             </BlurView>
@@ -817,8 +888,9 @@ export default function CreateStoryScreen() {
         ageGroupName={t(`createStory.ageGroups.${formik.values.ageGroup}.name`)}
         ageGroupEmoji={AGE_GROUPS.find(a => a.id === formik.values.ageGroup)?.emoji || ''}
         characters={selectedCharacters}
-        onConfirm={() => formik.handleSubmit()}
+        onConfirm={(isShared) => { isSharedRef.current = isShared; formik.handleSubmit(); }}
         onCancel={() => setShowConfirmationModal(false)}
+        onTestCreate={handleTestCreate}
       />
 
       {/* Modal de résultat */}

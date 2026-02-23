@@ -18,7 +18,7 @@ export default function Background({ isNight = false }: BackgroundProps) {
         Animated.loop(
             Animated.timing(cloudAnim, {
                 toValue: TOTAL_TRAVEL,
-                duration: 60000, // 60 secondes pour traverser l'écran
+                duration: 120000, // 1min pour traverser l'écran
                 easing: Easing.linear,
                 useNativeDriver: true,
             })

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Modal, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, ScrollView, Switch } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import type { Character } from '~/types';
@@ -16,8 +16,9 @@ type ConfirmationModalProps = {
   ageGroupName?: string;
   ageGroupEmoji?: string;
   characters?: Character[];
-  onConfirm: () => void;
+  onConfirm: (isShared: boolean) => void;
   onCancel: () => void;
+  onTestCreate?: (isShared: boolean) => void;
 };
 
 export default function ConfirmationModal({
@@ -33,8 +34,10 @@ export default function ConfirmationModal({
   characters = [],
   onConfirm,
   onCancel,
+  onTestCreate,
 }: ConfirmationModalProps) {
   const { t } = useTranslation();
+  const [isShared, setIsShared] = useState(true);
 
   // Build character summary
   const getCharacterSummary = (char: Character): string => {
@@ -192,6 +195,27 @@ export default function ConfirmationModal({
                   </View>
                 </View>
               </View>
+              {/* Toggle partage */}
+              <View className="bg-green-50 border border-green-200 rounded-xl p-4 mb-3">
+                <View className="flex-row items-center justify-between mb-2">
+                  <View className="flex-row items-center gap-2 flex-1">
+                    <Text className="text-lg">🌍</Text>
+                    <Text className="text-green-800 font-semibold text-base">
+                      {t('storyCreation.shareStory', 'Partager l\'histoire')}
+                    </Text>
+                  </View>
+                  <Switch
+                    value={isShared}
+                    onValueChange={setIsShared}
+                    trackColor={{ false: '#d1d5db', true: '#86efac' }}
+                    thumbColor={isShared ? '#16a34a' : '#9ca3af'}
+                  />
+                </View>
+                <Text className="text-green-700 text-xs">
+                  🎁 {t('storyCreation.shareReward', 'Après 10 histoires partagées, 1 jeton vous est offert !')}
+                </Text>
+              </View>
+
               {/* Info coût */}
               <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex-row items-start">
                 <Text className="text-blue-600 text-xl mr-3">ℹ️</Text>
@@ -209,9 +233,17 @@ export default function ConfirmationModal({
 
           {/* Actions */}
           <View className="p-6 pt-0 gap-3">
+            {onTestCreate && (
+              <TouchableOpacity
+                className="border-2 border-amber-400 bg-amber-50 px-6 py-3 rounded-xl items-center flex-row justify-center gap-2"
+                onPress={() => onTestCreate(isShared)}
+              >
+                <Text className="text-amber-700 font-bold text-base">🧪 Test (sans IA)</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
-              onPress={onConfirm}
+              onPress={() => onConfirm(isShared)}
             >
               <Text className="text-white font-bold text-lg">
                 {t('storyCreation.confirmAndCreate')}

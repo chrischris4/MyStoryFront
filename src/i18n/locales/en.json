@@ -325,6 +325,7 @@
     "low": "Low (30%)",
     "medium": "Medium (50%)",
     "high": "High (70%)",
+    "textStyle": "Text",
     "frame": "Frame",
     "frameNone": "None",
     "frameStars": "Stars",
@@ -522,6 +523,11 @@
     "shareStorySubtitle": "Choose how to share your story",
     "shareToEveryone": "Share with everyone",
     "visibleByCommunity": "Visible by the whole community",
+    "shareToEveryoneConfirmTitle": "Share with the community 🌍",
+    "shareToEveryoneConfirmMessage": "Your story will be visible to all users. It's a great way to share your creativity!",
+    "shareToEveryoneConfirmPermanent": "Note: this share is permanent.",
+    "shareToEveryoneConfirmBonus": "🎁 After 10 shared stories, you earn 1 free token!",
+    "shareToEveryoneConfirmButton": "Share now",
     "shareToGroups": "Share to groups",
     "noGroupYet": "You don't have any groups yet",
     "members": "{{count}} members",
@@ -698,6 +704,8 @@
     "reportError": "Error while sending the report"
   },
   "storyExample": {
+    "seeExample": "See an example",
+    "seeExampleSubtitle": "Discover what you can create",
     "title": "Story example",
     "subtitle": "Here is what you can get by creating a story",
     "storyTitle": "Story title",

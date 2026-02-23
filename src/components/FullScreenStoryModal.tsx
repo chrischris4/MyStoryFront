@@ -17,7 +17,7 @@ import { BlurView } from 'expo-blur';
 import * as Brightness from 'expo-brightness';
 import { useAudioPlayer } from 'expo-audio';
 import type { Page } from '~/types';
-import { StoryFrame, StoryEffect, type FrameType, type EffectType } from './StoryFrames';
+import { StoryFrame, StoryEffect, type FrameType, type EffectType, type TextStylePreset, TEXT_STYLE_PRESETS } from './StoryFrames';
 import FrameMenu from './FrameMenu';
 import { useTranslation } from 'react-i18next';
 import { STORY_MUSICS, MUSIC_CATEGORIES } from '../../assets/sounds/storySounds';
@@ -92,6 +92,7 @@ export default function FullScreenStoryModal({
   };
   const [selectedFrame, setSelectedFrame] = useState<FrameType>('black');
   const [selectedEffect, setSelectedEffect] = useState<EffectType>('none');
+  const [selectedTextStyle, setSelectedTextStyle] = useState<TextStylePreset>(TEXT_STYLE_PRESETS[0]);
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -317,18 +318,20 @@ export default function FullScreenStoryModal({
                   {/* Titre en haut de la cover */}
                   {item.isCover && title && (
                     <Animated.View
-                      className="absolute self-center z-20 bg-white/90 rounded-xl"
+                      className="absolute self-center z-20 rounded-xl"
                       style={{
                         top: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
                         maxWidth: '85%',
                         paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
                         paddingVertical: isRotated ? (isMd ? 12 : 4) : (isMd ? 6 : 2),
+                        backgroundColor: selectedTextStyle.bgColor,
                       }}
                     >
                       <Text
                         className="font-baloo-bold text-center"
                         style={{
                           fontSize: isRotated ? (isMd ? 30 : 24) : (isMd ? 24 : 12),
+                          color: selectedTextStyle.textColor,
                         }}
                       >
                         {title}
@@ -348,16 +351,18 @@ export default function FullScreenStoryModal({
                     >
                       {description && (
                         <View
-                          className="bg-white/90 rounded-xl"
+                          className="rounded-xl"
                           style={{
                             paddingHorizontal: isRotated ? (isMd ? 24 : 16) : (isMd ? 12 : 8),
                             paddingVertical: isRotated ? (isMd ? 10 : 6) : (isMd ? 4 : 3),
+                            backgroundColor: selectedTextStyle.bgColor,
                           }}
                         >
                           <Text
-                            className="font-baloo text-center text-gray-800"
+                            className="font-baloo text-center"
                             style={{
                               fontSize: isRotated ? (isMd ? 18 : 14) : (isMd ? 14 : 9),
+                              color: selectedTextStyle.textColor,
                             }}
                             numberOfLines={3}
                           >
@@ -367,16 +372,18 @@ export default function FullScreenStoryModal({
                       )}
                       {author && (
                         <View
-                          className="bg-white/90 rounded-xl"
+                          className="rounded-xl"
                           style={{
                             paddingHorizontal: isRotated ? (isMd ? 20 : 12) : (isMd ? 10 : 6),
                             paddingVertical: isRotated ? (isMd ? 8 : 4) : (isMd ? 3 : 2),
+                            backgroundColor: selectedTextStyle.bgColor,
                           }}
                         >
                           <Text
-                            className="font-baloo-medium text-center text-gray-900"
+                            className="font-baloo-medium text-center"
                             style={{
                               fontSize: isRotated ? (isMd ? 16 : 12) : (isMd ? 12 : 9),
+                              color: selectedTextStyle.textColor,
                             }}
                           >
                             {t('storyDetail.author', { name: author })}
@@ -388,7 +395,7 @@ export default function FullScreenStoryModal({
                   {/* Afficher le texte seulement si ce n'est pas la cover */}
                   {!item.isCover && (
                     <Animated.View
-                      className="absolute flex justify-center items-center self-center bg-white/90 rounded-xl z-20"
+                      className="absolute flex justify-center items-center self-center rounded-xl z-20"
                       style={{
                         bottom: isRotated ? (isMd ? 30 : 20) : (isMd ? 30 : 18),
                         maxWidth: '80%',
@@ -396,12 +403,14 @@ export default function FullScreenStoryModal({
                         paddingVertical: isRotated ? (isMd ? 12 : 8) : (isMd ? 6 : 4),
                         opacity: textOpacity,
                         transform: [{ translateY: textSlide }],
+                        backgroundColor: selectedTextStyle.bgColor,
                       }}
                     >
                       <Text
                         className="font-baloo-medium"
                         style={{
                           fontSize: isRotated ? (isMd ? 24 : 16) : (isMd ? 18 : 10),
+                          color: selectedTextStyle.textColor,
                         }}
                       >
                         {item.text}
@@ -459,7 +468,7 @@ export default function FullScreenStoryModal({
               position: 'absolute',
               top: 16,
               right: 16,
-              backgroundColor: showControls ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+              backgroundColor: showControls ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
               borderRadius: 40,
               width: 65,
               height: 65,
@@ -471,7 +480,7 @@ export default function FullScreenStoryModal({
             <Feather
               name="menu"
               size={22}
-              color={showControls ? "white" : "black"}
+              color="black"
             />
           </TouchableOpacity>
 
@@ -493,9 +502,6 @@ export default function FullScreenStoryModal({
                 {/* Bouton musique en haut à gauche */}
                 <View className='flex flex-row gap-4 relative'>
 
-
-
-
                   {/* Bouton luminosité + Slider */}
                   <TouchableOpacity
                     onPress={() => {
@@ -506,7 +512,7 @@ export default function FullScreenStoryModal({
                       }
                     }}
                     style={{
-                      backgroundColor: showBrightnessMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      backgroundColor: showBrightnessMenu ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
                       borderRadius: 40,
                       width: 65,
                       height: 65
@@ -516,7 +522,7 @@ export default function FullScreenStoryModal({
                     <Feather
                       name="sun"
                       size={24}
-                      color={showBrightnessMenu ? "white" : "black"}
+                      color="black"
                     />
                   </TouchableOpacity>
 
@@ -555,20 +561,20 @@ export default function FullScreenStoryModal({
                               height: 44,
                               borderRadius: 22,
                               backgroundColor: brightness === option.value && !isNightMode
-                                ? 'rgba(16, 185, 129, 0.9)'
+                                ? '#5FD5FF'
                                 : 'rgba(255, 255, 255, 0.9)',
                               justifyContent: 'center',
                               alignItems: 'center',
                               borderWidth: 2,
                               borderColor: brightness === option.value && !isNightMode
-                                ? 'rgba(16, 185, 129, 1)'
+                                ? '#5FD5FF50'
                                 : 'rgba(0, 0, 0, 0.1)',
                             }}
                           >
                             <Text style={{
                               fontSize: 12,
                               fontWeight: '600',
-                              color: brightness === option.value && !isNightMode ? 'white' : 'black',
+                              color: 'black',
                             }}>
                               {option.label}
                             </Text>
@@ -583,20 +589,20 @@ export default function FullScreenStoryModal({
                             height: 44,
                             borderRadius: 22,
                             backgroundColor: isNightMode
-                              ? 'rgba(99, 102, 241, 0.9)'
+                              ? '#5FD5FF'
                               : 'rgba(255, 255, 255, 0.9)',
                             justifyContent: 'center',
                             alignItems: 'center',
                             borderWidth: 2,
                             borderColor: isNightMode
-                              ? 'rgba(99, 102, 241, 1)'
+                              ? '#5FD5FF'
                               : 'rgba(0, 0, 0, 0.1)',
                           }}
                         >
                           <Feather
                             name="moon"
                             size={18}
-                            color={isNightMode ? 'white' : 'black'}
+                            color='black'
                           />
                         </TouchableOpacity>
                       </View>
@@ -611,7 +617,7 @@ export default function FullScreenStoryModal({
                       }
                     }}
                     style={{
-                      backgroundColor: selectedMusic ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      backgroundColor: showMusicMenu ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
                       borderRadius: 40,
                       width: 65,
                       height: 65
@@ -621,7 +627,7 @@ export default function FullScreenStoryModal({
                     <Feather
                       name="music"
                       size={24}
-                      color={selectedMusic ? "white" : "black"}
+                      color="black"
                     />
                   </TouchableOpacity>
                   {/* Menu des musiques */}
@@ -665,7 +671,7 @@ export default function FullScreenStoryModal({
                           style={{
                             padding: 12,
                             borderRadius: 8,
-                            backgroundColor: !selectedMusic ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                            backgroundColor: !selectedMusic ? '#5FD5FF50' : 'transparent',
                           }}
                         >
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -684,7 +690,7 @@ export default function FullScreenStoryModal({
                               style={{
                                 padding: 12,
                                 borderRadius: 8,
-                                backgroundColor: selectedMusic?.id === music.id ? 'rgba(16, 185, 129, 0.2)' : 'transparent',
+                                backgroundColor: selectedMusic?.id === music.id ? '#5FD5FF50' : 'transparent',
                               }}
                             >
                               <Text style={{ fontSize: 14 }}>
@@ -706,7 +712,7 @@ export default function FullScreenStoryModal({
                       }
                     }}
                     style={{
-                      backgroundColor: showFrameMenu ? 'rgba(16, 185, 129, 0.9)' : 'rgba(255, 255, 255, 0.7)',
+                      backgroundColor: showFrameMenu ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
                       borderRadius: 40,
                       width: 65,
                       height: 65,
@@ -716,7 +722,7 @@ export default function FullScreenStoryModal({
                     <Feather
                       name="image"
                       size={24}
-                      color={showFrameMenu ? "white" : "black"}
+                      color="black"
                     />
                   </TouchableOpacity>
 
@@ -729,11 +735,21 @@ export default function FullScreenStoryModal({
                     onSelectFrame={setSelectedFrame}
                     selectedEffect={selectedEffect}
                     onSelectEffect={setSelectedEffect}
+                    selectedTextStyle={selectedTextStyle}
+                    onSelectTextStyle={setSelectedTextStyle}
                   />
                 </View>
               </View>
 
-              <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+              <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                {/* Page indicator */}
+                <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }} pointerEvents="none">
+                  <View style={{ backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6 }}>
+                    <Text style={{ color: 'white', fontSize: 13, fontWeight: '600' }}>
+                      {currentPageIndex + 1} / {allItems.length}
+                    </Text>
+                  </View>
+                </View>
                 <TouchableOpacity
                   onPress={goToPreviousPage}
                   disabled={currentPageIndex === 0}

@@ -25,6 +25,23 @@ export type EffectType =
   | 'fireflies'
   | 'confetti';
 
+export type TextStylePreset = {
+  id: string;
+  bgColor: string;
+  textColor: string;
+};
+
+export const TEXT_STYLE_PRESETS: TextStylePreset[] = [
+  { id: 'default', bgColor: 'rgba(255,255,255,0.9)', textColor: '#000000' },
+  { id: 'dark',    bgColor: 'rgba(0,0,0,0.85)',      textColor: '#FFFFFF' },
+  { id: 'navy',    bgColor: 'rgba(15,23,42,0.92)',   textColor: '#BFDBFE' },
+  { id: 'forest',  bgColor: 'rgba(6,78,59,0.92)',    textColor: '#A7F3D0' },
+  { id: 'purple',  bgColor: 'rgba(46,16,101,0.92)',  textColor: '#EDE9FE' },
+  { id: 'rose',    bgColor: 'rgba(136,19,55,0.92)',  textColor: '#FECDD3' },
+  { id: 'amber',   bgColor: 'rgba(120,53,15,0.92)',  textColor: '#FDE68A' },
+  { id: 'cream',   bgColor: 'rgba(254,243,199,0.95)',textColor: '#92400E' },
+];
+
 
 // ===== STARS - Icones etoiles scintillantes =====
 

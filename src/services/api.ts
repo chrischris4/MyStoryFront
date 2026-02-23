@@ -325,7 +325,7 @@ export class ApiService {
   }
 
   async hasReportedStory(storyId: number) {
-    return this.get<{ hasReported: boolean }>(`/report/has-reported/${storyId}`);
+    return this.get<{ hasReported: boolean }>(`/report/check?storyId=${storyId}`);
   }
 
   // --- Characters ---

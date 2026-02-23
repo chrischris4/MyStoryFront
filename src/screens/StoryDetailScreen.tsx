@@ -62,6 +62,7 @@ export default function StoryDetailScreen() {
   const [selectedGroups, setSelectedGroups] = useState<number[]>([]);
   const scrollViewRef = useRef<ScrollView>(null);
   const coverFade = useRef(new Animated.Value(0)).current;
+  const confirmSlideAnim = useRef(new Animated.Value(width)).current;
   const { handleScroll: handleGoBackTopScroll, isVisible: goBackTopVisible, opacity: goBackTopOpacity, scale: goBackTopScale } = useGoBackTop(200);
 
   // Hook pour les sons
@@ -82,6 +83,7 @@ export default function StoryDetailScreen() {
   const isOwner = currentUser?.id === story?.user?.id;
   const { data: hasReported = false } = useHasReportedStory(isOwner ? 0 : Number(storyId));
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showShareCommunityConfirm, setShowShareCommunityConfirm] = useState(false);
   const [selectedReason, setSelectedReason] = useState<ReportReason | null>(null);
   const [reportMessage, setReportMessage] = useState('');
   const skyColor = isNight ? '#020205' : '#87CEEB';
@@ -345,6 +347,24 @@ export default function StoryDetailScreen() {
     }
   }, [showShareModal, sharedGroups]);
 
+  // Animation slide du panneau de confirmation communauté
+  useEffect(() => {
+    if (showShareCommunityConfirm) {
+      Animated.spring(confirmSlideAnim, {
+        toValue: 0,
+        useNativeDriver: true,
+        tension: 80,
+        friction: 12,
+      }).start();
+    } else {
+      Animated.timing(confirmSlideAnim, {
+        toValue: width,
+        duration: 220,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showShareCommunityConfirm]);
+
   // Animation pour le skeleton
   const skeletonAnim = useRef(new Animated.Value(0.3)).current;
 
@@ -542,6 +562,7 @@ export default function StoryDetailScreen() {
         contentContainerStyle={{ paddingBottom: 70 }}
         scrollEventThrottle={16}
         onScroll={handleGoBackTopScroll}
+        showsVerticalScrollIndicator={false}
       >
 
         {/* Couverture */}
@@ -823,7 +844,7 @@ export default function StoryDetailScreen() {
             <BlurView
               intensity={90}
               tint={isNight ? "dark" : "light"}
-              className="rounded-3xl p-6 mx-4 w-11/12  max-w-md overflow-hidden"
+              className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
               style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff', minHeight: '80%', maxHeight: '80%' }}
             >
               <View className="flex-1">
@@ -833,7 +854,9 @@ export default function StoryDetailScreen() {
 
                 {/* Option: Partager à tout le monde */}
                 <TouchableOpacity
-                  onPress={handleShareToCommunity}
+                  onPress={() => {
+                    if (!isShared) setShowShareCommunityConfirm(true);
+                  }}
                   disabled={isShared}
                   className="mb-4"
                 >
@@ -947,7 +970,7 @@ export default function StoryDetailScreen() {
 
                 <TouchableOpacity
                   onPress={() => {
-                    setSelectedGroups([]); // Réinitialiser la sélection
+                    setSelectedGroups([]);
                     setShowShareModal(false);
                   }}
                   className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 rounded-xl items-center`}
@@ -958,6 +981,67 @@ export default function StoryDetailScreen() {
                 </TouchableOpacity>
               </View>
             </BlurView>
+
+            {/* Panneau de confirmation - slide depuis la droite */}
+            <Animated.View
+              pointerEvents={showShareCommunityConfirm ? 'auto' : 'none'}
+              style={{
+                position: 'absolute',
+                top: 0, left: 0, right: 0, bottom: 0,
+                justifyContent: 'center',
+                transform: [{ translateX: confirmSlideAnim }],
+              }}
+            >
+              <BlurView
+                intensity={95}
+                tint={isNight ? "dark" : "light"}
+                style={{
+                  borderColor: isNight ? '#1e293b' : '#ffffff',
+                  borderWidth: 2,
+                  marginHorizontal: 16,
+                  borderRadius: 24,
+                  overflow: 'hidden',
+                  backgroundColor: isNight ? '#1e293b' : '#ffffff',
+                  padding: 24,
+                }}
+              >
+                <Text className={`text-2xl font-baloo-bold ${isNight ? 'text-white' : 'text-gray-900'} mb-3`}>
+                  {t('storyDetail.shareToEveryoneConfirmTitle')}
+                </Text>
+                <Text className={`font-baloo text-base ${isNight ? 'text-gray-300' : 'text-gray-700'} mb-3`}>
+                  {t('storyDetail.shareToEveryoneConfirmMessage')}
+                </Text>
+                <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-500'} mb-4`}>
+                  {t('storyDetail.shareToEveryoneConfirmPermanent')}
+                </Text>
+                <View className={`rounded-xl p-3 mb-5 ${isNight ? 'bg-yellow-500/20' : 'bg-yellow-50'}`}>
+                  <Text className={`font-baloo-semibold text-sm ${isNight ? 'text-yellow-300' : 'text-yellow-700'} text-center`}>
+                    {t('storyDetail.shareToEveryoneConfirmBonus')}
+                  </Text>
+                </View>
+                <View className="flex-row gap-3">
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowShareCommunityConfirm(false);
+                      handleShareToCommunity();
+                    }}
+                    className="bg-blue-600 p-4 rounded-xl items-center flex-1"
+                  >
+                    <Text className="text-white font-baloo-bold text-lg">
+                      {t('storyDetail.share')}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setShowShareCommunityConfirm(false)}
+                    className={`${isNight ? 'bg-gray-700' : 'bg-gray-200'} p-4 flex-1 rounded-xl items-center`}
+                  >
+                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>
+                      {t('common.cancel')}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </BlurView>
+            </Animated.View>
           </View>
         </Modal>
 

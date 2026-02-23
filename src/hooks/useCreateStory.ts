@@ -10,6 +10,7 @@ type CreateStoryInput = {
   language: string;
   characterIds?: number[];
   characterDescriptions?: string[];
+  isShared?: boolean;
 };
 
 type CreateStoryResponse = {
