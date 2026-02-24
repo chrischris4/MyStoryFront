@@ -1,6 +1,6 @@
 import { View, Text, Image, TouchableOpacity, Animated, useWindowDimensions } from 'react-native';
 import HomeButton from '~/components/HomeButton';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { MainTabParamList } from '~/navigation/AppNavigator';
@@ -162,9 +162,12 @@ export default function HomeScreen() {
                 className="py-2 px-4 rounded-2xl overflow-hidden"
                 style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
               >
-                <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg md:text-xl text-center font-baloo-semibold`}>
-                  {planName}
-                </Text>
+                <View className="flex-row items-center gap-1">
+                  <FontAwesome name="star" size={14} color="#FBBF24" />
+                  <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg md:text-xl text-center font-baloo-semibold ml-1`}>
+                    {planName}
+                  </Text>
+                </View>
               </BlurView>
             </View>
           )}

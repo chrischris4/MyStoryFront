@@ -366,7 +366,8 @@ export default function SettingsScreen() {
                                         autoPlay
                                         loop={true}
                                         style={{ width: 100, height: 100 }}
-                                    />                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
+                                    />                                    
+                                    <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
                                         {t('common.loading')}
                                     </Text>
                                 </View>

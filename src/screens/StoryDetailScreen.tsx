@@ -670,7 +670,7 @@ export default function StoryDetailScreen() {
           .map((page) => (
             <View key={page.id} className=" bg-gray-100 p-4 rounded-lg relative shadow mb-4 w-full">
               <Text style={{ maxWidth: '90%' }}
-                className=" mb-2 text-sm md:text-lg absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
+                className=" mb-2 text-xs md:text-sm absolute bottom-4 self-center z-20 bg-white/80 px-2 py-1 rounded-md font-baloo-medium">{page.text}</Text>
               <Image
                 source={{ uri: page.imageUrl }}
                 style={{ width: '100%', height: isMd ? 350 : 200, borderRadius: 10 }}
