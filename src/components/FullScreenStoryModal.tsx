@@ -27,7 +27,7 @@ import type { StoryMusic } from '../../assets/sounds/storySounds';
 interface FullScreenStoryModalProps {
   visible: boolean;
   pages: Page[];
-  coverUrl?: string;
+  coverUrl?: string | number;
   title?: string;
   description?: string;
   author?: string;
@@ -341,7 +341,7 @@ export default function FullScreenStoryModal({
                   className="relative"
                 >
                   <Image
-                    source={{ uri: item.imageUrl }}
+                    source={typeof item.imageUrl === 'string' ? { uri: item.imageUrl } : item.imageUrl}
                     style={{
                       width: '100%',
                       height: '100%',

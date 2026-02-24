@@ -10,20 +10,20 @@ type StoryExampleModalProps = {
   onClose: () => void;
 };
 
-const EXAMPLE_IMAGE_URLS = [
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/cover.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_1.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_2.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_3.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_4.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_5.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_6.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_7.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_8.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_9.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_10.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_11.webp',
-  'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_82/page_12.webp',
+const EXAMPLE_IMAGES = [
+  require('../../assets/storyExample/story_82_cover.webp'),
+  require('../../assets/storyExample/story_82_page_1.webp'),
+  require('../../assets/storyExample/story_82_page_2.webp'),
+  require('../../assets/storyExample/story_82_page_3.webp'),
+  require('../../assets/storyExample/story_82_page_4.webp'),
+  require('../../assets/storyExample/story_82_page_5.webp'),
+  require('../../assets/storyExample/story_82_page_6.webp'),
+  require('../../assets/storyExample/story_82_page_7.webp'),
+  require('../../assets/storyExample/story_82_page_8.webp'),
+  require('../../assets/storyExample/story_82_page_9.webp'),
+  require('../../assets/storyExample/story_82_page_10.webp'),
+  require('../../assets/storyExample/story_82_page_11.webp'),
+  require('../../assets/storyExample/story_82_page_12.webp'),
 ];
 
 export default function StoryExampleModal({ visible, onClose }: StoryExampleModalProps) {
@@ -37,19 +37,19 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
     { name: 'Anton', emoji: '🐶', description: t('storyExample.example.characters.anton') },
   ];
   const examplePages = [
-    { page: 1, text: t('storyExample.example.pages.cover'), imageUrl: EXAMPLE_IMAGE_URLS[0] },
-    { page: 2, text: t('storyExample.example.pages.page1'), imageUrl: EXAMPLE_IMAGE_URLS[1] },
-    { page: 3, text: t('storyExample.example.pages.page2'), imageUrl: EXAMPLE_IMAGE_URLS[2] },
-    { page: 4, text: t('storyExample.example.pages.page3'), imageUrl: EXAMPLE_IMAGE_URLS[3] },
-    { page: 5, text: t('storyExample.example.pages.page4'), imageUrl: EXAMPLE_IMAGE_URLS[4] },
-    { page: 6, text: t('storyExample.example.pages.page5'), imageUrl: EXAMPLE_IMAGE_URLS[5] },
-    { page: 7, text: t('storyExample.example.pages.page6'), imageUrl: EXAMPLE_IMAGE_URLS[6] },
-    { page: 8, text: t('storyExample.example.pages.page7'), imageUrl: EXAMPLE_IMAGE_URLS[7] },
-    { page: 9, text: t('storyExample.example.pages.page8'), imageUrl: EXAMPLE_IMAGE_URLS[8] },
-    { page: 10, text: t('storyExample.example.pages.page9'), imageUrl: EXAMPLE_IMAGE_URLS[9] },
-    { page: 11, text: t('storyExample.example.pages.page10'), imageUrl: EXAMPLE_IMAGE_URLS[10] },
-    { page: 12, text: t('storyExample.example.pages.page11'), imageUrl: EXAMPLE_IMAGE_URLS[11] },
-    { page: 13, text: t('storyExample.example.pages.page12'), imageUrl: EXAMPLE_IMAGE_URLS[12] },
+    { page: 1, text: t('storyExample.example.pages.cover'), imageUrl: EXAMPLE_IMAGES[0] },
+    { page: 2, text: t('storyExample.example.pages.page1'), imageUrl: EXAMPLE_IMAGES[1] },
+    { page: 3, text: t('storyExample.example.pages.page2'), imageUrl: EXAMPLE_IMAGES[2] },
+    { page: 4, text: t('storyExample.example.pages.page3'), imageUrl: EXAMPLE_IMAGES[3] },
+    { page: 5, text: t('storyExample.example.pages.page4'), imageUrl: EXAMPLE_IMAGES[4] },
+    { page: 6, text: t('storyExample.example.pages.page5'), imageUrl: EXAMPLE_IMAGES[5] },
+    { page: 7, text: t('storyExample.example.pages.page6'), imageUrl: EXAMPLE_IMAGES[6] },
+    { page: 8, text: t('storyExample.example.pages.page7'), imageUrl: EXAMPLE_IMAGES[7] },
+    { page: 9, text: t('storyExample.example.pages.page8'), imageUrl: EXAMPLE_IMAGES[8] },
+    { page: 10, text: t('storyExample.example.pages.page9'), imageUrl: EXAMPLE_IMAGES[9] },
+    { page: 11, text: t('storyExample.example.pages.page10'), imageUrl: EXAMPLE_IMAGES[10] },
+    { page: 12, text: t('storyExample.example.pages.page11'), imageUrl: EXAMPLE_IMAGES[11] },
+    { page: 13, text: t('storyExample.example.pages.page12'), imageUrl: EXAMPLE_IMAGES[12] },
   ];
   const examplePagesAsPages = examplePages.map((p) => ({
     id: p.page,
@@ -185,7 +185,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
               </Text>
               <View className="rounded-xl overflow-hidden bg-gray-100 w-full mb-6">
                 <Image
-                  source={{ uri: EXAMPLE_IMAGE_URLS[0] }}
+                  source={EXAMPLE_IMAGES[0]}
                   contentFit="cover"
                   style={{ width: '100%', aspectRatio: 16 / 10 }}
                 />
@@ -216,7 +216,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
                   >
                     <View className="rounded-xl overflow-hidden bg-gray-100 w-full">
                       <Image
-                        source={{ uri: page.imageUrl }}
+                        source={page.imageUrl as number}
                         contentFit="cover"
                         style={{ width: '100%', aspectRatio: 16 / 10 }}
                       />
@@ -255,8 +255,8 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
       </View>
       <FullScreenStoryModal
         visible={showFullScreen}
-        pages={examplePagesAsPages.slice(1)}
-        coverUrl={EXAMPLE_IMAGE_URLS[0]}
+        pages={examplePagesAsPages.slice(1) as any}
+        coverUrl={EXAMPLE_IMAGES[0]}
         title={exampleTitle}
         description={examplePrompt}
         isNight={false}

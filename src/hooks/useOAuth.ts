@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
+
 import { api } from '~/services/api';
 import { useAuth } from '~/context/AuthContext';
 import Toast from 'react-native-toast-message';
@@ -10,11 +11,8 @@ import { mapApiError } from '~/utils/errorMapper';
 // Nécessaire pour fermer la session web browser après l'auth
 WebBrowser.maybeCompleteAuthSession();
 
-// Configuration Google - À remplacer par tes vrais IDs
 const GOOGLE_CLIENT_ID_WEB = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || '';
 const GOOGLE_CLIENT_ID_IOS = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || '';
-const GOOGLE_CLIENT_ID_ANDROID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID || '';
-
 
 export const useOAuth = () => {
   const { t } = useTranslation();
@@ -22,11 +20,12 @@ export const useOAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<'google' | null>(null);
 
-  // Configuration Google
-  const [googleRequest, googleResponse, googlePromptAsync] = Google.useAuthRequest({
+  // Le client iOS génère automatiquement le redirect URI en reverse scheme :
+  // com.googleusercontent.apps.{iOS_client_id}:/oauthredirect
+  // Aucune config à ajouter dans Google Cloud Console.
+  const [googleRequest, , googlePromptAsync] = Google.useAuthRequest({
     webClientId: GOOGLE_CLIENT_ID_WEB,
     iosClientId: GOOGLE_CLIENT_ID_IOS,
-    androidClientId: GOOGLE_CLIENT_ID_ANDROID,
   });
 
 
@@ -65,6 +64,8 @@ export const useOAuth = () => {
 
     try {
       const result = await googlePromptAsync();
+      console.log('[OAuth] result type:', result.type);
+      console.log('[OAuth] result complet:', JSON.stringify(result, null, 2));
 
       if (result.type === 'success' && result.authentication?.accessToken) {
         // Récupérer les infos utilisateur Google pour avoir le nom

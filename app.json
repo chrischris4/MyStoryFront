@@ -40,7 +40,14 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSCameraUsageDescription": "Flun utilise la caméra pour personnaliser votre photo de profil.",
-        "NSPhotoLibraryUsageDescription": "Flun accède à vos photos pour personnaliser votre profil et vos histoires."
+        "NSPhotoLibraryUsageDescription": "Flun accède à vos photos pour personnaliser votre profil et vos histoires.",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": [
+              "com.googleusercontent.apps.969744828747-neis51hmf35fetdac96b7fk3h6qiq97e"
+            ]
+          }
+        ]
       }
     },
     "android": {
