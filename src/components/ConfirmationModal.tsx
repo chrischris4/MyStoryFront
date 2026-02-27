@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Switch } from 'react-native';
 import { BlurView } from 'expo-blur';
+import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { Character } from '~/types';
 import { GENDERS, ANIMAL_TYPES, ANIMAL_AGE_RANGES, SKIN_COLORS, HAIR_COLORS, EYE_COLORS, FUR_COLORS, getHumanEmoji } from '~/types';
@@ -196,11 +197,11 @@ export default function ConfirmationModal({
                 </View>
               </View>
               {/* Toggle partage */}
-              <View className="bg-green-50 border border-green-200 rounded-xl p-4 mb-3">
+              <View className="bg-gray-100 rounded-2xl p-4 mb-3">
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center gap-2 flex-1">
-                    <Text className="text-lg">🌍</Text>
-                    <Text className="text-green-800 font-semibold text-base">
+                      <Feather name='globe' size={18} color='#000' />
+                    <Text className="text-gray-800 font-semibold text-base">
                       {t('storyCreation.shareStory', 'Partager l\'histoire')}
                     </Text>
                   </View>
@@ -211,8 +212,8 @@ export default function ConfirmationModal({
                     thumbColor={isShared ? '#16a34a' : '#9ca3af'}
                   />
                 </View>
-                <Text className="text-green-700 text-xs">
-                  🎁 {t('storyCreation.shareReward', 'Après 10 histoires partagées, 1 jeton vous est offert !')}
+                <Text className="text-gray-700 text-xs">
+                  {t('storyCreation.shareReward', 'Après 10 histoires partagées, 1 jeton vous est offert !')}
                 </Text>
               </View>
 
