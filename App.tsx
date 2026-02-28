@@ -11,6 +11,7 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { Text, View, Platform } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import { initI18n } from '~/i18n';
 import { useNotifications } from '~/hooks/useNotifications';
 
@@ -43,9 +44,6 @@ const toastConfig = {
           }),
         }}
       >
-        <Text style={{ fontSize: 28, marginRight: 12 }}>
-          {props.props?.emoji || '\u2728'}
-        </Text>
         <View style={{ flex: 1 }}>
           <Text
             style={{
@@ -69,6 +67,7 @@ const toastConfig = {
             </Text>
           ) : null}
         </View>
+        <Feather name="check-circle" size={26} color="#10B981" style={{ marginLeft: 12 }} />
       </View>
     </View>
   ),
@@ -91,9 +90,6 @@ const toastConfig = {
           }),
         }}
       >
-        <Text style={{ fontSize: 28, marginRight: 12 }}>
-          {props.props?.emoji || '\uD83D\uDE25'}
-        </Text>
         <View style={{ flex: 1 }}>
           <Text
             style={{
@@ -117,6 +113,7 @@ const toastConfig = {
             </Text>
           ) : null}
         </View>
+        <Feather name="x-circle" size={26} color="#EF4444" style={{ marginLeft: 12 }} />
       </View>
     </View>
   ),
@@ -139,9 +136,6 @@ const toastConfig = {
           }),
         }}
       >
-        <Text style={{ fontSize: 28, marginRight: 12 }}>
-          {props.props?.emoji || '\uD83D\uDCD6'}
-        </Text>
         <View style={{ flex: 1 }}>
           <Text
             style={{
@@ -165,6 +159,7 @@ const toastConfig = {
             </Text>
           ) : null}
         </View>
+        <Feather name="info" size={26} color="#3B82F6" style={{ marginLeft: 12 }} />
       </View>
     </View>
   ),

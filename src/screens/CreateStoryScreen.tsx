@@ -333,6 +333,7 @@ export default function CreateStoryScreen() {
           ? selectedCharacters.map((c) => buildCharacterDescription(c))
           : undefined,
       };
+      console.log('[TestCreate] payload:', JSON.stringify(payload, null, 2));
       const response = await fetch(`${API_BASE_URL}/story/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },

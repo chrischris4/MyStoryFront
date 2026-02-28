@@ -11,6 +11,7 @@ import EditProfilModal from '~/components/EditProfilModal';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from 'react-i18next';
+import i18n, { setLanguage } from '~/i18n';
 import { useTransactionsByUser, type Transaction } from '~/hooks/useTransactionsByUser';
 import { useDeleteAccount } from '~/hooks/useDeleteAccount';
 import LottieView from 'lottie-react-native';
@@ -136,6 +137,35 @@ export default function SettingsScreen() {
 
                         </View>
                     </TouchableOpacity>
+                </BlurView>
+                <BlurView intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                    <View className='flex flex-row justify-between mb-4'>
+                        <Text className={`${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.language')}</Text>
+                        <Feather name="globe" size={20} color={isNight ? "#fff" : "#000"} />
+                    </View>
+                    <View className='flex-row gap-3'>
+                        {(['fr', 'en'] as const).map((lang) => {
+                            const isSelected = i18n.language === lang;
+                            return (
+                                <TouchableOpacity
+                                    key={lang}
+                                    activeOpacity={0.8}
+                                    onPress={() => {
+                                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                        playSound('click');
+                                        setLanguage(lang);
+                                    }}
+                                    className='flex-1 py-3 rounded-xl items-center'
+                                    style={{ backgroundColor: isSelected ? '#38b6ff' : isNight ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.3)' }}
+                                >
+                                    <Text className={`font-baloo-semibold text-lg ${isSelected ? 'text-white' : isNight ? 'text-white' : 'text-slate-600'}`}>
+                                        {lang === 'fr' ? '🇫🇷  Français' : '🇬🇧  English'}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
                 </BlurView>
                 <BlurView intensity={90}
                     tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>

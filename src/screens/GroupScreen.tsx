@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
+import { useAuth } from '~/context/AuthContext';
 import { BlurView } from 'expo-blur';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
@@ -36,6 +37,7 @@ type TabType = 'myGroups' | 'search' | 'invitations';
 export default function GroupScreen() {
   const { t } = useTranslation();
   const { isNight } = useTheme();
+  const { user } = useAuth();
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const navigation = useNavigation();
@@ -215,6 +217,7 @@ export default function GroupScreen() {
       group={group}
       isNight={isNight}
       onPress={() => handleOpenGroupModal(group)}
+      isOwner={user?.id === group.ownerId}
     />
   );
 

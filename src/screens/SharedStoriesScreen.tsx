@@ -13,6 +13,7 @@ import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
+import { useFavoriteSharedStories } from '~/hooks/useFavoriteSharedStories';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
@@ -27,6 +28,7 @@ export default function SharedStoriesScreen() {
   const isPremium = isPremiumUser(user?.subscriptionPlan);
   const [sharedStories, setSharedStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { data: favoriteStories = [], isLoading: loadingFavorites } = useFavoriteSharedStories();
   const [showBubble, setShowBubble] = useState(false);
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const animationRef = useRef(null);
@@ -158,11 +160,11 @@ export default function SharedStoriesScreen() {
           isShared={true}
           isPremium={isPremium}
           title={t('sharedStories.mostLiked')}
-          icon={<Feather name="clock" size={24} color="#fff" />}
+          icon={<Feather name="heart" size={24} color="#fff" />}
           storyType="RECENT"
           description={t('sharedStories.mostLikedDesc')}
-          stories={sharedStories}
-          isLoading={loading}
+          stories={favoriteStories}
+          isLoading={loadingFavorites}
         />
         {showBubble && (
           <Animated.View

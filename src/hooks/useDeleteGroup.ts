@@ -28,8 +28,18 @@ export const useDeleteGroup = () => {
 
   return useMutation({
     mutationFn: (groupId: number) => deleteGroup(groupId, accessToken),
-    onSuccess: () => {
-      // Invalider les groupes pour retirer le groupe supprimé
+    onMutate: async (groupId) => {
+      await queryClient.cancelQueries({ queryKey: ['groups'] });
+      const previous = queryClient.getQueryData(['groups']);
+      queryClient.setQueryData(['groups'], (old: any[]) =>
+        old?.filter((g) => g.id !== groupId) ?? []
+      );
+      return { previous };
+    },
+    onError: (_err, _groupId, context) => {
+      queryClient.setQueryData(['groups'], context?.previous);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['groups'] });
     },
   });

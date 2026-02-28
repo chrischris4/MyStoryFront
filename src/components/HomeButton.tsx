@@ -30,7 +30,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={handlePress}
-      className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10 md:h-full`}
+      className={` ${style === "half" ? "w-1/2 flex-1" : "w-full"} rounded-3xl overflow-hidden z-10 h-full`}
     >
       {!!badge && badge > 0 && (
         <View className="absolute top-4 right-4 z-20 bg-red-500 rounded-full min-w-[22px] h-[22px] items-center justify-center px-1">
@@ -40,7 +40,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
       <BlurView
         intensity={90}
         tint={isNight ? "dark" : "light"}
-        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10', ...(isMd && { height: 160 }) }}
+        style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10', ...(isMd ? { height: 160 } : { height: 120 }) }}
         className="p-4 md:p-6 flex-col justify-between"
       >
         <View className='flex flex-col'>

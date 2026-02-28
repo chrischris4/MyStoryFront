@@ -171,7 +171,7 @@ export default function ConfirmationModal({
 
                 {/* Tranche d'âge */}
                 {ageGroupName && (
-                <View className="flex-1 w-1/2">
+                  <View className="flex-1 w-1/2">
                     <Text className="text-gray-500 text-sm font-semibold mb-1">
                       {t('storyCreation.ageGroup')}
                     </Text>
@@ -200,7 +200,7 @@ export default function ConfirmationModal({
               <View className="bg-gray-100 rounded-2xl p-4 mb-3">
                 <View className="flex-row items-center justify-between mb-2">
                   <View className="flex-row items-center gap-2 flex-1">
-                      <Feather name='globe' size={18} color='#000' />
+                    <Feather name='globe' size={18} color='#000' />
                     <Text className="text-gray-800 font-semibold text-base">
                       {t('storyCreation.shareStory', 'Partager l\'histoire')}
                     </Text>
@@ -233,23 +233,25 @@ export default function ConfirmationModal({
           </ScrollView>
 
           {/* Actions */}
-          <View className="p-6 pt-0 gap-3">
+          <View className="p-6 pt-3 gap-3">
             {onTestCreate && (
               <TouchableOpacity
-                className="border-2 border-amber-400 bg-amber-50 px-6 py-3 rounded-xl items-center flex-row justify-center gap-2"
+                className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
                 onPress={() => onTestCreate(isShared)}
               >
-                <Text className="text-amber-700 font-bold text-base">🧪 Test (sans IA)</Text>
+                <Text className="text-white font-bold text-lg">
+                  {t('storyCreation.confirmAndCreate')} !
+                </Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity
+            {/* <TouchableOpacity
               className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
               onPress={() => onConfirm(isShared)}
             >
               <Text className="text-white font-bold text-lg">
                 {t('storyCreation.confirmAndCreate')}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity
               className="bg-gray-200 px-6 py-4 rounded-xl items-center"
