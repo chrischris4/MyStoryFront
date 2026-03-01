@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Modal, TouchableOpacity, Pressable } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
@@ -47,7 +47,7 @@ export default function SubscriptionModal({
                     className="w-full max-w-md"
                     onStartShouldSetResponder={() => true}
                 >
-                    <BlurView
+                    <PlatformBlur
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl overflow-hidden"
@@ -90,7 +90,7 @@ export default function SubscriptionModal({
                                     onPress={onSelectMonthly}
                                     className="rounded-2xl overflow-hidden"
                                 >
-                                    <BlurView
+                                    <PlatformBlur
                                         intensity={90}
                                         tint={isNight ? "dark" : "light"}
                                         className="p-4"
@@ -107,7 +107,7 @@ export default function SubscriptionModal({
                                                 {monthlyPrice}
                                             </Text>
                                         </View>
-                                    </BlurView>
+                                    </PlatformBlur>
                                 </TouchableOpacity>
 
                                 {/* Yearly Option */}
@@ -115,7 +115,7 @@ export default function SubscriptionModal({
                                     onPress={onSelectYearly}
                                     className="rounded-2xl overflow-hidden"
                                 >
-                                    <BlurView
+                                    <PlatformBlur
                                         intensity={90}
                                         tint={isNight ? "dark" : "light"}
                                         className="p-4 relative"
@@ -139,11 +139,11 @@ export default function SubscriptionModal({
                                                 {yearlyPrice}
                                             </Text>
                                         </View>
-                                    </BlurView>
+                                    </PlatformBlur>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </BlurView>
+                    </PlatformBlur>
                 </Animated.View>
             </Pressable>
         </Modal>

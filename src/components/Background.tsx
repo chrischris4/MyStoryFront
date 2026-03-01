@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, Easing, Dimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StarryBackground from './StarryBackground';
 
 type BackgroundProps = {
@@ -13,6 +14,7 @@ const TOTAL_TRAVEL = SCREEN_WIDTH * 3.5 + CLOUD_WIDTH * 2;
 
 export default function Background({ isNight = false }: BackgroundProps) {
     const cloudAnim = useRef(new Animated.Value(0)).current;
+    const { bottom: bottomInset } = useSafeAreaInsets();
 
     useEffect(() => {
         Animated.loop(
@@ -44,7 +46,11 @@ export default function Background({ isNight = false }: BackgroundProps) {
             {/* Sol */}
             <View
                 className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+                style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
+            />
+            <View
+                className='absolute bottom-0 -left-10 h-[75px] w-[200%] z-20'
+                style={{ backgroundColor: groundColor }}
             />
 
             

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, ImageBackground } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
 import { useTheme } from '~/context/ThemeContext';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { LinearGradient } from 'expo-linear-gradient';
 import StoryModal from '~/components/StoryModal';
 import ConfirmationModal from '~/components/ConfirmationModal';
@@ -128,6 +129,7 @@ type CreateStoryScreenNavigationProp = CompositeNavigationProp<
 >;
 
 export default function CreateStoryScreen() {
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const navigation = useNavigation<CreateStoryScreenNavigationProp>();
   const { t } = useTranslation();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
@@ -422,7 +424,7 @@ export default function CreateStoryScreen() {
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
-      {/* <TouchableOpacity
+      <TouchableOpacity
         className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
         onPress={() => {
           if (isCreating) {
@@ -434,23 +436,18 @@ export default function CreateStoryScreen() {
         }}
       >
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
-      </TouchableOpacity> */}
-      <View
-        pointerEvents="none"
-        className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-20'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
+      </TouchableOpacity>
       <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
       <Text className={`text-xl md:text-2xl font-baloo pb-2 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView
-        className="flex-1 px-4 md:px-8 z-20"
-        contentContainerStyle={{ paddingBottom: 100 }}
+        className="flex-1 px-4 md:px-8 z-10"
+        contentContainerStyle={{ paddingBottom: 100 + bottomInset }}
         showsVerticalScrollIndicator={false}
       >
         <View>
           {/* 📖 Voir un exemple */}
           <View style={{ borderRadius: 24, overflow: 'hidden', marginBottom: 16 }}>
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? 'dark' : 'light'}
               style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -470,7 +467,7 @@ export default function CreateStoryScreen() {
                 </View>
                 <Feather name="chevron-right" size={18} color={isNight ? '#ffffff80' : '#94a3b8'} />
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 🟣 Bloc Titre */}
@@ -481,7 +478,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -502,7 +499,7 @@ export default function CreateStoryScreen() {
                 )}
                 <Text className={` ${isNight ? "text-white/80" : "text-slate-600"} text-sm self-end md:text-base mt-1`}>{formik.values.title.length}/40</Text>
               </View>
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 👤 Bloc Personnage */}
@@ -528,7 +525,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -565,7 +562,7 @@ export default function CreateStoryScreen() {
                   <Text className="absolute left-0 top-0 text-red-500 font-baloo text-sm md:text-base mt-1">{formik.errors.prompt}</Text>
                 )}
               </View>
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 🟢 Bloc Style */}
@@ -576,7 +573,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -694,7 +691,7 @@ export default function CreateStoryScreen() {
               {formik.touched.selectedStyle && formik.errors.selectedStyle && (
                 <Text className="text-red-500 font-baloo text-sm md:text-base mt-2 text-center">{formik.errors.selectedStyle}</Text>
               )}
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 🌍 Bloc Langue */}
@@ -705,7 +702,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -731,7 +728,7 @@ export default function CreateStoryScreen() {
               {formik.touched.language && formik.errors.language && (
                 <Text className="text-red-500 font-baloo text-sm md:text-base mt-2">{formik.errors.language}</Text>
               )}
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 👶 Bloc Tranche d'âge */}
@@ -742,7 +739,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -774,7 +771,7 @@ export default function CreateStoryScreen() {
               {formik.touched.ageGroup && formik.errors.ageGroup && (
                 <Text className="text-red-500 font-baloo text-sm md:text-base mt-2">{formik.errors.ageGroup}</Text>
               )}
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* 🧡 Sélecteur de pages */}
@@ -785,7 +782,7 @@ export default function CreateStoryScreen() {
               marginBottom: 16,
             }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -798,13 +795,13 @@ export default function CreateStoryScreen() {
               {formik.touched.numPages && formik.errors.numPages && (
                 <Text className="text-red-500 font-baloo text-sm md:text-base mt-1 text-center">{formik.errors.numPages}</Text>
               )}
-            </BlurView>
+            </PlatformBlur>
           </View>
 
           {/* Messages d'erreur résumés */}
           {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
             (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
-              <BlurView
+              <PlatformBlur
                 intensity={90}
                 tint={isNight ? 'dark' : 'light'}
                 className="mb-4 overflow-hidden"
@@ -838,10 +835,10 @@ export default function CreateStoryScreen() {
                     )}
                   </View>
                 </View>
-              </BlurView>
+              </PlatformBlur>
             )}
           {storyCoin === 0 ? (
-            <BlurView intensity={90}
+            <PlatformBlur intensity={90}
               tint={isNight ? 'dark' : 'light'} style={{
                 borderRadius: 24,
                 overflow: 'hidden'
@@ -859,10 +856,10 @@ export default function CreateStoryScreen() {
               >
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           ) : (
 
-            <BlurView intensity={90}
+            <PlatformBlur intensity={90}
               tint={isNight ? 'dark' : 'light'} style={{
                 borderRadius: 24,
                 overflow: 'hidden'
@@ -880,7 +877,7 @@ export default function CreateStoryScreen() {
               >
                 <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           )}
         </View>
       </ScrollView>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 
 type ShopButtonProps = {
@@ -23,7 +23,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, descr
       className={` ${isCoin ? "h-24 md:h-36" : "h-44 md:h-56"} rounded-xl w-full mt-2`}
       style={{ overflow: 'hidden' }}
     >
-      <BlurView
+      <PlatformBlur
         intensity={90}
         tint={isNight ? "dark" : "light"}
         className="flex flex-col w-full p-2 md:p-4 h-full relative"
@@ -46,7 +46,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, descr
         </View>
         <Text className={`${isNight ? "text-white/80" : "text-slate-900"} text-sm md:text-base font-baloo self-end absolute bottom-2 right-2`}>{price}</Text>
         {icon && <View style={{ alignSelf: 'flex-end' }}>{icon}</View>}
-      </BlurView>
+      </PlatformBlur>
     </TouchableOpacity>
   );
 }

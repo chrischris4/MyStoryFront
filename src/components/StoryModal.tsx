@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, useWindowDimensions, View, TouchableOpacity, Image } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -29,6 +30,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
     const { t } = useTranslation();
     const { close } = useStoryCreationStore();
     const { width: screenWidth } = useWindowDimensions();
+    const { bottom: bottomInset } = useSafeAreaInsets();
     const rotateAnim = useRef(new Animated.Value(0)).current;
     const dayNightAnim = useRef(new Animated.Value(0)).current;
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -186,7 +188,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
     };
 
     return (
-        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
+        <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: bottomInset, zIndex: 20 }}>
             <TouchableOpacity
                 activeOpacity={1}
                 style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' }}
@@ -217,7 +219,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                             width: screenWidth - 32,
                             justifyContent: 'center',
                             alignItems: 'center',
-                            top: 200,
+                            bottom: 75 - screenWidth / 2,
                             transform: [{ rotate }],
                         }}
                     >
@@ -318,8 +320,8 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
 
                                 {coverUrl && (
                                     <View style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 16 }}>
-                                        <BlurView intensity={90} tint="light" style={{ padding: 16 }}>
-                                            <Animated.Text className="font-baloo-bold text-3xl md:text-4xl md:p-4 text-center" style={{ color: textColor }}>
+                                        <View style={{ padding: 16 }} className='bg-white'>
+                                            <Animated.Text className="font-baloo-bold text-3xl md:text-4xl md:p-4 text-center text-black">
                                                 {title}
                                             </Animated.Text>
                                             <View className='rounded-full self-center overflow-hidden w-1/2 aspect-square'>
@@ -329,7 +331,7 @@ export default function StoryModal({ loading, title, description, coverUrl, stor
                                                     resizeMode="cover"
                                                 />
                                             </View>
-                                        </BlurView>
+                                        </View>
                                     </View>
                                 )}
                             </Animated.View>

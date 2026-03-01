@@ -15,7 +15,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Feather } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -198,7 +198,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
           },
         ]}
       >
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint={isNight ? 'dark' : 'light'}
           className="w-full p-6 rounded-3xl self-start overflow-hidden h-full z-50"
@@ -355,7 +355,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                     const memberName = user.profil?.name || user.email || 'Utilisateur';
 
                     return (
-                      <BlurView
+                      <PlatformBlur
                         key={member.id}
                         intensity={90}
                         tint={isNight ? 'dark' : 'light'}
@@ -387,7 +387,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                             </TouchableOpacity>
                           )}
                         </View>
-                      </BlurView>
+                      </PlatformBlur>
                     );
                   })}
                 </ScrollView>
@@ -448,7 +448,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                         }}
                         activeOpacity={0.8}
                       >
-                        <BlurView
+                        <PlatformBlur
                           intensity={90}
                           tint={isNight ? 'dark' : 'light'}
                           className="p-3 rounded-xl mb-2 overflow-hidden"
@@ -465,7 +465,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                             </View>
                             <Feather name="chevron-right" size={20} color={isNight ? '#94a3b8' : '#64748b'} />
                           </View>
-                        </BlurView>
+                        </PlatformBlur>
                       </TouchableOpacity>
                     );
                   })}
@@ -473,7 +473,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
               )}
             </View>
           )}
-        </BlurView>
+        </PlatformBlur>
       </Animated.View>
     </View>
   );

@@ -19,6 +19,7 @@ import GroupScreen from '~/screens/GroupScreen';
 import ProtectedRoute from '~/components/ProtectedRoute';
 import BottomNavBar from '~/navigation/BottomNavBar';
 import FloatingStoryCreation from '~/components/FloatingStoryCreation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
 import type { RootStackParamList, MainTabParamList } from '~/types';
@@ -28,10 +29,14 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Tab Navigator avec BottomNavBar personnalisée
 function MainTabs() {
+    const { bottom: bottomInset } = useSafeAreaInsets();
+    const TAB_BAR_HEIGHT = 64;
+
     return (
         <Tab.Navigator
             screenOptions={{ headerShown: false }}
             tabBar={(props) => <BottomNavBar {...props} />}
+            sceneContainerStyle={{ paddingBottom: TAB_BAR_HEIGHT + Math.max(bottomInset, 8) }}
         >
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Stories" component={StoriesScreen} />

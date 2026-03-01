@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent, useWindowDimensions } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
 
@@ -37,7 +37,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
           <Text className="text-white text-sm font-baloo-bold -mb-[2px]">{badge > 99 ? '99+' : badge}</Text>
         </View>
       )}
-      <BlurView
+      <PlatformBlur
         intensity={90}
         tint={isNight ? "dark" : "light"}
         style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10', ...(isMd ? { height: 160 } : { height: 120 }) }}
@@ -55,7 +55,7 @@ export default function HomeButton({ onPress, title, description, icon, isNight,
             }
           </View>
         )}
-      </BlurView>
+      </PlatformBlur>
     </TouchableOpacity>
   );
 }

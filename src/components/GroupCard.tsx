@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useTranslation } from 'react-i18next';
 import { useUpdateGroup } from '~/hooks/useUpdateGroup';
 import { useDeleteGroup } from '~/hooks/useDeleteGroup';
@@ -72,7 +72,7 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
     return (
         <>
             <TouchableOpacity onPress={onPress} className="mb-3">
-                <BlurView
+                <PlatformBlur
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-4 md:p-6 rounded-2xl overflow-hidden"
@@ -110,13 +110,13 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                             </View>
                         )}
                     </View>
-                </BlurView>
+                </PlatformBlur>
             </TouchableOpacity>
 
             {/* Modal édition */}
             <Modal visible={editVisible} transparent animationType="fade" onRequestClose={() => setEditVisible(false)}>
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
-                    <BlurView
+                    <PlatformBlur
                         intensity={90}
                         tint={isNight ? 'dark' : 'light'}
                         className="w-full max-w-lg rounded-3xl overflow-hidden"
@@ -165,14 +165,14 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </BlurView>
+                    </PlatformBlur>
                 </View>
             </Modal>
 
             {/* Modal confirmation suppression */}
             <Modal visible={deleteVisible} transparent animationType="fade" onRequestClose={() => setDeleteVisible(false)}>
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
-                    <BlurView
+                    <PlatformBlur
                         intensity={90}
                         tint={isNight ? 'dark' : 'light'}
                         className="w-full max-w-lg rounded-3xl overflow-hidden"
@@ -206,7 +206,7 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </BlurView>
+                    </PlatformBlur>
                 </View>
             </Modal>
         </>

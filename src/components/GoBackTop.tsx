@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import { TouchableOpacity, Animated, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 
 interface GoBackTopProps {
   scrollViewRef: React.RefObject<ScrollView | null>;
@@ -13,6 +14,7 @@ interface GoBackTopProps {
 }
 
 export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: GoBackTopProps) {
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const scrollToTop = () => {
     scrollViewRef.current?.scrollTo({
       y: 0,
@@ -24,7 +26,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
     <Animated.View
       style={{
         position: 'absolute',
-        bottom: 100,
+        bottom: 100 + bottomInset,
         right: 16,
         opacity,
         transform: [{ scale }],
@@ -47,7 +49,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
         }}
         activeOpacity={0.8}
       >
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint="light"
           style={{
@@ -58,7 +60,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
           }}
         >
           <Feather name="arrow-up" size={28} />
-        </BlurView>
+        </PlatformBlur>
       </TouchableOpacity>
     </Animated.View>
   );

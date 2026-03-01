@@ -10,12 +10,12 @@ import {
   useWindowDimensions,
   RefreshControl,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useGroups } from '~/hooks/useGroups';
@@ -41,6 +41,7 @@ export default function GroupScreen() {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const navigation = useNavigation();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<TabType>('myGroups');
   const [searchQuery, setSearchQuery] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -172,7 +173,7 @@ export default function GroupScreen() {
       onPress={() => setActiveTab(tab)}
       className="flex-1"
     >
-      <BlurView
+      <PlatformBlur
         intensity={90}
         tint={isNight ? "dark" : "light"}
         className={`py-3 px-4 rounded-2xl overflow-hidden ${activeTab === tab ? 'opacity-100' : 'opacity-60'}`}
@@ -197,7 +198,7 @@ export default function GroupScreen() {
             </View>
           )}
         </View>
-      </BlurView>
+      </PlatformBlur>
     </TouchableOpacity>
   );
 
@@ -224,7 +225,7 @@ export default function GroupScreen() {
   const renderSearchGroupCard = (group: any) => {
     const memberCount = group._count?.members || 0;
     return (
-      <BlurView
+      <PlatformBlur
         key={group.id}
         intensity={90}
         tint={isNight ? "dark" : "light"}
@@ -252,7 +253,7 @@ export default function GroupScreen() {
             className="ml-3"
             disabled={joinGroupMutation.isPending}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               className="px-4 py-2 rounded-xl overflow-hidden"
@@ -270,17 +271,17 @@ export default function GroupScreen() {
                   {t('groups.join')}
                 </Text>
               )}
-            </BlurView>
+            </PlatformBlur>
           </TouchableOpacity>
         </View>
-      </BlurView>
+      </PlatformBlur>
     );
   };
 
   const renderInvitationCard = (invitation: any) => {
     const isPending = invitation.status === 'PENDING';
     return (
-      <BlurView
+      <PlatformBlur
         key={invitation.id}
         intensity={90}
         tint={isNight ? "dark" : "light"}
@@ -303,7 +304,7 @@ export default function GroupScreen() {
                 onPress={() => handleAcceptInvitation(invitation.id)}
                 disabled={acceptInvitationMutation.isPending}
               >
-                <BlurView
+                <PlatformBlur
                   intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="p-2 rounded-xl overflow-hidden"
@@ -315,14 +316,14 @@ export default function GroupScreen() {
                   ) : (
                     <Feather name="check" size={20} color={isNight ? '#ffffff' : '#16a34a'} />
                   )}
-                </BlurView>
+                </PlatformBlur>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() => handleRejectInvitation(invitation.id)}
                 disabled={declineInvitationMutation.isPending}
               >
-                <BlurView
+                <PlatformBlur
                   intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="p-2 rounded-xl overflow-hidden"
@@ -334,7 +335,7 @@ export default function GroupScreen() {
                   ) : (
                     <Feather name="x" size={20} color={isNight ? '#ffffff' : '#dc2626'} />
                   )}
-                </BlurView>
+                </PlatformBlur>
               </TouchableOpacity>
             </View>
           )}
@@ -345,7 +346,7 @@ export default function GroupScreen() {
             <Text className="text-red-500 font-baloo-semibold">{t('groups.declined')}</Text>
           )}
         </View>
-      </BlurView>
+      </PlatformBlur>
     );
   };
   const groundColor = isNight ? '#2E313F' : '#38A169';
@@ -358,7 +359,7 @@ export default function GroupScreen() {
 
       <View
         className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] flex flex-row items-center justify-between p-4 z-30'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
       >
         <TouchableOpacity
           activeOpacity={0.8}
@@ -410,7 +411,7 @@ export default function GroupScreen() {
                   onPress={openCreateModal}
                   className="mb-4"
                 >
-                  <BlurView
+                  <PlatformBlur
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-4 rounded-2xl overflow-hidden"
@@ -422,13 +423,13 @@ export default function GroupScreen() {
                         {t('groups.createNewGroup')}
                       </Text>
                     </View>
-                  </BlurView>
+                  </PlatformBlur>
                 </TouchableOpacity>
 
 
                 {myGroups.length >= 10 && (
                   <View>
-                    <BlurView
+                    <PlatformBlur
                       intensity={90}
                       tint={isNight ? "dark" : "light"}
                       className="mb-4 rounded-2xl overflow-hidden"
@@ -444,7 +445,7 @@ export default function GroupScreen() {
                           className={`flex-1 ml-3 ${isNight ? 'text-white' : 'text-slate-800'} font-baloo text-base`}
                         />
                       </View>
-                    </BlurView>
+                    </PlatformBlur>
 
                     {isSearching ? (
                       <View className="items-center py-8">
@@ -462,7 +463,7 @@ export default function GroupScreen() {
                         </Animated.View>
                       </View>
                     ) : searchResults.length === 0 && searchQuery.trim().length > 0 ? (
-                      <BlurView
+                      <PlatformBlur
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="p-8 rounded-2xl overflow-hidden items-center"
@@ -472,7 +473,7 @@ export default function GroupScreen() {
                         <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
                           {t('groups.noGroupFound')}
                         </Text>
-                      </BlurView>
+                      </PlatformBlur>
                     ) : (
                       searchResults.map(group => renderSearchGroupCard(group))
                     )}
@@ -494,7 +495,7 @@ export default function GroupScreen() {
                     </Animated.View>
                   </View>
                 ) : myGroups.length === 0 ? (
-                  <BlurView
+                  <PlatformBlur
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
@@ -504,7 +505,7 @@ export default function GroupScreen() {
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
                       {t('groups.noGroupYet')}
                     </Text>
-                  </BlurView>
+                  </PlatformBlur>
                 ) : (
                   myGroups.map(group => renderMyGroupCard(group))
                 )}
@@ -530,7 +531,7 @@ export default function GroupScreen() {
                     </Animated.View>
                   </View>
                 ) : invitations.length === 0 ? (
-                  <BlurView
+                  <PlatformBlur
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     className="p-8 rounded-2xl overflow-hidden items-center"
@@ -540,7 +541,7 @@ export default function GroupScreen() {
                     <Text className={`${isNight ? 'text-slate-400' : 'text-slate-500'} font-baloo text-center mt-4`}>
                       {t('groups.noInvitations')}
                     </Text>
-                  </BlurView>
+                  </PlatformBlur>
                 ) : (
                   invitations.map(invitation => renderInvitationCard(invitation))
                 )}
@@ -558,7 +559,7 @@ export default function GroupScreen() {
                 <View className="absolute inset-0" />
               </TouchableWithoutFeedback>
               <Animated.View style={{ transform: [{ scale: createModalScale }], width: isTablet ? '60%' : '100%' }}>
-                <BlurView
+                <PlatformBlur
                   intensity={90}
                   tint={isNight ? "dark" : "light"}
                   className="w-full p-6 rounded-3xl overflow-hidden"
@@ -657,7 +658,7 @@ export default function GroupScreen() {
                       </>
                     )}
                   </Formik>
-                </BlurView>
+                </PlatformBlur>
               </Animated.View>
             </Animated.View>
           )}

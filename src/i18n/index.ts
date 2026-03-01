@@ -34,13 +34,13 @@ export const initI18n = async (): Promise<void> => {
   const storedLanguage = await getStoredLanguage();
   const deviceLanguage = Localization.getLocales()[0]?.languageCode ?? 'fr';
 
-  // Use stored language, or device language if supported, or fallback to French
-  const defaultLanguage = storedLanguage || (deviceLanguage === 'en' ? 'en' : 'fr');
+  // Use stored language, or device language if supported, or fallback to English
+  const defaultLanguage = storedLanguage || (['fr', 'en'].includes(deviceLanguage) ? deviceLanguage : 'en');
 
   await i18n.use(initReactI18next).init({
     resources,
     lng: defaultLanguage,
-    fallbackLng: 'fr',
+    fallbackLng: 'en',
     compatibilityJSON: 'v4',
     interpolation: {
       escapeValue: false,

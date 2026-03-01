@@ -8,7 +8,7 @@ import {
   Animated,
   useWindowDimensions,
 } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
@@ -150,7 +150,7 @@ export default function ShareStoryModal({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint={isNight ? 'dark' : 'light'}
           className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
@@ -163,7 +163,7 @@ export default function ShareStoryModal({
 
             {/* Partager à tout le monde */}
             <TouchableOpacity onPress={() => { if (!isShared) setShowConfirm(true); }} disabled={isShared} className="mb-4">
-              <BlurView
+              <PlatformBlur
                 intensity={90}
                 tint={isNight ? 'dark' : 'light'}
                 className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-green-500' : ''}`}
@@ -180,7 +180,7 @@ export default function ShareStoryModal({
                   </View>
                   {isShared && <Feather name="check-circle" size={24} color="#22c55e" />}
                 </View>
-              </BlurView>
+              </PlatformBlur>
             </TouchableOpacity>
 
             {/* Partager à des groupes */}
@@ -190,7 +190,7 @@ export default function ShareStoryModal({
               </Text>
               <ScrollView className="flex-1" showsVerticalScrollIndicator={true}>
                 {myGroups.length === 0 ? (
-                  <BlurView
+                  <PlatformBlur
                     intensity={90} tint={isNight ? 'dark' : 'light'}
                     className="p-4 rounded-xl overflow-hidden items-center"
                     style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -199,14 +199,14 @@ export default function ShareStoryModal({
                     <Text className={`${isNight ? 'text-gray-400' : 'text-gray-600'} font-baloo text-center mt-2`}>
                       {t('storyDetail.noGroupYet')}
                     </Text>
-                  </BlurView>
+                  </PlatformBlur>
                 ) : (
                   myGroups.map((group: any) => {
                     const isAlreadyShared = sharedGroups.some((g: any) => g.id === group.id);
                     const isSelected = selectedGroups.includes(group.id);
                     return (
                       <TouchableOpacity key={group.id} onPress={() => handleToggleGroup(group.id)} className="mb-2">
-                        <BlurView
+                        <PlatformBlur
                           intensity={90} tint={isNight ? 'dark' : 'light'}
                           className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
                           style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -223,7 +223,7 @@ export default function ShareStoryModal({
                               <Feather name="check-circle" size={20} color={isAlreadyShared ? '#10b981' : '#3b82f6'} />
                             )}
                           </View>
-                        </BlurView>
+                        </PlatformBlur>
                       </TouchableOpacity>
                     );
                   })
@@ -254,7 +254,7 @@ export default function ShareStoryModal({
               </Text>
             </TouchableOpacity>
           </View>
-        </BlurView>
+        </PlatformBlur>
 
         {/* Panneau de confirmation communauté */}
         <Animated.View
@@ -265,7 +265,7 @@ export default function ShareStoryModal({
             transform: [{ translateX: confirmSlideAnim }],
           }}
         >
-          <BlurView
+          <PlatformBlur
             intensity={95} tint={isNight ? 'dark' : 'light'}
             style={{
               borderColor: isNight ? '#1e293b' : '#ffffff', borderWidth: 2,
@@ -301,7 +301,7 @@ export default function ShareStoryModal({
                 <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>{t('common.cancel')}</Text>
               </TouchableOpacity>
             </View>
-          </BlurView>
+          </PlatformBlur>
         </Animated.View>
       </View>
     </Modal>

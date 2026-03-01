@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useTranslation } from 'react-i18next';
 import type { FrameType, EffectType, TextStylePreset } from './StoryFrames';
 import { TEXT_STYLE_PRESETS } from './StoryFrames';
@@ -85,7 +85,7 @@ export default function FrameMenu({
         }],
       }}
     >
-      <BlurView
+      <PlatformBlur
         intensity={90}
         tint={isNight ? 'dark' : 'light'}
         style={{ borderRadius: 16, overflow: 'hidden' }}
@@ -236,7 +236,7 @@ export default function FrameMenu({
             </ScrollView>
           )}
         </View>
-      </BlurView>
+      </PlatformBlur>
     </Animated.View>
   );
 }

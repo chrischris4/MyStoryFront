@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import Toast from 'react-native-toast-message';
@@ -220,7 +220,7 @@ export default function CharacterSection({
         marginBottom: 16,
       }}
     >
-      <BlurView
+      <PlatformBlur
         intensity={90}
         tint={isNight ? 'dark' : 'light'}
         style={{ padding: 16, backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
@@ -331,7 +331,7 @@ export default function CharacterSection({
             ))}
           </View>
         )}
-      </BlurView>
+      </PlatformBlur>
 
       {/* Character Limit Modal */}
       <CharacterLimitModal

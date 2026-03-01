@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, useWindowDimensions, TouchableOpacity, Animated } from 'react-native';
 import ShopButton from '~/components/ShopButton';
 import SubscriptionModal from '~/components/SubscriptionModal';
@@ -19,6 +20,7 @@ type StoryDetailNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function BillingScreen() {
     const { t } = useTranslation();
+    const { bottom: bottomInset } = useSafeAreaInsets();
     const storePhrases = t('billing.storePhrases', { returnObjects: true }) as string[];
 
     function StoreBubble({
@@ -456,7 +458,7 @@ export default function BillingScreen() {
             <Background isNight={isNight} />
             <View
                 className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] z-30 flex flex-row items-center justify-between p-4'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+                style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
             >
                 <TouchableOpacity
                     onPress={() => navigation.goBack()}
@@ -572,7 +574,7 @@ export default function BillingScreen() {
                         style={{
                             transform: [{ translateX }],
                             position: 'absolute',
-                            bottom: 26,
+                            bottom: 26 + bottomInset,
                             left: 0,
                             zIndex: 5
                         }}
@@ -590,7 +592,7 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: isTablet ? -40 : -45,
+                    bottom: (isTablet ? -40 : -45) + bottomInset,
                     left: isTablet ? 140 : 60,
                     zIndex: 1
                 }}
@@ -625,7 +627,7 @@ export default function BillingScreen() {
             <Animated.View
                 style={{
                     position: 'absolute',
-                    bottom: isTablet ? 75 : 75,
+                    bottom: 75 + bottomInset,
                     left: isTablet ? -50 : -60,
                 }}
             >

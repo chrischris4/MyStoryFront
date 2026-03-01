@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, Switch } from 'react-native';
-import { BlurView } from 'expo-blur';
+
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import type { Character } from '~/types';

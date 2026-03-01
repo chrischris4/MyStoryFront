@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   Modal,
@@ -10,11 +11,10 @@ import {
   Animated,
   ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import * as Brightness from 'expo-brightness';
 import { useAudioPlayer } from 'expo-audio';
 import type { Page } from '~/types';
@@ -46,6 +46,7 @@ export default function FullScreenStoryModal({
   onClose,
 }: FullScreenStoryModalProps) {
   const { t } = useTranslation();
+  const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
   const [showControls, setShowControls] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
@@ -292,9 +293,9 @@ export default function FullScreenStoryModal({
   }
 
   return (
-    <Modal visible={visible} animationType="slide">
+    <Modal visible={visible} animationType="slide" statusBarTranslucent>
       <StatusBar hidden={true} />
-      <SafeAreaView style={{ backgroundColor: 'black' }}>
+      <View style={{ flex: 1, backgroundColor: 'black' }}>
         {/* Container principal qui pivote */}
         <View
           style={isRotated ? {
@@ -502,8 +503,8 @@ export default function FullScreenStoryModal({
             onPress={toggleControls}
             style={{
               position: 'absolute',
-              top: 16,
-              right: 16,
+              top: 16 + (isRotated ? 0 : topInset),
+              right: 16 + (isRotated ? bottomInset : 0),
               backgroundColor: showControls ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
               borderRadius: 40,
               width: 65,
@@ -534,7 +535,7 @@ export default function FullScreenStoryModal({
               pointerEvents="box-none"
             >
               {/* MENU FULL SCREEN */}
-              <View className='absolute top-4 left-4 right-4 flex flex-row justify-between'>
+              <View style={{ position: 'absolute', top: 16 + (isRotated ? 0 : topInset), left: 16 + (isRotated ? bottomInset : 0), right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
                 {/* Bouton musique en haut à gauche */}
                 <View className='flex flex-row gap-4 relative'>
 
@@ -578,7 +579,7 @@ export default function FullScreenStoryModal({
                       }],
                     }}
                   >
-                    <BlurView
+                    <PlatformBlur
                       intensity={90}
                       tint={isNight ? "dark" : "light"}
                       style={{
@@ -642,7 +643,7 @@ export default function FullScreenStoryModal({
                           />
                         </TouchableOpacity>
                       </View>
-                    </BlurView>
+                    </PlatformBlur>
                   </Animated.View>
                   <TouchableOpacity
                     onPress={() => {
@@ -683,7 +684,7 @@ export default function FullScreenStoryModal({
                       }],
                     }}
                   >
-                    <BlurView
+                    <PlatformBlur
                       intensity={90}
                       tint={isNight ? "dark" : "light"}
                       style={{
@@ -736,7 +737,7 @@ export default function FullScreenStoryModal({
                           );
                         })}
                       </ScrollView>
-                    </BlurView>
+                    </PlatformBlur>
                   </Animated.View>
                   {/* Bouton Background au milieu */}
                   <TouchableOpacity
@@ -777,7 +778,7 @@ export default function FullScreenStoryModal({
                 </View>
               </View>
 
-              <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ position: 'absolute', bottom: 16 + (isRotated ? 0 : bottomInset), left: 16 + (isRotated ? bottomInset : 0), right: 16 + (isRotated ? bottomInset : 0), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 {/* Page indicator */}
                 <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }} pointerEvents="none">
                   <View style={{ backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6 }}>
@@ -822,8 +823,8 @@ export default function FullScreenStoryModal({
                   width: 65,
                   height: 65,
                   position: 'absolute',
-                  bottom: 175,
-                  right: 16,
+                  bottom: 175 + (isRotated ? 0 : bottomInset),
+                  right: 16 + (isRotated ? bottomInset : 0),
                 }}
                 className='flex justify-center items-center'
               >
@@ -839,8 +840,8 @@ export default function FullScreenStoryModal({
                   width: 65,
                   height: 65,
                   position: 'absolute',
-                  bottom: 95,
-                  right: 16,
+                  bottom: 95 + (isRotated ? 0 : bottomInset),
+                  right: 16 + (isRotated ? bottomInset : 0),
                 }}
                 className='flex justify-center items-center'
               >
@@ -869,7 +870,7 @@ export default function FullScreenStoryModal({
             />
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 }

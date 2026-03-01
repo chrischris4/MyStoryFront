@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 import * as yup from 'yup';
 import * as Haptics from 'expo-haptics';
@@ -72,7 +72,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-        <BlurView
+        <PlatformBlur
           intensity={90} tint={isNight ? 'dark' : 'light'}
           className="rounded-3xl p-6 mx-4 w-11/12 max-w-md overflow-hidden"
           style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
@@ -95,7 +95,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
                 onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setSelectedReason(reason.value); }}
                 className="mb-2"
               >
-                <BlurView
+                <PlatformBlur
                   intensity={90} tint={isNight ? 'dark' : 'light'}
                   className={`p-3 rounded-xl overflow-hidden ${selectedReason === reason.value ? 'border-2 border-red-500' : ''}`}
                   style={{ backgroundColor: selectedReason === reason.value ? (isNight ? '#ef444430' : '#ef444420') : (isNight ? '#1e293b90' : '#38b6ff10') }}
@@ -104,7 +104,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
                     <Text className={`font-baloo-semibold ${isNight ? 'text-white' : 'text-gray-900'}`}>{reason.label}</Text>
                     {selectedReason === reason.value && <Feather name="check-circle" size={20} color="#ef4444" />}
                   </View>
-                </BlurView>
+                </PlatformBlur>
               </TouchableOpacity>
             ))}
           </View>
@@ -156,7 +156,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
               </Text>
             </TouchableOpacity>
           </View>
-        </BlurView>
+        </PlatformBlur>
       </View>
     </Modal>
   );

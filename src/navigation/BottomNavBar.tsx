@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { View, TouchableOpacity, Animated, useWindowDimensions } from 'react-native';
+import { View, TouchableOpacity, Animated, useWindowDimensions, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { Feather } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
@@ -8,6 +9,7 @@ import * as Haptics from 'expo-haptics';
 
 export default function BottomNavBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { width: screenWidth } = useWindowDimensions();
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const flowerTranslateY = useRef(new Animated.Value(50)).current;
   const flowerOpacity = useRef(new Animated.Value(0)).current;
   const flowerPosition = useRef(new Animated.Value(0)).current;
@@ -56,12 +58,12 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
   }, [state.index]);
 
   return (
-    <View className="absolute bottom-2 left-2 right-2 h-16 flex flex-row justify-around items-center rounded-xl shadow-md z-50">
+    <View className="absolute left-2 right-2 flex flex-row justify-around items-center rounded-xl z-50" style={{ bottom: Math.max(bottomInset, 8), paddingBottom: Platform.OS === 'android' ? 8 : 0 }}>
       {/* Fleur indicatrice qui suit la page active */}
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: 20,
+          bottom: Platform.OS === 'android' ? 28 : 20,
           left: 0,
           transform: [
             { translateX: flowerPosition },
@@ -94,8 +96,9 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
               navigation.navigate(item.screen);
             }}
             className="items-center"
+            style={{borderRadius: 32, overflow: 'hidden'}}
           >
-            <View className={` ${isActive ? "bg-yellow-800" : ""} h-16 w-16 rounded-full flex items-center justify-center`}>
+            <View className={`${isActive ? "bg-yellow-800" : ""} h-16 w-16 flex items-center justify-center`} style={{ borderRadius: 32 }}>
               <Feather
                 name={item.icon as keyof typeof Feather.glyphMap}
                 size={item.screen === 'CreateStory' ? 26 : 24}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Switch, StyleSheet, ScrollView, Image, Linking, Modal } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
@@ -19,6 +20,7 @@ import Background from '~/components/Background';
 
 export default function SettingsScreen() {
     const { t } = useTranslation();
+    const { bottom: bottomInset } = useSafeAreaInsets();
     const navigation = useNavigation();
     const { isNight, toggleTheme } = useTheme();
     const { logout, user } = useAuth();
@@ -68,15 +70,15 @@ export default function SettingsScreen() {
 
     return (
         <View className="relative" style={[styles.container, { backgroundColor: isNight ? '#020205' : '#87CEEB' }]}>
-            <Background isNight={isNight} />
             <View
-                className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-0'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+                className='absolute bottom-0 -right-52 border-4 h-36 rounded-t-full w-[100%] z-10'
+                style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
             />
-            <Text className={`font-baloo-bold text-4xl md:text-5xl pt-2 px-4 md:px-8 md:pb-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
-            <ScrollView className='px-4 md:px-8' showsVerticalScrollIndicator={false}>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+            <Background isNight={isNight} />
+            <Text className={`font-baloo-bold mb-2 text-4xl md:text-5xl pt-2 px-4 md:px-8 md:pb-2 ${isNight ? "text-white" : "text-black"}`}>{t('settings.title')}</Text>
+            <ScrollView className='px-4 md:px-8 z-10' showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 + bottomInset }}>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} mb-4 text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.account')}</Text>
                         <Feather name="user" size={20} color={isNight ? "#fff" : "#000"} />
@@ -105,9 +107,9 @@ export default function SettingsScreen() {
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.editProfile')}</Text>
                         <Feather name="edit" size={20} color={isNight ? "#fff" : "#000"} />
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start mb-2`}>{t('settings.appearance')}</Text>
                         {!isNight ? (
@@ -137,9 +139,9 @@ export default function SettingsScreen() {
 
                         </View>
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={`${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.language')}</Text>
                         <Feather name="globe" size={20} color={isNight ? "#fff" : "#000"} />
@@ -166,9 +168,9 @@ export default function SettingsScreen() {
                             );
                         })}
                     </View>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.sounds')}</Text>
                         <Feather name="volume-2" size={20} color={isNight ? "#fff" : "#000"} />
@@ -189,9 +191,9 @@ export default function SettingsScreen() {
                             thumbColor={areSoundEffectsEnabled ? '#38A169' : '#ccc'}
                         />
                     </View>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
 
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.notifications')}</Text>
@@ -205,9 +207,9 @@ export default function SettingsScreen() {
                             thumbColor={notificationsEnabled ? '#38A169' : '#ccc'}
                         />
                     </View>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.history')}</Text>
                         <Feather name="clock" size={20} color={isNight ? "#fff" : "#000"} />
@@ -223,9 +225,9 @@ export default function SettingsScreen() {
                     >
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.viewPurchases')}</Text>
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
-                    className='p-4 rounded-xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    className='p-4 rounded-3xl overflow-hidden mb-4' tint={isNight ? 'dark' : 'light'} style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.subscription')}</Text>
                         <Feather name="credit-card" size={20} color={isNight ? "#fff" : "#000"} />
@@ -247,9 +249,9 @@ export default function SettingsScreen() {
                         style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]} onPress={handleBilling}>
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.manageSubscription')}</Text>
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.contact')}</Text>
                         <Feather name="mail" size={20} color={isNight ? "#fff" : "#000"} />
@@ -266,10 +268,10 @@ export default function SettingsScreen() {
                         <Feather name="mail" size={18} color={isNight ? "#fff" : "#000"} />
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>support@flun.app</Text>
                     </TouchableOpacity>
-                </BlurView>
-                
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.followUs')}</Text>
                         <Feather name="heart" size={20} color={isNight ? "#fff" : "#000"} />
@@ -300,9 +302,9 @@ export default function SettingsScreen() {
                             <FontAwesome name="twitter" size={28} color={isNight ? "#fff" : "#000"} />
                         </TouchableOpacity>
                     </View>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.legal')}</Text>
                         <Feather name="book-open" size={20} color={isNight ? "#fff" : "#000"} />
@@ -332,9 +334,9 @@ export default function SettingsScreen() {
                         <Feather name="file-text" size={18} color={isNight ? "#fff" : "#000"} />
                         <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.termsOfService')}</Text>
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
-                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
+                    tint={isNight ? 'dark' : 'light'} className='p-4 rounded-3xl overflow-hidden mb-4' style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}>
                     <View className='flex flex-row justify-between mb-4'>
                         <Text className={` ${isNight ? "text-white" : "text-slate-800"} text-2xl md:text-3xl font-baloo-semibold self-start`}>{t('settings.deleteAccount')}</Text>
                         <Feather name="trash-2" size={20} color="#ef4444" />
@@ -351,13 +353,13 @@ export default function SettingsScreen() {
                         <Feather name="trash-2" size={18} color="#ef4444" />
                         <Text className="text-red-500 text-lg font-baloo">{t('settings.deleteAccountButton')}</Text>
                     </TouchableOpacity>
-                </BlurView>
-                <BlurView intensity={90}
+                </PlatformBlur>
+                <PlatformBlur intensity={90}
                     tint={isNight ? 'dark' : 'light'} style={styles.sectionBis} className='w-11/12 mx-auto'>
                     <TouchableOpacity activeOpacity={0.8} style={[styles.button, { backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }]} onPress={handleLogout}>
                         <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('settings.logout')}</Text>
                     </TouchableOpacity>
-                </BlurView>
+                </PlatformBlur>
             </ScrollView>
 
             {/* Modal Edit Profile */}
@@ -374,7 +376,7 @@ export default function SettingsScreen() {
                 onRequestClose={() => setIsHistoryModalVisible(false)}
             >
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
-                    <BlurView
+                    <PlatformBlur
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl w-full max-w-lg overflow-hidden"
@@ -396,7 +398,7 @@ export default function SettingsScreen() {
                                         autoPlay
                                         loop={true}
                                         style={{ width: 100, height: 100 }}
-                                    />                                    
+                                    />
                                     <Text className={`${isNight ? 'text-white/70' : 'text-gray-500'} font-baloo mt-4`}>
                                         {t('common.loading')}
                                     </Text>
@@ -477,7 +479,7 @@ export default function SettingsScreen() {
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    </BlurView>
+                    </PlatformBlur>
                 </View>
             </Modal>
 
@@ -489,7 +491,7 @@ export default function SettingsScreen() {
                 onRequestClose={() => setIsDeleteAccountModalVisible(false)}
             >
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
-                    <BlurView
+                    <PlatformBlur
                         intensity={90}
                         tint={isNight ? "dark" : "light"}
                         className="rounded-3xl w-full max-w-lg overflow-hidden"
@@ -570,7 +572,7 @@ export default function SettingsScreen() {
                                 )}
                             </TouchableOpacity>
                         </View>
-                    </BlurView>
+                    </PlatformBlur>
                 </View>
             </Modal>
         </View>
@@ -581,7 +583,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 40,
-                paddingBottom: 20,
     },
     section: {
         borderRadius: 24,

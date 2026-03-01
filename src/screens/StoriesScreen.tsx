@@ -1,5 +1,6 @@
 import React, { useRef, useMemo, useEffect, useState } from 'react';
 import { View, Text, Animated, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
@@ -30,6 +31,7 @@ export default function StoriesScreen() {
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
+  const { bottom: bottomInset } = useSafeAreaInsets();
   const skyColor = isNight ? '#020205' : '#87CEEB';
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
@@ -56,7 +58,7 @@ export default function StoriesScreen() {
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: isTablet ? -25 : 65,
+          bottom: (isTablet ? -25 : 65) + bottomInset,
           right: isTablet ? -40 : -15,
           zIndex: 10 
         }}
@@ -76,7 +78,7 @@ export default function StoriesScreen() {
       <Animated.View
         style={{
           position: 'absolute',
-          bottom: isTablet ? 120 : 110,
+          bottom: (isTablet ? 120 : 110) + bottomInset,
           right: isTablet ? 120 : 50,
         }}
       >
@@ -91,7 +93,7 @@ export default function StoriesScreen() {
       {/* Sol */}
       <View
         className='absolute bottom-0 -right-20 border-4 h-36 rounded-tl-full w-[100%] z-10'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
       />
       <Text className={`text-4xl md:text-5xl font-baloo-bold px-4 md:px-8 pt-4 ${isNight ? "text-white" : "text-black"}`}>{t('stories.title')}</Text>
       <Text className={` text-xl md:text-2xl font-baloo mb-4 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"}`}>
@@ -120,8 +122,8 @@ export default function StoriesScreen() {
       {showBubble && (
 
         <Animated.View
-          className="absolute bottom-60 md:bottom-80 right-20 md:right-72 z-10"
-          style={{ opacity: bubbleOpacity }}
+          className="absolute right-20 md:right-72 z-5"
+          style={{ opacity: bubbleOpacity, bottom: (isTablet ? 320 : 240) + bottomInset }}
         >
           <View
             className="px-4 py-3 flex w-80 md:w-96 rounded-2xl bg-white text-black"

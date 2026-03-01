@@ -1,4 +1,5 @@
-import { View, Text, Image, TouchableOpacity, Animated, useWindowDimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Animated, useWindowDimensions, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeButton from '~/components/HomeButton';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,7 +9,7 @@ import Background from '~/components/Background';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useTranslation } from 'react-i18next';
 import { useSound } from '~/context/SoundContext';
 import { useEffect, useRef } from 'react';
@@ -22,6 +23,7 @@ export default function HomeScreen() {
   const { playBackgroundMusic, toggleBackgroundMusic, isMusicEnabled } = useSound();
   const { width } = useWindowDimensions();
   const isMd = width >= 768;
+  const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
   const { data: invitations = [] } = useGroupInvitations();
   const pendingInvitationsCount = invitations.filter((inv: any) => inv.status === 'PENDING').length;
 
@@ -77,7 +79,7 @@ export default function HomeScreen() {
     <View className="flex-1 relative">
       <View
         className='absolute bottom-0 -left-52 border-4 h-36 rounded-t-full w-[100%] z-10'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
       />
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
@@ -87,7 +89,7 @@ export default function HomeScreen() {
           style={{
             transform: [{ translateX }],
             position: 'absolute',
-            bottom: 10,
+            bottom: 10 + bottomInset,
             alignSelf: 'center',
             zIndex: 20,
           }}
@@ -102,7 +104,7 @@ export default function HomeScreen() {
         </Animated.View>
       )}
       {/* 🌟 Contenu principal au-dessus */}
-      <View className="flex-1 items-center w-full absolute top-0 left-0 right-0 bottom-0">
+      <View className="flex-1 items-center w-full absolute left-0 right-0 bottom-0" style={{ top: Platform.OS === 'android' ? topInset : 0 }}>
         <View className="flex flex-row mt-8 md:mt-12 w-full items-center relative">
           {/* Bouton musique en haut à droite */}
           <TouchableOpacity
@@ -110,7 +112,7 @@ export default function HomeScreen() {
             className="absolute right-0 top-0 z-10"
             style={isMd ? { right: 28 } : { right: 16 }}
           >
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? 'dark' : 'light'}
               className="p-3 rounded-full overflow-hidden"
@@ -121,9 +123,9 @@ export default function HomeScreen() {
                 size={24}
                 color={isNight ? '#ffffff' : '#334155'}
               />
-            </BlurView>
+            </PlatformBlur>
           </TouchableOpacity>
-          <View className="flex flex-col items-center mx-auto">
+          <View className="flex mx-auto mb-2">
             <View
               className='relative w-40 h-40 md:w-60 md:h-60'
               style={{
@@ -151,12 +153,12 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-        <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl md:text-5xl font-baloo-semibold mt-2 md:pt-4`}>{profile?.name || 'Jean'}</Text>
+        <Text className={` ${isNight ? "text-[#eaeeff]" : "text-black"} text-3xl md:text-5xl font-baloo-semibold md:pt-4`}>{profile?.name || 'Jean'}</Text>
 
-        <View className='flex-row items-center gap-4 self-center mb-4 md:mb-6 md:mt-2'>
+        <View className='flex-row mt-1 items-center gap-4 self-center mb-4 md:mb-6 md:mt-2'>
           {profile.isPremium && (
             <View>
-              <BlurView
+              <PlatformBlur
                 intensity={90}
                 tint={isNight ? "dark" : "light"}
                 className="py-2 px-4 rounded-2xl overflow-hidden"
@@ -168,11 +170,11 @@ export default function HomeScreen() {
                     {planName}
                   </Text>
                 </View>
-              </BlurView>
+              </PlatformBlur>
             </View>
           )}
           <View>
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               className="py-2 px-4 rounded-2xl overflow-hidden"
@@ -181,7 +183,7 @@ export default function HomeScreen() {
               <Text className={`${isNight ? "text-white" : "text-slate-700"} text-lg md:text-xl md:pt-1 text-center font-baloo-semibold`}>
                 {profile?.storyCoin || '0'} {t('home.tokens')}
               </Text>
-            </BlurView>
+            </PlatformBlur>
           </View>
         </View>
 
@@ -253,7 +255,7 @@ export default function HomeScreen() {
           <View
             style={{
               position: 'absolute',
-              bottom: 24,
+              bottom: 24 + bottomInset,
               right: 10,
               zIndex: 100,
             }}

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
   Text,
@@ -17,7 +18,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
-import { BlurView } from 'expo-blur';
+import PlatformBlur from '~/components/PlatformBlur';
 import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
@@ -44,6 +45,7 @@ export default function StoryDetailScreen() {
   const route = useRoute<StoryDetailRouteProp>();
   const { isNight } = useTheme();
   const { width } = useWindowDimensions();
+  const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
   const isMd = width >= 768;
   const currentUser = useUserStore((state) => state.user);
 
@@ -206,7 +208,7 @@ export default function StoryDetailScreen() {
       <View className="flex-1 pt-10 px-4 md:px-8" style={{ backgroundColor: skyColor }}>
         {isNight && <StarryBackground starCount={50} />}
         {/* Skeleton Cover */}
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
@@ -270,12 +272,12 @@ export default function StoryDetailScreen() {
               }}
             />
           </View>
-        </BlurView>
+        </PlatformBlur>
 
         {/* Skeleton Share & Like buttons */}
         <View className='flex flex-row justify-between mt-4'>
           {/* Skeleton Share Button */}
-          <BlurView
+          <PlatformBlur
             intensity={90}
             tint={isNight ? "dark" : "light"}
             style={{
@@ -293,11 +295,11 @@ export default function StoryDetailScreen() {
                 borderRadius: 12,
               }}
             />
-          </BlurView>
+          </PlatformBlur>
 
           {/* Skeleton Like Button */}
           <View className='flex flex-row gap-3'>
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -318,8 +320,8 @@ export default function StoryDetailScreen() {
                   borderRadius: 12,
                 }}
               />
-            </BlurView>
-            <BlurView
+            </PlatformBlur>
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -340,19 +342,12 @@ export default function StoryDetailScreen() {
                   borderRadius: 12,
                 }}
               />
-            </BlurView>
+            </PlatformBlur>
           </View>
         </View>
-
-        {/* Ground decoration */}
-        <View
-          className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-        />
-
         <View
           className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30 flex flex-row items-center justify-between px-8 p-4'
-          style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+          style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
         />
       </View>
     );
@@ -367,20 +362,20 @@ export default function StoryDetailScreen() {
   }
 
   return (
-    <View className="flex-1 relative pt-10 pb-4" style={{ backgroundColor: skyColor }}>
+    <View className="flex-1 relative pb-4" style={{ backgroundColor: skyColor, paddingTop: 20 + topInset }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
       <ScrollView
         ref={scrollViewRef}
-        className="flex-grow px-4 md:px-8 z-20"
-        contentContainerStyle={{ paddingBottom: 70 }}
+        className="flex-grow px-4 md:px-8 z-10"
+        contentContainerStyle={{ paddingBottom: 70 + bottomInset }}
         scrollEventThrottle={16}
         onScroll={handleGoBackTopScroll}
         showsVerticalScrollIndicator={false}
       >
 
         {/* Couverture */}
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
@@ -415,7 +410,7 @@ export default function StoryDetailScreen() {
               {/* <Text className="text-base font-bold text-black">{story.user?.profil?.name || 'Anonyme'}</Text> */}
             </View>
           </View>
-        </BlurView>
+        </PlatformBlur>
 
 
 
@@ -423,7 +418,7 @@ export default function StoryDetailScreen() {
         <View className='flex flex-row justify-between mt-4'>
           {/* Bouton de partage (owner) ou Report (non-owner) */}
           {isOwner ? (
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -468,9 +463,9 @@ export default function StoryDetailScreen() {
                   </>
                 )}
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           ) : (
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -496,10 +491,10 @@ export default function StoryDetailScreen() {
                   {hasReported ? t('report.alreadyReported') : t('report.report')}
                 </Text>
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           )}
           <View className='flex flex-row gap-2'>
-            <BlurView
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -517,8 +512,8 @@ export default function StoryDetailScreen() {
               <Text className={`text-base font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-800'}`}>
                 {story?.numberOfPages ?? story?.pages?.length ?? '-'}
               </Text>
-            </BlurView>
-            <BlurView
+            </PlatformBlur>
+            <PlatformBlur
               intensity={90}
               tint={isNight ? "dark" : "light"}
               style={{
@@ -543,13 +538,13 @@ export default function StoryDetailScreen() {
               >
                 <MaterialIcons name={isFavorite ? 'favorite' : 'favorite-border'} size={20} color="red" />
               </TouchableOpacity>
-            </BlurView>
+            </PlatformBlur>
           </View>
         </View>
 
 
         {/* Button Story details  */}
-        <BlurView
+        <PlatformBlur
           intensity={90}
           tint={isNight ? "dark" : "light"}
           style={{
@@ -569,7 +564,7 @@ export default function StoryDetailScreen() {
             </Text>
             <Feather name={isExpanded ? 'chevron-up' : 'chevron-down'} size={24} color={isNight ? '#fff' : '#000'} />
           </TouchableOpacity>
-        </BlurView>
+        </PlatformBlur>
 
 
 
@@ -681,13 +676,8 @@ export default function StoryDetailScreen() {
       </ScrollView>
       {/* Navbar */}
       <View
-        className='absolute bottom-0 self-center border-4 h-36 rounded-t-full w-[100%] z-0'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-      />
-
-      <View
         className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30'
-        style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
+        style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
       >
         <View className="flex flex-row relative w-full h-full items-center justify-center">
         <TouchableOpacity

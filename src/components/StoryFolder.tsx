@@ -24,12 +24,14 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 import { getHumanEmoji } from '~/types';
-import { BlurView } from 'expo-blur';
 import { useTranslation } from 'react-i18next';
 import LottieView from 'lottie-react-native';
 import Slider from '@react-native-community/slider';
 import Toast from 'react-native-toast-message';
 import { useDeleteStory } from '~/hooks/useDeleteStory';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import PlatformBlur from '~/components/PlatformBlur';
 
 type StoryFolderNavigationProp = CompositeNavigationProp<
     BottomTabNavigationProp<MainTabParamList>,
@@ -110,6 +112,7 @@ export default function StoryFolder({
     isNight,
     isLoading = false,
 }: StoryFolderProps) {
+    const { bottom: bottomInset } = useSafeAreaInsets();
     const { t } = useTranslation();
     const deleteStoryMutation = useDeleteStory();
     const { width: screenWidth, height: screenHeight } = useWindowDimensions();
@@ -232,11 +235,11 @@ export default function StoryFolder({
                 if (!expanded) handleToggle();
             }}
             className="flex items-center justify-center w-full"
-            style={{ zIndex: 20 }}
+            style={{ zIndex: 10 }}
             onLayout={onLayout}
         >
             <Animated.View style={[animatedStyle, { overflow: 'hidden', borderRadius: 24 }]}>
-                <BlurView
+                <PlatformBlur
                     intensity={90}
                     tint={isNight ? "dark" : "light"}
                     style={{
@@ -459,7 +462,7 @@ export default function StoryFolder({
                                 keyExtractor={(item, index) => `${item.id}-${index}`}
                                 numColumns={numColumns}
                                 style={{ flex: 1, marginTop: 16 }}
-                                contentContainerStyle={{ paddingBottom: 100 }}
+                                contentContainerStyle={{ paddingBottom: 85 + bottomInset }}
                                 columnWrapperStyle={numColumns > 1 ? { gap: columnGap } : undefined}
                                 showsVerticalScrollIndicator={false}
                                 initialNumToRender={6}
@@ -516,7 +519,7 @@ export default function StoryFolder({
                                                         className='absolute top-14 right-6 z-10 rounded-full overflow-hidden'
                                                         activeOpacity={0.8}
                                                     >
-                                                        <BlurView
+                                                        <PlatformBlur
                                                             intensity={90}
                                                             style={{
                                                                 backgroundColor: isNight ? '#1e293b50' : '#38b6ff40',
@@ -528,7 +531,7 @@ export default function StoryFolder({
                                                                 {t('storyFolder.unlockPremium')}
                                                             </Text>
                                                             <Feather name="arrow-right" size={16} color="#1e293b" />
-                                                        </BlurView>
+                                                        </PlatformBlur>
                                                     </TouchableOpacity>
                                                 )}
                                                 <View>
@@ -655,7 +658,7 @@ export default function StoryFolder({
                             />
                         ) : null}
                     </View>
-                </BlurView>
+                </PlatformBlur>
             </Animated.View>
         </Pressable>
     );
