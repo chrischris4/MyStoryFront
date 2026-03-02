@@ -421,7 +421,7 @@ export default function SettingsScreen() {
                                     </Text>
                                 </View>
                             ) : (
-                                <ScrollView showsVerticalScrollIndicator={false}>
+                                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
                                     {transactions.map((transaction: Transaction) => (
                                         <View
                                             key={transaction.id}

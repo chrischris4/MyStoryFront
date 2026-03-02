@@ -11,9 +11,10 @@ interface GoBackTopProps {
   isVisible: boolean;
   opacity: Animated.Value;
   scale: Animated.Value;
+  isNight?: boolean;
 }
 
-export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: GoBackTopProps) {
+export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale, isNight }: GoBackTopProps) {
   const { bottom: bottomInset } = useSafeAreaInsets();
   const scrollToTop = () => {
     scrollViewRef.current?.scrollTo({
@@ -51,7 +52,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
       >
         <PlatformBlur
           intensity={90}
-          tint="light"
+          tint={isNight ? 'dark' : 'light'}
           style={{
             width: '100%',
             height: '100%',
@@ -59,7 +60,7 @@ export default function GoBackTop({ scrollViewRef, isVisible, opacity, scale }: 
             justifyContent: 'center',
           }}
         >
-          <Feather name="arrow-up" size={28} />
+          <Feather name="arrow-up" size={28} color={isNight ? 'white' : 'black'} />
         </PlatformBlur>
       </TouchableOpacity>
     </Animated.View>

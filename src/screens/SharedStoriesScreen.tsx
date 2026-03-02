@@ -88,7 +88,7 @@ export default function SharedStoriesScreen() {
         }).start();
       }, 2000);
       return () => clearTimeout(timer);
-  },);
+  }, []);
 
 
   return (

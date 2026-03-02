@@ -613,7 +613,7 @@ export default function StoryFolder({
                                                             const character = storyCharacter.character;
                                                             if (!character) return null;
                                                             return (
-                                                                <View key={storyCharacter.id ?? `char-${charIndex}`} className='flex flex-row items-center gap-2 bg-white/90 rounded-xl px-3 py-2'>
+                                                                <View key={storyCharacter.id ?? `char-${charIndex}`} className={`flex flex-row items-center gap-2 ${isNight ? 'bg-slate-700' : 'bg-white/90'} rounded-xl px-3 py-2`}>
                                                                     <View
                                                                         className={`w-8 h-8 rounded-full items-center justify-center ${character.type === 'HUMAN' ? 'bg-blue-500' : 'bg-orange-500'
                                                                             }`}

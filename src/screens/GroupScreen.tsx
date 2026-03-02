@@ -389,6 +389,7 @@ export default function GroupScreen() {
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 100 + bottomInset }}
             refreshControl={
               <RefreshControl
                 refreshing={activeTab === 'myGroups' ? isRefetchingGroups : isRefetchingInvitations}

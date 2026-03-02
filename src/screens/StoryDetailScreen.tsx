@@ -589,7 +589,7 @@ export default function StoryDetailScreen() {
           onRequestClose={() => setShowDeleteModal(false)}
         >
           <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-            <View className="bg-white rounded-2xl p-6 mx-4 w-11/12 max-w-md">
+            <View className={`${isNight ? 'bg-slate-800' : 'bg-white'} rounded-2xl p-6 mx-4 w-11/12 max-w-md`}>
               <View className="items-center mb-4">
                 <Animated.View
                   style={{
@@ -605,10 +605,10 @@ export default function StoryDetailScreen() {
                   />
                 </Animated.View>
 
-                <Text className="text-2xl font-baloo-bold text-gray-900 mb-2">
+                <Text className={`text-2xl font-baloo-bold mb-2 ${isNight ? 'text-white' : 'text-gray-900'}`}>
                   {t('storyDetail.deleteStoryTitle')}
                 </Text>
-                <Text className="text-center text-gray-600 font-baloo">
+                <Text className={`text-center font-baloo ${isNight ? 'text-gray-300' : 'text-gray-600'}`}>
                   {t('storyDetail.deleteStoryMessage', { title: story?.title })}
                 </Text>
               </View>
@@ -629,9 +629,9 @@ export default function StoryDetailScreen() {
                     playSound('pop');
                     setShowDeleteModal(false);
                   }}
-                  className="bg-gray-200 p-4 rounded-xl items-center"
+                  className={`${isNight ? 'bg-slate-600' : 'bg-gray-200'} p-4 rounded-xl items-center`}
                 >
-                  <Text className="text-gray-800 font-baloo-semibold text-lg">
+                  <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg`}>
                     {t('common.cancel')}
                   </Text>
                 </TouchableOpacity>
@@ -721,6 +721,7 @@ export default function StoryDetailScreen() {
         isVisible={goBackTopVisible}
         opacity={goBackTopOpacity}
         scale={goBackTopScale}
+        isNight={isNight}
       />
     </View>
   );
