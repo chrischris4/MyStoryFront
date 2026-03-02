@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Platform,
   useWindowDimensions,
   Animated,
   ScrollView,
@@ -47,6 +48,8 @@ export default function FullScreenStoryModal({
 }: FullScreenStoryModalProps) {
   const { t } = useTranslation();
   const { bottom: bottomInset, top: topInset } = useSafeAreaInsets();
+  const safeTop = Platform.OS === 'android' ? topInset : 0;
+  const safeBottom = Platform.OS === 'android' ? bottomInset : 0;
   const [showControls, setShowControls] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
   const [showMusicMenu, setShowMusicMenu] = useState(false);
@@ -503,8 +506,8 @@ export default function FullScreenStoryModal({
             onPress={toggleControls}
             style={{
               position: 'absolute',
-              top: 16 + (isRotated ? 0 : topInset),
-              right: 16 + (isRotated ? bottomInset : 0),
+              top: 16 + (isRotated ? 0 : safeTop),
+              right: 16 + (isRotated ? safeBottom : 0),
               backgroundColor: showControls ? '#5FD5FF' : 'rgba(255, 255, 255, 0.7)',
               borderRadius: 40,
               width: 65,
@@ -535,7 +538,7 @@ export default function FullScreenStoryModal({
               pointerEvents="box-none"
             >
               {/* MENU FULL SCREEN */}
-              <View style={{ position: 'absolute', top: 16 + (isRotated ? 0 : topInset), left: 16 + (isRotated ? bottomInset : 0), right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ position: 'absolute', top: 16 + (isRotated ? 0 : safeTop), left: 16 + (isRotated ? safeBottom : 0), right: 16, flexDirection: 'row', justifyContent: 'space-between' }}>
                 {/* Bouton musique en haut à gauche */}
                 <View className='flex flex-row gap-4 relative'>
 
@@ -778,7 +781,7 @@ export default function FullScreenStoryModal({
                 </View>
               </View>
 
-              <View style={{ position: 'absolute', bottom: 16 + (isRotated ? 0 : bottomInset), left: 16 + (isRotated ? bottomInset : 0), right: 16 + (isRotated ? bottomInset : 0), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View style={{ position: 'absolute', bottom: 16 + (isRotated ? 0 : safeBottom), left: 16 + (isRotated ? safeBottom : 0), right: 16 + (isRotated ? safeBottom : 0), flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 {/* Page indicator */}
                 <View style={{ position: 'absolute', left: 0, right: 0, alignItems: 'center' }} pointerEvents="none">
                   <View style={{ backgroundColor: 'rgba(0,0,0,0.45)', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 6 }}>
@@ -823,8 +826,8 @@ export default function FullScreenStoryModal({
                   width: 65,
                   height: 65,
                   position: 'absolute',
-                  bottom: 175 + (isRotated ? 0 : bottomInset),
-                  right: 16 + (isRotated ? bottomInset : 0),
+                  bottom: 175 + (isRotated ? 0 : safeBottom),
+                  right: 16 + (isRotated ? safeBottom : 0),
                 }}
                 className='flex justify-center items-center'
               >
@@ -840,8 +843,8 @@ export default function FullScreenStoryModal({
                   width: 65,
                   height: 65,
                   position: 'absolute',
-                  bottom: 95 + (isRotated ? 0 : bottomInset),
-                  right: 16 + (isRotated ? bottomInset : 0),
+                  bottom: 95 + (isRotated ? 0 : safeBottom),
+                  right: 16 + (isRotated ? safeBottom : 0),
                 }}
                 className='flex justify-center items-center'
               >
