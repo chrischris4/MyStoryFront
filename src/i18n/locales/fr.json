@@ -257,6 +257,7 @@
   },
   "storyFolder": {
     "noStoriesCreated": "Pas d'histoires créées.",
+    "noFavoriteStories": "Pas d'histoires favorites.",
     "createStory": "Créer une histoire",
     "author": "Auteur",
     "anonymous": "Anonyme",
@@ -418,7 +419,11 @@
     "deleteGroup": "Supprimer le groupe",
     "deleteGroupConfirm": "Es-tu sûr de vouloir supprimer \"{{name}}\" ? Cette action est irréversible.",
     "deleteSuccess": "Groupe supprimé",
-    "deleteError": "Impossible de supprimer le groupe"
+    "deleteError": "Impossible de supprimer le groupe",
+    "leaveGroup": "Quitter le groupe",
+    "leaveGroupConfirm": "Es-tu sûr de vouloir quitter le groupe \"{{name}}\" ?",
+    "leaveSuccess": "Tu as quitté le groupe",
+    "leaveError": "Impossible de quitter le groupe"
   },
   "subscription": {
     "included": "Ce qui est inclus :",
@@ -521,6 +526,7 @@
     "unknownDate": "Date inconnue",
     "shared": "Partagée",
     "share": "Partager",
+    "reported": "Histoire signalée",
     "hidePages": "Masquer les pages",
     "showAllPages": "Voir toutes les pages",
     "readFullscreen": "Lire en plein écran",
@@ -535,7 +541,7 @@
     "shareToEveryoneConfirmTitle": "Partager à la communauté 🌍",
     "shareToEveryoneConfirmMessage": "Votre histoire sera visible par tous les utilisateurs. C'est une belle façon de faire découvrir votre créativité !",
     "shareToEveryoneConfirmPermanent": "Note : ce partage est définitif.",
-    "shareToEveryoneConfirmBonus": "🎁 Après 10 histoires partagées, vous gagnez 1 jeton offert !",
+    "shareToEveryoneConfirmBonus": "10 histoires partagées = 1 jeton offert !",
     "shareToEveryoneConfirmButton": "Partager maintenant",
     "shareToGroups": "Partager à des groupes",
     "noGroupYet": "Tu n'as pas encore de groupe",

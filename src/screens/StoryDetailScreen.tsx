@@ -432,13 +432,22 @@ export default function StoryDetailScreen() {
             >
               <TouchableOpacity
                 onPress={() => {
+                  if (!story.canBeShared) return;
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   playSound('pop');
                   setShowShareModal(true);
                 }}
                 className="flex-row gap-2 items-center px-2"
+                disabled={!story.canBeShared}
               >
-                {(isShared || sharedGroups.length > 0) ? (
+                {!story.canBeShared ? (
+                  <>
+                    <Feather name='alert-circle' size={18} color="#ef4444" />
+                    <Text className="text-lg font-baloo-semibold text-red-500">
+                      {t('storyDetail.reported')}
+                    </Text>
+                  </>
+                ) : (isShared || sharedGroups.length > 0) ? (
                   <>
                     <Text className={`text-lg font-baloo-semibold ${isNight ? 'text-white' : 'text-black'}`}>
                       {t('storyDetail.shared')}

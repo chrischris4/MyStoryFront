@@ -5,6 +5,7 @@ import PlatformBlur from '~/components/PlatformBlur';
 import { useTranslation } from 'react-i18next';
 import { useUpdateGroup } from '~/hooks/useUpdateGroup';
 import { useDeleteGroup } from '~/hooks/useDeleteGroup';
+import { useLeaveGroup } from '~/hooks/useLeaveGroup';
 import Toast from 'react-native-toast-message';
 
 type GroupCardProps = {
@@ -21,11 +22,13 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
 
     const [editVisible, setEditVisible] = useState(false);
     const [deleteVisible, setDeleteVisible] = useState(false);
+    const [leaveVisible, setLeaveVisible] = useState(false);
     const [name, setName] = useState(group.name);
     const [description, setDescription] = useState(group.description || '');
 
     const updateGroup = useUpdateGroup();
     const deleteGroup = useDeleteGroup();
+    const leaveGroup = useLeaveGroup();
 
     const handleEdit = (e: any) => {
         e.stopPropagation();
@@ -56,6 +59,21 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
             Toast.show({ type: 'success', text1: t('groups.deleteSuccess') });
         } catch {
             Toast.show({ type: 'error', text1: t('common.error'), text2: t('groups.deleteError') });
+        }
+    };
+
+    const handleLeave = (e: any) => {
+        e.stopPropagation();
+        setLeaveVisible(true);
+    };
+
+    const confirmLeave = async () => {
+        try {
+            await leaveGroup.mutateAsync(group.id);
+            setLeaveVisible(false);
+            Toast.show({ type: 'success', text1: t('groups.leaveSuccess') });
+        } catch {
+            Toast.show({ type: 'error', text1: t('common.error'), text2: t('groups.leaveError') });
         }
     };
 
@@ -99,7 +117,7 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                                 </Text>
                             </View>
                         </View>
-                        {isOwner && (
+                        {isOwner ? (
                             <View className="flex-row items-center gap-4">
                                 <TouchableOpacity onPress={handleEdit} hitSlop={8}>
                                     <Feather name="edit-2" size={16} color={isNight ? '#94a3b8' : '#64748b'} />
@@ -108,6 +126,10 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                                     <Feather name="trash-2" size={16} color="#ef4444" />
                                 </TouchableOpacity>
                             </View>
+                        ) : (
+                            <TouchableOpacity onPress={handleLeave} hitSlop={8}>
+                                <Feather name="log-out" size={16} color="#ef4444" />
+                            </TouchableOpacity>
                         )}
                     </View>
                 </PlatformBlur>
@@ -161,6 +183,47 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                                 >
                                     <Text className="text-white font-baloo-semibold text-base">
                                         {t('common.save')}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </PlatformBlur>
+                </View>
+            </Modal>
+
+            {/* Modal confirmation quitter le groupe */}
+            <Modal visible={leaveVisible} transparent animationType="fade" onRequestClose={() => setLeaveVisible(false)}>
+                <View className="flex-1 justify-center items-center bg-black/50 px-4">
+                    <PlatformBlur
+                        intensity={90}
+                        tint={isNight ? 'dark' : 'light'}
+                        className="w-full max-w-lg rounded-3xl overflow-hidden"
+                        style={{ backgroundColor: isNight ? '#1e293b' : '#fff' }}
+                    >
+                        <View className="bg-orange-500 p-6 items-center">
+                            <Feather name="log-out" size={40} color="#fff" style={{ marginBottom: 8 }} />
+                            <Text className="text-white text-2xl font-baloo-bold text-center">{t('groups.leaveGroup')}</Text>
+                        </View>
+                        <View className="p-6">
+                            <Text className={`${isNight ? 'text-white/80' : 'text-gray-600'} font-baloo text-base text-center mb-6`}>
+                                {t('groups.leaveGroupConfirm', { name: group.name })}
+                            </Text>
+                            <View className="flex-row gap-3">
+                                <TouchableOpacity
+                                    className={`flex-1 py-4 rounded-xl items-center ${isNight ? 'bg-slate-700' : 'bg-gray-200'}`}
+                                    onPress={() => setLeaveVisible(false)}
+                                >
+                                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-base`}>
+                                        {t('common.cancel')}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    className="flex-1 py-4 rounded-xl items-center bg-orange-500"
+                                    onPress={confirmLeave}
+                                    disabled={leaveGroup.isPending}
+                                >
+                                    <Text className="text-white font-baloo-semibold text-base">
+                                        {t('common.confirm')}
                                     </Text>
                                 </TouchableOpacity>
                             </View>

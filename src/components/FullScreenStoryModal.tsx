@@ -240,37 +240,6 @@ export default function FullScreenStoryModal({
   const rotatedWidth = isRotated ? height : width;
   const rotatedHeight = isRotated ? width : height;
 
-  // Opacité et slide du texte liés à la position du scroll
-  const textOpacity = useMemo(() => {
-    const n = allItems.length;
-    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [1, 1], extrapolate: 'clamp' });
-    const inputRange: number[] = [];
-    const outputRange: number[] = [];
-    for (let i = 0; i < n; i++) {
-      const center = i * rotatedWidth;
-      if (i > 0) { inputRange.push(center - rotatedWidth * 0.15); outputRange.push(0); }
-      inputRange.push(center);
-      outputRange.push(1);
-      if (i < n - 1) { inputRange.push(center + rotatedWidth * 0.15); outputRange.push(0); }
-    }
-    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
-  }, [allItems.length, rotatedWidth]);
-
-  const textSlide = useMemo(() => {
-    const n = allItems.length;
-    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [0, 0], extrapolate: 'clamp' });
-    const inputRange: number[] = [];
-    const outputRange: number[] = [];
-    for (let i = 0; i < n; i++) {
-      const center = i * rotatedWidth;
-      if (i > 0) { inputRange.push(center - rotatedWidth * 0.15); outputRange.push(8); }
-      inputRange.push(center);
-      outputRange.push(0);
-      if (i < n - 1) { inputRange.push(center + rotatedWidth * 0.15); outputRange.push(8); }
-    }
-    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
-  }, [allItems.length, rotatedWidth]);
-
   // Dimensions réelles de l'image affichée (contentFit="contain" avec ratio 16:9)
   // Arrondi pour éviter les gaps sub-pixel entre le cadre et l'image
   const imageAspect = 16 / 9;
@@ -294,6 +263,37 @@ export default function FullScreenStoryModal({
     frameTop = Math.floor((rotatedHeight - frameH) / 2);
     frameLeft = 0;
   }
+
+  // Opacité et slide du texte liés à la position du scroll
+  const textOpacity = useMemo(() => {
+    const n = allItems.length;
+    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [1, 1], extrapolate: 'clamp' });
+    const inputRange: number[] = [];
+    const outputRange: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const center = i * frameW;
+      if (i > 0) { inputRange.push(center - frameW * 0.15); outputRange.push(0); }
+      inputRange.push(center);
+      outputRange.push(1);
+      if (i < n - 1) { inputRange.push(center + frameW * 0.15); outputRange.push(0); }
+    }
+    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
+  }, [allItems.length, frameW]);
+
+  const textSlide = useMemo(() => {
+    const n = allItems.length;
+    if (n <= 1) return scrollX.interpolate({ inputRange: [0, 1], outputRange: [0, 0], extrapolate: 'clamp' });
+    const inputRange: number[] = [];
+    const outputRange: number[] = [];
+    for (let i = 0; i < n; i++) {
+      const center = i * frameW;
+      if (i > 0) { inputRange.push(center - frameW * 0.15); outputRange.push(8); }
+      inputRange.push(center);
+      outputRange.push(0);
+      if (i < n - 1) { inputRange.push(center + frameW * 0.15); outputRange.push(8); }
+    }
+    return scrollX.interpolate({ inputRange, outputRange, extrapolate: 'clamp' });
+  }, [allItems.length, frameW]);
 
   return (
     <Modal visible={visible} animationType="slide" statusBarTranslucent>
@@ -331,19 +331,22 @@ export default function FullScreenStoryModal({
               { useNativeDriver: false }
             )}
             scrollEventThrottle={16}
+            style={{
+              position: 'absolute',
+              left: frameLeft,
+              top: frameTop,
+              width: frameW,
+              height: frameH,
+              overflow: 'hidden',
+            }}
             onMomentumScrollEnd={(event) => {
-              const index = Math.round(event.nativeEvent.contentOffset.x / rotatedWidth);
+              const index = Math.round(event.nativeEvent.contentOffset.x / frameW);
               setCurrentPageIndex(index);
             }}
             renderItem={({ item }) => (
               <View
-                style={{ width: rotatedWidth, height: rotatedHeight, backgroundColor: 'black' }}
-                className="justify-center items-center"
+                style={{ width: frameW, height: frameH }}
               >
-                <View
-                  style={{ width: frameW, height: frameH }}
-                  className="relative"
-                >
                   <Image
                     source={typeof item.imageUrl === 'string' ? { uri: item.imageUrl } : item.imageUrl}
                     style={{
@@ -457,7 +460,6 @@ export default function FullScreenStoryModal({
                       </Text>
                     </Animated.View>
                   )}
-                </View>
               </View>
             )}
           />

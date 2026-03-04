@@ -58,6 +58,7 @@ export type Story = {
   language?: string;
   status?: StoryStatus;
   failureReason?: string;
+  canBeShared?: boolean;
 };
 
 // ==================== CHARACTER TYPES ====================

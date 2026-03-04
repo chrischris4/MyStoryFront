@@ -105,6 +105,7 @@ const StorySkeleton = () => {
 
 export default function StoryFolder({
     isShared,
+    storyType,
     title,
     isPremium,
     description,
@@ -268,7 +269,7 @@ export default function StoryFolder({
                         )}
 
                         {/* Bouton toggle filtres - uniquement pour ALL et FAVORITE */}
-                        {expanded && (!isShared || isPremium) && showContent && !isLoading && stories.length > 0 && (
+                        {expanded && (!isShared || isPremium) && showContent && !isLoading && stories.length > 1 && (
                             <TouchableOpacity
                                 onPress={() => setShowFilters(!showFilters)}
                                 className={`mt-2 flex-row items-center justify-center py-2 px-4 rounded-xl self-start w-full ${showFilters
@@ -443,6 +444,8 @@ export default function StoryFolder({
                                 <Text className={`${isNight ? "text-white" : "text-slate-800"} mb-4 font-baloo-medium`}>
                                     {showFilters
                                         ? t('storyFolder.noMatchingStories')
+                                        : storyType === 'FAVORITE'
+                                        ? t('storyFolder.noFavoriteStories')
                                         : t('storyFolder.noStoriesCreated')
                                     }
                                 </Text>

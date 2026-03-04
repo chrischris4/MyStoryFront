@@ -607,7 +607,7 @@ export default function CreateStoryScreen() {
                         borderRadius: 22,
                         overflow: 'hidden',
                         borderWidth: isSelected ? 4 : 0,
-                        borderColor: isSelected ? '#10B981' : 'transparent',
+                        borderColor: isSelected ? '#38b6ff' : 'transparent',
                       }}
                       className="h-40 md:h-60"
                     >
@@ -631,7 +631,7 @@ export default function CreateStoryScreen() {
                         >
 
                           {isSelected && (
-                            <View className="bg-green-500 absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
+                            <View className="bg-[#38b6ff] absolute top-4 right-4 rounded-full w-8 h-8 items-center justify-center">
                               <Text className="text-white font-baloo-bold text-lg">✓</Text>
                             </View>
                           )}
@@ -715,7 +715,7 @@ export default function CreateStoryScreen() {
                     <TouchableOpacity
                       key={lang.id}
                       onPress={() => formik.setFieldValue('language', lang.id)}
-                      className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-green-500' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
+                      className={`px-4 py-2 rounded-xl flex-row items-center gap-2 ${isSelected ? 'bg-[#38b6ff]' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
                     >
                       <Text className="text-xl md:text-2xl">{lang.flag}</Text>
                       <Text className={`font-baloo-medium md:text-lg ${isSelected ? 'text-white' : isNight ? 'text-white/80' : 'text-slate-800'}`}>
@@ -753,7 +753,7 @@ export default function CreateStoryScreen() {
                     <TouchableOpacity
                       key={age.id}
                       onPress={() => formik.setFieldValue('ageGroup', age.id)}
-                      className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-green-500' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
+                      className={`px-4 py-3 rounded-xl flex-1 min-w-[45%] ${isSelected ? 'bg-[#38b6ff]' : isNight ? 'bg-slate-700/50' : 'bg-black/10'}`}
                     >
                       <View className="flex-row items-center gap-2 mb-1">
                         <Text className="text-xl md:text-2xl">{age.emoji}</Text>
@@ -807,9 +807,9 @@ export default function CreateStoryScreen() {
                 className="mb-4 overflow-hidden"
                 style={{
                   borderWidth: 1,
-                  borderColor: isNight ? '#f87171' : '#dc2626',
+                  borderColor: '#ef4444',
                   borderRadius: 16,
-                  backgroundColor: isNight ? 'rgba(248,113,113,0.4)' : 'rgba(248,113,113,0.3)',
+                  backgroundColor: isNight ? '#1e293b90' : '#38b6ff10',
                 }}
               >
                 <View className="p-4">

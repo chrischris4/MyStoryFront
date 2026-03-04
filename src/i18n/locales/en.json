@@ -244,7 +244,7 @@
     "ageGroup": "Age group",
     "numPages": "Number of pages",
     "importantInfo": "Important information",
-    "costInfo": "This creation will use 1 Story Coin. Once created, the story will be available in your library.",
+    "costInfo": "This creation will use 1 Coin. Once created, the story will be available in your library.",
     "confirmAndCreate": "Confirm and create",
     "creating": "Creating...",
     "finished": "Finished!",
@@ -257,6 +257,7 @@
   },
   "storyFolder": {
     "noStoriesCreated": "No stories created.",
+    "noFavoriteStories": "No favorite stories.",
     "createStory": "Create a story",
     "author": "Author",
     "anonymous": "Anonymous",
@@ -418,7 +419,11 @@
     "deleteGroup": "Delete group",
     "deleteGroupConfirm": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
     "deleteSuccess": "Group deleted",
-    "deleteError": "Unable to delete group"
+    "deleteError": "Unable to delete group",
+    "leaveGroup": "Leave group",
+    "leaveGroupConfirm": "Are you sure you want to leave the group \"{{name}}\"?",
+    "leaveSuccess": "You have left the group",
+    "leaveError": "Unable to leave the group"
   },
   "subscription": {
     "included": "What's included:",
@@ -521,6 +526,7 @@
     "unknownDate": "Unknown date",
     "shared": "Shared",
     "share": "Share",
+    "reported": "Reported story",
     "hidePages": "Hide pages",
     "showAllPages": "Show all pages",
     "readFullscreen": "Read fullscreen",
@@ -535,7 +541,7 @@
     "shareToEveryoneConfirmTitle": "Share with the community 🌍",
     "shareToEveryoneConfirmMessage": "Your story will be visible to all users. It's a great way to share your creativity!",
     "shareToEveryoneConfirmPermanent": "Note: this share is permanent.",
-    "shareToEveryoneConfirmBonus": "🎁 After 10 shared stories, you earn 1 free token!",
+    "shareToEveryoneConfirmBonus": "10 shared stories = 1 free token!",
     "shareToEveryoneConfirmButton": "Share now",
     "shareToGroups": "Share to groups",
     "noGroupYet": "You don't have any groups yet",

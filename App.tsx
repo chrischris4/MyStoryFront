@@ -35,7 +35,7 @@ const toastConfig = {
           paddingVertical: 14,
           paddingHorizontal: 20,
           backgroundColor: '#ECFDF5',
-          borderWidth: 2,
+          borderWidth: 4,
           borderColor: '#6EE7B7',
           zIndex: 9999,
           ...Platform.select({
@@ -47,7 +47,7 @@ const toastConfig = {
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontFamily: 'Baloo2-Bold',
               color: '#065F46',
               marginBottom: 2,
@@ -58,7 +58,7 @@ const toastConfig = {
           {props.text2 ? (
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 16,
                 fontFamily: 'Baloo2-Medium',
                 color: '#37b350',
               }}
@@ -81,7 +81,7 @@ const toastConfig = {
           paddingVertical: 14,
           paddingHorizontal: 20,
           backgroundColor: '#FEF2F2',
-          borderWidth: 2,
+          borderWidth: 4,
           borderColor: '#FCA5A5',
           zIndex: 9999,
           ...Platform.select({
@@ -93,7 +93,7 @@ const toastConfig = {
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontFamily: 'Baloo2-Bold',
               color: '#991B1B',
               marginBottom: 2,
@@ -104,7 +104,7 @@ const toastConfig = {
           {props.text2 ? (
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 16,
                 fontFamily: 'Baloo2-Medium',
                 color: '#b33737',
               }}
@@ -127,7 +127,7 @@ const toastConfig = {
           paddingVertical: 14,
           paddingHorizontal: 20,
           backgroundColor: '#EFF6FF',
-          borderWidth: 2,
+          borderWidth: 4,
           borderColor: '#93C5FD',
           zIndex: 9999,
           ...Platform.select({
@@ -139,7 +139,7 @@ const toastConfig = {
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontFamily: 'Baloo2-Bold',
               color: '#1E3A5F',
               marginBottom: 2,
@@ -150,7 +150,7 @@ const toastConfig = {
           {props.text2 ? (
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 16,
                 fontFamily: 'Baloo2-Medium',
                 color: '#5175db',
               }}
@@ -159,7 +159,7 @@ const toastConfig = {
             </Text>
           ) : null}
         </View>
-        <Feather name="info" size={26} color="#3B82F6" style={{ marginLeft: 12 }} />
+        <Text style={{ fontSize: 28, marginLeft: 12 }}>👋</Text>
       </View>
     </View>
   ),
