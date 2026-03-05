@@ -737,8 +737,8 @@
     "readFullScreen": "Lire en plein écran",
     "close": "Fermer",
     "example": {
-      "title": "L'aventure de Mimi et Anton",
-      "prompt": "Mimi et Anton partent en randonnée en montagne, en chemin ils découvrent une grotte secrète avec des cristaux brillants. Anton flaire une piste mystérieuse qui les mène à un lac caché. Ils y entendent une voix qui leur confie une mission : retrouver une fleur magique au sommet. Ensemble ils surmontent les obstacles et trouvent la fleur qui illumine toute la vallée.",
+      "title": "L'aventure de Mimi et Cookie",
+      "prompt": "Mimi et Cookie partent en randonnée en montagne, en chemin ils découvrent une grotte secrète avec des cristaux brillants. Cookie flaire une piste mystérieuse qui les mène à un lac caché. Ils y entendent une voix qui leur confie une mission : retrouver une fleur magique au sommet. Ensemble ils surmontent les obstacles et trouvent la fleur qui illumine toute la vallée.",
       "style": "Classique",
       "age": "8+ ans",
       "language": "🇫🇷 Français",
@@ -747,19 +747,19 @@
         "anton": "Chien, jeune, pelage blanc, c'est un Jack Russell blanc avec des tâches marrons"
       },
       "pages": {
-        "cover": "Rejoins Mimi et Anton dans une aventure magique ! Randonnez, découvrez des secrets et dénichez la fleur qui illuminera la vallée !",
-        "page1": "Un matin ensoleillé, Anton et Mimi se préparent pour leur randonnée en montagne, impatients de découvrir de nouveaux horizons.",
-        "page2": "« Je sens que cette journée va être incroyable ! » s'exclame Anton. Il sourit avec enthousiasme.",
+        "cover": "Rejoins Mimi et Cookie dans une aventure magique ! Randonnez, découvrez des secrets et dénichez la fleur qui illuminera la vallée !",
+        "page1": "Un matin ensoleillé, Cookie et Mimi se préparent pour leur randonnée en montagne, impatients de découvrir de nouveaux horizons.",
+        "page2": "« Je sens que cette journée va être incroyable ! » s'exclame Cookie. Il sourit avec enthousiasme.",
         "page3": "Ils commencent à grimper la montagne, admirant le paysage magnifique tout autour d'eux, chaque pas les rapprochant de leur but.",
-        "page4": "« Regarde cette grotte ! » s'écrie Mimi en pointant vers une ouverture mystérieuse dans la roche. Anton acquiesce avec curiosité.",
+        "page4": "« Regarde cette grotte ! » s'écrie Mimi en pointant vers une ouverture mystérieuse dans la roche. Cookie acquiesce avec curiosité.",
         "page5": "Entrant dans la grotte, ils découvrent des cristaux brillants qui scintillent comme des étoiles au plafond obscur.",
-        "page6": "« Ça brille tellement ! » murmure Anton émerveillé. Mimi acquiesce avec un grand sourire.",
-        "page7": "Soudain, Anton flaire une piste mystérieuse menant vers un lac caché derrière les arbres. « Suis-moi ! » dit-il avec détermination.",
+        "page6": "« Ça brille tellement ! » murmure Cookie émerveillé. Mimi acquiesce avec un grand sourire.",
+        "page7": "Soudain, Cookie flaire une piste mystérieuse menant vers un lac caché derrière les arbres. « Suis-moi ! » dit-il avec détermination.",
         "page8": "« Regarde ce lac ! » s'exclame Mimi émerveillée. Leurs yeux brillent devant la beauté du paysage.",
         "page9": "« Bonjour jeunes aventuriers ! » dit la voix sage près du lac.",
         "page10": "« Vous devez retrouver une fleur magique au sommet de la montagne » explique la voix avec sagesse. Les deux amis acquiescent sérieusement.",
-        "page11": "« Ensemble nous pouvons réussir cette mission ! » dit Anton avec détermination. Mimi sourit et lui prend la main.",
-        "page12": "« Nous avons trouvé la fleur magique ! » crie Mimi joyeusement en tenant la fleur brillante. Anton sourit fièrement à ses côtés."
+        "page11": "« Ensemble nous pouvons réussir cette mission ! » dit Cookie avec détermination. Mimi sourit et lui prend la main.",
+        "page12": "« Nous avons trouvé la fleur magique ! » crie Mimi joyeusement en tenant la fleur brillante. Cookie sourit fièrement à ses côtés."
       }
     }
   }
