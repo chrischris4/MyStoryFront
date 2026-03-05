@@ -250,10 +250,12 @@
     "finished": "Terminée !",
     "pages": "pages",
     "creationInProgress": "Création en cours",
-    "creationWaitMessage": "Le temps de te chercher quelque chose à boire et ton histoire sera prête !",
+    "creationWaitMessage": "Le temps de t'installer confortablement et ton histoire sera prête !",
     "storyReady": "Ton histoire est prête !",
     "discoverStory": "Découvrir ton histoire",
-    "createNewStory": "Créer une nouvelle histoire !"
+    "createNewStory": "Créer une nouvelle histoire !",
+    "shareStory": "Partager l'histoire",
+    "shareReward": "Après 10 histoires partagées, 1 jeton vous est offert !"
   },
   "storyFolder": {
     "noStoriesCreated": "Pas d'histoires créées.",
@@ -537,7 +539,9 @@
     "shareStoryTitle": "Partager l'histoire",
     "shareStorySubtitle": "Choisissez comment partager votre histoire",
     "shareToEveryone": "Partager à tout le monde",
+    "sharedToEveryone": "Partagée à tout le monde",
     "visibleByCommunity": "Visible par toute la communauté",
+    "alreadySharedToCommunity": "Déjà partagée avec la communauté",
     "shareToEveryoneConfirmTitle": "Partager à la communauté 🌍",
     "shareToEveryoneConfirmMessage": "Votre histoire sera visible par tous les utilisateurs. C'est une belle façon de faire découvrir votre créativité !",
     "shareToEveryoneConfirmPermanent": "Note : ce partage est définitif.",

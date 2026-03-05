@@ -183,23 +183,23 @@ export default function CreateStoryScreen() {
   }, [navigation, isCreating, isMinimized, maximize]);
 
   // Données de test pour le bouton de test
-  const testStoryPages: StoryPage[] = [
-    {
-      page: 1,
-      text: 'Il était une fois, dans une forêt magique, un petit renard nommé Roux qui rêvait de découvrir le monde.',
-      imageUrl: 'https://picsum.photos/400/600?random=1'
-    },
-    {
-      page: 2,
-      text: 'Un jour, il rencontra une chouette sage qui lui révéla l\'existence d\'un trésor caché au sommet de la montagne.',
-      imageUrl: 'https://picsum.photos/400/600?random=2'
-    },
-    {
-      page: 3,
-      text: 'Roux se mit en route, traversant des rivières et des vallées, faisant de nouvelles rencontres à chaque étape.',
-      imageUrl: 'https://picsum.photos/400/600?random=3'
-    }
-  ];
+  // const testStoryPages: StoryPage[] = [
+  //   {
+  //     page: 1,
+  //     text: 'Il était une fois, dans une forêt magique, un petit renard nommé Roux qui rêvait de découvrir le monde.',
+  //     imageUrl: 'https://picsum.photos/400/600?random=1'
+  //   },
+  //   {
+  //     page: 2,
+  //     text: 'Un jour, il rencontra une chouette sage qui lui révéla l\'existence d\'un trésor caché au sommet de la montagne.',
+  //     imageUrl: 'https://picsum.photos/400/600?random=2'
+  //   },
+  //   {
+  //     page: 3,
+  //     text: 'Roux se mit en route, traversant des rivières et des vallées, faisant de nouvelles rencontres à chaque étape.',
+  //     imageUrl: 'https://picsum.photos/400/600?random=3'
+  //   }
+  // ];
 
   const formik = useFormik({
     initialValues: {
@@ -424,7 +424,7 @@ export default function CreateStoryScreen() {
     <View className="flex-1 pt-4 relative" style={{ backgroundColor: skyColor }}>
       {/* 🌤️ Background animé */}
       <Background isNight={isNight} />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         className="absolute top-4 left-4 z-50 bg-purple-600 rounded-full p-3"
         onPress={() => {
           if (isCreating) {
@@ -436,7 +436,7 @@ export default function CreateStoryScreen() {
         }}
       >
         <Feather name={isCreating ? "eye-off" : "eye"} size={24} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Text className={`text-4xl md:text-5xl font-baloo-bold pt-10 px-4 md:px-8 ${isNight ? "text-white" : "text-black"}`}>{t('createStory.title')}</Text>
       <Text className={`text-xl md:text-2xl font-baloo pb-2 px-4 md:px-8 ${isNight ? "text-white" : "text-slate-600"} `}>{t('createStory.subtitle')}</Text>
       <ScrollView

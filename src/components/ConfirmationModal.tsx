@@ -197,8 +197,8 @@ export default function ConfirmationModal({
                 </View>
               </View>
               {/* Toggle partage */}
-              <View className="bg-gray-100 rounded-2xl p-4 mb-3">
-                <View className="flex-row items-center justify-between mb-2">
+              <View className="bg-gray-100 rounded-2xl pt-2 pb-4 px-4 mb-3">
+                <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2 flex-1">
                     <Feather name='globe' size={18} color='#000' />
                     <Text className="text-gray-800 font-semibold text-base">

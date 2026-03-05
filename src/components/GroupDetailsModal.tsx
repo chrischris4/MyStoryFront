@@ -267,7 +267,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 </Text>
                 {newStoriesCount > 0 && activeTab !== 'stories' && (
                   <View className="bg-red-500 rounded-full min-w-[20px] h-[20px] items-center justify-center px-1">
-                    <Text className="text-white text-xs font-baloo-bold -mb-1">{newStoriesCount > 99 ? '99+' : newStoriesCount}</Text>
+                    <Text className="text-white text-xs font-baloo-bold">{newStoriesCount > 99 ? '99+' : newStoriesCount}</Text>
                   </View>
                 )}
               </View>

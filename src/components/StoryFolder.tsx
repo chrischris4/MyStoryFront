@@ -625,7 +625,7 @@ export default function StoryFolder({
                                                                             {getHumanEmoji(character)}
                                                                         </Text>
                                                                     </View>
-                                                                    <Text className="text-sm font-baloo-semibold text-slate-700">
+                                                                    <Text className={`text-sm font-baloo-semibold ${isNight ? 'text-white' : 'text-slate-700'}`}>
                                                                         {character.name}
                                                                     </Text>
                                                                 </View>

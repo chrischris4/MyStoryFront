@@ -250,10 +250,12 @@
     "finished": "Finished!",
     "pages": "pages",
     "creationInProgress": "Creation in progress",
-    "creationWaitMessage": "Grab a drink and your story will be ready!",
+    "creationWaitMessage": "Get comfortable and your story will be ready!",
     "storyReady": "Your story is ready!",
     "discoverStory": "Discover your story",
-    "createNewStory": "Create a new story!"
+    "createNewStory": "Create a new story!",
+    "shareStory": "Share the story",
+    "shareReward": "After 10 shared stories, 1 token is awarded to you!"
   },
   "storyFolder": {
     "noStoriesCreated": "No stories created.",
@@ -445,7 +447,7 @@
     "premiumDescription": "Discover stories shared by the community!",
     "nonPremiumDescription": "You need a higher plan to see shared stories",
     "allStories": "All stories",
-    "allStoriesDesc": "There's something for everyone!",
+    "allStoriesDesc": "There's stories for everyone!",
     "mostLiked": "Most liked",
     "mostLikedDesc": "The 10 most popular stories",
     "storeBubble": "Hey! You should visit my shop, i got subscriptions!",
@@ -537,7 +539,9 @@
     "shareStoryTitle": "Share story",
     "shareStorySubtitle": "Choose how to share your story",
     "shareToEveryone": "Share with everyone",
+    "sharedToEveryone": "Shared with everyone",
     "visibleByCommunity": "Visible by the whole community",
+    "alreadySharedToCommunity": "Already shared with the community",
     "shareToEveryoneConfirmTitle": "Share with the community 🌍",
     "shareToEveryoneConfirmMessage": "Your story will be visible to all users. It's a great way to share your creativity!",
     "shareToEveryoneConfirmPermanent": "Note: this share is permanent.",
