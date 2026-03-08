@@ -28,7 +28,7 @@ import * as Yup from 'yup';
 type Step = 'email' | 'code' | 'password';
 
 export default function ForgotPasswordScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { login } = useAuth();
 
@@ -92,7 +92,7 @@ export default function ForgotPasswordScreen() {
 
     setIsLoading(true);
     try {
-      await api.forgotPassword(email);
+      await api.forgotPassword(email, i18n.language);
       Toast.show({
         type: 'success',
         text1: t('forgotPassword.codeSent'),

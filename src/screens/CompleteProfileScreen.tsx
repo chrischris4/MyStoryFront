@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Image, Text, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -12,11 +12,6 @@ import { useTranslation } from 'react-i18next';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CompleteProfileScreen'>;
 
-// Fonction pour générer un username aléatoire
-const generateRandomUsername = (): string => {
-    const randomNumber = Math.floor(1000 + Math.random() * 9000); // Nombre entre 1000 et 9999
-    return `Fluner${randomNumber}`;
-};
 
 export default function CompleteProfileScreen({ route, navigation }: Props) {
     const { t } = useTranslation();
@@ -24,7 +19,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
     const { login } = useAuth();
 
     const [imageUri, setImageUri] = useState<string | null>(null);
-    const defaultUsername = useMemo(() => generateRandomUsername(), []);
+
 
     // Schéma de validation Yup
     const validationSchema = Yup.object().shape({
@@ -33,7 +28,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
             .max(20, t('profile.pseudoMaxLength'))
             .matches(/^[a-zA-Z0-9_-]*$/, t('profile.pseudoInvalidChars'))
             .test('no-profanity', t('validation.profanity'), (value) => !value || !containsProfanity(value))
-            .optional(),
+            .required(t('profile.pseudoRequired')),
     });
 
     const pickImage = async () => {
@@ -63,8 +58,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
     const handleSubmit = async (values: { name?: string } = { name: '' }, { setSubmitting, setFieldError }: any) => {
         try {
 
-            // Utiliser le username par défaut si aucun n'est fourni
-            const finalUsername = (values?.name || '').trim() || defaultUsername;
+            const finalUsername = (values.name ?? '').trim();
 
             const formData = new FormData();
             formData.append('name', finalUsername);
@@ -160,12 +154,9 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
                             <View className='w-full'>
                                 <Text className='font-semibold text-base mb-1'>{t('profile.pseudo')}</Text>
-                                <Text className='text-gray-500 text-xs mb-2'>
-                                    {t('profile.defaultPseudo', { name: defaultUsername })}
-                                </Text>
                                 <TextInput
                                     className={`w-full border ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 mb-2`}
-                                    placeholder={t('profile.pseudoPlaceholder', { name: defaultUsername })}
+                                    placeholder={t('profile.pseudoPlaceholder')}
                                     value={values.name}
                                     onChangeText={handleChange('name')}
                                     onBlur={handleBlur('name')}

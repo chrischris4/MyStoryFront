@@ -218,8 +218,8 @@ export class ApiService {
     return this.post<{ accessToken: string; refreshToken: string }>('/auth/oauth', { provider, accessToken, name }, false);
   }
 
-  async forgotPassword(email: string) {
-    return this.post<{ message: string }>('/auth/forgot-password', { email }, false);
+  async forgotPassword(email: string, language?: string) {
+    return this.post<{ message: string }>('/auth/forgot-password', { email, language }, false);
   }
 
   async verifyResetCode(email: string, code: string) {
