@@ -43,27 +43,28 @@ export const useToggleFavorite = () => {
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: ['favoriteStories'] });
 
-      const previousFavorites = queryClient.getQueryData<any[]>(['favoriteStories']);
+      const previousFavorites = queryClient.getQueryData<any[]>(['favoriteStories']) ?? [];
 
-      // Mise à jour optimiste de la liste favoriteStories
       if (variables.isFavorite) {
         // Retirer des favoris
-        if (previousFavorites) {
-          queryClient.setQueryData<any[]>(
-            ['favoriteStories'],
-            previousFavorites.filter((s: any) => s.id !== variables.storyId)
-          );
-        }
+        queryClient.setQueryData<any[]>(
+          ['favoriteStories'],
+          previousFavorites.filter((s: any) => s.id !== variables.storyId)
+        );
       } else {
-        // Ajouter aux favoris : chercher la story dans le cache stories
-        const stories = queryClient.getQueryData<any[]>(['stories']);
-        const story = stories?.find((s: any) => s.id === variables.storyId);
-        if (story && previousFavorites) {
-          queryClient.setQueryData<any[]>(
-            ['favoriteStories'],
-            [story, ...previousFavorites]
-          );
-        }
+        // Ajouter aux favoris : chercher dans tous les caches disponibles
+        const allCached = [
+          ...(queryClient.getQueryData<any[]>(['stories']) ?? []),
+          ...(queryClient.getQueryData<any[]>(['communityStories']) ?? []),
+          ...previousFavorites,
+        ];
+        const story = allCached.find((s: any) => s.id === variables.storyId)
+          ?? { id: variables.storyId }; // fallback minimal pour que isFavorite soit true
+
+        queryClient.setQueryData<any[]>(
+          ['favoriteStories'],
+          [story, ...previousFavorites]
+        );
       }
 
       return { previousFavorites };

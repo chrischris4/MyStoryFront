@@ -45,7 +45,7 @@ export const useFavoriteStories = () => {
       const freshToken = useUserStore.getState().accessToken;
       return fetchFavoriteStories(freshToken);
     },
-    staleTime: 1000 * 60 * 5, // Les données sont considérées comme fraîches pendant 5 minutes
+    staleTime: 0, // Toujours refetch au montage
     retry: 2, // Réessayer 2 fois en cas d'erreur
     enabled: !!accessToken, // Ne lance la requête que si on a un token
   });
