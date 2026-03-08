@@ -78,10 +78,10 @@ export default function ConfirmationModal({
         <View className="bg-white rounded-3xl w-full max-w-lg overflow-hidden">
           {/* Header */}
           <View className="bg-[#0D1821] p-6">
-            <Text className="text-white text-2xl font-bold text-center">
+            <Text className="text-white text-2xl font-baloo-bold text-center">
               {t('storyCreation.confirmTitle')}
             </Text>
-            <Text className="text-white/70 text-sm text-center mt-2">
+            <Text className="text-white/80 text-sm font-baloo text-center mt-2">
               {t('storyCreation.confirmSubtitle')}
             </Text>
           </View>
@@ -91,11 +91,11 @@ export default function ConfirmationModal({
             <View className="p-6">
               {/* Titre */}
               <View className="mb-4">
-                <Text className="text-gray-500 text-sm font-semibold mb-1">
+                <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                   {t('storyCreation.storyTitle')}
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
-                  <Text className="text-gray-800 text-lg font-semibold">
+                  <Text className="text-gray-800 text-lg font-baloo-semibold">
                     {title}
                   </Text>
                 </View>
@@ -103,11 +103,11 @@ export default function ConfirmationModal({
 
               {/* Résumé */}
               <View className="mb-4">
-                <Text className="text-gray-500 text-sm font-semibold mb-1">
+                <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                   {t('storyCreation.summary')}
                 </Text>
                 <View className="bg-gray-100 rounded-xl p-4">
-                  <Text className="text-gray-800 text-base">
+                  <Text className="text-gray-800 font-baloo text-base">
                     {prompt}
                   </Text>
                 </View>
@@ -116,7 +116,7 @@ export default function ConfirmationModal({
               {/* Personnages */}
               {characters.length > 0 && (
                 <View className="mb-4">
-                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                  <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                     {t('storyCreation.characters', { count: characters.length })}
                   </Text>
                   <View className="gap-2">
@@ -126,10 +126,10 @@ export default function ConfirmationModal({
                           {getHumanEmoji(character)}
                         </Text>
                         <View className="flex-1">
-                          <Text className="text-gray-800 font-semibold">
+                          <Text className="text-gray-800 font-baloo-semibold">
                             {character.name}
                           </Text>
-                          <Text className="text-gray-600 text-sm">
+                          <Text className="text-gray-600 font-baloo text-sm">
                             {getCharacterSummary(character)}
                           </Text>
                         </View>
@@ -143,12 +143,12 @@ export default function ConfirmationModal({
               <View className="flex-row gap-3 mb-4">
                 {/* Style */}
                 <View className="flex-1 w-1/2">
-                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                  <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                     {t('storyCreation.style')}
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
                     <Text className="text-2xl h-9"></Text>
-                    <Text className="text-gray-800 font-semibold">
+                    <Text className="text-gray-800 font-baloo-semibold">
                       {styleName}
                     </Text>
                   </View>
@@ -156,12 +156,12 @@ export default function ConfirmationModal({
 
                 {/* Langue */}
                 <View className="flex-1">
-                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                  <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                     {t('storyCreation.language')}
                   </Text>
                   <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
                     <Text className="text-2xl mr-2">{languageFlag}</Text>
-                    <Text className="text-gray-800 font-semibold">
+                    <Text className="text-gray-800 font-baloo-semibold">
                       {languageName}
                     </Text>
                   </View>
@@ -172,12 +172,11 @@ export default function ConfirmationModal({
                 {/* Tranche d'âge */}
                 {ageGroupName && (
                   <View className="flex-1 w-1/2">
-                    <Text className="text-gray-500 text-sm font-semibold mb-1">
+                    <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                       {t('storyCreation.ageGroup')}
                     </Text>
-                    <View className="bg-gray-100 rounded-xl p-4 justify-center flex-row items-center">
-                      <Text className="text-2xl h-9"></Text>
-                      <Text className="text-gray-800 font-semibold">
+                    <View className="bg-gray-100 rounded-xl h-16 p-4 justify-center flex-row items-center">
+                      <Text className="text-gray-800 font-baloo-semibold">
                         {ageGroupName}
                       </Text>
                     </View>
@@ -186,11 +185,11 @@ export default function ConfirmationModal({
 
                 {/* Nombre de pages */}
                 <View className="flex-1">
-                  <Text className="text-gray-500 text-sm font-semibold mb-1">
+                  <Text className="text-gray-500 text-base font-baloo-semibold mb-1">
                     {t('storyCreation.numPages')}
                   </Text>
-                  <View className="bg-gray-100 rounded-xl p-4 items-center justify-center">
-                    <Text className="text-gray-800 text-2xl font-bold">
+                  <View className="bg-gray-100 rounded-xl h-16 p-4 items-center justify-center">
+                    <Text className="text-gray-800 text-2xl font-baloo-bold">
                       {numPages}
                     </Text>
                   </View>
@@ -201,7 +200,7 @@ export default function ConfirmationModal({
                 <View className="flex-row items-center justify-between">
                   <View className="flex-row items-center gap-2 flex-1">
                     <Feather name='globe' size={18} color='#000' />
-                    <Text className="text-gray-800 font-semibold text-base">
+                    <Text className="text-gray-800 font-baloo-semibold text-base">
                       {t('storyCreation.shareStory', 'Partager l\'histoire')}
                     </Text>
                   </View>
@@ -212,7 +211,7 @@ export default function ConfirmationModal({
                     thumbColor={isShared ? '#16a34a' : '#9ca3af'}
                   />
                 </View>
-                <Text className="text-gray-700 text-xs">
+                <Text className="text-gray-700 font-baloo mt-2 text-sm">
                   {t('storyCreation.shareReward', 'Après 10 histoires partagées, 1 jeton vous est offert !')}
                 </Text>
               </View>
@@ -221,10 +220,10 @@ export default function ConfirmationModal({
               <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex-row items-start">
                 <Text className="text-blue-600 text-xl mr-3">ℹ️</Text>
                 <View className="flex-1">
-                  <Text className="text-blue-800 font-semibold mb-1">
+                  <Text className="text-blue-800 font-baloo-semibold mb-1">
                     {t('storyCreation.importantInfo')}
                   </Text>
-                  <Text className="text-blue-700 text-sm">
+                  <Text className="text-blue-700 font-baloo text-sm">
                     {t('storyCreation.costInfo')}
                   </Text>
                 </View>
@@ -234,30 +233,30 @@ export default function ConfirmationModal({
 
           {/* Actions */}
           <View className="p-6 pt-3 gap-3">
-            {onTestCreate && (
+            {/* {onTestCreate && (
               <TouchableOpacity
                 className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
                 onPress={() => onTestCreate(isShared)}
               >
-                <Text className="text-white font-bold text-lg">
+                <Text className="text-white font-baloo-bold text-lg">
                   {t('storyCreation.confirmAndCreate')} !
                 </Text>
               </TouchableOpacity>
-            )}
-            {/* <TouchableOpacity
+            )} */}
+            <TouchableOpacity
               className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
               onPress={() => onConfirm(isShared)}
             >
-              <Text className="text-white font-bold text-lg">
+              <Text className="text-white font-baloo-bold text-lg">
                 {t('storyCreation.confirmAndCreate')}
               </Text>
-            </TouchableOpacity> */}
+            </TouchableOpacity>
 
             <TouchableOpacity
               className="bg-gray-200 px-6 py-4 rounded-xl items-center"
               onPress={onCancel}
             >
-              <Text className="text-gray-800 font-semibold text-lg">
+              <Text className="text-gray-800 font-baloo-semibold text-lg">
                 {t('common.cancel')}
               </Text>
             </TouchableOpacity>

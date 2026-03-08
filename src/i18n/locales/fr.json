@@ -239,6 +239,8 @@
     "storyTitle": "Titre de l'histoire",
     "summary": "Résumé",
     "character": "Personnage",
+    "characters_one": "{{count}} personnage",
+    "characters_other": "{{count}} personnages",
     "style": "Style",
     "language": "Langue",
     "ageGroup": "Tranche d'âge",

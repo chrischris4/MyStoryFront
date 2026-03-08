@@ -413,7 +413,7 @@ export default function FullScreenStoryModal({
                           </Text>
                         </View>
                       )}
-                      {author && (
+                      {/* {author && (
                         <View
                           className="rounded-xl"
                           style={{
@@ -432,7 +432,7 @@ export default function FullScreenStoryModal({
                             {t('storyDetail.author', { name: author })}
                           </Text>
                         </View>
-                      )}
+                      )} */}
                     </Animated.View>
                   )}
                   {/* Afficher le texte seulement si ce n'est pas la cover */}

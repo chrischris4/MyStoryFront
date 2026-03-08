@@ -145,7 +145,7 @@ export default function RegisterScreen() {
                     onBlur={handleBlur('email')}
                   />
                   {touched.email && errors.email && (
-                    <Text className="text-red-500 text-sm md:text-base mt-1 ml-2">{errors.email}</Text>
+                    <Text className="text-red-500 font-baloo text-sm md:text-base mt-1 ml-2">{errors.email}</Text>
                   )}
                 </View>
 
@@ -169,7 +169,7 @@ export default function RegisterScreen() {
                     </TouchableOpacity>
                   </View>
                   {touched.password && errors.password && (
-                    <Text className="text-red-500 text-sm md:text-base mt-1 ml-2">{errors.password}</Text>
+                    <Text className="text-red-500 font-baloo text-sm md:text-base mt-1 ml-2">{errors.password}</Text>
                   )}
                 </View>
 

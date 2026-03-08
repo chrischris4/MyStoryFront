@@ -82,21 +82,21 @@ const STORY_STYLES: StoryStyle[] = [
     name: 'Classique',
     description: 'Style conte de fées traditionnel',
     gradient: ['#FFD700', '#FFA500'],
-    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_23/page_1.webp', // Livre ancien
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_95/page_1.webp', // Classique
   },
   {
     id: 'WATERCOLOR',
     name: 'Aquarelle',
     description: 'Style aquarelle doux et poétique',
     gradient: ['#7DD3FC', '#A78BFA'],
-    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_22/cover.webp', // Aquarelle
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_93/cover.webp', // Aquarelle
   },
   {
     id: 'MANGA',
     name: 'Manga',
     description: 'Style manga japonais',
     gradient: ['#FF6B9D', '#C06C84'],
-    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_19/cover.webp', // Art manga
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_94/cover.webp', // Art manga
   },
 ];
 
@@ -799,7 +799,7 @@ export default function CreateStoryScreen() {
           </View>
 
           {/* Messages d'erreur résumés */}
-          {(formik.touched.title || formik.touched.prompt || formik.touched.numPages || formik.touched.selectedStyle || formik.touched.language || formik.touched.ageGroup) &&
+          {formik.submitCount > 0 &&
             (formik.errors.title || formik.errors.prompt || formik.errors.numPages || formik.errors.selectedStyle || formik.errors.language || formik.errors.ageGroup) && (
               <PlatformBlur
                 intensity={90}
@@ -815,22 +815,22 @@ export default function CreateStoryScreen() {
                 <View className="p-4">
                   <Text className={`${isNight ? 'text-white/80' : ''} font-baloo-semibold text-base md:text-lg mb-2`}>{t('createStory.missingInfo')}</Text>
                   <View className="gap-1">
-                    {formik.touched.title && formik.errors.title && (
+                    {formik.errors.title && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.title}</Text>
                     )}
-                    {formik.touched.prompt && formik.errors.prompt && (
+                    {formik.errors.prompt && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.prompt}</Text>
                     )}
-                    {formik.touched.numPages && formik.errors.numPages && (
+                    {formik.errors.numPages && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.numPages}</Text>
                     )}
-                    {formik.touched.selectedStyle && formik.errors.selectedStyle && (
+                    {formik.errors.selectedStyle && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.selectedStyle}</Text>
                     )}
-                    {formik.touched.language && formik.errors.language && (
+                    {formik.errors.language && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.language}</Text>
                     )}
-                    {formik.touched.ageGroup && formik.errors.ageGroup && (
+                    {formik.errors.ageGroup && (
                       <Text className={`${isNight ? 'text-white/80' : 'text-black'} font-baloo-medium text-sm md:text-base`}>• {formik.errors.ageGroup}</Text>
                     )}
                   </View>

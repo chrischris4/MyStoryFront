@@ -9,6 +9,7 @@ import type { RootStackParamList } from '~/types';
 import { useAuth } from '~/context/AuthContext';
 import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
+import LottieView from 'lottie-react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CompleteProfileScreen'>;
 
@@ -19,7 +20,20 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
     const { login } = useAuth();
 
     const [imageUri, setImageUri] = useState<string | null>(null);
+    const [currentAccessToken, setCurrentAccessToken] = useState(accessToken);
 
+    const getValidToken = async (): Promise<string> => {
+        const API_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000';
+        const res = await fetch(`${API_URL}/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken }),
+        });
+        if (!res.ok) throw new Error('Session expirée');
+        const { accessToken: newToken } = await res.json();
+        setCurrentAccessToken(newToken);
+        return newToken;
+    };
 
     // Schéma de validation Yup
     const validationSchema = Yup.object().shape({
@@ -75,21 +89,29 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                 } as any);
             }
 
-            const res = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/profile`, {
+            const API_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000';
+            let token = currentAccessToken;
+            let res = await fetch(`${API_URL}/profile`, {
                 method: 'PATCH',
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+                headers: { Authorization: `Bearer ${token}` },
                 body: formData,
             });
+
+            // Token expiré → refresh et retry
+            if (res.status === 401) {
+                token = await getValidToken();
+                res = await fetch(`${API_URL}/profile`, {
+                    method: 'PATCH',
+                    headers: { Authorization: `Bearer ${token}` },
+                    body: formData,
+                });
+            }
 
             const data = await res.json();
 
             if (res.ok) {
-                // Mettre à jour le contexte d'authentification
-                // On ne passe pas de userData pour que login() récupère le profil complet depuis /profile/me
                 try {
-                    await login(accessToken, refreshToken);
+                    await login(token, refreshToken);
 
                     // Naviguer vers MainTabs en réinitialisant la navigation stack
                     navigation.reset({
@@ -145,7 +167,7 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
         <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
             <View className="w-[160%] md:w-[90%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
                 <View className='w-[60%]'>
-                    <Text className='font-bold text-xl mb-2 text-center text-gray-800'>{t('profile.completeProfile')}</Text>
+                    <Text className='font-baloo-bold text-2xl md:text-3xl mb-4 text-center text-gray-800'>{t('profile.completeProfile')}</Text>
                     <Formik
                         initialValues={{ name: '' }}
                         validationSchema={validationSchema}
@@ -153,9 +175,9 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                     >
                         {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
                             <View className='w-full'>
-                                <Text className='font-semibold text-base mb-1'>{t('profile.pseudo')}</Text>
+                                <Text className='text-gray-700 md:text-lg font-baloo-medium mb-1 ml-1'>{t('profile.pseudo')}</Text>
                                 <TextInput
-                                    className={`w-full border ${touched.name && errors.name ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 mb-2`}
+                                    className={`w-full border border-gray-300 rounded-xl p-4 mb-1`}
                                     placeholder={t('profile.pseudoPlaceholder')}
                                     value={values.name}
                                     onChangeText={handleChange('name')}
@@ -163,45 +185,38 @@ export default function CompleteProfileScreen({ route, navigation }: Props) {
                                     autoCapitalize="none"
                                 />
                                 {touched.name && errors.name && (
-                                    <Text className='text-red-500 text-sm mb-2'>{errors.name}</Text>
+                                    <Text className='text-red-500 font-baloo text-sm md:text-base ml-1'>{errors.name}</Text>
                                 )}
-
-                                <Text className='font-semibold text-base mb-2 mt-2'>{t('profile.profilePicture')}</Text>
+                                <Text className='text-gray-700 md:text-lg font-baloo-medium mt-2 mb-1 ml-1'>{t('profile.profilePicture')}</Text>
                                 <TouchableOpacity onPress={pickImage}>
                                     <View className='items-center mb-3'>
                                         {imageUri ? (
                                             <Image
                                                 source={{ uri: imageUri }}
-                                                className="w-24 h-24 rounded-full"
+                                                className="w-24 md:w-32 h-24 md:h-32 rounded-full"
                                             />
                                         ) : (
-                                            <View className="w-24 h-24 rounded-full border-2 border-dashed border-gray-400 justify-center items-center bg-gray-100">
-                                                <Text className='text-gray-500 text-xs text-center'>{t('profile.tapToAdd')}</Text>
+                                            <View className="w-24 md:w-32 h-24 md:h-32 rounded-full border-2 border-dashed border-gray-400 justify-center items-center bg-gray-100">
+                                                <Text className='text-gray-500 text-sm md:text-base font-baloo-medium text-center'>{t('profile.tapToAdd')}</Text>
                                             </View>
                                         )}
                                     </View>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
-                                    className={`w-full rounded-xl py-4 items-center mb-2 ${isSubmitting ? 'bg-gray-400' : 'bg-[#38b6ff]'}`}
+                                    className="bg-[#38b6ff] rounded-xl h-14 flex justify-center items-center w-full my-4"
                                     onPress={() => handleSubmit()}
                                     disabled={isSubmitting}
                                 >
                                     <Text className='text-white font-semibold text-center'>
-                                        {isSubmitting ? t('profile.sending') : t('profile.continue')}
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity
-                                    className='w-full rounded-xl py-3 items-center'
-                                    onPress={() => {
-                                        // Soumettre avec une valeur vide pour utiliser le username par défaut
-                                        handleSubmit();
-                                    }}
-                                    disabled={isSubmitting}
-                                >
-                                    <Text className='text-[#38b6ff] text-center'>
-                                        {t('profile.skipStep')}
+                                        {isSubmitting ?
+                                            <LottieView
+                                                source={require('../../assets/animations/LoadingWhite.json')}
+                                                autoPlay
+                                                loop={true}
+                                                style={{ width: 100, height: 100 }}
+                                            /> :
+                                            <Text className="text-white text-lg md:text-xl font-baloo-semibold text-center">{t('profile.continue')}</Text>}
                                     </Text>
                                 </TouchableOpacity>
                             </View>
