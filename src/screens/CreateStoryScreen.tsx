@@ -82,7 +82,7 @@ const STORY_STYLES: StoryStyle[] = [
     name: 'Classique',
     description: 'Style conte de fées traditionnel',
     gradient: ['#FFD700', '#FFA500'],
-    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_95/page_1.webp', // Classique
+    imageUrl: 'https://pub-4440daff467b4f9da84a0416a4dc8269.r2.dev/story_96/page_4.webp', // Classique
   },
   {
     id: 'WATERCOLOR',
