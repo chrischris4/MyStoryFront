@@ -138,7 +138,10 @@ export default function BillingScreen() {
     const navigation = useNavigation<StoryDetailNavigationProp>();
 
     // === HOOKS IAP ===
-    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading } = useIAP();
+    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading, products, subscriptions } = useIAP();
+
+    const getPrice = (sku: string) => products.find((p) => p.productId === sku)?.localizedPrice ?? '...';
+    const getSubPrice = (sku: string) => subscriptions.find((s) => s.productId === sku)?.localizedPrice ?? '...';
     const { mutate: verifyProduct, isPending: isVerifyingProduct } = usePurchaseProduct();
     const { mutate: verifySubscription, isPending: isVerifyingSubscription } = usePurchaseSubscription();
 
@@ -171,7 +174,7 @@ export default function BillingScreen() {
     // Configurer les callbacks IAP
     useEffect(() => {
         setOnPurchaseSuccess(async (purchase) => {
-            const isTokenPack = purchase.productId.includes('tokens_pack');
+            const isTokenPack = purchase.productId.startsWith('tokens_');
 
             if (isTokenPack) {
                 // Valider l'achat de jetons côté backend
@@ -260,8 +263,8 @@ export default function BillingScreen() {
                 name: t('plans.explorer'),
                 planId: 1,
                 features: [t('billing.sharedStories'), t('billing.cancelAnytime')],
-                monthlyPrice: `$4.99/${t('billing.month')}`,
-                yearlyPrice: `$49.99/${t('billing.year')}`,
+                monthlyPrice: `${getSubPrice('explorer_monthly')}/${t('billing.month')}`,
+                yearlyPrice: `${getSubPrice('explorer_yearly')}/${t('billing.year')}`,
                 monthlyProductId: 'explorer_monthly',
                 yearlyProductId: 'explorer_yearly',
             },
@@ -269,8 +272,8 @@ export default function BillingScreen() {
                 name: t('plans.adventurer'),
                 planId: 2,
                 features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 1 }), t('billing.cancelAnytime')],
-                monthlyPrice: `$14.99/${t('billing.month')}`,
-                yearlyPrice: `$149.99/${t('billing.year')}`,
+                monthlyPrice: `${getSubPrice('adventurer_monthly')}/${t('billing.month')}`,
+                yearlyPrice: `${getSubPrice('adventurer_yearly')}/${t('billing.year')}`,
                 monthlyProductId: 'adventurer_monthly',
                 yearlyProductId: 'adventurer_yearly',
             },
@@ -278,8 +281,8 @@ export default function BillingScreen() {
                 name: t('plans.legend'),
                 planId: 3,
                 features: [t('billing.sharedStories'), t('billing.tokensPerDay_plural', { count: 2 }), t('billing.charactersAllowed'), t('billing.cancelAnytime')],
-                monthlyPrice: `$19.99/${t('billing.month')}`,
-                yearlyPrice: `$199.99/${t('billing.year')}`,
+                monthlyPrice: `${getSubPrice('legend_monthly')}/${t('billing.month')}`,
+                yearlyPrice: `${getSubPrice('legend_yearly')}/${t('billing.year')}`,
                 monthlyProductId: 'legend_monthly',
                 yearlyProductId: 'legend_yearly',
             },
@@ -487,7 +490,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={5} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$4.99" onPress={() => buy('tokens_pack_5')} />
+                        <ShopButton amount={5} isNight={isNight} isCoin={true} title={t('billing.tokens')} price={getPrice('tokens_5')} onPress={() => buy('tokens_5')} />
                     </Animated.View>
 
                     {/* Button 10 jetons - En bas à gauche */}
@@ -502,7 +505,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={10} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$9.99" onPress={() => buy('tokens_pack_10')} />
+                        <ShopButton amount={10} isNight={isNight} isCoin={true} title={t('billing.tokens')} price={getPrice('tokens_10')} onPress={() => buy('tokens_10')} />
                     </Animated.View>
 
                     {/* Button 20 jetons - En bas à droite */}
@@ -517,7 +520,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton amount={20} isNight={isNight} isCoin={true} title={t('billing.tokens')} price="$18.99" onPress={() => buy('tokens_pack_20')} />
+                        <ShopButton amount={20} isNight={isNight} isCoin={true} title={t('billing.tokens')} price={getPrice('tokens_20')} onPress={() => buy('tokens_20')} />
                     </Animated.View >
                 </View>
             </View>
@@ -537,7 +540,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton description={t('billing.explorerCatchphrase')} isNight={isNight} title={t('plans.explorer')} price={`${t('billing.from')} $4.99`} onPress={() => openSubscriptionModal('explorer')} />
+                        <ShopButton description={t('billing.explorerCatchphrase')} isNight={isNight} title={t('plans.explorer')} price={`${t('billing.from')} ${getSubPrice('explorer_monthly')}`} onPress={() => openSubscriptionModal('explorer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -550,7 +553,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton description={t('billing.adventurerCatchphrase')} isNight={isNight} title={t('plans.adventurer')} price={`${t('billing.from')} $14.99`} onPress={() => openSubscriptionModal('adventurer')} />
+                        <ShopButton description={t('billing.adventurerCatchphrase')} isNight={isNight} title={t('plans.adventurer')} price={`${t('billing.from')} ${getSubPrice('adventurer_monthly')}`} onPress={() => openSubscriptionModal('adventurer')} />
                     </Animated.View>
                     <Animated.View
                         style={{
@@ -563,7 +566,7 @@ export default function BillingScreen() {
                             ],
                         }}
                     >
-                        <ShopButton description={t('billing.legendCatchphrase')} isNight={isNight} title={t('plans.legend')} price={`${t('billing.from')} $19.99`} onPress={() => openSubscriptionModal('legend')} />
+                        <ShopButton description={t('billing.legendCatchphrase')} isNight={isNight} title={t('plans.legend')} price={`${t('billing.from')} ${getSubPrice('legend_monthly')}`} onPress={() => openSubscriptionModal('legend')} />
                     </Animated.View>
                 </View>
             </View>

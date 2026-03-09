@@ -84,7 +84,7 @@ export function useIAP() {
   };
 
   // SKUs des produits
-  const productSkus = ['tokens_pack_5', 'tokens_pack_10', 'tokens_pack_20'];
+  const productSkus = ['tokens_5', 'tokens_10', 'tokens_20'];
   const subscriptionSkus = [
     'explorer_monthly',
     'explorer_yearly',
