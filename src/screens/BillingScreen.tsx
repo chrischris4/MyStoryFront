@@ -171,6 +171,15 @@ export default function BillingScreen() {
         'legend_yearly': 3,
     };
 
+    const planNameMapping: Record<string, 'EXPLORER' | 'ADVENTURER' | 'LEGEND'> = {
+        'explorer_monthly': 'EXPLORER',
+        'explorer_yearly': 'EXPLORER',
+        'adventurer_monthly': 'ADVENTURER',
+        'adventurer_yearly': 'ADVENTURER',
+        'legend_monthly': 'LEGEND',
+        'legend_yearly': 'LEGEND',
+    };
+
     // Configurer les callbacks IAP
     useEffect(() => {
         setOnPurchaseSuccess(async (purchase) => {
@@ -206,10 +215,12 @@ export default function BillingScreen() {
             } else {
                 // Valider l'abonnement côté backend
                 const planId = planIdMapping[purchase.productId] || 1;
+                const planName = planNameMapping[purchase.productId] ?? 'EXPLORER';
                 verifySubscription(
                     {
                         productId: purchase.productId,
                         planId,
+                        planName,
                         transactionId: purchase.transactionId,
                         receipt: purchase.transactionReceipt,
                         purchaseToken: purchase.purchaseToken,

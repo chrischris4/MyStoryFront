@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Platform } from 'react-native';
 import { useUserStore } from '~/store/useUserStore';
 import { API_BASE_URL } from '~/config/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type VerifyPurchaseInput = {
   productId: string;
@@ -51,12 +52,18 @@ const verifyAndPurchaseProduct = async (
 
 export const usePurchaseProduct = () => {
   const accessToken = useUserStore((state) => state.accessToken);
+  const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: VerifyPurchaseInput) => verifyAndPurchaseProduct(input, accessToken),
-    onSuccess: () => {
-      // Rafraîchir les données utilisateur (pour mettre à jour les coins)
+    onSuccess: (data) => {
+      if (user) {
+        const updatedUser = { ...user, storyCoin: (user.storyCoin ?? 0) + data.coinsAdded };
+        setUser(updatedUser);
+        AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      }
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
   });
