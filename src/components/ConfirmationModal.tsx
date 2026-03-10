@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Modal, ScrollView, Switch } from 'react-n
 
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { useUserStore } from '~/store/useUserStore';
 import type { Character } from '~/types';
 import { GENDERS, ANIMAL_TYPES, ANIMAL_AGE_RANGES, SKIN_COLORS, HAIR_COLORS, EYE_COLORS, FUR_COLORS, getHumanEmoji } from '~/types';
 
@@ -39,6 +40,7 @@ export default function ConfirmationModal({
 }: ConfirmationModalProps) {
   const { t } = useTranslation();
   const [isShared, setIsShared] = useState(true);
+  const storyCoin = useUserStore((state) => state.user?.storyCoin ?? 0);
 
   // Build character summary
   const getCharacterSummary = (char: Character): string => {
@@ -239,18 +241,20 @@ export default function ConfirmationModal({
                 onPress={() => onTestCreate(isShared)}
               >
                 <Text className="text-white font-baloo-bold text-lg">
-                  {t('storyCreation.confirmAndCreate')} !
+                  {t('storyCreation.confirmAndCreate')} test !
                 </Text>
               </TouchableOpacity>
             )}
-            {/* <TouchableOpacity
-              className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
-              onPress={() => onConfirm(isShared)}
-            >
-              <Text className="text-white font-baloo-bold text-lg">
-                {t('storyCreation.confirmAndCreate')}
-              </Text>
-            </TouchableOpacity> */}
+            {storyCoin >= 1 && (
+              <TouchableOpacity
+                className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
+                onPress={() => onConfirm(isShared)}
+              >
+                <Text className="text-white font-baloo-bold text-lg">
+                  {t('storyCreation.confirmAndCreate')}
+                </Text>
+              </TouchableOpacity>
+            )}
 
             <TouchableOpacity
               className="bg-gray-200 px-6 py-4 rounded-xl items-center"
