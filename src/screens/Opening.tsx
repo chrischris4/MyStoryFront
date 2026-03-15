@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
 import React, { useEffect } from 'react';
-import { View, Image, Animated } from 'react-native';
+import { View, Image, Animated, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Constants from 'expo-constants';
 import Toast from 'react-native-toast-message';
 import { RootStackParamList } from '~/navigation/AppNavigator';
 import { useAuth } from '~/context/AuthContext';
@@ -62,6 +63,9 @@ export default function OpeningScreen() {
                     style={{ width: 150, height: 150 }}
                 />
             </Animated.View>
+            <Text className="absolute bottom-8 text-white text-xs font-baloo opacity-70">
+                v{Constants.expoConfig?.android?.versionCode}
+            </Text>
         </View>
     );
 }
