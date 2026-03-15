@@ -151,6 +151,8 @@ export default function LoginScreen() {
                       placeholder={t('auth.passwordPlaceholder')}
                       placeholderTextColor="#6B7280"
                       secureTextEntry={!showPassword}
+                      style={!showPassword ? { fontFamily: 'sans-serif' } : undefined}
+                      autoCapitalize="none"
                       value={values.password}
                       onChangeText={handleChange('password')}
                       onBlur={handleBlur('password')}

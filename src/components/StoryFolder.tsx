@@ -530,10 +530,10 @@ export default function StoryFolder({
                                                             tint="light"
                                                             className='flex px-4 flex-row gap-3 p-2'
                                                         >
-                                                            <Text className="text-slate-800 font-baloo text-sm">
+                                                            <Text className={`${isNight ? 'text-white' : 'text-slate-800'} font-baloo text-sm`}>
                                                                 {t('storyFolder.unlockPremium')}
                                                             </Text>
-                                                            <Feather name="arrow-right" size={16} color="#1e293b" />
+                                                            <Feather name="arrow-right" size={16} color={isNight ? '#ffffff' : '#1e293b'} />
                                                         </PlatformBlur>
                                                     </TouchableOpacity>
                                                 )}

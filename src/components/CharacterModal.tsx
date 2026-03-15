@@ -5,10 +5,9 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '~/context/ThemeContext';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +52,8 @@ type OptionSelectorProps = {
   isNight: boolean;
   translationKey?: string;
   errorMessage?: string;
+  allowCustom?: boolean;
+  onFocusScroll?: () => void;
 };
 
 function OptionSelector({
@@ -63,8 +64,12 @@ function OptionSelector({
   isNight,
   translationKey,
   errorMessage,
+  allowCustom,
+  onFocusScroll,
 }: OptionSelectorProps) {
   const { t } = useTranslation();
+  const isCustomValue = allowCustom && selectedValue && !options.find(o => o.id === selectedValue);
+  const [customText, setCustomText] = useState(isCustomValue ? selectedValue : '');
 
   return (
     <View className="mb-4">
@@ -81,6 +86,7 @@ function OptionSelector({
               key={option.id}
               onPress={() => {
                 onSelect(option.id);
+                setCustomText('');
               }}
               className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isSelected
                 ? 'bg-green-500'
@@ -100,6 +106,20 @@ function OptionSelector({
           );
         })}
       </View>
+      {allowCustom && (
+        <TextInput
+          className={`mt-2 px-3 py-2 rounded-xl font-baloo ${isNight ? 'bg-slate-700 text-white' : 'bg-gray-200 text-gray-700'} ${isCustomValue ? 'border border-green-500' : ''}`}
+          placeholder={t('character.customAnimalPlaceholder', 'Autre animal...')}
+          placeholderTextColor={isNight ? '#ffffff60' : '#9ca3af'}
+          value={customText}
+          onChangeText={(text) => {
+            setCustomText(text);
+            onSelect(text);
+          }}
+          autoCapitalize="none"
+          onFocus={() => onFocusScroll?.()}
+        />
+      )}
       {errorMessage && (
         <Text className="text-red-500 text-sm mt-1 font-baloo">{errorMessage}</Text>
       )}
@@ -120,7 +140,7 @@ export default function CharacterModal({
   const updateCharacterMutation = useUpdateCharacter();
   const deleteCharacterMutation = useDeleteCharacter();
 
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const isEditing = !!editCharacter;
 
@@ -332,13 +352,9 @@ export default function CharacterModal({
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-      >
         <View className="flex-1 justify-center items-center bg-black/50 px-4">
           <View
-            className={`${isNight ? 'bg-slate-800' : 'bg-white'} rounded-3xl w-full max-w-lg overflow-hidden max-h-[90%]`}
+            className={`${isNight ? 'bg-slate-800' : 'bg-white'} rounded-3xl w-full max-w-lg overflow-hidden max-h-[80%]`}
           >
             {/* Header */}
             <View className={`${isNight ? 'bg-slate-900' : 'bg-[#0D1821]'} p-6`}>
@@ -353,7 +369,7 @@ export default function CharacterModal({
             </View>
 
             {/* Content */}
-            <ScrollView ref={scrollViewRef} className="p-6" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            <KeyboardAwareScrollView ref={scrollViewRef} className="p-6" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" enableOnAndroid extraScrollHeight={100}>
               {/* Type selector */}
               <View className="mb-4">
                 <Text
@@ -540,7 +556,7 @@ export default function CharacterModal({
                       onBlur={() => formik.setFieldTouched('clothing', true)}
                       onFocus={() => {
                         setTimeout(() => {
-                          scrollViewRef.current?.scrollToEnd({ animated: true });
+                          scrollViewRef.current?.scrollToEnd(true);
                         }, 300);
                       }}
                       placeholder={t('character.clothingPlaceholder')}
@@ -568,6 +584,8 @@ export default function CharacterModal({
                     isNight={isNight}
                     translationKey="character.animalTypes"
                     errorMessage={formik.touched.animalType && formik.errors.animalType ? formik.errors.animalType : undefined}
+                    allowCustom
+                    onFocusScroll={() => scrollViewRef.current?.scrollToEnd(true)}
                   />
 
                   <OptionSelector
@@ -597,8 +615,8 @@ export default function CharacterModal({
                   onBlur={() => formik.setFieldTouched('description', true)}
                   onFocus={() => {
                     setTimeout(() => {
-                      scrollViewRef.current?.scrollToEnd({ animated: true });
-                    }, 300);
+                      scrollViewRef.current?.scrollToEnd(true);
+                    }, 500);
                   }}
                   placeholder={getDescriptionPlaceholder()}
                   placeholderTextColor={isNight ? '#94a3b8' : '#9ca3af'}
@@ -612,7 +630,7 @@ export default function CharacterModal({
                   <Text className="text-red-500 text-sm mt-1 font-baloo">{formik.errors.description}</Text>
                 )}
               </View>
-            </ScrollView>
+            </KeyboardAwareScrollView>
 
             {/* Actions */}
             <View className="p-6 flex flex-row pt-0 gap-3 mt-3">
@@ -644,7 +662,6 @@ export default function CharacterModal({
             </View>
           </View>
         </View>
-      </KeyboardAvoidingView>
 
       <DeleteCharacterModal
         visible={showDeleteModal}

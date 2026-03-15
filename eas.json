@@ -15,6 +15,10 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://mystoryback-production.up.railway.app",
+        "EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID": "969744828747-bar0rq2f93jm535hlpk5tds2328lu0fo.apps.googleusercontent.com"
+      },
       "ios": {
         "simulator": false
       },

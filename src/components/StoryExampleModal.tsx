@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import { Feather } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import FullScreenStoryModal from './FullScreenStoryModal';
+import { useSound } from '~/context/SoundContext';
 
 type StoryExampleModalProps = {
   visible: boolean;
@@ -28,6 +29,7 @@ const EXAMPLE_IMAGES = [
 
 export default function StoryExampleModal({ visible, onClose }: StoryExampleModalProps) {
   const { t } = useTranslation();
+  const { pauseBackgroundMusic } = useSound();
   const [showFullScreen, setShowFullScreen] = useState(false);
 
   const exampleTitle = t('storyExample.example.title');
@@ -235,7 +237,7 @@ export default function StoryExampleModal({ visible, onClose }: StoryExampleModa
           <View className="px-6 my-4 gap-3">
             <TouchableOpacity
               className="bg-[#0D1821] px-6 py-4 rounded-xl items-center flex-row justify-center gap-2"
-              onPress={() => setShowFullScreen(true)}
+              onPress={() => { pauseBackgroundMusic(); setShowFullScreen(true); }}
             >
               <Feather name="maximize" size={18} color="white" />
               <Text className="text-white font-baloo-bold text-lg">

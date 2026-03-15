@@ -171,10 +171,10 @@ export default function ShareStoryModal({
               >
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
+                    <Text className="font-baloo-semibold text-lg text-white">
                       {isShared ? t('storyDetail.sharedToEveryone') : t('storyDetail.shareToEveryone')}
                     </Text>
-                    <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
+                    <Text className="font-baloo text-sm text-gray-400">
                       {isShared ? t('storyDetail.alreadySharedToCommunity') : t('storyDetail.visibleByCommunity')}
                     </Text>
                   </View>
