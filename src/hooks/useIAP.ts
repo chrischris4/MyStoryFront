@@ -112,8 +112,19 @@ export function useIAP() {
           RNIap.getSubscriptions({ skus: subscriptionSkus }),
         ]);
 
-        setProducts(fetchedProducts);
-        setSubscriptions(fetchedSubs);
+        // Normaliser les produits
+        setProducts(fetchedProducts.map((p: any) => ({
+          ...p,
+          localizedPrice: p.localizedPrice ?? p.oneTimePurchaseOfferDetails?.formattedPrice ?? '...',
+        })));
+
+        // Normaliser les abonnements (v12+ Android)
+        setSubscriptions(fetchedSubs.map((s: any) => ({
+          ...s,
+          localizedPrice: s.localizedPrice
+            ?? s.subscriptionOfferDetails?.[0]?.pricingPhases?.pricingPhaseList?.[0]?.formattedPrice
+            ?? '...',
+        })));
         setIsReady(true);
 
         // Listeners pour les achats
