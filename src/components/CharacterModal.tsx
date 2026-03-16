@@ -244,6 +244,8 @@ export default function CharacterModal({
     initialValues,
     enableReinitialize: true,
     validationSchema,
+    validateOnBlur: false,
+    validateOnChange: false,
     onSubmit: (values) => {
       const characterData: CreateCharacterInput = {
         name: values.name.trim(),
