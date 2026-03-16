@@ -618,6 +618,7 @@
     "clothing": "Clothing",
     "clothingPlaceholder": "Ex: A red dress with golden stars...",
     "animalType": "Animal type",
+    "customAnimalPlaceholder": "Other animal...",
     "furColor": "Color / Fur",
     "other": "Other",
     "enterCustomValue": "Enter a custom value",

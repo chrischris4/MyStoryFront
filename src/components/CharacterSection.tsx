@@ -41,7 +41,7 @@ function CharacterCard({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`w-28 h-32 rounded-2xl mr-3 overflow-hidden ${isSelected ? 'border-4 border-[#38b6ff]' : ''
+      className={`w-28 h-32 rounded-2xl mr-3 overflow-hidden border-4 ${isSelected ? 'border-[#38b6ff]' : 'border-transparent'
         }`}
       style={{
         backgroundColor: isNight ? '#334155' : '#f3f4f6',
