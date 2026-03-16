@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import {} from 'react';
 import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
+import PasswordInput from '~/components/PasswordInput';
 import { useNavigation, CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '~/types';
@@ -16,7 +17,6 @@ import { api } from '~/services/api';
 export default function RegisterScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [showPassword, setShowPassword] = useState(false);
   const { signInWithGoogle, isLoading: isOAuthLoading, loadingProvider } = useOAuth();
   const welcomeMessages = t('welcome.messages', { returnObjects: true }) as string[];
 
@@ -151,24 +151,14 @@ export default function RegisterScreen() {
 
                 <View className="mb-4">
                   <Text className="text-gray-700 md:text-lg font-baloo-medium mb-1 ml-1">{t('auth.password')}</Text>
-                  <View className="relative">
-                    <TextInput
-                      className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
-                      placeholder={t('auth.passwordPlaceholder')}
-                      placeholderTextColor="#6B7280"
-                      secureTextEntry={!showPassword}
-                      autoCapitalize="none"
-                      value={values.password}
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                    />
-                    <TouchableOpacity
-                      className="absolute right-4 top-4"
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#6B7280" />
-                    </TouchableOpacity>
-                  </View>
+                  <PasswordInput
+                    className={`w-full border ${touched.password && errors.password ? 'border-red-500' : 'border-gray-300'} rounded-xl p-4 pr-12`}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    placeholderTextColor="#6B7280"
+                    value={values.password}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                  />
                   {touched.password && errors.password && (
                     <Text className="text-red-500 font-baloo text-sm md:text-base mt-1 ml-2">{errors.password}</Text>
                   )}

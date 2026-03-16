@@ -14,6 +14,7 @@
     "plugins": [
       "expo-secure-store",
       "expo-font",
+      "@react-native-google-signin/google-signin",
       [
         "expo-notifications",
         {
@@ -56,7 +57,7 @@
         "backgroundColor": "#0D1821"
       },
       "package": "com.flun.app",
-      "versionCode": 9,
+      "versionCode": 10,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",

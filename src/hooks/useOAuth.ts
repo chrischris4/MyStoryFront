@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import { useState, useEffect } from 'react';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 import { api } from '~/services/api';
 import { useAuth } from '~/context/AuthContext';
@@ -8,12 +7,7 @@ import Toast from 'react-native-toast-message';
 import { useTranslation } from 'react-i18next';
 import { mapApiError } from '~/utils/errorMapper';
 
-// Nécessaire pour fermer la session web browser après l'auth
-WebBrowser.maybeCompleteAuthSession();
-
 const GOOGLE_CLIENT_ID_WEB = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB || '';
-const GOOGLE_CLIENT_ID_IOS = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS || '';
-const GOOGLE_CLIENT_ID_ANDROID = process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID || '';
 
 export const useOAuth = () => {
   const { t } = useTranslation();
@@ -21,15 +15,11 @@ export const useOAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<'google' | null>(null);
 
-  // Le client iOS génère automatiquement le redirect URI en reverse scheme :
-  // com.googleusercontent.apps.{iOS_client_id}:/oauthredirect
-  // Aucune config à ajouter dans Google Cloud Console.
-  const [googleRequest, , googlePromptAsync] = Google.useAuthRequest({
-    webClientId: GOOGLE_CLIENT_ID_WEB,
-    androidClientId: GOOGLE_CLIENT_ID_WEB,
-    redirectUri: 'https://auth.expo.io/@chris4/flun',
-  });
-
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: GOOGLE_CLIENT_ID_WEB,
+    });
+  }, []);
 
   const handleOAuthLogin = async (
     provider: 'google',
@@ -51,44 +41,20 @@ export const useOAuth = () => {
   };
 
   const signInWithGoogle = async () => {
-    console.log('[OAuth] redirectUri utilisé:', googleRequest?.redirectUri);
-    if (!googleRequest) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.googleNotConfigured'),
-        props: { emoji: '⚙️' },
-      });
-      return false;
-    }
-
     setIsLoading(true);
     setLoadingProvider('google');
 
     try {
-      const result = await googlePromptAsync();
-      console.log('[OAuth] result type:', result.type);
-      console.log('[OAuth] result complet:', JSON.stringify(result, null, 2));
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      const tokens = await GoogleSignin.getTokens();
 
-      if (result.type === 'success' && result.authentication?.accessToken) {
-        // Récupérer les infos utilisateur Google pour avoir le nom
-        const userInfoResponse = await fetch(
-          'https://www.googleapis.com/userinfo/v2/me',
-          {
-            headers: { Authorization: `Bearer ${result.authentication.accessToken}` },
-          }
-        );
-        const userInfo = await userInfoResponse.json();
-
+      if (tokens.accessToken) {
         return await handleOAuthLogin(
           'google',
-          result.authentication.accessToken,
-          userInfo.name
+          tokens.accessToken,
+          userInfo.data?.user?.name ?? undefined
         );
-      }
-
-      if (result.type === 'cancel') {
-        return false;
       }
 
       Toast.show({
@@ -97,7 +63,10 @@ export const useOAuth = () => {
         text2: t('auth.googleAuthFailed'),
       });
       return false;
-    } catch (error) {
+    } catch (error: any) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        return false;
+      }
       Toast.show({
         type: 'error',
         text1: t('common.error'),
@@ -110,11 +79,10 @@ export const useOAuth = () => {
     }
   };
 
-
   return {
     signInWithGoogle,
     isLoading,
     loadingProvider,
-    googleReady: !!googleRequest,
+    googleReady: true,
   };
 };
