@@ -220,7 +220,7 @@ export default function ConfirmationModal({
 
               {/* Info coût */}
               <View className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex-row items-start">
-                <Text className="text-blue-600 text-xl mr-3">ℹ️</Text>
+                <Feather name="info" size={20} color="#2563eb" style={{ marginRight: 12, marginTop: 2 }} />
                 <View className="flex-1">
                   <Text className="text-blue-800 font-baloo-semibold mb-1">
                     {t('storyCreation.importantInfo')}

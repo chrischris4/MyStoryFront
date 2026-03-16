@@ -26,8 +26,8 @@ export const useOAuth = () => {
   // Aucune config à ajouter dans Google Cloud Console.
   const [googleRequest, , googlePromptAsync] = Google.useAuthRequest({
     webClientId: GOOGLE_CLIENT_ID_WEB,
-    iosClientId: GOOGLE_CLIENT_ID_IOS,
-    androidClientId: GOOGLE_CLIENT_ID_ANDROID,
+    androidClientId: GOOGLE_CLIENT_ID_WEB,
+    redirectUri: 'https://auth.expo.io/@chris4/flun',
   });
 
 
@@ -51,6 +51,7 @@ export const useOAuth = () => {
   };
 
   const signInWithGoogle = async () => {
+    console.log('[OAuth] redirectUri utilisé:', googleRequest?.redirectUri);
     if (!googleRequest) {
       Toast.show({
         type: 'error',
