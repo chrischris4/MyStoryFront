@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
 
 type Product = {
   productId: string;
@@ -71,7 +70,6 @@ export function useIAP() {
 
         const {
           initConnection,
-          flushFailedPurchasesCachedAsPendingAndroid,
           getProducts,
           getSubscriptions,
           purchaseUpdatedListener,
@@ -81,11 +79,6 @@ export function useIAP() {
 
         const connected = await initConnection();
         addLog(`initConnection: ${JSON.stringify(connected)}`);
-
-        if (Platform.OS === 'android') {
-          await flushFailedPurchasesCachedAsPendingAndroid();
-          addLog('flushFailedPurchases: done');
-        }
 
         const [fetchedProducts, fetchedSubs] = await Promise.all([
           getProducts({ skus: productSkus }),
@@ -135,7 +128,7 @@ export function useIAP() {
     }
     const { requestPurchase: rnRequestPurchase } = require('react-native-iap');
     try {
-      return await rnRequestPurchase({ sku });
+      return await rnRequestPurchase({ skus: [sku] });
     } catch (err: any) {
       throw err;
     }
