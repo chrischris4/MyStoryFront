@@ -107,8 +107,11 @@ export default function LoginScreen() {
   };
 
   const handleGoogleLogin = async () => {
-    const success = await signInWithGoogle();
-    if (success) {
+    const result = await signInWithGoogle();
+    if (!result.success) return;
+    if (result.isNewUser) {
+      navigation.navigate('CompleteProfileScreen', { accessToken: result.accessToken, refreshToken: result.refreshToken });
+    } else {
       await handleOAuthSuccess();
     }
   };

@@ -215,7 +215,7 @@ export class ApiService {
   }
 
   async oauthLogin(provider: 'google', accessToken: string, name?: string) {
-    return this.post<{ accessToken: string; refreshToken: string }>('/auth/oauth', { provider, accessToken, name }, false);
+    return this.post<{ accessToken: string; refreshToken: string; isNewUser: boolean }>('/auth/oauth', { provider, accessToken, name }, false);
   }
 
   async forgotPassword(email: string, language?: string) {

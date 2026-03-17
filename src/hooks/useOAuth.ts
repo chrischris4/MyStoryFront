@@ -21,26 +21,7 @@ export const useOAuth = () => {
     });
   }, []);
 
-  const handleOAuthLogin = async (
-    provider: 'google',
-    accessToken: string,
-    userName?: string
-  ) => {
-    try {
-      const data = await api.oauthLogin(provider, accessToken, userName);
-      await login(data.accessToken, data.refreshToken);
-      return true;
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: mapApiError(error, t),
-      });
-      return false;
-    }
-  };
-
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (): Promise<{ success: false } | { success: true; isNewUser: boolean; accessToken: string; refreshToken: string }> => {
     setIsLoading(true);
     setLoadingProvider('google');
 
@@ -49,30 +30,24 @@ export const useOAuth = () => {
       const userInfo = await GoogleSignin.signIn();
       const tokens = await GoogleSignin.getTokens();
 
-      if (tokens.accessToken) {
-        return await handleOAuthLogin(
-          'google',
-          tokens.accessToken,
-          userInfo.data?.user?.name ?? undefined
-        );
+      if (!tokens.accessToken) {
+        Toast.show({ type: 'error', text1: t('common.error'), text2: t('auth.googleAuthFailed') });
+        return { success: false };
       }
 
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: t('auth.googleAuthFailed'),
-      });
-      return false;
+      const data = await api.oauthLogin('google', tokens.accessToken, userInfo.data?.user?.name ?? undefined);
+
+      if (!data.isNewUser) {
+        await login(data.accessToken, data.refreshToken);
+      }
+
+      return { success: true, isNewUser: data.isNewUser, accessToken: data.accessToken, refreshToken: data.refreshToken };
     } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        return false;
+        return { success: false };
       }
-      Toast.show({
-        type: 'error',
-        text1: t('common.error'),
-        text2: mapApiError(error, t),
-      });
-      return false;
+      Toast.show({ type: 'error', text1: t('common.error'), text2: mapApiError(error, t) });
+      return { success: false };
     } finally {
       setIsLoading(false);
       setLoadingProvider(null);

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
 
-// Types pour react-native-iap
 type Product = {
   productId: string;
   title: string;
@@ -15,7 +14,7 @@ type Purchase = {
   productId: string;
   transactionId: string;
   transactionReceipt: string;
-  purchaseToken?: string; // Android
+  purchaseToken?: string;
 };
 
 type PurchaseError = {
@@ -23,45 +22,21 @@ type PurchaseError = {
   message: string;
 };
 
-// Mock pour le dev
-const createDevMock = () => ({
-  initConnection: async () => true,
-  flushFailedPurchasesCachedAsPendingAndroid: async () => {},
-  getProducts: async ({ skus }: { skus: string[] }) =>
-    skus.map((sku) => ({
-      productId: sku,
-      title: sku,
-      description: 'Produit simulé',
-      price: '0.99',
-      localizedPrice: '$0.99',
-      currency: 'USD',
-    })),
-  getSubscriptions: async ({ skus }: { skus: string[] }) =>
-    skus.map((sku) => ({
-      productId: sku,
-      title: sku,
-      description: 'Abonnement simulé',
-      price: '1.99',
-      localizedPrice: '$1.99',
-      currency: 'USD',
-    })),
-  requestPurchase: async ({ sku }: { sku: string }) => {
-    console.log('[DEV] Achat simulé:', sku);
-    return {
-      productId: sku,
-      transactionId: `dev_${Date.now()}`,
-      transactionReceipt: 'dev_receipt_mock',
-      purchaseToken: 'dev_token_mock',
-    };
-  },
-  purchaseUpdatedListener: (cb: (purchase: Purchase) => void) => {
-    // Simuler un achat réussi après 1s en dev
-    return { remove: () => {} };
-  },
-  purchaseErrorListener: (cb: (error: PurchaseError) => void) => ({ remove: () => {} }),
-  finishTransaction: async () => {},
-  endConnection: async () => {},
-});
+const productSkus = ['tokens_5', 'tokens_10', 'tokens_20'];
+const subscriptionSkus = [
+  'explorer_monthly',
+  'explorer_yearly',
+  'adventurer_monthly',
+  'adventurer_yearly',
+  'legend_monthly',
+  'legend_yearly',
+];
+
+const normalizePrice = (item: any): string =>
+  item.localizedPrice
+  ?? item.oneTimePurchaseOfferDetails?.formattedPrice
+  ?? item.subscriptionOfferDetails?.[0]?.pricingPhases?.pricingPhaseList?.[0]?.formattedPrice
+  ?? '...';
 
 export function useIAP() {
   const [isReady, setIsReady] = useState(false);
@@ -75,73 +50,55 @@ export function useIAP() {
   const onPurchaseSuccessRef = useRef<((purchase: Purchase) => void) | null>(null);
   const onPurchaseErrorRef = useRef<((error: PurchaseError) => void) | null>(null);
 
-  // Récupérer le module IAP (mock en dev)
-  const getRNIap = () => {
-    if (__DEV__) {
-      return createDevMock();
-    }
-    return require('react-native-iap');
-  };
-
-  // SKUs des produits
-  const productSkus = ['tokens_5', 'tokens_10', 'tokens_20'];
-  const subscriptionSkus = [
-    'explorer_monthly',
-    'explorer_yearly',
-    'adventurer_monthly',
-    'adventurer_yearly',
-    'legend_monthly',
-    'legend_yearly',
-  ];
-
   useEffect(() => {
     const initIAP = async () => {
-      const RNIap = getRNIap();
-
       try {
         setIsLoading(true);
-        await RNIap.initConnection();
 
-        if (Platform.OS === 'android') {
-          await RNIap.flushFailedPurchasesCachedAsPendingAndroid();
+        if (__DEV__) {
+          // Mock en dev
+          setProducts(productSkus.map((sku) => ({ productId: sku, title: sku, description: '', price: '0.99', localizedPrice: '0,99 €', currency: 'EUR' })));
+          setSubscriptions(subscriptionSkus.map((sku) => ({ productId: sku, title: sku, description: '', price: '1.99', localizedPrice: '1,99 €', currency: 'EUR' })));
+          setIsReady(true);
+          return;
         }
 
-        // Récupérer les produits
+        const {
+          initConnection,
+          flushFailedPurchasesCachedAsPendingAndroid,
+          getProducts,
+          getSubscriptions,
+          purchaseUpdatedListener,
+          purchaseErrorListener: purchaseErrListener,
+          finishTransaction,
+        } = require('react-native-iap');
+
+        await initConnection();
+
+        if (Platform.OS === 'android') {
+          await flushFailedPurchasesCachedAsPendingAndroid();
+        }
+
         const [fetchedProducts, fetchedSubs] = await Promise.all([
-          RNIap.getProducts({ skus: productSkus }),
-          RNIap.getSubscriptions({ skus: subscriptionSkus }),
+          getProducts({ skus: productSkus }),
+          getSubscriptions({ skus: subscriptionSkus }),
         ]);
 
-        // Normaliser les produits
-        setProducts(fetchedProducts.map((p: any) => ({
-          ...p,
-          localizedPrice: p.localizedPrice ?? p.oneTimePurchaseOfferDetails?.formattedPrice ?? '...',
-        })));
-
-        // Normaliser les abonnements (v12+ Android)
-        setSubscriptions(fetchedSubs.map((s: any) => ({
-          ...s,
-          localizedPrice: s.localizedPrice
-            ?? s.subscriptionOfferDetails?.[0]?.pricingPhases?.pricingPhaseList?.[0]?.formattedPrice
-            ?? '...',
-        })));
+        setProducts(fetchedProducts.map((p: any) => ({ ...p, localizedPrice: normalizePrice(p) })));
+        setSubscriptions(fetchedSubs.map((s: any) => ({ ...s, localizedPrice: normalizePrice(s) })));
         setIsReady(true);
 
-        // Listeners pour les achats
-        purchaseUpdateListener.current = RNIap.purchaseUpdatedListener(
-          async (purchase: Purchase) => {
-            if (purchase.transactionReceipt) {
-              onPurchaseSuccessRef.current?.(purchase);
-              await RNIap.finishTransaction({ purchase, isConsumable: true });
-            }
+        purchaseUpdateListener.current = purchaseUpdatedListener(async (purchase: Purchase) => {
+          if (purchase.transactionReceipt) {
+            onPurchaseSuccessRef.current?.(purchase);
+            await finishTransaction({ purchase, isConsumable: true });
           }
-        );
+        });
 
-        purchaseErrorListener.current = RNIap.purchaseErrorListener((err: PurchaseError) => {
+        purchaseErrorListener.current = purchaseErrListener((err: PurchaseError) => {
           onPurchaseErrorRef.current?.(err);
         });
       } catch (err: any) {
-        console.error('Erreur init IAP:', err);
         setError(err.message || 'Erreur initialisation IAP');
       } finally {
         setIsLoading(false);
@@ -153,18 +110,21 @@ export function useIAP() {
     return () => {
       purchaseUpdateListener.current?.remove();
       purchaseErrorListener.current?.remove();
-      getRNIap().endConnection();
+      if (!__DEV__) {
+        const { endConnection } = require('react-native-iap');
+        endConnection();
+      }
     };
   }, []);
 
   const requestPurchase = async (sku: string): Promise<Purchase | null> => {
-    const RNIap = getRNIap();
-
+    if (__DEV__) {
+      return { productId: sku, transactionId: `dev_${Date.now()}`, transactionReceipt: 'dev_receipt', purchaseToken: 'dev_token' };
+    }
+    const { requestPurchase: rnRequestPurchase } = require('react-native-iap');
     try {
-      const purchase = await RNIap.requestPurchase({ sku });
-      return purchase;
+      return await rnRequestPurchase({ sku });
     } catch (err: any) {
-      console.error('Erreur achat:', err);
       throw err;
     }
   };
