@@ -44,6 +44,12 @@ export function useIAP() {
   const [subscriptions, setSubscriptions] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [debugLogs, setDebugLogs] = useState<string[]>([]);
+
+  const addLog = (msg: string) => {
+    console.log('[IAP]', msg);
+    setDebugLogs((prev) => [...prev, `${new Date().toISOString().slice(11, 19)} ${msg}`]);
+  };
 
   const purchaseUpdateListener = useRef<{ remove: () => void } | null>(null);
   const purchaseErrorListener = useRef<{ remove: () => void } | null>(null);
@@ -73,16 +79,21 @@ export function useIAP() {
           finishTransaction,
         } = require('react-native-iap');
 
-        await initConnection();
+        const connected = await initConnection();
+        addLog(`initConnection: ${JSON.stringify(connected)}`);
 
         if (Platform.OS === 'android') {
           await flushFailedPurchasesCachedAsPendingAndroid();
+          addLog('flushFailedPurchases: done');
         }
 
         const [fetchedProducts, fetchedSubs] = await Promise.all([
           getProducts({ skus: productSkus }),
           getSubscriptions({ skus: subscriptionSkus }),
         ]);
+
+        addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.productId).join(', ') || 'none'}`);
+        addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.productId).join(', ') || 'none'}`);
 
         setProducts(fetchedProducts.map((p: any) => ({ ...p, localizedPrice: normalizePrice(p) })));
         setSubscriptions(fetchedSubs.map((s: any) => ({ ...s, localizedPrice: normalizePrice(s) })));
@@ -99,6 +110,7 @@ export function useIAP() {
           onPurchaseErrorRef.current?.(err);
         });
       } catch (err: any) {
+        addLog(`ERROR: ${err?.message || JSON.stringify(err)}`);
         setError(err.message || 'Erreur initialisation IAP');
       } finally {
         setIsLoading(false);
@@ -143,6 +155,7 @@ export function useIAP() {
     error,
     products,
     subscriptions,
+    debugLogs,
     requestPurchase,
     setOnPurchaseSuccess,
     setOnPurchaseError,
