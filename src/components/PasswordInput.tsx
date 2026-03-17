@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { View, TextInput, TouchableOpacity, TextInputProps } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -39,6 +39,8 @@ export default function PasswordInput({ value, onChangeText, className, ...props
         onChangeText={handleChange}
         autoCapitalize="none"
         autoCorrect={false}
+        autoComplete="off"
+        importantForAutofill="no"
       />
       <TouchableOpacity
         activeOpacity={0.8}

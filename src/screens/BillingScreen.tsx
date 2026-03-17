@@ -138,7 +138,17 @@ export default function BillingScreen() {
     const navigation = useNavigation<StoryDetailNavigationProp>();
 
     // === HOOKS IAP ===
-    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading, products, subscriptions } = useIAP();
+    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading, products, subscriptions, error: iapError } = useIAP();
+
+    useEffect(() => {
+      if (!iapLoading) {
+        Toast.show({
+          type: iapError ? 'error' : 'info',
+          text1: `IAP: ${products.length} produits, ${subscriptions.length} abonnements`,
+          text2: iapError ?? 'OK',
+        });
+      }
+    }, [iapLoading]);
 
     const getPrice = (sku: string) => products.find((p) => p.productId === sku)?.localizedPrice ?? '...';
     const getSubPrice = (sku: string) => subscriptions.find((s) => s.productId === sku)?.localizedPrice ?? '...';
