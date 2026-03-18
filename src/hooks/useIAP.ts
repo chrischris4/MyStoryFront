@@ -131,8 +131,12 @@ export function useIAP() {
       return { productId: sku, transactionId: `dev_${Date.now()}`, transactionReceipt: 'dev_receipt', purchaseToken: 'dev_token' };
     }
     const { requestPurchase: rnRequestPurchase } = require('react-native-iap');
+    const isSubscription = subscriptionSkus.includes(sku);
     try {
-      return await rnRequestPurchase({ request: { google: { skus: [sku] } } });
+      return await rnRequestPurchase({
+        request: { google: { skus: [sku] } },
+        type: isSubscription ? 'subs' : 'in-app',
+      });
     } catch (err: any) {
       throw err;
     }
