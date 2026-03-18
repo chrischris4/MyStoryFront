@@ -68,22 +68,19 @@ export function useIAP() {
           return;
         }
 
-        const {
-          initConnection,
-          getProducts,
-          getSubscriptions,
-          purchaseUpdatedListener,
-          purchaseErrorListener: purchaseErrListener,
-          finishTransaction,
-        } = require('react-native-iap');
+        const iapModule = require('react-native-iap');
+        const iap = iapModule.default || iapModule;
+        addLog(`iap keys: ${Object.keys(iap).join(', ')}`);
+
+        const { initConnection, getProducts, getSubscriptions, purchaseUpdatedListener, purchaseErrorListener: purchaseErrListener, finishTransaction } = iap;
 
         const connected = await initConnection();
         addLog(`initConnection: ${JSON.stringify(connected)}`);
 
-        const [fetchedProducts, fetchedSubs] = await Promise.all([
-          getProducts({ skus: productSkus }),
-          getSubscriptions({ skus: subscriptionSkus }),
-        ]);
+        addLog('calling getProducts...');
+        const fetchedProducts = await getProducts({ skus: productSkus });
+        addLog(`calling getSubscriptions...`);
+        const fetchedSubs = await getSubscriptions({ skus: subscriptionSkus });
 
         addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.productId).join(', ') || 'none'}`);
         addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.productId).join(', ') || 'none'}`);
