@@ -77,9 +77,9 @@ export function useIAP() {
         addLog(`initConnection: ${JSON.stringify(connected)}`);
 
         addLog('calling fetchProducts...');
-        const fetchedProducts = await fetchProducts({ productIds: productSkus, productType: 'inapp' });
+        const fetchedProducts = await fetchProducts({ skus: productSkus, productType: 'inapp' });
         addLog(`calling fetchProducts subs...`);
-        const fetchedSubs = await fetchProducts({ productIds: subscriptionSkus, productType: 'subs' });
+        const fetchedSubs = await fetchProducts({ skus: subscriptionSkus, productType: 'subs' });
 
         addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.productId).join(', ') || 'none'}`);
         addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.productId).join(', ') || 'none'}`);
