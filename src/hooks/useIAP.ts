@@ -81,12 +81,19 @@ export function useIAP() {
         addLog(`calling fetchProducts subs...`);
         const fetchedSubs = await fetchProducts({ skus: subscriptionSkus, type: 'subs' });
 
-        addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.productId).join(', ') || 'none'}`);
-        addLog(`first product keys: ${fetchedProducts[0] ? Object.keys(fetchedProducts[0]).join(', ') : 'n/a'}`);
-        addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.productId).join(', ') || 'none'}`);
+        addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.id || p.productId).join(', ') || 'none'}`);
+        addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.id || s.productId).join(', ') || 'none'}`);
 
-        setProducts(fetchedProducts.map((p: any) => ({ ...p, localizedPrice: normalizePrice(p) })));
-        setSubscriptions(fetchedSubs.map((s: any) => ({ ...s, localizedPrice: normalizePrice(s) })));
+        setProducts(fetchedProducts.map((p: any) => ({
+          ...p,
+          productId: p.id || p.productId || p.sku,
+          localizedPrice: p.displayPrice || normalizePrice(p),
+        })));
+        setSubscriptions(fetchedSubs.map((s: any) => ({
+          ...s,
+          productId: s.id || s.productId || s.sku,
+          localizedPrice: s.displayPrice || normalizePrice(s),
+        })));
         setIsReady(true);
 
         purchaseUpdateListener.current = purchaseUpdatedListener(async (purchase: Purchase) => {
