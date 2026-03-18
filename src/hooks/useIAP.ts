@@ -134,7 +134,7 @@ export function useIAP() {
     const isSubscription = subscriptionSkus.includes(sku);
     try {
       return await rnRequestPurchase({
-        request: { google: { skus: [sku] } },
+        request: { android: { skus: [sku] } },
         type: isSubscription ? 'subs' : 'in-app',
       });
     } catch (err: any) {
