@@ -77,11 +77,12 @@ export function useIAP() {
         addLog(`initConnection: ${JSON.stringify(connected)}`);
 
         addLog('calling fetchProducts...');
-        const fetchedProducts = await fetchProducts({ skus: productSkus, productType: 'inapp' });
+        const fetchedProducts = await fetchProducts({ skus: productSkus, type: 'in-app' });
         addLog(`calling fetchProducts subs...`);
-        const fetchedSubs = await fetchProducts({ skus: subscriptionSkus, productType: 'subs' });
+        const fetchedSubs = await fetchProducts({ skus: subscriptionSkus, type: 'subs' });
 
         addLog(`products (${fetchedProducts.length}): ${fetchedProducts.map((p: any) => p.productId).join(', ') || 'none'}`);
+        addLog(`first product keys: ${fetchedProducts[0] ? Object.keys(fetchedProducts[0]).join(', ') : 'n/a'}`);
         addLog(`subs (${fetchedSubs.length}): ${fetchedSubs.map((s: any) => s.productId).join(', ') || 'none'}`);
 
         setProducts(fetchedProducts.map((p: any) => ({ ...p, localizedPrice: normalizePrice(p) })));
@@ -124,7 +125,7 @@ export function useIAP() {
     }
     const { requestPurchase: rnRequestPurchase } = require('react-native-iap');
     try {
-      return await rnRequestPurchase({ skus: [sku] });
+      return await rnRequestPurchase({ request: { google: { skus: [sku] } } });
     } catch (err: any) {
       throw err;
     }
