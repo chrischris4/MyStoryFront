@@ -33,7 +33,7 @@ const verifyAndCreateSubscription = async (
   const platform = Platform.OS === 'ios' ? 'ios' : 'android';
   const packageName = Platform.OS === 'android' ? 'com.flun.app' : undefined;
 
-  const response = await fetch(`${API_BASE_URL}/subscriptions/verify-purchase`, {
+  const response = await fetch(`${API_BASE_URL}/subscription/verify-purchase`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

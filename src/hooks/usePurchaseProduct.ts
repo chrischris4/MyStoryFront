@@ -27,7 +27,7 @@ const verifyAndPurchaseProduct = async (
   const platform = Platform.OS === 'ios' ? 'ios' : 'android';
   const packageName = Platform.OS === 'android' ? 'com.flun.app' : undefined;
 
-  const response = await fetch(`${API_BASE_URL}/products/verify-purchase`, {
+  const response = await fetch(`${API_BASE_URL}/product/purchase`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
