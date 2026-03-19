@@ -60,15 +60,13 @@ export default function HomeScreen() {
 
   // Fonction pour obtenir le nom d'affichage du plan
   const getPlanDisplayName = (planType?: string): string => {
-    if (!planType) return t('plans.explorer');
-
     const planNames: { [key: string]: string } = {
-      'EXPLOROR': t('plans.explorer'),
+      'EXPLORER': t('plans.explorer'),
       'ADVENTURER': t('plans.adventurer'),
       'LEGEND': t('plans.legend'),
     };
 
-    return planNames[planType] || 'Premium';
+    return planType ? (planNames[planType] ?? '') : '';
   };
 
   const planName = getPlanDisplayName(user?.subscriptionPlan);

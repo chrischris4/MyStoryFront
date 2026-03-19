@@ -138,17 +138,7 @@ export default function BillingScreen() {
     const navigation = useNavigation<StoryDetailNavigationProp>();
 
     // === HOOKS IAP ===
-    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, isLoading: iapLoading, products, subscriptions, error: iapError, debugLogs } = useIAP();
-
-    useEffect(() => {
-      if (!iapLoading) {
-        Toast.show({
-          type: iapError ? 'error' : 'info',
-          text1: `IAP: ${products.length} produits, ${subscriptions.length} abonnements`,
-          text2: iapError ?? 'OK',
-        });
-      }
-    }, [iapLoading]);
+    const { requestPurchase, setOnPurchaseSuccess, setOnPurchaseError, products, subscriptions } = useIAP();
 
     const getPrice = (sku: string) => products.find((p) => p.productId === sku)?.localizedPrice ?? '...';
     const getSubPrice = (sku: string) => subscriptions.find((s) => s.productId === sku)?.localizedPrice ?? '...';
@@ -493,13 +483,6 @@ export default function BillingScreen() {
             </View>
             <Text className={`font-baloo-semibold text-4xl md:text-5xl pt-10 ${isNight ? "text-white" : "text-slate-900"}`}>{t('billing.title')}</Text>
 
-            {/* DEBUG IAP - à supprimer */}
-            <View style={{ backgroundColor: 'rgba(0,0,0,0.7)', padding: 8, borderRadius: 8, marginTop: 8 }}>
-                {debugLogs.map((log, i) => (
-                    <Text key={i} style={{ color: '#00ff00', fontSize: 10, fontFamily: 'monospace' }}>{log}</Text>
-                ))}
-                {debugLogs.length === 0 && <Text style={{ color: '#888', fontSize: 10 }}>En attente des logs IAP...</Text>}
-            </View>
 
             {/* Boutons de jetons*/}
             <View className='flex-col w-full mt-4'>

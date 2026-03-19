@@ -446,10 +446,7 @@ export default function SettingsScreen() {
                                                     </Text>
                                                 </View>
                                                 <View className="items-end">
-                                                    <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-bold text-lg`}>
-                                                        {transaction.amount.toFixed(2)} {transaction.currency}
-                                                    </Text>
-                                                    <View className={`mt-1 px-2 py-1 rounded-full ${transaction.status === 'COMPLETED' ? 'bg-green-500/20' :
+                                                    <View className={`px-2 py-1 rounded-full ${transaction.status === 'COMPLETED' ? 'bg-green-500/20' :
                                                         transaction.status === 'PENDING' ? 'bg-yellow-500/20' : 'bg-red-500/20'
                                                         }`}>
                                                         <Text className={`text-xs font-baloo-medium ${transaction.status === 'COMPLETED' ? 'text-green-600' :

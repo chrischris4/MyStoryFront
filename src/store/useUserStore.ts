@@ -87,12 +87,12 @@ export const useUserStore = create<UserStore>((set) => ({
       const refreshToken = await AsyncStorage.getItem('refreshToken');
       const userString = await AsyncStorage.getItem('user');
 
-      if (accessToken && refreshToken && userString) {
+      if (accessToken && userString) {
         const user = JSON.parse(userString);
         set({
           user,
           accessToken,
-          refreshToken,
+          refreshToken: refreshToken ?? null,
           isAuthenticated: true,
         });
       }
