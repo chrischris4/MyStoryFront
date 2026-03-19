@@ -97,7 +97,7 @@ export function useIAP() {
         setIsReady(true);
 
         purchaseUpdateListener.current = purchaseUpdatedListener(async (purchase: Purchase) => {
-          if (purchase.transactionReceipt) {
+          if (purchase.purchaseToken || purchase.transactionId) {
             onPurchaseSuccessRef.current?.(purchase);
             await finishTransaction({ purchase, isConsumable: true });
           }

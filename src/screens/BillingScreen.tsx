@@ -201,7 +201,7 @@ export default function BillingScreen() {
                     {
                         productId: purchase.productId,
                         transactionId: purchase.transactionId,
-                        receipt: purchase.transactionReceipt,
+                        receipt: purchase.purchaseToken ?? '',
                         purchaseToken: purchase.purchaseToken,
                     },
                     {
@@ -232,7 +232,7 @@ export default function BillingScreen() {
                         planId,
                         planName,
                         transactionId: purchase.transactionId,
-                        receipt: purchase.transactionReceipt,
+                        receipt: purchase.purchaseToken ?? '',
                         purchaseToken: purchase.purchaseToken,
                     },
                     {
