@@ -282,7 +282,7 @@ export default function BillingScreen() {
             adventurer: {
                 name: t('plans.adventurer'),
                 planId: 2,
-                features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 1 }), t('billing.cancelAnytime')],
+                features: [t('billing.sharedStories'), t('billing.tokensPerDay', { count: 10 }), t('billing.cancelAnytime')],
                 monthlyPrice: `${getSubPrice('adventurer_monthly')}/${t('billing.month')}`,
                 yearlyPrice: `${getSubPrice('adventurer_yearly')}/${t('billing.year')}`,
                 monthlyProductId: 'adventurer_monthly',
@@ -291,7 +291,7 @@ export default function BillingScreen() {
             legend: {
                 name: t('plans.legend'),
                 planId: 3,
-                features: [t('billing.sharedStories'), t('billing.tokensPerDay_plural', { count: 2 }), t('billing.charactersAllowed'), t('billing.cancelAnytime')],
+                features: [t('billing.sharedStories'), t('billing.tokensPerDay_plural', { count: 20 }), t('billing.charactersAllowed'), t('billing.cancelAnytime')],
                 monthlyPrice: `${getSubPrice('legend_monthly')}/${t('billing.month')}`,
                 yearlyPrice: `${getSubPrice('legend_yearly')}/${t('billing.year')}`,
                 monthlyProductId: 'legend_monthly',
