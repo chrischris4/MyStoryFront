@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, GestureResponderEvent } from 'react-native';
 import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 type ShopButtonProps = {
   title: string;
@@ -15,6 +16,7 @@ type ShopButtonProps = {
 };
 
 export default function ShopButton({ onPress, title, price, icon, isNight, description, amount, isCoin = false }: ShopButtonProps) {
+  const { t } = useTranslation();
 
   return (
     <TouchableOpacity
@@ -39,7 +41,7 @@ export default function ShopButton({ onPress, title, price, icon, isNight, descr
           )}
           {!isCoin && (
             <View className="flex-row justify-end items-center gap-1 mt-2">
-              <Text className={`${isNight ? "text-white" : "text-slate-600"} text-xs md:text-base font-baloo underline`}>Plus de détails</Text>
+              <Text className={`${isNight ? "text-white" : "text-slate-600"} text-xs md:text-base font-baloo underline`}>{t('billing.moreDetails')}</Text>
               <Feather name="arrow-right" size={10} color={isNight ? "rgba(255,255,255,0.5)" : "#64748b"} className='mb-1 md:mb-0' />
             </View>
           )}

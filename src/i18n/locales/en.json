@@ -167,6 +167,7 @@
     "loadError": "Error loading transactions"
   },
   "billing": {
+    "moreDetails": "More details",
     "title": "Shop",
     "tokenPacks": "Token Packs",
     "tokenInfo": "( 1 token = 1 story! )",

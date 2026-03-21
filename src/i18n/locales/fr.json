@@ -167,6 +167,7 @@
     "loadError": "Erreur lors du chargement des transactions"
   },
   "billing": {
+    "moreDetails": "Plus de détails",
     "title": "Boutique",
     "tokenPacks": "Paquets de Jetons",
     "tokenInfo": "( 1 jeton = 1 histoire ! )",
