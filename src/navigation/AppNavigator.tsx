@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,6 +23,7 @@ import FloatingStoryCreation from '~/components/FloatingStoryCreation';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '~/context/AuthContext';
 import { api } from '~/services/api';
+import * as NavigationBar from 'expo-navigation-bar';
 import type { RootStackParamList, MainTabParamList } from '~/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -105,6 +107,13 @@ function AppNavigatorContent() {
 }
 
 export default function AppNavigator() {
+    useEffect(() => {
+        if (Platform.OS === 'android') {
+            NavigationBar.setPositionAsync('absolute');
+            NavigationBar.setBackgroundColorAsync('#00000000');
+        }
+    }, []);
+
     return (
         <NavigationContainer>
             <AppNavigatorContent />
