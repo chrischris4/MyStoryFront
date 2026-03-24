@@ -57,7 +57,7 @@
         "backgroundColor": "#0D1821"
       },
       "package": "com.flun.app",
-      "versionCode": 27,
+      "versionCode": 28,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
@@ -65,7 +65,11 @@
       ],
       "blockedPermissions": [
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
-      ]
+      ],
+      "navigationBar": {
+        "barStyle": "dark-content",
+        "backgroundColor": "#00000000"
+      }
     },
     "extra": {
       "eas": {
