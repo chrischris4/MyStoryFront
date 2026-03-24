@@ -6,23 +6,19 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: 'npm'
 
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
 
       - name: Cache Gradle
         uses: actions/cache@v4
@@ -30,10 +26,22 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache EAS build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.eas-build-local-nodejs
+            /tmp/eas-build-local
+          key: ${{ runner.os }}-eas-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-eas-
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Install EAS CLI
         run: npm install -g eas-cli
@@ -48,3 +56,4 @@ jobs:
         with:
           name: app-release
           path: "*.aab"
+          retention-days: 7
