@@ -11,19 +11,32 @@ type PasswordInputProps = Omit<TextInputProps, 'value' | 'onChangeText' | 'secur
 export default function PasswordInput({ value, onChangeText, className, ...props }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleChange = (input: string) => {
+    if (showPassword) {
+      onChangeText(input);
+      return;
+    }
+    const prevLength = value.length;
+    const newLength = input.length;
+    if (newLength > prevLength) {
+      onChangeText(value + input.slice(prevLength));
+    } else {
+      onChangeText(value.slice(0, newLength));
+    }
+  };
+
   return (
     <View className="relative">
       <TextInput
         {...props}
         className={className}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={!showPassword}
+        value={showPassword ? value : '•'.repeat(value.length)}
+        onChangeText={handleChange}
         autoCapitalize="none"
         autoCorrect={false}
-        autoComplete="password"
-        textContentType="password"
-        style={[{ fontFamily: showPassword ? undefined : 'System' }, props.style]}
+        autoComplete="off"
+        importantForAutofill="no"
+        keyboardType={showPassword ? 'default' : 'visible-password'}
       />
       <TouchableOpacity
         activeOpacity={0.8}
