@@ -11,10 +11,16 @@ jobs:
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/lib/android/sdk/build-tools
+          sudo rm -rf /usr/local/lib/android/sdk/platforms
           df -h
+
+      - name: Install Android NDK
+        run: |
+          echo "y" | /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager "ndk;27.3.13750724"
+          echo "ANDROID_NDK_HOME=/usr/local/lib/android/sdk/ndk/27.3.13750724" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
 
