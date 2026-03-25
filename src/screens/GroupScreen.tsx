@@ -361,6 +361,7 @@ export default function GroupScreen() {
         className='absolute bottom-0 left-0 right-0 border-t-4 h-[75px] flex flex-row items-center justify-between p-4 z-30'
         style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
       >
+        <View style={{ position: 'absolute', top: '100%', left: 0, right: 0, height: 200, backgroundColor: groundColor }} />
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => navigation.goBack()}

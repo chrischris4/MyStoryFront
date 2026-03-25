@@ -349,7 +349,9 @@ export default function StoryDetailScreen() {
         <View
           className='absolute bottom-0 left-0 border-t-4 h-[75px] w-full z-30 flex flex-row items-center justify-between px-8 p-4'
           style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: bottomInset }}
-        />
+        >
+          <View style={{ position: 'absolute', top: '100%', left: 0, right: 0, height: 200, backgroundColor: groundColor }} />
+        </View>
       </View>
     );
   }
