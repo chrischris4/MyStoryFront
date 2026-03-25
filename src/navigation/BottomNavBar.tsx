@@ -13,6 +13,7 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
   const { bottom: bottomInset } = useSafeAreaInsets();
   const { isNight } = useTheme();
   const groundColor = isNight ? '#2E313F' : '#38A169';
+  const groundBorderColor = isNight ? '#44495D' : '#2F855A';
   const flowerTranslateY = useRef(new Animated.Value(50)).current;
   const flowerOpacity = useRef(new Animated.Value(0)).current;
   const flowerPosition = useRef(new Animated.Value(0)).current;
@@ -31,7 +32,7 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
 
   // Calculer la position horizontale de la fleur en fonction de l'écran actif
   useEffect(() => {
-    const itemWidth = (screenWidth - 16) / navItems.length; // -16 pour les marges left-2 right-2
+    const itemWidth = (screenWidth) / navItems.length; // -16 pour les marges left-2 right-2
     const currentRoute = state.routes[state.index];
     const currentIndex = navItems.findIndex(item => item.screen === currentRoute.name);
 
@@ -61,9 +62,9 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
   }, [state.index]);
 
   return (
-    <View className="absolute left-2 right-2 flex flex-row justify-around items-center rounded-xl z-50" style={{ bottom: Math.max(bottomInset, 8), paddingBottom: Platform.OS === 'android' ? 8 : 0 }}>
+    <View className="absolute left-0 right-0 flex flex-row justify-around items-center pt-2 z-50 border-t-4" style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: Math.max(bottomInset, 8), paddingBottom: Platform.OS === 'android' ? 8 : 0 }}>
       {/* Fond vert qui couvre la navbar système */}
-      <View style={{ position: 'absolute', top: '100%', left: -20, right: -20, height: 200, backgroundColor: groundColor, zIndex: -1 }} />
+      {/* <View style={{ position: 'absolute', top: 0, left: -20, right: -20, height: 200, backgroundColor: groundColor, zIndex: -1 }} /> */}
       {/* Fleur indicatrice qui suit la page active */}
       <Animated.View
         style={{
@@ -101,7 +102,7 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
               navigation.navigate(item.screen);
             }}
             className="items-center"
-            style={{borderRadius: 32, overflow: 'hidden'}}
+            style={{ borderRadius: 32, overflow: 'hidden' }}
           >
             <View className={`${isActive ? "bg-yellow-800" : ""} h-16 w-16 flex items-center justify-center`} style={{ borderRadius: 32 }}>
               <Feather

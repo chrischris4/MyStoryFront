@@ -40,22 +40,6 @@ export default function Background({ isNight = false }: BackgroundProps) {
             style={{ backgroundColor: skyColor }}
         >
             {isNight && <StarryBackground starCount={50} />}
-
-            {/* Sol */}
-            <View
-                className='absolute bottom-0 -left-10 border-t-4 h-[75px] w-[200%] z-30'
-                style={{ backgroundColor: groundColor, borderColor: groundBorderColor }}
-            />
-            <View
-                className='absolute bottom-0 -left-10 h-[75px] w-[200%] z-20'
-                style={{ backgroundColor: groundColor }}
-            />
-
-            
-            {/* Nuages - répartis pour une boucle fluide
-                Position initiale: certains visibles, d'autres hors écran à gauche
-                Tous sortent à droite, puis reset et recommencent */}
-
             {/* Nuage 1 - visible au démarrage, côté gauche */}
             <Animated.View
                 style={{

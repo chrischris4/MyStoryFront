@@ -57,7 +57,7 @@
         "backgroundColor": "#0D1821"
       },
       "package": "com.flun.app",
-      "versionCode": 31,
+      "versionCode": 32,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
