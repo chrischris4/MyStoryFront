@@ -64,7 +64,7 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
   return (
     <View className="absolute left-0 right-0 flex flex-row justify-around items-center pt-2 z-50 border-t-4" style={{ backgroundColor: groundColor, borderColor: groundBorderColor, bottom: Math.max(bottomInset, 8), paddingBottom: Platform.OS === 'android' ? 8 : 0 }}>
       {/* Fond vert qui couvre la navbar système */}
-      {/* <View style={{ position: 'absolute', top: 0, left: -20, right: -20, height: 200, backgroundColor: groundColor, zIndex: -1 }} /> */}
+      <View style={{ position: 'absolute', top: 2, left: -20, right: -20, height: 200, backgroundColor: groundColor, zIndex: -1 }} />
       {/* Fleur indicatrice qui suit la page active */}
       <Animated.View
         style={{
