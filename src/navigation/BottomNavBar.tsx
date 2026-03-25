@@ -6,10 +6,13 @@ import { Feather } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
 import { useSound } from '~/context/SoundContext';
 import * as Haptics from 'expo-haptics';
+import { useTheme } from '~/context/ThemeContext';
 
 export default function BottomNavBar({ state, descriptors, navigation }: BottomTabBarProps) {
   const { width: screenWidth } = useWindowDimensions();
   const { bottom: bottomInset } = useSafeAreaInsets();
+  const { isNight } = useTheme();
+  const groundColor = isNight ? '#2E313F' : '#38A169';
   const flowerTranslateY = useRef(new Animated.Value(50)).current;
   const flowerOpacity = useRef(new Animated.Value(0)).current;
   const flowerPosition = useRef(new Animated.Value(0)).current;
@@ -59,6 +62,8 @@ export default function BottomNavBar({ state, descriptors, navigation }: BottomT
 
   return (
     <View className="absolute left-2 right-2 flex flex-row justify-around items-center rounded-xl z-50" style={{ bottom: Math.max(bottomInset, 8), paddingBottom: Platform.OS === 'android' ? 8 : 0 }}>
+      {/* Fond vert qui couvre la navbar système */}
+      <View style={{ position: 'absolute', top: '100%', left: -20, right: -20, height: 200, backgroundColor: groundColor, zIndex: -1 }} />
       {/* Fleur indicatrice qui suit la page active */}
       <Animated.View
         style={{
