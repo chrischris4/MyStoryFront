@@ -81,4 +81,4 @@ jobs:
         with:
           name: app-release
           path: "*.aab"
-          retention-days: 7
+          retention-days: 3
