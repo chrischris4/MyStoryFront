@@ -28,6 +28,7 @@ export default function SettingsScreen() {
     const [isEditProfilModalVisible, setIsEditProfilModalVisible] = useState(false);
     const [isHistoryModalVisible, setIsHistoryModalVisible] = useState(false);
     const [isDeleteAccountModalVisible, setIsDeleteAccountModalVisible] = useState(false);
+    const [isDeleteConfirmed, setIsDeleteConfirmed] = useState(false);
     const { data: transactions = [], isLoading: isLoadingTransactions, error: transactionsError } = useTransactionsByUser(isHistoryModalVisible);
     const deleteAccountMutation = useDeleteAccount();
     const { playSound, isMusicEnabled, toggleBackgroundMusic, areSoundEffectsEnabled, toggleSoundEffects, pauseBackgroundMusic } = useSound();
@@ -507,9 +508,53 @@ export default function SettingsScreen() {
                             <Text className={`${isNight ? 'text-white/80' : 'text-gray-600'} font-baloo text-base text-center mb-4`}>
                                 {t('settings.deleteAccountWarning')}
                             </Text>
-                            <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg text-center`}>
+
+                            {/* Dynamic warnings */}
+                            {(userStore?.storyCoin ?? 0) > 0 && (
+                                <View className="bg-orange-500/20 rounded-xl p-3 mb-3">
+                                    <Text className="text-orange-500 font-baloo text-sm text-center">
+                                        {t('settings.deleteAccountLoseCoins', { count: userStore?.storyCoin })}
+                                    </Text>
+                                </View>
+                            )}
+                            {userStore?.subscriptionPlan && (
+                                <View className="bg-red-500/20 rounded-xl p-3 mb-3">
+                                    <Text className="text-red-500 font-baloo text-sm text-center">
+                                        {t('settings.deleteAccountLoseSubscription', { plan: getPlanDisplayName(userStore.subscriptionPlan) })}
+                                    </Text>
+                                </View>
+                            )}
+
+                            <Text className={`${isNight ? 'text-white' : 'text-gray-800'} font-baloo-semibold text-lg text-center mb-4`}>
                                 {t('settings.deleteAccountConfirm')}
                             </Text>
+
+                            {/* Checkbox de confirmation */}
+                            <TouchableOpacity
+                                activeOpacity={0.8}
+                                className="flex-row items-center gap-3"
+                                onPress={() => setIsDeleteConfirmed(!isDeleteConfirmed)}
+                            >
+                                <View
+                                    style={{
+                                        width: 24,
+                                        height: 24,
+                                        borderRadius: 6,
+                                        borderWidth: 2,
+                                        borderColor: isDeleteConfirmed ? '#ef4444' : (isNight ? '#64748b' : '#94a3b8'),
+                                        backgroundColor: isDeleteConfirmed ? '#ef4444' : 'transparent',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    {isDeleteConfirmed && (
+                                        <Feather name="check" size={14} color="#fff" />
+                                    )}
+                                </View>
+                                <Text className={`${isNight ? 'text-white/80' : 'text-gray-600'} font-baloo text-sm flex-1`}>
+                                    {t('settings.deleteAccountCheckbox')}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
 
                         {/* Actions */}
@@ -519,6 +564,7 @@ export default function SettingsScreen() {
                                 className={`flex-1 ${isNight ? 'bg-slate-700' : 'bg-gray-200'} px-6 py-4 rounded-xl items-center`}
                                 onPress={() => {
                                     playSound('click');
+                                    setIsDeleteConfirmed(false);
                                     setIsDeleteAccountModalVisible(false);
                                 }}
                             >
@@ -528,8 +574,9 @@ export default function SettingsScreen() {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 activeOpacity={0.8}
-                                className="flex-1 bg-red-500 px-6 py-4 rounded-xl items-center"
-                                disabled={deleteAccountMutation.isPending}
+                                className="flex-1 px-6 py-4 rounded-xl items-center"
+                                style={{ backgroundColor: isDeleteConfirmed ? '#ef4444' : (isNight ? '#4b5563' : '#d1d5db') }}
+                                disabled={deleteAccountMutation.isPending || !isDeleteConfirmed}
                                 onPress={async () => {
                                     if (!user?.id) return;
                                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -537,6 +584,7 @@ export default function SettingsScreen() {
 
                                     try {
                                         await deleteAccountMutation.mutateAsync(user.id);
+                                        setIsDeleteConfirmed(false);
                                         setIsDeleteAccountModalVisible(false);
                                         pauseBackgroundMusic();
                                         await logout();
@@ -560,7 +608,7 @@ export default function SettingsScreen() {
                                         source={require('../../assets/animations/LoadingWhite.json')}
                                         autoPlay
                                         loop={true}
-                                        style={{ width: 100, height: 100 }}
+                                        style={{ width: 50, height: 50 }}
                                     />
                                 ) : (
                                     <Text className="text-white font-baloo-semibold text-lg">
