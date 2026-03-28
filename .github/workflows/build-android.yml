@@ -8,6 +8,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: false
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Free Android SDK space
+        run: |
+          sudo rm -rf /usr/local/lib/android/sdk/build-tools
+          sudo rm -rf /usr/local/lib/android/sdk/platforms
+          sudo rm -rf /usr/local/lib/android/sdk/emulator
+          sudo rm -rf /usr/local/lib/android/sdk/ndk
+          df -h
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
