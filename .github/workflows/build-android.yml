@@ -15,9 +15,9 @@ jobs:
           android: false
           dotnet: true
           haskell: true
-          large-packages: true
+          large-packages: false
           docker-images: true
-          swap-storage: true
+          swap-storage: false
 
       - name: Free Android SDK space
         run: |
@@ -74,6 +74,7 @@ jobs:
         run: eas build --platform android --profile production --local --non-interactive
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
