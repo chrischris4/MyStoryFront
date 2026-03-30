@@ -126,7 +126,7 @@ export default function StoriesScreen() {
           style={{ opacity: bubbleOpacity, bottom: (isTablet ? 320 : 240) + bottomInset }}
         >
           <View
-            className="px-4 py-3 flex w-80 md:w-96 rounded-2xl bg-white text-black"
+            className="px-4 py-3 flex w-64 md:w-96 rounded-2xl bg-white text-black"
           >
             <Text className="font-baloo-medium text-base md:text-lg text-center">
               {t('sharedStories.storeBubble2')}
