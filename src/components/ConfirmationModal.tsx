@@ -235,7 +235,7 @@ export default function ConfirmationModal({
 
           {/* Actions */}
           <View className="p-6 pt-3 gap-3">
-            {onTestCreate && (
+            {/* {onTestCreate && (
               <TouchableOpacity
                 className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
                 onPress={() => onTestCreate(isShared)}
@@ -244,8 +244,8 @@ export default function ConfirmationModal({
                   {t('storyCreation.confirmAndCreate')} test !
                 </Text>
               </TouchableOpacity>
-            )}
-            {/* {storyCoin >= 1 && (
+            )} */}
+            {storyCoin >= 1 && (
               <TouchableOpacity
                 className="bg-[#0D1821] px-6 py-4 rounded-xl items-center"
                 onPress={() => onConfirm(isShared)}
@@ -254,7 +254,7 @@ export default function ConfirmationModal({
                   {t('storyCreation.confirmAndCreate')}
                 </Text>
               </TouchableOpacity>
-            )} */}
+            )}
 
             <TouchableOpacity
               className="bg-gray-200 px-6 py-4 rounded-xl items-center"

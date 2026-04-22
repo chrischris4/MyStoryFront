@@ -267,7 +267,7 @@ export default function SettingsScreen() {
                         }}
                     >
                         <Feather name="mail" size={18} color={isNight ? "#fff" : "#000"} />
-                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>support@flun.app</Text>
+                        <Text className={` ${isNight ? "text-white" : "text-slate-600"} text-lg font-baloo`}>{t('settings.contactUs')}</Text>
                     </TouchableOpacity>
                 </PlatformBlur>
 
