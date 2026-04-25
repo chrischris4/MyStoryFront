@@ -285,10 +285,10 @@ export default function SettingsScreen() {
                             onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                 playSound('click');
-                                Linking.openURL('https://instagram.com/flun.app');
+                                Linking.openURL(i18n.language === 'fr' ? 'https://www.facebook.com/FlunFr/about/' : 'https://www.facebook.com/flunApp/about/');
                             }}
                         >
-                            <FontAwesome name="instagram" size={28} color={isNight ? "#fff" : "#000"} />
+                            <FontAwesome name="facebook" size={28} color={isNight ? "#fff" : "#000"} />
                         </TouchableOpacity>
                         <TouchableOpacity
                             activeOpacity={0.7}
