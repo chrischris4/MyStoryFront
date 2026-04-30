@@ -852,9 +852,9 @@ export default function CreateStoryScreen() {
                 flexDirection: 'row',
                 gap: 8, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)'
               }}
-                onPress={handleCreateClick}
+                onPress={() => navigation.navigate('BillingScreen' as never)}
               >
-                <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.createMyStory')}</Text>
+                <Text className={`${isNight ? "text-white" : "text-slate-700"} font-baloo-medium text-xl`}>{t('createStory.needTokenToContinue')}</Text>
               </TouchableOpacity>
             </PlatformBlur>
           ) : (

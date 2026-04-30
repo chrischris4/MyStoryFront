@@ -494,6 +494,7 @@
       }
     },
     "missingInfo": "Informations manquantes",
+    "needTokenToContinue": "Tu as besoin d'un token pour continuer",
     "createMyStory": "Créer mon histoire !",
     "creationError": "Erreur lors de la création de l'histoire.",
     "styleClassic": "Cartoon",
