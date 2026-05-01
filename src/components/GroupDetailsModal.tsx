@@ -4,6 +4,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
   ScrollView,
   Dimensions,
   useWindowDimensions,
@@ -168,6 +170,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
   }
 
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <View className="absolute inset-0">
       <Animated.View
         style={[
@@ -476,5 +479,6 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
         </PlatformBlur>
       </Animated.View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }

@@ -13,10 +13,9 @@ import {
 } from 'react-native';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { Story, RootStackParamList } from '~/types';
+import type { RootStackParamList } from '~/types';
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import PlatformBlur from '~/components/PlatformBlur';
@@ -24,6 +23,7 @@ import { useCheckFavorite } from '~/hooks/useCheckFavorite';
 import { useToggleFavorite } from '~/hooks/useToggleFavorite';
 import { useStoryGroups } from '~/hooks/useStoryGroups';
 import { useDeleteStory } from '~/hooks/useDeleteStory';
+import { useStoryDetail } from '~/hooks/useStoryDetail';
 import { useHasReportedStory } from '~/hooks/useReportStory';
 import Toast from 'react-native-toast-message';
 import GoBackTop, { useGoBackTop } from '~/components/GoBackTop';
@@ -51,9 +51,7 @@ export default function StoryDetailScreen() {
   const currentUser = useUserStore((state) => state.user);
 
   const { storyId } = route.params;
-  const [story, setStory] = useState<Story | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: story, isLoading: loading, error } = useStoryDetail(storyId);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isShared, setIsShared] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -131,46 +129,16 @@ export default function StoryDetailScreen() {
   };
 
 
-  const fetchStory = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) throw new Error(t('storyDetail.userNotAuthenticated'));
-
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/detail/${storyId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 403) {
-        const data = await response.json().catch(() => ({}));
-        Toast.show({
-          type: 'error',
-          text1: t('common.error'),
-          text2: data.message || t('storyDetail.accessDenied'),
-        });
-        navigation.goBack();
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error(t('storyDetail.fetchError'));
-      }
-
-      const data: Story = await response.json();
-      setStory(data);
-      setIsShared(data.isShared || false);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (error && (error as any).status === 403) {
+      Toast.show({ type: 'error', text1: t('common.error'), text2: t('storyDetail.accessDenied') });
+      navigation.goBack();
     }
-  };
-
+  }, [error]);
 
   useEffect(() => {
-    fetchStory();
-  }, [storyId]);
+    if (story) setIsShared(story.isShared || false);
+  }, [story]);
 
   useEffect(() => {
     if (!loading && story) {
@@ -359,7 +327,7 @@ export default function StoryDetailScreen() {
   if (error || !story) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-red-500">{error ?? t('storyDetail.storyNotFound')}</Text>
+        <Text className="text-red-500">{error?.message ?? t('storyDetail.storyNotFound')}</Text>
       </View>
     );
   }
@@ -660,7 +628,6 @@ export default function StoryDetailScreen() {
             isShared={isShared}
             onSharedToCommunity={() => {
               setIsShared(true);
-              setStory(prev => prev ? { ...prev, isShared: true } : prev);
             }}
           />
         )}

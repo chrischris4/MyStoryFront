@@ -91,6 +91,8 @@ export default function ShareStoryModal({
         onSharedToCommunity();
         queryClient.invalidateQueries({ queryKey: ['stories'] });
         queryClient.invalidateQueries({ queryKey: ['communityStories'] });
+        queryClient.invalidateQueries({ queryKey: ['sharedStories'] });
+        queryClient.invalidateQueries({ queryKey: ['storyDetail', storyId] });
       } else {
         Toast.show({ type: 'error', text1: t('common.error'), text2: t('storyDetail.shareStatusError') });
       }
@@ -166,19 +168,21 @@ export default function ShareStoryModal({
               <PlatformBlur
                 intensity={90}
                 tint={isNight ? 'dark' : 'light'}
-                className={`p-4 rounded-xl overflow-hidden ${isShared ? 'border-2 border-green-500' : ''}`}
-                style={{ backgroundColor: isShared ? (isNight ? '#22c55e50' : '#22c55e30') : (isNight ? '#3b82f690' : '#3b82f630') }}
+                className="p-4 rounded-xl overflow-hidden"
+                style={{ backgroundColor: isShared ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? 'rgba(255,255,255,0.1)' : '#e5e7eb'), borderWidth: isShared ? 2 : 0, borderColor: '#3b82f6' }}
               >
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="font-baloo-semibold text-lg text-white">
+                    <Text className="font-baloo-semibold text-lg text-black">
                       {isShared ? t('storyDetail.sharedToEveryone') : t('storyDetail.shareToEveryone')}
                     </Text>
-                    <Text className="font-baloo text-sm text-gray-400">
+                    <Text className="font-baloo text-sm text-black/80">
                       {isShared ? t('storyDetail.alreadySharedToCommunity') : t('storyDetail.visibleByCommunity')}
                     </Text>
                   </View>
-                  {isShared && <Feather name="check-circle" size={24} color="#22c55e" />}
+                  {isShared && <Feather name="check-circle" size={24} color="#3b82f6" />}
+                  {!isShared && <Feather name="globe" size={24} color={isNight ? 'white' : 'black'} />}
+
                 </View>
               </PlatformBlur>
             </TouchableOpacity>
@@ -208,8 +212,8 @@ export default function ShareStoryModal({
                       <TouchableOpacity key={group.id} onPress={() => handleToggleGroup(group.id)} className="mb-2">
                         <PlatformBlur
                           intensity={90} tint={isNight ? 'dark' : 'light'}
-                          className={`p-3 rounded-xl overflow-hidden ${isSelected ? 'border-2 border-blue-500' : ''}`}
-                          style={{ backgroundColor: isNight ? '#1e293b90' : '#38b6ff10' }}
+                          className="p-3 rounded-xl overflow-hidden"
+                          style={{ backgroundColor: isSelected ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? 'rgba(255,255,255,0.1)' : '#e5e7eb'), borderWidth: isSelected ? 2 : 0, borderColor: '#3b82f6' }}
                         >
                           <View className="flex-row items-center justify-between">
                             <View className="flex-1">
@@ -220,7 +224,7 @@ export default function ShareStoryModal({
                               </Text>
                             </View>
                             {isSelected && (
-                              <Feather name="check-circle" size={20} color={isAlreadyShared ? '#10b981' : '#3b82f6'} />
+                              <Feather name="check-circle" size={20} color={isAlreadyShared ? '#3b82f6' : '#3b82f6'} />
                             )}
                           </View>
                         </PlatformBlur>
@@ -268,7 +272,7 @@ export default function ShareStoryModal({
           <PlatformBlur
             intensity={95} tint={isNight ? 'dark' : 'light'}
             style={{
-              borderColor: isNight ? '#1e293b' : '#ffffff', borderWidth: 2,
+              borderColor: isNight ? '#1e293b' : '#000000', borderWidth: 4,
               marginHorizontal: 16, borderRadius: 24, overflow: 'hidden',
               backgroundColor: isNight ? '#1e293b' : '#ffffff', padding: 24,
             }}

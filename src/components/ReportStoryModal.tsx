@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import PlatformBlur from '~/components/PlatformBlur';
 import { Feather } from '@expo/vector-icons';
 import * as yup from 'yup';
@@ -71,6 +71,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 justify-center items-center" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
         <PlatformBlur
           intensity={90} tint={isNight ? 'dark' : 'light'}
@@ -158,6 +159,7 @@ export default function ReportStoryModal({ visible, onClose, storyId, isNight }:
           </View>
         </PlatformBlur>
       </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }

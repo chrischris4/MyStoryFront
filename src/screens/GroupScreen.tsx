@@ -7,6 +7,7 @@ import {
   ScrollView,
   Animated,
   TouchableWithoutFeedback,
+  Keyboard,
   useWindowDimensions,
   RefreshControl,
 } from 'react-native';
@@ -560,6 +561,7 @@ export default function GroupScreen() {
               <TouchableWithoutFeedback onPress={closeCreateModal}>
                 <View className="absolute inset-0" />
               </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <Animated.View style={{ transform: [{ scale: createModalScale }], width: isTablet ? '60%' : '100%' }}>
                 <PlatformBlur
                   intensity={90}
@@ -607,6 +609,8 @@ export default function GroupScreen() {
                             multiline
                             numberOfLines={3}
                             maxLength={100}
+                            submitBehavior="blurAndSubmit"
+                            returnKeyType="done"
                             className={`${isNight ? 'text-white bg-slate-700' : 'text-slate-800 bg-slate-100'} font-baloo text-base px-4 py-3 rounded-xl ${touched.description && errors.description ? 'border border-red-500' : ''}`}
                             style={{ textAlignVertical: 'top' }}
                           />
@@ -662,6 +666,7 @@ export default function GroupScreen() {
                   </Formik>
                 </PlatformBlur>
               </Animated.View>
+              </TouchableWithoutFeedback>
             </Animated.View>
           )}
 

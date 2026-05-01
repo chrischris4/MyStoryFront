@@ -7,7 +7,6 @@ import type { CompositeNavigationProp } from '@react-navigation/native';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import StoryFolder from '~/components/StoryFolder';
 import { Feather } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTheme } from '~/context/ThemeContext';
 import LottieView from 'lottie-react-native';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
@@ -15,6 +14,7 @@ import type { RootStackParamList, MainTabParamList } from '~/types';
 import { useTranslation } from 'react-i18next';
 import Background from '~/components/Background';
 import { useFavoriteSharedStories } from '~/hooks/useFavoriteSharedStories';
+import { useSharedStories } from '~/hooks/useSharedStories';
 
 type SharedStoriesScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'SharedStories'>,
@@ -27,8 +27,7 @@ export default function SharedStoriesScreen() {
   const { isNight } = useTheme();
   const user = useUserStore((state) => state.user);
   const isPremium = isPremiumUser(user?.subscriptionPlan);
-  const [sharedStories, setSharedStories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { data: sharedStories = [], isLoading: loading } = useSharedStories();
   const { data: favoriteStories = [], isLoading: loadingFavorites } = useFavoriteSharedStories();
   const [showBubble, setShowBubble] = useState(false);
   const bubbleOpacity = useRef(new Animated.Value(0)).current;
@@ -40,42 +39,6 @@ export default function SharedStoriesScreen() {
   const groundColor = isNight ? '#2E313F' : '#38A169';
   const groundBorderColor = isNight ? '#44495D' : '#2F855A';
 
-  const fetchSharedStories = async () => {
-    try {
-      const token = await AsyncStorage.getItem('accessToken');
-      if (!token) {
-        return;
-      }
-
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://192.168.1.97:3000'}/story/shared`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Erreur lors de la récupération des histoires partagées');
-      }
-
-      const data = await response.json();
-      setSharedStories(data);
-    } catch (err) {
-      console.error('Erreur lors du chargement des histoires partagées:', err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        await fetchSharedStories();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   // Show bubble after 2 seconds delay
   useEffect(() => {

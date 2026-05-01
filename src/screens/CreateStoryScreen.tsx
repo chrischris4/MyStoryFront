@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, useWindowDimensions, ImageBackground, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated } from 'react-native';
 import PageSelector from '~/components/PageSelector';
@@ -443,6 +443,8 @@ export default function CreateStoryScreen() {
         className="flex-1 px-4 md:px-8 z-10"
         contentContainerStyle={{ paddingBottom: 100 + bottomInset }}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        onScrollBeginDrag={Keyboard.dismiss}
       >
         <View>
           {/* 📖 Voir un exemple */}

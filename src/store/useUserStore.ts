@@ -39,6 +39,7 @@ type UserStore = {
   logout: () => Promise<void>;
   loadFromStorage: () => Promise<void>;
   updateProfile: (profile: { name?: string; imageUrl?: string | null }) => Promise<void>;
+  decrementStoryCoin: () => void;
 };
 
 export const useUserStore = create<UserStore>((set) => ({
@@ -99,6 +100,15 @@ export const useUserStore = create<UserStore>((set) => ({
     } catch (error) {
       console.error('Erreur lors du chargement depuis AsyncStorage:', error);
     }
+  },
+
+  decrementStoryCoin: () => {
+    set((state) => {
+      if (!state.user) return state;
+      const updatedUser = { ...state.user, storyCoin: Math.max(0, (state.user.storyCoin ?? 0) - 1) };
+      AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+      return { user: updatedUser };
+    });
   },
 
   updateProfile: async (profile) => {

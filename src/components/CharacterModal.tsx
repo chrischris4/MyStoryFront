@@ -89,7 +89,7 @@ function OptionSelector({
                 setCustomText('');
               }}
               className={`px-3 py-2 rounded-xl flex-row items-center gap-1 ${isSelected
-                ? 'bg-green-500'
+                ? 'bg-blue-500'
                 : isNight
                   ? 'bg-slate-700'
                   : 'bg-gray-200'
@@ -603,7 +603,7 @@ export default function CharacterModal({
               )}
 
               {/* Description */}
-              <View className="mb-4">
+              <View className="pb-4 mb-4">
                 <Text
                   className={`${isNight ? 'text-white' : 'text-gray-600'} text-sm font-baloo-semibold mb-2`}
                 >

@@ -47,12 +47,17 @@ const createStory = async (
 
 export const useCreateStory = () => {
   const accessToken = useUserStore((state) => state.accessToken);
+  const decrementStoryCoin = useUserStore((state) => state.decrementStoryCoin);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (input: CreateStoryInput) => createStory(input, accessToken),
-    onSuccess: () => {
+    onSuccess: (_, input) => {
+      decrementStoryCoin();
       queryClient.invalidateQueries({ queryKey: ['stories'] });
+      if (input.isShared) {
+        queryClient.invalidateQueries({ queryKey: ['sharedStories'] });
+      }
     },
   });
 };

@@ -14,7 +14,6 @@ import { mapApiError } from '~/utils/errorMapper';
 import LottieView from 'lottie-react-native';
 import { useOAuth } from '~/hooks/useOAuth';
 import PasswordInput from '~/components/PasswordInput';
-import Constants from 'expo-constants';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -120,7 +119,6 @@ export default function LoginScreen() {
     <View className="flex-1 justify-center items-center bg-[#87CEEB] px-6">
       <View className="w-[160%] md:w-[90%] flex flex-col justify-center items-center aspect-square rounded-full bg-white">
         <View className='w-[60%]'>
-          <Text className="text-gray-400 text-xs font-baloo text-center mb-1">v{Constants.expoConfig?.android?.versionCode}</Text>
           <Text className="font-baloo-bold text-2xl md:text-3xl mb-4 text-center text-gray-800">{t('auth.login')}</Text>
 
           <Formik

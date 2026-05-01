@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import PlatformBlur from '~/components/PlatformBlur';
 import { useTranslation } from 'react-i18next';
@@ -137,6 +137,7 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
 
             {/* Modal édition */}
             <Modal visible={editVisible} transparent animationType="fade" onRequestClose={() => setEditVisible(false)}>
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View className="flex-1 justify-center items-center bg-black/50 px-4">
                     <PlatformBlur
                         intensity={90}
@@ -189,6 +190,7 @@ export default function GroupCard({ group, isNight, onPress, isOwner = false }: 
                         </View>
                     </PlatformBlur>
                 </View>
+                </TouchableWithoutFeedback>
             </Modal>
 
             {/* Modal confirmation quitter le groupe */}

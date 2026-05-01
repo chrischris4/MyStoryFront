@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, Image, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { useEditProfil } from '~/hooks/useEditProfil';
@@ -112,6 +112,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
       animationType="fade"
       onRequestClose={onClose}
     >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View className="flex-1 justify-center items-center bg-black/50 px-4">
         <View className={`${isNight ? 'bg-slate-800' : 'bg-white'} rounded-3xl w-full max-w-lg overflow-hidden`}>
           {/* Header */}
@@ -193,6 +194,7 @@ export default function EditProfilModal({ visible, onClose }: EditProfilModalPro
           </View>
         </View>
       </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 }

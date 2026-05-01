@@ -496,7 +496,7 @@ export default function SettingsScreen() {
                         style={{ backgroundColor: isNight ? '#1e293b' : '#ffffff' }}
                     >
                         {/* Header */}
-                        <View className="bg-red-500 p-6">
+                        <View className="bg-red-700 p-6">
                             <Feather name="alert-triangle" size={48} color="#fff" style={{ alignSelf: 'center', marginBottom: 12 }} />
                             <Text className="text-white text-2xl md:text-3xl font-baloo-bold text-center">
                                 {t('settings.deleteAccountTitle')}
