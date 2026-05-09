@@ -51,6 +51,12 @@ export default function LoginScreen() {
 
       if (response.ok) {
         const userData = await response.json();
+
+        if (!userData?.profil) {
+          navigation.navigate('CompleteProfileScreen', { accessToken: data.accessToken, refreshToken: data.refreshToken } as never);
+          return;
+        }
+
         const userName = userData?.profil?.name || 'toi';
         const randomMessage = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
 
