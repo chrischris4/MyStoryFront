@@ -169,14 +169,14 @@ export default function ShareStoryModal({
                 intensity={90}
                 tint={isNight ? 'dark' : 'light'}
                 className="p-4 rounded-xl overflow-hidden"
-                style={{ backgroundColor: isShared ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? 'rgba(255,255,255,0.1)' : '#e5e7eb'), borderWidth: isShared ? 2 : 0, borderColor: '#3b82f6' }}
+                style={{ backgroundColor: isShared ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? '#334155' : '#e5e7eb'), borderWidth: isShared ? 2 : 0, borderColor: '#3b82f6' }}
               >
                 <View className="flex-row items-center justify-between">
                   <View className="flex-1">
-                    <Text className="font-baloo-semibold text-lg text-black">
+                    <Text className={`font-baloo-semibold text-lg ${isNight ? 'text-white' : 'text-gray-900'}`}>
                       {isShared ? t('storyDetail.sharedToEveryone') : t('storyDetail.shareToEveryone')}
                     </Text>
-                    <Text className="font-baloo text-sm text-black/80">
+                    <Text className={`font-baloo text-sm ${isNight ? 'text-gray-400' : 'text-gray-600'}`}>
                       {isShared ? t('storyDetail.alreadySharedToCommunity') : t('storyDetail.visibleByCommunity')}
                     </Text>
                   </View>
@@ -213,7 +213,7 @@ export default function ShareStoryModal({
                         <PlatformBlur
                           intensity={90} tint={isNight ? 'dark' : 'light'}
                           className="p-3 rounded-xl overflow-hidden"
-                          style={{ backgroundColor: isSelected ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? 'rgba(255,255,255,0.1)' : '#e5e7eb'), borderWidth: isSelected ? 2 : 0, borderColor: '#3b82f6' }}
+                          style={{ backgroundColor: isSelected ? (isNight ? '#3b82f620' : '#3b82f620') : (isNight ? '#334155' : '#e5e7eb'), borderWidth: isSelected ? 2 : 0, borderColor: '#3b82f6' }}
                         >
                           <View className="flex-row items-center justify-between">
                             <View className="flex-1">

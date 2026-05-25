@@ -320,7 +320,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
                   {t('groups.groupMembers')}
                 </Text>
-                <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
+                <View className="flex-row items-center gap-1 bg-blue-500/10 px-3 py-1 rounded-full">
                   <Feather name="users" size={14} color="#3b82f6" />
                   <Text className="text-blue-500 font-baloo-semibold text-sm">
                     {memberCount}
@@ -381,7 +381,6 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                             <TouchableOpacity
                               activeOpacity={0.8}
                               onPress={() => {
-                                console.log('🔵 Remove member:', { groupId: group.id, memberId: member.id, userId: user.id });
                                 handleRemoveMember(group.id, user.id);
                               }}
                               className="p-2"
@@ -405,7 +404,7 @@ export default function GroupDetailsModal({ visible, group, onClose }: GroupDeta
                 <Text className={`${isNight ? 'text-white' : 'text-slate-800'} text-lg font-baloo-semibold`}>
                   {t('groups.groupStories')}
                 </Text>
-                <View className="flex-row items-center gap-1 bg-blue-500/20 px-3 py-1 rounded-full">
+                <View className="flex-row items-center gap-1 bg-blue-500/10 px-3 py-1 rounded-full">
                   <Feather name="book" size={14} color="#3b82f6" />
                   <Text className="text-blue-500 font-baloo-semibold text-sm">
                     {groupStories.length}

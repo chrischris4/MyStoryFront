@@ -5,7 +5,7 @@ import PlatformBlur from '~/components/PlatformBlur';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '~/context/ThemeContext';
 import { useAuth } from '~/context/AuthContext';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Feather, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { useUserStore, isPremiumUser } from '~/store/useUserStore';
 import EditProfilModal from '~/components/EditProfilModal';
@@ -297,10 +297,22 @@ export default function SettingsScreen() {
                             onPress={() => {
                                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                                 playSound('click');
-                                Linking.openURL('https://x.com/flunapp');
+                                Linking.openURL('https://www.instagram.com/flun_off/');
                             }}
                         >
-                            <FontAwesome name="twitter" size={28} color={isNight ? "#fff" : "#000"} />
+                            <FontAwesome name="instagram" size={28} color={isNight ? "#fff" : "#000"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            activeOpacity={0.7}
+                            className='items-center justify-center rounded-2xl'
+                            style={{ width: 56, height: 56, backgroundColor: isNight ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.3)' }}
+                            onPress={() => {
+                                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                playSound('click');
+                                Linking.openURL('https://www.tiktok.com/@flun_off');
+                            }}
+                        >
+                            <FontAwesome5 name="tiktok" size={28} color={isNight ? "#fff" : "#000"} />
                         </TouchableOpacity>
                     </View>
                 </PlatformBlur>
